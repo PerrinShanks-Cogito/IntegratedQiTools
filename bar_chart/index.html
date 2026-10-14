@@ -172,9 +172,12 @@ fieldset.opts legend{font-weight:600;margin:0 0 .35rem;padding:0}
 
 {% include focus-header.html %}
 
-<div class="page-head">
-  <h1>Build a bar chart</h1>
-  <p class="meta">Paste your data to compare amounts across categories, such as wards, teams or reasons. Everything runs in your browser, so your data is never uploaded.</p>
+<div class="page-head fa-host">
+  <div class="fa-head-text">
+    <h1>Build a bar chart</h1>
+    <p class="meta">Paste your data to compare amounts across categories, such as wards, teams or reasons. Everything runs in your browser, so your data is never uploaded.</p>
+  </div>
+  <div data-focus-actions></div>
 </div>
 
 <main>
@@ -570,14 +573,6 @@ fieldset.opts legend{font-weight:600;margin:0 0 .35rem;padding:0}
       <p class="summary">${sm.head}.</p>
       <p class="focuson">${esc(sm.sub)}</p>
       <div class="chartwrap" id="chart">${svg}</div>
-      <div class="btns">
-        <button type="button" class="primary" data-act="png">Download PNG</button>
-        <button type="button" data-act="svg">Download SVG</button>
-        <button type="button" data-act="copyimg">Copy chart</button>
-        <button type="button" data-act="csv">Download table (CSV)</button>
-        <button type="button" data-act="copytable">Copy table</button>
-        <span id="status" role="status" aria-live="polite"></span>
-      </div>
       ${timeWarn}
       <div class="tablewrap">
         <table>
@@ -616,7 +611,7 @@ fieldset.opts legend{font-weight:600;margin:0 0 .35rem;padding:0}
     setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
     return true;
   }
-  function status(msg) { const st = $('status'); if (st) { st.textContent = msg; setTimeout(() => { if (st.textContent === msg) st.textContent = ''; }, 3000); } }
+  function status(msg) { FocusActions.say(msg); }
   function toPNG(cb) {
     const svg = svgEl(); if (!svg) return;
     const vb = svg.viewBox.baseVal, sc = 2;
@@ -685,6 +680,16 @@ fieldset.opts legend{font-weight:600;margin:0 0 .35rem;padding:0}
 
 
   loadExample();
+
+  // ---- shared toolbar (Open, Save, Export) ----
+  FocusActions.mount({
+    tool: 'bar_chart', toolName: 'bar chart',
+    fileName: () => fileName(),
+    fields: 'section.panel[aria-labelledby="data-h"]',
+    afterOpen: () => update(),
+    ready: () => !!current,
+    exports: ['png', 'svg', 'copyimg', 'csv', 'copytable'].map(type => ({ type, run: () => act(type) }))
+  });
 })();
 </script>
 </body>

@@ -1,0 +1,72 @@
+/* Shared FOCUS tool toolbar (Open, Save, Export). Every selector is
+   prefixed .fa so it can sit alongside each tool's own stylesheet. */
+.fa-bar{
+  --fa-blue:#005EB8; --fa-blue-dark:#004A93; --fa-yellow:#FFB81C; --fa-surface:#FFFFFF;
+  --fa-ink:#212B32; --fa-muted:#4C6272; --fa-line:#D8DDE0; --fa-hover:#E6F0FA; --fa-on-blue:#FFFFFF;
+  display:flex; flex-direction:column; align-items:flex-end; gap:.35rem;
+  font-family:Figtree, "Frutiger", "Helvetica Neue", Arial, sans-serif; font-size:1rem; line-height:1.2;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .fa-bar{
+    --fa-blue:#5AA2EA; --fa-blue-dark:#7DB6EE; --fa-surface:#162533; --fa-ink:#E8EEF2;
+    --fa-muted:#A3B6C3; --fa-line:#2A3E4F; --fa-hover:#15314B; --fa-on-blue:#0E1A24;
+  }
+}
+:root[data-theme="dark"] .fa-bar{
+  --fa-blue:#5AA2EA; --fa-blue-dark:#7DB6EE; --fa-surface:#162533; --fa-ink:#E8EEF2;
+  --fa-muted:#A3B6C3; --fa-line:#2A3E4F; --fa-hover:#15314B; --fa-on-blue:#0E1A24;
+}
+.fa-bar *,.fa-bar *::before,.fa-bar *::after{box-sizing:border-box}
+.fa-btns{display:flex; flex-wrap:wrap; justify-content:flex-end; gap:.5rem}
+
+.fa-bar .fa-btn{
+  display:inline-flex; align-items:center; gap:.4rem; margin:0;
+  padding:.5rem .95rem; min-height:2.6rem; border-radius:4px; border:2px solid var(--fa-blue);
+  background:var(--fa-surface); color:var(--fa-blue); font:inherit; font-weight:700; line-height:1.2;
+  cursor:pointer; white-space:nowrap; box-shadow:none; text-decoration:none;
+}
+.fa-bar .fa-btn:hover{background:var(--fa-hover)}
+.fa-bar .fa-btn.fa-primary{background:var(--fa-blue); color:var(--fa-on-blue)}
+.fa-bar .fa-btn.fa-primary:hover{background:var(--fa-blue-dark); border-color:var(--fa-blue-dark)}
+.fa-bar .fa-btn:focus-visible,.fa-list button:focus-visible{outline:3px solid var(--fa-yellow); outline-offset:2px}
+.fa-bar .fa-btn svg{flex:none}
+.fa-bar .fa-primary::after{
+  content:""; width:.42rem; height:.42rem; margin-left:.15rem;
+  border-right:2px solid currentColor; border-bottom:2px solid currentColor;
+  transform:translateY(-2px) rotate(45deg); transition:transform .15s;
+}
+.fa-bar .fa-primary[aria-expanded="true"]::after{transform:translateY(2px) rotate(-135deg)}
+
+.fa-menu{position:relative}
+.fa-list{
+  position:absolute; z-index:900; top:calc(100% + .4rem); right:0; width:min(18rem, calc(100vw - 2rem));
+  background:var(--fa-surface); color:var(--fa-ink); border:1px solid var(--fa-line); border-radius:8px;
+  box-shadow:0 12px 32px rgba(0,20,40,.25); padding:.35rem; text-align:left;
+}
+.fa-list[hidden]{display:none}
+.fa-list[data-empty]:not([data-empty=""])::before{
+  content:attr(data-empty); display:block; padding:.45rem .65rem .35rem; font-size:.85rem; color:var(--fa-muted);
+}
+.fa-list button{
+  display:block; width:100%; margin:0; padding:.55rem .65rem; border:0; border-radius:4px;
+  background:none; color:var(--fa-ink); font:inherit; font-weight:600; text-align:left; cursor:pointer;
+}
+.fa-list button+button{border-top:1px solid var(--fa-line); border-radius:0}
+.fa-list button:hover:not(:disabled){background:var(--fa-hover)}
+.fa-list button:disabled{opacity:.5; cursor:not-allowed}
+.fa-list small{display:block; font-weight:400; font-size:.82rem; color:var(--fa-muted); margin-top:.1rem}
+
+.fa-file{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; opacity:0}
+.fa-status{margin:0; min-height:1.2em; font-size:.88rem; color:var(--fa-muted); text-align:right; max-width:28rem}
+.fa-status:empty{display:none}
+
+/* Page heading with the toolbar on the right */
+.fa-host{display:flex; flex-wrap:wrap; align-items:flex-start; justify-content:space-between; gap:.75rem 1.5rem}
+.fa-host > .fa-head-text{flex:1 1 26rem; min-width:0}
+.fa-host > .fa-bar{flex:none; margin-left:auto}
+@media (max-width:640px){
+  .fa-host > .fa-bar{margin-left:0; align-items:flex-start}
+  .fa-btns{justify-content:flex-start}
+  .fa-status{text-align:left}
+}
+@media print{.fa-bar{display:none!important}}

@@ -1,1 +1,5 @@
 <link rel="stylesheet" href="{{ '/assets/css/focus-header.css' | relative_url }}">
+{%- if page.tool_id %}
+<link rel="stylesheet" href="{{ '/assets/css/focus-actions.css' | relative_url }}">
+<script src="{{ '/assets/js/focus-actions.js' | relative_url }}"></script>
+{%- endif %}

@@ -184,9 +184,12 @@ footer p{max-width:90ch;margin:0 0 6px}
 {% include focus-header.html %}
 
 <div class="wrap">
-  <div class="page-head">
-    <h1>Run chart builder</h1>
-    <p>Paste dates and values. You'll get a run chart checked against the four run chart rules in the NHS <a href="https://www.england.nhs.uk/improvement-hub/wp-content/uploads/sites/44/2017/11/A-guide-to-creating-and-interpreting-run-and-control-charts.pdf" target="_blank" rel="noopener">guide to creating and interpreting run and control charts</a>, with a plain-English reading of what the chart shows.</p>
+  <div class="page-head fa-host">
+    <div class="fa-head-text">
+      <h1>Run chart builder</h1>
+      <p>Paste dates and values. You'll get a run chart checked against the four run chart rules in the NHS <a href="https://www.england.nhs.uk/improvement-hub/wp-content/uploads/sites/44/2017/11/A-guide-to-creating-and-interpreting-run-and-control-charts.pdf" target="_blank" rel="noopener">guide to creating and interpreting run and control charts</a>, with a plain-English reading of what the chart shows.</p>
+    </div>
+    <div data-focus-actions></div>
   </div>
 
   <div class="layout">
@@ -243,10 +246,6 @@ footer p{max-width:90ch;margin:0 0 6px}
       <section class="panel" id="chart-panel" hidden>
         <div class="chart-head">
           <h3 id="chart-title">Run chart</h3>
-          <div class="actions">
-            <button type="button" id="dl-png">Download PNG</button>
-            <button type="button" id="copy">Copy summary</button>
-          </div>
         </div>
         <div id="chart"><div class="tip" id="tip" role="status"></div></div>
         <div class="legend" id="legend"></div>
@@ -806,11 +805,37 @@ els.rules.addEventListener("focusin", e => { const li = e.target.closest("li[dat
 els.rules.addEventListener("focusout", () => setFocus(null));
 
 /* Exports */
-el("dl-png").addEventListener("click", () => {
-  if (!state.data) return;
-  const W = 1200, H = 600;
+const exportName = () => (els.measure.value.trim() || "run-chart").replace(/[^\w\- ]+/g, "").trim().replace(/\s+/g, "-").toLowerCase() || "run-chart";
+function exportSVGText(W, H){
   const svg = buildSVG(state.data, state.an, state.opts, palette(true), W, H, els.measure.value.trim() || "Run chart");
   renderChart(); // restore on-screen geometry
+  return svg;
+}
+function downloadBlob(blob, name){
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+function exportSVG(){
+  if (!state.data) return;
+  downloadBlob(new Blob([exportSVGText(1200, 600)], { type: "image/svg+xml" }), exportName() + ".svg");
+  FocusActions.say("SVG downloaded.");
+}
+function exportCSV(){
+  if (!state.data) return;
+  const q = v => { v = String(v == null ? "" : v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+  const head = state.data.header || [];
+  const single = state.data.singleCol;
+  const rows = [["Point"].concat(single ? [] : [head[0] || "Date"], [els.measure.value.trim() || "Value", "Median"])]
+    .concat(state.data.points.map((p, i) => [i + 1].concat(single ? [] : [p.label], [p.value, state.an.med])));
+  downloadBlob(new Blob(["\uFEFF" + rows.map(r => r.map(q).join(",")).join("\r\n")], { type: "text/csv" }), exportName() + ".csv");
+  FocusActions.say("Data table downloaded.");
+}
+function exportPNG(){
+  if (!state.data) return;
+  const W = 1200, H = 600;
+  const svg = exportSVGText(W, H);
   const img = new Image();
   const url = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml;charset=utf-8" }));
   img.onload = () => {
@@ -820,14 +845,15 @@ el("dl-png").addEventListener("click", () => {
     cv.toBlob(b => {
       const a = document.createElement("a");
       a.href = URL.createObjectURL(b);
-      a.download = (els.measure.value.trim() || "run-chart").replace(/[^\w\- ]+/g, "").trim().replace(/\s+/g, "-").toLowerCase() + ".png";
+      a.download = exportName() + ".png";
       document.body.appendChild(a); a.click(); a.remove();
+      FocusActions.say("PNG downloaded.");
     }, "image/png");
   };
   img.src = url;
-});
+}
 
-el("copy").addEventListener("click", async () => {
+async function copySummary(){
   if (!state.data) return;
   const { an, opts } = state;
   const lines = [];
@@ -839,10 +865,9 @@ el("copy").addEventListener("click", async () => {
     if (r.items.length) r.items.forEach(s => lines.push(head + s.text + (opts.dir !== "none" && r.key !== "astro" ? ` (${an.word(s.kind)})` : "")));
     else lines.push(head + r.none);
   });
-  try { await navigator.clipboard.writeText(lines.join("\n")); flash(el("copy"), "Copied"); }
-  catch { flash(el("copy"), "Couldn't copy"); }
-});
-function flash(btn, text){ const t = btn.textContent; btn.textContent = text; setTimeout(() => btn.textContent = t, 1600); }
+  try { await navigator.clipboard.writeText(lines.join("\n")); FocusActions.say("Summary copied."); }
+  catch { FocusActions.say("Copy was blocked by your browser."); }
+}
 
 /* Inputs */
 let timer;
@@ -876,6 +901,21 @@ new ResizeObserver(() => { if (state.data) renderChart(); }).observe(els.chart);
 window.matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => state.data && renderChart());
 
 
+
+/* Shared toolbar (Open, Save, Export) */
+FocusActions.mount({
+  tool: "run_chart", toolName: "run chart",
+  fileName: exportName,
+  fields: 'aside.panel[aria-label="Your data and settings"]',
+  afterOpen: () => { measureTouched = !!els.measure.value.trim(); run(); },
+  ready: () => !!state.data,
+  exports: [
+    { type: "png", run: exportPNG },
+    { type: "svg", run: exportSVG },
+    { type: "csv", run: exportCSV },
+    { type: "copysummary", run: copySummary }
+  ]
+});
 
 // Exposed for testing
 window.__runchart = { parseInput, analyse, findShifts, findTrends, countRuns, parseDate };

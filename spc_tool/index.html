@@ -187,10 +187,13 @@ td button{font-size:12px;padding:2px 8px}
 {% include focus-header.html %}
 
 <div class="wrap">
-  <div class="page-head">
-    <h1>SPC chart builder</h1>
-    <p>Paste your data to get an XmR chart with control limits, special cause signals and a plain-English reading of what the chart shows, following NHS England's Making Data Count approach.</p>
-    <p class="privacy"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5 2.5 3.5v4c0 3.2 2.3 5.9 5.5 7 3.2-1.1 5.5-3.8 5.5-7v-4L8 1.5Z" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="m5.6 8 1.7 1.7 3.2-3.4" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>Calculated in your browser. Nothing you paste is uploaded or saved.</p>
+  <div class="page-head fa-host">
+    <div class="fa-head-text">
+      <h1>SPC chart builder</h1>
+      <p>Paste your data to get an XmR chart with control limits, special cause signals and a plain-English reading of what the chart shows, following NHS England's Making Data Count approach.</p>
+      <p class="privacy"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5 2.5 3.5v4c0 3.2 2.3 5.9 5.5 7 3.2-1.1 5.5-3.8 5.5-7v-4L8 1.5Z" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="m5.6 8 1.7 1.7 3.2-3.4" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>Calculated in your browser. Nothing you paste is uploaded or saved.</p>
+    </div>
+    <div data-focus-actions></div>
   </div>
 
   <div class="layout">
@@ -694,7 +697,6 @@ function renderAllInner(){
   if (notes.length) h += `<div class="notes">${notes.map(t => `<p>${esc(t)}</p>`).join('')}</div>`;
   h += `</div>`;
 
-  h += `<div class="actions"><button type="button" class="primary" data-save="png">Save chart as PNG</button><button type="button" data-save="svg">Save as SVG</button><button type="button" data-save="csv">Save values as CSV</button><span id="saveMsg" role="status" aria-live="polite"></span></div>`;
   h += tableHTML();
   out.innerHTML = h;
   out.insertAdjacentHTML('beforeend', '');
@@ -803,7 +805,7 @@ async function svgToPng(svg, W, H){
   return await new Promise(r => c.toBlob(r, 'image/png'));
 }
 async function doSave(kind){
-  const msg = $('#saveMsg'); msg.textContent = '';
+  const msg = { set textContent(t){ if (t) FocusActions.say(t); } };
   try {
     let name, blob;
     if (kind === 'csv'){ name = slug() + '.csv'; blob = new Blob([csvText()], { type: 'text/csv' }); }
@@ -871,6 +873,26 @@ $('#clearBtn').onclick = () => {
   $('#data').value = ''; state.breaks.clear(); $('#title').value = ''; state.title = ''; $('#yLabel').value = ''; $('#yLabel').placeholder = 'e.g. Days';
   $('#target').value = ''; state.target = null; readData(); renderAll(); $('#data').focus();
 };
+
+/* ---------- Shared toolbar (Open, Save, Export) ---------- */
+FocusActions.mount({
+  tool: 'spc_tool', toolName: 'SPC chart',
+  fileName: () => slug(),
+  fields: 'aside.panel[aria-label="Data and settings"]',
+  getExtra: () => ({ breaks: [...state.breaks], useBaseN: state.useBaseN }),
+  setExtra: x => {
+    state.breaks = new Set((x && x.breaks) || []);
+    const base = document.querySelector(`input[name=base][value=${x && x.useBaseN ? 'first' : 'all'}]`);
+    if (base) { base.checked = true; state.useBaseN = !!(x && x.useBaseN); }
+  },
+  afterOpen: () => { clearTimeout(parseTimer); state.title = $('#title').value.trim(); readData(); renderAll(); },
+  ready: () => state.rows.length > 0,
+  exports: [
+    { type: 'png', run: () => doSave('png') },
+    { type: 'svg', run: () => doSave('svg') },
+    { type: 'csv', run: () => doSave('csv') }
+  ]
+});
 
 let rz; new ResizeObserver(() => { clearTimeout(rz); rz = setTimeout(drawCharts, 80); }).observe(out);
 if (window.matchMedia) window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => renderAll());

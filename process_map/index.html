@@ -249,27 +249,18 @@ select.field{overflow:visible;cursor:pointer}
 <body>
 {% include focus-header.html %}
 
-<div class="page-head">
-  <div>
+<div class="page-head fa-host">
+  <div class="fa-head-text">
     <h1>Map, analyse and redesign a process</h1>
     <p class="meta">Swimlane map of what really happens, with value, waits and hand-offs counted for you.</p>
-  </div>
-  <div class="actions">
-    <button class="btn" id="btnTable" type="button">Edit as table</button>
-    <button class="btn" id="btnExample" type="button">Load example</button>
-    <button class="btn" id="btnNew" type="button">New map</button>
-    <div class="menu">
-      <button class="btn primary" id="btnExport" type="button" aria-haspopup="true" aria-expanded="false">Export</button>
-      <div class="menu-list" id="exportMenu" role="menu">
-        <button role="menuitem" data-exp="png" type="button">PNG image<small>The map you're viewing, for slides</small></button>
-        <button role="menuitem" data-exp="svg" type="button">SVG image<small>Scales without blurring</small></button>
-        <button role="menuitem" data-exp="csv" type="button">Step table (.csv)<small>Opens in Excel</small></button>
-        <button role="menuitem" data-exp="json" type="button">Project file (.json)<small>Both maps, to keep editing later</small></button>
-        <button role="menuitem" data-exp="import" type="button">Open project file…<small>Load a .json you saved</small></button>
-      </div>
+    <div class="actions" style="margin-top:.75rem">
+      <button class="btn" id="btnTable" type="button">Edit as table</button>
+      <button class="btn" id="btnExample" type="button">Load example</button>
+      <button class="btn" id="btnNew" type="button">New map</button>
     </div>
-    <input type="file" id="fileIn" accept=".json,application/json" class="sr" tabindex="-1" aria-hidden="true">
   </div>
+  <div data-focus-actions></div>
+  <input type="file" id="fileIn" accept=".json,application/json" class="sr" tabindex="-1" aria-hidden="true">
 </div>
 
 <main>
@@ -1026,23 +1017,21 @@ $("#btnNew").addEventListener("click",()=>{
   if(hasContent()&&!confirm("Start a new, empty map? Export a project file first if you want to keep this one.")) return;
   const v=state.view; state=blank(); state.view=v; selected=null; autoFit=true; persist(); renderAll(); $("#title").focus();
 });
-const expBtn=$("#btnExport"), expMenu=$("#exportMenu");
-expBtn.addEventListener("click",e=>{e.stopPropagation();const o=!expMenu.classList.contains("open");expMenu.classList.toggle("open",o);expBtn.setAttribute("aria-expanded",String(o));});
-document.addEventListener("click",()=>{expMenu.classList.remove("open");expBtn.setAttribute("aria-expanded","false");});
-document.addEventListener("keydown",e=>{if(e.key==="Escape"&&expMenu.classList.contains("open")){expMenu.classList.remove("open");expBtn.focus();}});
-expMenu.addEventListener("click",e=>{
-  const b=e.target.closest("[data-exp]"); if(!b) return;
-  const k=b.dataset.exp, m=map();
-  if(k==="import"){$("#fileIn").click();return;}
-  if(k==="json"){saveFile(slug()+".json",JSON.stringify(state,null,2),"application/json");return;}
-  if(!m){toast("There's no redesign to export. Switch to the current map.");return;}
-  if(k==="svg") saveFile(slug()+suffix()+".svg",layout(m,{export:true}).svg,"image/svg+xml");
-  else if(k==="png") exportPng(m);
-  else if(k==="csv"){
-    const q=v=>{v=String(v==null?"":v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;};
-    const csv=toTable(m).split("\n").map((r,i)=>[i?i:"Step number"].concat(r.split("\t")).map(q).join(",")).join("\n");
-    saveFile(slug()+suffix()+".csv","\uFEFF"+csv,"text/csv");
-  }
+/* Shared toolbar (Open, Save, Export) */
+function withMap(fn){const m=map(); if(!m){toast("There's no redesign to export. Switch to the current map.");return;} fn(m);}
+FocusActions.mount({
+  tool:"process_map", toolName:"process map", fileName:()=>slug(), say:m=>toast(m),
+  save:()=>saveFile(slug()+".json",JSON.stringify(state,null,2),"application/json"),
+  open:()=>$("#fileIn").click(),
+  exports:[
+    {type:"png",hint:"The map you're viewing, for slides",run:()=>withMap(m=>exportPng(m))},
+    {type:"svg",run:()=>withMap(m=>saveFile(slug()+suffix()+".svg",layout(m,{export:true}).svg,"image/svg+xml"))},
+    {type:"csv",label:"Step table (.csv)",run:()=>withMap(m=>{
+      const q=v=>{v=String(v==null?"":v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;};
+      const csv=toTable(m).split("\n").map((r,i)=>[i?i:"Step number"].concat(r.split("\t")).map(q).join(",")).join("\n");
+      saveFile(slug()+suffix()+".csv","\uFEFF"+csv,"text/csv");
+    })}
+  ]
 });
 function slug(){return (state.title||"process-map").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,60)||"process-map";}
 function suffix(){return state.active==="future"?"-redesign":"-current";}
