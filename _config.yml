@@ -1,6 +1,9 @@
 title: FOCUS
 description: Free, browser-based quality improvement charting tools. Paste your data and build a chart. Nothing is uploaded.
 baseurl: ""
+
+# Copyright notice shown in every page footer and at the top of each source file
+copyright: "© Guy’s and St Thomas’ NHS Foundation Trust 2026. All rights reserved."
 url: ""
 
 # Static output for Azure Static Web Apps (deployed from _site)
