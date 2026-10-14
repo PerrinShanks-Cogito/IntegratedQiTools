@@ -1,3 +1,5 @@
+/* © Guy’s and St Thomas’ NHS Foundation Trust 2026. All rights reserved. */
+
 /* Shared FOCUS header. Every selector is prefixed with .fh so it can sit
    alongside each tool's own stylesheet without clashing. */
 .fh{
@@ -58,3 +60,8 @@
 .fh-tag-here{background:var(--fh-yellow);color:#212B32}
 
 @media print{.fh{display:none!important}}
+
+/* Shared footer on tool pages */
+.fh-foot{margin-top:2rem;border-top:1px solid var(--fh-line);color:var(--fh-muted);font-size:.85rem}
+.fh-foot .fh-inner{padding:1rem 1.25rem 1.5rem}
+.fh-foot p{margin:0}

@@ -71,3 +71,7 @@ Then open <http://localhost:4000>.
 If you host the site under a sub-path rather than at the root of a domain,
 set `baseurl` in `_config.yml` (for example `baseurl: "/qi"`). All internal
 links use `relative_url`, so they follow it.
+
+## Copyright
+
+© Guy’s and St Thomas’ NHS Foundation Trust 2026. All rights reserved.

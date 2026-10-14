@@ -1,3 +1,5 @@
+// © Guy’s and St Thomas’ NHS Foundation Trust 2026. All rights reserved.
+
 // Shared FOCUS header: only one menu open at a time; close on outside click or Escape.
 (function () {
   const menus = [...document.querySelectorAll("details.fh-dd")];

@@ -1,3 +1,5 @@
+/* © Guy’s and St Thomas’ NHS Foundation Trust 2026. All rights reserved. */
+
 /* Shared FOCUS tool toolbar: Example, Open, Save and an Export menu, shown in the
    top right of every tool's page heading so they all work the same way.
 
