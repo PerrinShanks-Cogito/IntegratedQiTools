@@ -679,7 +679,7 @@ fieldset.opts legend{font-weight:600;margin:0 0 .35rem;padding:0}
   els.result.addEventListener('click', e => { const b = e.target.closest('button[data-act]'); if (b) act(b.dataset.act); });
 
 
-  loadExample();
+  update(); // start empty, ready for the user's data
 
   // ---- shared toolbar (Open, Save, Export) ----
   FocusActions.mount({

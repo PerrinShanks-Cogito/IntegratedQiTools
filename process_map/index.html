@@ -479,7 +479,7 @@ function normalise(o){
 }
 function cloneMap(m){return normMap(JSON.parse(JSON.stringify(m)));}
 
-let state=load()||example();
+let state=load()||blank(); // start empty unless there is saved work
 let selected=null, zoom=1, autoFit=true;
 const map=()=>state.maps[state.active];
 const laneOf=(m,id)=>m.lanes.find(l=>l.id===id)||m.lanes[0];

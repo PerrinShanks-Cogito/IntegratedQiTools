@@ -361,7 +361,7 @@ function normalise(o){
   return s;
 }
 
-let state=load()||example();
+let state=load()||blank(); // start empty unless there is saved work
 let selected=null;
 let zoom=1, autoFit=true;
 

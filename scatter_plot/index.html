@@ -661,7 +661,7 @@ details.values .tablewrap{margin-top:.6rem}
   els.result.addEventListener('click', e => { const b = e.target.closest('button[data-act]'); if (b) act(b.dataset.act); });
 
 
-  loadExample();
+  update(); // start empty, ready for the user's data
 
   // ---- shared toolbar (Open, Save, Export) ----
   FocusActions.mount({
