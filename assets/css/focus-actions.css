@@ -65,7 +65,7 @@
 .fa-host > .fa-head-text{flex:1 1 26rem; min-width:0}
 .fa-host > .fa-bar{flex:none; margin-left:auto}
 @media (max-width:640px){
-  .fa-host > .fa-bar{margin-left:0; align-items:flex-start}
+  .fa-host > .fa-bar{flex:1 1 100%; min-width:0; margin-left:0; align-items:flex-start}
   .fa-btns{justify-content:flex-start}
   .fa-status{text-align:left}
 }

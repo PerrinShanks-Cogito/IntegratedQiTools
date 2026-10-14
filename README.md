@@ -30,7 +30,8 @@ Tools (copied from [ImprovementTools](https://github.com/PerrinShanks-Cogito/Imp
   (`assets/css/focus-header.css`) are all prefixed `.fh` so they don't clash
   with each tool's own CSS.
 - `assets/js/focus-actions.js` – the shared toolbar at the top right of every
-  tool: **Open** (reopen a saved project file), **Save** (download a project
+  tool: **Example** (fill in example data), **Open** (reopen a saved project
+  file), **Save** (download a project
   `.json`) and **Export** (a menu of PNG, SVG, CSV and copy options, using the
   same labels in every tool). Each tool calls `FocusActions.mount()` with its
   own export functions; chart tools save and reopen everything in their data

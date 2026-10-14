@@ -180,7 +180,6 @@ details.values .tablewrap{margin-top:.6rem}
     <label class="check"><input type="checkbox" id="hasHeader"> First row is column headings</label>
 
     <div class="btns" style="margin-bottom:1.5rem">
-      <button type="button" id="exampleBtn">Load example</button>
       <button type="button" id="clearBtn">Clear</button>
     </div>
 
@@ -655,17 +654,17 @@ details.values .tablewrap{margin-top:.6rem}
   els.hasHeader.addEventListener('change', () => { headerTouched = true; update(); });
   ['title', 'xLabel', 'yLabel'].forEach(id => els[id].addEventListener('input', schedule));
   ['showTrend', 'byGroup', 'flagOdd', 'zero'].forEach(id => els[id].addEventListener('change', update));
-  $('exampleBtn').addEventListener('click', loadExample);
   $('exampleBtn2').addEventListener('click', loadExample);
   $('clearBtn').addEventListener('click', () => { els.data.value = ''; els.title.value = ''; els.xLabel.value = ''; els.yLabel.value = ''; headerTouched = false; els.hasHeader.checked = false; update(); els.data.focus(); });
   els.result.addEventListener('click', e => { const b = e.target.closest('button[data-act]'); if (b) act(b.dataset.act); });
 
 
-  loadExample();
+  update(); // start empty, ready for the user's data
 
   // ---- shared toolbar (Open, Save, Export) ----
   FocusActions.mount({
     tool: 'scatter_plot', toolName: 'scatter plot',
+    example: loadExample, hasData: () => !!els.data.value.trim(),
     fileName: () => fileName(),
     fields: 'section.panel[aria-labelledby="data-h"]',
     afterOpen: () => update(),

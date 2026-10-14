@@ -204,7 +204,6 @@ td button{font-size:12px;padding:2px 8px}
         <p class="hint" id="dataHint">Paste one value per line, or a label and a value (dates, weeks, anything). A header row is fine.</p>
         <p class="status" id="parseStatus" role="status" aria-live="polite"></p>
         <div class="row">
-          <button type="button" id="exampleBtn">Use example data</button>
           <button type="button" id="clearBtn">Clear</button>
         </div>
       </section>
@@ -868,7 +867,6 @@ function loadExample(){
   state.breaks.clear();
   readData(); renderAll();
 }
-$('#exampleBtn').onclick = loadExample;
 $('#clearBtn').onclick = () => {
   $('#data').value = ''; state.breaks.clear(); $('#title').value = ''; state.title = ''; $('#yLabel').value = ''; $('#yLabel').placeholder = 'e.g. Days';
   $('#target').value = ''; state.target = null; readData(); renderAll(); $('#data').focus();
@@ -877,6 +875,7 @@ $('#clearBtn').onclick = () => {
 /* ---------- Shared toolbar (Open, Save, Export) ---------- */
 FocusActions.mount({
   tool: 'spc_tool', toolName: 'SPC chart',
+  example: loadExample, hasData: () => !!$('#data').value.trim(),
   fileName: () => slug(),
   fields: 'aside.panel[aria-label="Data and settings"]',
   getExtra: () => ({ breaks: [...state.breaks], useBaseN: state.useBaseN }),

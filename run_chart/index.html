@@ -198,7 +198,6 @@ footer p{max-width:90ch;margin:0 0 6px}
       <p class="hint">Copy two columns from Excel (date, then value) and paste them here. A header row is fine. One column of values on its own also works.</p>
       <textarea id="data" spellcheck="false" placeholder="Date	Value&#10;05/01/2026	17&#10;12/01/2026	19&#10;19/01/2026	20&#10;…"></textarea>
       <div class="row">
-        <button type="button" id="example">Use example data</button>
         <button type="button" id="clear">Clear</button>
       </div>
       <ul class="notes" id="notes" aria-live="polite"></ul>
@@ -888,7 +887,6 @@ function loadExample(){
   els.medmode.value = "change"; els.firstnWrap.hidden = true;
   run();
 }
-el("example").addEventListener("click", loadExample);
 el("example2").addEventListener("click", loadExample);
 el("clear").addEventListener("click", () => {
   els.data.value = ""; els.measure.value = ""; measureTouched = false;
@@ -905,6 +903,7 @@ window.matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", (
 /* Shared toolbar (Open, Save, Export) */
 FocusActions.mount({
   tool: "run_chart", toolName: "run chart",
+  example: loadExample, hasData: () => !!els.data.value.trim(),
   fileName: exportName,
   fields: 'aside.panel[aria-label="Your data and settings"]',
   afterOpen: () => { measureTouched = !!els.measure.value.trim(); run(); },
