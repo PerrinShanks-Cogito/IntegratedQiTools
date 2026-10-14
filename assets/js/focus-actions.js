@@ -1,4 +1,4 @@
-/* Shared FOCUS tool toolbar: Open, Save and an Export menu, shown in the
+/* Shared FOCUS tool toolbar: Example, Open, Save and an Export menu, shown in the
    top right of every tool's page heading so they all work the same way.
 
    A tool calls FocusActions.mount({...}) once its own script has set up:
@@ -11,6 +11,9 @@
      setExtra   (extra) => restore that extra state
      afterOpen  () => redraw once the fields have been restored
      save/open  optional overrides for tools that have their own project files
+     example    () => fill the tool with its example data
+     hasData    () => true if the user has entered something (asks before
+                the example replaces it)
      say        optional (message) => void, to show messages the tool's way
      ready      () => true when there is something to export
      exports    [{ type, run, hint? }] where type is one of FORMATS below
@@ -28,6 +31,7 @@
   };
 
   const ICONS = {
+    example: '<svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" focusable="false"><path d="M10 2.75a5 5 0 0 0-2.9 9.07c.4.29.65.74.65 1.23v.45h4.5v-.45c0-.49.25-.94.65-1.23A5 5 0 0 0 10 2.75zM8 16.5h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     open: '<svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" focusable="false"><path d="M2.5 5.5a1 1 0 0 1 1-1h4l1.5 1.75h7.5a1 1 0 0 1 1 1v7.25a1 1 0 0 1-1 1h-13a1 1 0 0 1-1-1z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>',
     save: '<svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" focusable="false"><path d="M3.5 3.5h10l3 3v10h-13z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M6.5 3.5v4h6v-4M6.5 16.5v-5h7v5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>',
     export: '<svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" focusable="false"><path d="M10 3v9M6.5 6.5 10 3l3.5 3.5M4 12v4.5h12V12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>'
@@ -98,6 +102,7 @@
     bar.classList.add("fa-bar");
     bar.innerHTML =
       '<div class="fa-btns">' +
+        (o.example ? '<button type="button" class="fa-btn" data-fa="example">' + ICONS.example + '<span>Example</span></button>' : '') +
         '<button type="button" class="fa-btn" data-fa="open">' + ICONS.open + '<span>Open</span></button>' +
         '<button type="button" class="fa-btn" data-fa="save">' + ICONS.save + '<span>Save</span></button>' +
         '<div class="fa-menu">' +
@@ -127,6 +132,10 @@
       list.hidden = !open;
       expBtn.setAttribute("aria-expanded", String(open));
       if (open) {
+        // Keep the menu on screen when the button has wrapped to the left.
+        list.style.right = "";
+        const left = list.getBoundingClientRect().left;
+        if (left < 8) list.style.right = (left - 8) + "px";
         const ok = !o.ready || o.ready();
         items.forEach(b => { b.disabled = !ok; });
         list.dataset.empty = ok ? "" : "Add some data first";
@@ -153,6 +162,16 @@
       setOpen(false); expBtn.focus();
       try { o.exports[+b.dataset.i].run(); } catch (err) { say("Sorry, that export didn't work."); }
     });
+
+    /* Example */
+    const exBtn = bar.querySelector('[data-fa="example"]');
+    if (exBtn) {
+      exBtn.title = "Fill in example data to see how the tool works";
+      exBtn.addEventListener("click", () => {
+        if (o.hasData && o.hasData() && !confirm("Replace what you've entered with the example?")) return;
+        o.example();
+      });
+    }
 
     /* Save */
     saveBtn.addEventListener("click", () => {

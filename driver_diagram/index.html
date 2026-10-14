@@ -200,7 +200,6 @@ dialog::backdrop{background:rgba(0,20,40,.5)}
     <p class="meta">Goal, drivers, projects and balancing measures, laid out left to right.</p>
     <div class="actions" style="margin-top:.75rem">
       <button class="btn" id="btnOutline" type="button">Edit as outline</button>
-      <button class="btn" id="btnExample" type="button">Load example</button>
       <button class="btn" id="btnNew" type="button">New diagram</button>
     </div>
   </div>
@@ -781,10 +780,10 @@ $("#outlineForm").addEventListener("submit",e=>{
 });
 
 /* ---------- top actions ---------- */
-$("#btnExample").addEventListener("click",()=>{
+function loadExampleProject(){
   if(hasContent()&&!confirm("Replace your current diagram with the fuel costs example?")) return;
   state=example(); selected=null; autoFit=true; persist(); renderAll();
-});
+}
 $("#btnNew").addEventListener("click",()=>{
   if(hasContent()&&!confirm("Start a new, empty diagram? Export a project file first if you want to keep this one.")) return;
   state=blank(); selected=null; autoFit=true; persist(); renderAll(); $("#goalText").focus();
@@ -794,6 +793,7 @@ function hasContent(){return !!(state.goal.text.trim()||state.drivers.length||st
 /* Shared toolbar (Open, Save, Export) */
 FocusActions.mount({
   tool:"driver_diagram", toolName:"driver diagram", fileName:()=>slug(), say:m=>toast(m),
+  example:()=>loadExampleProject(),
   save:()=>saveFile(slug()+".json",JSON.stringify(state,null,2),"application/json"),
   open:()=>$("#fileIn").click(),
   ready:()=>hasContent(),
