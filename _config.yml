@@ -1,0 +1,24 @@
+title: FOCUS
+description: Free, browser-based quality improvement charting tools. Paste your data and build a chart. Nothing is uploaded.
+baseurl: ""
+url: ""
+
+# Static output for Azure Static Web Apps (deployed from _site)
+permalink: pretty
+markdown: kramdown
+
+# Links shared by every page header
+links:
+  citi_academy: "https://coh.gstt.nhs.uk/course/view.php?id=3199"
+  feedback: "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=slTDN7CF9UeyIge0jXdO49aeA-DV7cxNn3HtO8zfVhdURFNZRkUyVUpBUUhTRjlOSE5JWlJNMlBXQS4u"
+  qi_coach: "https://m365.cloud.microsoft/chat/?titleId=T_9a8ef1bb-12ee-5134-a332-f2a26e2f1bd9&source=embedded-builder"
+
+include:
+  - staticwebapp.config.json
+
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - vendor
+  - .github

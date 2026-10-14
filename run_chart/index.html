@@ -1,0 +1,886 @@
+---
+tool_id: run_chart
+title: "Run chart builder"
+permalink: /run_chart/
+---
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Run chart builder</title>
+<meta name="description" content="Paste dates and values to draw a run chart and check it against the four run chart rules.">
+<link rel="icon" type="image/png" sizes="64x64" href="data:image/png;base64,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">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#005EB8; --navy:#003087; --bg:#F0F4F5; --surface:#FFFFFF; --ink:#212B32;
+  --muted:#4C6272; --line:#D8DDE0; --soft:#F6F8F9; --yellow:#FFB81C; --green:#007F3B; --green-bg:#E3F2E9;
+  --blue-bg:#E6F0FA; --shadow:0 2px 0 #D8DDE0;
+  --brand:var(--blue); --brand-ink:#FFFFFF; --focus:var(--yellow);
+  --improve:#0072CE; --concern:#C9580A; --neutral:#7C2855; --common:#8A9AA5;
+  --font:Figtree, "Frutiger", "Helvetica Neue", Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --blue:#5AA2EA; --navy:#9CC3EF; --bg:#0E1A24; --surface:#162533; --ink:#E8EEF2;
+    --muted:#A3B6C3; --line:#2A3E4F; --soft:#1C2E3E; --green:#4CC17E; --green-bg:#143326; --blue-bg:#15314B;
+    --shadow:0 2px 0 #0A131B; --brand-ink:#0E1A24;
+    --improve:#5AB0F5; --concern:#F29A4A; --neutral:#D584B0; --common:#7E909C;
+  }
+}
+:root[data-theme="dark"]{
+  --blue:#5AA2EA; --navy:#9CC3EF; --bg:#0E1A24; --surface:#162533; --ink:#E8EEF2;
+  --muted:#A3B6C3; --line:#2A3E4F; --soft:#1C2E3E; --green:#4CC17E; --green-bg:#143326; --blue-bg:#15314B;
+  --shadow:0 2px 0 #0A131B; --brand-ink:#0E1A24;
+  --improve:#5AB0F5; --concern:#F29A4A; --neutral:#D584B0; --common:#7E909C;
+}
+*,*::before,*::after{box-sizing:border-box}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 1rem/1.5 var(--font);-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--brand)}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:2px;border-radius:2px}
+
+.wrap{max-width:1240px;margin:0 auto;padding:0 1.25rem}
+/* Header (FOCUS style) */
+.top{background:#005EB8;color:#fff}
+.top-inner{max-width:1240px;margin:0 auto;padding:.9rem 1.25rem;display:flex;flex-wrap:wrap;gap:.75rem 1.5rem;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:.6rem;color:#fff;text-decoration:none}
+.brand b{font-size:1.25rem;font-weight:800;letter-spacing:-.01em}
+.brand span{opacity:.85;font-size:.95rem}
+.brand .tag{opacity:1}
+.top nav{display:flex;flex-wrap:wrap;gap:.25rem}
+.top nav a{color:#fff;text-decoration:none;padding:.4rem .7rem;border-radius:4px;font-weight:600;font-size:.95rem}
+.top nav a:hover{background:rgba(255,255,255,.14)}
+.support{background:#003087;color:#fff}
+.support-inner{max-width:1240px;margin:0 auto;padding:.5rem 1.25rem;display:flex;flex-wrap:wrap;gap:.25rem 1.75rem;align-items:center;font-size:.92rem}
+.support a{color:#fff;text-underline-offset:3px}
+.tools{position:relative}
+.tools summary{cursor:pointer;list-style:none;text-decoration:underline;text-underline-offset:3px;display:inline-flex;align-items:center;gap:.35rem}
+.tools summary::-webkit-details-marker{display:none}
+.tools summary::after{content:"";width:.45rem;height:.45rem;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-2px) rotate(45deg);transition:transform .15s}
+.tools[open] summary::after{transform:translateY(2px) rotate(-135deg)}
+.tools .menu{position:absolute;z-index:20;top:calc(100% + .5rem);left:0;width:min(380px,calc(100vw - 2.5rem));max-height:70vh;overflow:auto;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:8px;box-shadow:0 12px 32px rgba(0,20,40,.25);padding:.4rem}
+.toollist{list-style:none;margin:0;padding:0}
+.toollist li{display:flex;justify-content:space-between;align-items:center;gap:.75rem;padding:.5rem .6rem;border-radius:4px}
+.toollist li+li{border-top:1px solid var(--line)}
+.toollist a{color:var(--blue);font-weight:600}
+.toollist .off{color:var(--muted)}
+.toollist li[aria-current] a{color:var(--ink);text-decoration:none}
+.supportlist li{flex-direction:column;align-items:flex-start;gap:.1rem}
+.menu-desc{font-size:.85rem;color:var(--muted)}
+.menu-note{font-size:.82rem;color:var(--muted);margin:.4rem .6rem .2rem}
+.tag{flex:none;font-size:.78rem;font-weight:700;padding:.1rem .5rem;border-radius:99px;white-space:nowrap}
+.tag.beta{background:var(--green-bg);color:var(--green)}
+.tag.alpha{background:var(--blue-bg);color:var(--navy)}
+.tag.dev{background:#FFF4DB;color:#6B4A00}
+.tag.idea{background:var(--bg);color:var(--muted);border:1px solid var(--line)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .tag.dev{background:#3A2E10;color:#FFD27A}}
+:root[data-theme="dark"] .tag.dev{background:#3A2E10;color:#FFD27A}
+.page-head{padding:1.5rem 0 1.25rem}
+.page-head h1{margin:0;font-size:clamp(1.5rem,3vw,2rem);line-height:1.2;font-weight:800;letter-spacing:-.015em}
+.page-head p{margin:.35rem 0 0;color:var(--muted);max-width:68ch}
+
+.layout{display:grid;grid-template-columns:minmax(300px,370px) minmax(0,1fr);gap:20px;align-items:start;padding-bottom:40px}
+@media (max-width:920px){.layout{grid-template-columns:1fr}}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:1.25rem 1.5rem;box-shadow:var(--shadow)}
+aside.panel{position:sticky;top:16px}
+@media (max-width:920px){aside.panel{position:static}}
+aside h2{font-size:1.15rem;margin:0 0 4px}
+.hint{font-size:.9rem;color:var(--muted);margin:0 0 10px}
+textarea{width:100%;min-height:260px;resize:vertical;padding:.55rem .7rem;border:2px solid var(--muted);border-radius:4px;background:var(--surface);color:var(--ink);font:400 .95rem/1.45 var(--font);font-variant-numeric:tabular-nums;tab-size:16}
+textarea:focus,input:focus,select:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px var(--yellow)}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 0}
+button{display:inline-flex;align-items:center;gap:.4rem;font-weight:700;font-size:.95rem;border-radius:4px;padding:.5rem .95rem;cursor:pointer;background:var(--surface);color:var(--blue);border:2px solid var(--blue)}
+button:hover{background:var(--blue-bg)}
+button.primary{background:var(--green);color:#fff;border:0;padding:.65rem 1.1rem;box-shadow:0 3px 0 #00401E}
+button.primary:hover{background:var(--green);filter:brightness(1.06)}
+button.primary:active{transform:translateY(2px);box-shadow:0 1px 0 #00401E}
+.field{margin-top:18px}
+.field > label,.field > .lbl{display:block;font-weight:600;margin-bottom:.35rem}
+input[type=text],input[type=number],select{width:100%;padding:.55rem .7rem;border:2px solid var(--muted);border-radius:4px;background:var(--surface);color:var(--ink)}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);border:2px solid var(--muted);border-radius:4px;overflow:hidden}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label{text-align:center;padding:8px 4px;font-size:.92rem;cursor:pointer;border-left:1px solid var(--line)}
+.seg label:first-of-type{border-left:0}
+.seg input:checked + label{background:var(--blue);color:#fff;font-weight:700}
+.seg input:focus-visible + label{outline:3px solid var(--focus);outline-offset:-3px}
+.inline{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:.92rem}
+.inline input{width:80px}
+.notes{margin:12px 0 0;padding:0;list-style:none;font-size:.88rem;color:var(--muted)}
+.notes li{padding:6px 10px;border-left:4px solid var(--yellow);background:var(--soft);margin-top:6px;border-radius:0 4px 4px 0}
+
+main{display:grid;gap:20px;min-width:0}
+.empty{text-align:center;padding:60px 20px;color:var(--muted)}
+.empty p{margin:0 0 14px}
+
+.verdict{border-left:6px solid var(--common);padding:18px 20px}
+.verdict.special{border-left-color:var(--blue)}
+.verdict h2{font-size:1.6rem;font-weight:800;letter-spacing:-.01em;line-height:1.2;margin:0 0 6px}
+.verdict p{margin:0;max-width:72ch}
+.verdict .tally{display:flex;gap:18px;flex-wrap:wrap;margin-top:12px;font-size:.95rem}
+.tally span{display:inline-flex;align-items:center;gap:7px}
+.dot{width:12px;height:12px;border-radius:50%;display:inline-block;flex:none}
+
+.chart-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;margin-bottom:6px}
+.chart-head h3{font-size:1.15rem;margin:0}
+.chart-head .actions{display:flex;gap:8px}
+.chart-head button{padding:6px 10px;font-size:.85rem}
+#chart{position:relative;width:100%;touch-action:pan-y}
+#chart svg{display:block;width:100%;height:auto;overflow:visible}
+#chart svg .pt,#chart svg .ring{transition:opacity .15s}
+#chart svg[data-focus] .pt,#chart svg[data-focus] .ring{opacity:.18}
+#chart svg[data-focus="shift"] .r-shift,
+#chart svg[data-focus="trend"] .r-trend,
+#chart svg[data-focus="astro"] .r-astro,
+#chart svg[data-focus="runs"] .r-runs{opacity:1}
+@media (prefers-reduced-motion:reduce){#chart svg .pt,#chart svg .ring{transition:none}}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--surface);font-size:.85rem;line-height:1.35;padding:7px 10px;border-radius:6px;white-space:nowrap;transform:translate(-50%,calc(-100% - 12px));opacity:0;transition:opacity .1s;z-index:2}
+.tip.on{opacity:1}
+.tip b{font-weight:700}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:.88rem;color:var(--muted);margin-top:8px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend .ln{width:22px;height:0;border-top:2px solid var(--ink)}
+.legend .ln.dash{border-top-style:dashed}
+
+.rules{list-style:none;margin:0;padding:0}
+.rules li{display:grid;grid-template-columns:116px minmax(0,1fr);gap:16px;padding:14px 4px;border-top:1px solid var(--line);border-radius:4px;cursor:default}
+.rules li:first-child{border-top:0}
+.rules li:hover,.rules li:focus-within,.rules li:focus{background:var(--soft)}
+.chip{align-self:start;justify-self:start;font-size:.82rem;font-weight:700;padding:3px 10px;border-radius:999px;border:1.5px solid currentColor;white-space:nowrap}
+.chip.signal{background:var(--blue);color:#fff;border-color:var(--blue)}
+.chip.clear{color:var(--muted)}
+.chip.check{color:var(--concern)}
+.chip.na{color:var(--muted);border-style:dashed}
+.rules h4{margin:0 0 2px;font-size:1.05rem}
+.rules .what{margin:0;font-size:.9rem;color:var(--muted)}
+.rules .found{margin:6px 0 0}
+.rules .found ul{margin:4px 0 0;padding-left:0;list-style:none}
+.rules .found li{display:flex;gap:8px;align-items:baseline;border:0;padding:2px 0;grid-template-columns:none;background:none}
+.rules .found .dot{transform:translateY(1px)}
+@media (max-width:560px){.rules li{grid-template-columns:1fr;gap:6px}}
+
+.next h3,.check h3{font-size:1.15rem;margin:0 0 6px}
+.next p{margin:0 0 8px;max-width:72ch}
+details summary{cursor:pointer;font-weight:700}
+.tablewrap{overflow-x:auto;margin-top:10px}
+table{border-collapse:collapse;font-size:.9rem;font-variant-numeric:tabular-nums;min-width:100%}
+th,td{text-align:left;padding:5px 10px;border-bottom:1px solid var(--line)}
+th{font-weight:700}
+td.num{text-align:right}
+footer{color:var(--muted);font-size:.85rem;padding:0 0 32px}
+footer p{max-width:90ch;margin:0 0 6px}
+[hidden]{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+{% include focus-head.html %}
+</head>
+<body>
+{% include focus-header.html %}
+
+<div class="wrap">
+  <div class="page-head">
+    <h1>Run chart builder</h1>
+    <p>Paste dates and values. You'll get a run chart checked against the four run chart rules in the NHS <a href="https://www.england.nhs.uk/improvement-hub/wp-content/uploads/sites/44/2017/11/A-guide-to-creating-and-interpreting-run-and-control-charts.pdf" target="_blank" rel="noopener">guide to creating and interpreting run and control charts</a>, with a plain-English reading of what the chart shows.</p>
+  </div>
+
+  <div class="layout">
+    <aside class="panel" aria-label="Your data and settings">
+      <h2><label for="data">Your data</label></h2>
+      <p class="hint">Copy two columns from Excel (date, then value) and paste them here. A header row is fine. One column of values on its own also works.</p>
+      <textarea id="data" spellcheck="false" placeholder="Date	Value&#10;05/01/2026	17&#10;12/01/2026	19&#10;19/01/2026	20&#10;…"></textarea>
+      <div class="row">
+        <button type="button" id="example">Use example data</button>
+        <button type="button" id="clear">Clear</button>
+      </div>
+      <ul class="notes" id="notes" aria-live="polite"></ul>
+
+      <div class="field">
+        <label for="measure">What are you measuring?</label>
+        <input type="text" id="measure" placeholder="e.g. % patients discharged before midday">
+      </div>
+
+      <div class="field">
+        <span class="lbl" id="dir-lbl">Which direction is better?</span>
+        <div class="seg" role="radiogroup" aria-labelledby="dir-lbl">
+          <input type="radio" name="dir" id="dir-up" value="up"><label for="dir-up">Higher</label>
+          <input type="radio" name="dir" id="dir-down" value="down"><label for="dir-down">Lower</label>
+          <input type="radio" name="dir" id="dir-none" value="none" checked><label for="dir-none">Neither</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="change">Mark a change after</label>
+        <select id="change"><option value="">No change marked</option></select>
+      </div>
+
+      <div class="field">
+        <label for="medmode">Calculate the median from</label>
+        <select id="medmode">
+          <option value="all">All points</option>
+          <option value="change">Points before the marked change</option>
+          <option value="first">The first few points</option>
+        </select>
+        <div class="inline" id="firstn-wrap" hidden>
+          <span>First</span><input type="number" id="firstn" min="2" value="12" aria-label="Number of baseline points"><span>points, then extended</span>
+        </div>
+      </div>
+    </aside>
+
+    <main id="out" aria-live="polite">
+      <section class="panel empty" id="empty">
+        <p>Paste your data on the left to draw the chart.</p>
+        <button type="button" class="primary" id="example2">Try it with example data</button>
+      </section>
+
+      <section class="panel verdict" id="verdict" hidden></section>
+
+      <section class="panel" id="chart-panel" hidden>
+        <div class="chart-head">
+          <h3 id="chart-title">Run chart</h3>
+          <div class="actions">
+            <button type="button" id="dl-png">Download PNG</button>
+            <button type="button" id="copy">Copy summary</button>
+          </div>
+        </div>
+        <div id="chart"><div class="tip" id="tip" role="status"></div></div>
+        <div class="legend" id="legend"></div>
+      </section>
+
+      <section class="panel" id="rules-panel" hidden>
+        <ul class="rules" id="rules"></ul>
+      </section>
+
+      <section class="panel next" id="next" hidden></section>
+
+      <section class="panel check" id="check" hidden>
+        <details>
+          <summary>Check how your data was read</summary>
+          <div class="tablewrap"><table id="table"></table></div>
+        </details>
+      </section>
+    </main>
+  </div>
+
+  <footer>
+    <p>Rules follow <em>A guide to creating and interpreting run and control charts</em> (NHS Institute for Innovation and Improvement, 2009), based on the work of Robert Lloyd and on Provost &amp; Murray's <em>The Data Guide</em>. Limits for the number of runs come from the Balestracci &amp; Barlow table used in that guide, for 10 to 60 useful observations; above 60 a normal approximation is used.</p>
+    <p>Your data stays in your browser. Nothing is uploaded or stored.</p>
+  </footer>
+</div>
+
+<script>
+(() => {
+"use strict";
+
+/* ---------- Reference data ---------- */
+// Lower/upper limits for number of runs, by useful observations (Balestracci & Barlow, as reproduced in the NHS guide).
+const RUNS_TABLE = {10:[3,8],11:[3,9],12:[3,10],13:[4,10],14:[4,11],15:[4,12],16:[5,12],17:[5,13],18:[6,13],19:[6,14],20:[6,15],21:[7,15],22:[7,16],23:[8,16],24:[8,17],25:[8,18],26:[9,18],27:[9,19],28:[10,19],29:[10,20],30:[11,20],31:[11,21],32:[11,22],33:[11,22],34:[12,23],35:[13,23],36:[13,24],37:[13,25],38:[14,25],39:[14,26],40:[15,26],41:[16,26],42:[16,27],43:[17,27],44:[17,28],45:[17,29],46:[17,30],47:[18,30],48:[18,31],49:[19,31],50:[19,32],51:[20,32],52:[21,32],53:[21,33],54:[22,33],55:[22,34],56:[23,34],57:[23,35],58:[24,35],59:[24,36],60:[25,36]};
+
+const EXAMPLE = (() => {
+  const vals = [17,19,20,18,16,15,17,19,21,20,18,16,17,19,20, 22,24,23,26,25,27,24,26,28,25,27,26,29,27,28];
+  const start = Date.UTC(2026,0,5);
+  const lines = ["Week commencing\t% discharged before midday"];
+  vals.forEach((v,i) => {
+    const d = new Date(start + i*7*864e5);
+    lines.push(`${String(d.getUTCDate()).padStart(2,"0")}/${String(d.getUTCMonth()+1).padStart(2,"0")}/${d.getUTCFullYear()}\t${v}`);
+  });
+  return lines.join("\n");
+})();
+
+const MONTHS = {jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
+
+/* ---------- Parsing ---------- */
+function yr(y){ y = +y; return y < 100 ? (y >= 70 ? 1900 + y : 2000 + y) : y; }
+function mk(y, mo, d){
+  if (mo < 0 || mo > 11 || d < 1 || d > 31) return null;
+  const t = Date.UTC(y, mo, d);
+  return new Date(t).getUTCDate() === d ? t : null;
+}
+function parseDate(raw){
+  const s = String(raw).trim(); let m;
+  if ((m = s.match(/^(\d{4})-(\d{1,2})(?:-(\d{1,2}))?(?:[T\s].*)?$/))) return mk(+m[1], +m[2]-1, m[3] ? +m[3] : 1);
+  if ((m = s.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{2,4})(?:\s.*)?$/))) {
+    let d = +m[1], mo = +m[2];
+    if (mo > 12 && d <= 12) [d, mo] = [mo, d];
+    return mk(yr(m[3]), mo-1, d);
+  }
+  if ((m = s.match(/^(\d{1,2})[\/.\-](\d{4})$/))) return mk(+m[2], +m[1]-1, 1);
+  if ((m = s.match(/^(?:(\d{1,2})(?:st|nd|rd|th)?[\s\-]+)?([A-Za-z]{3,9})\.?[\s\-',]+(\d{2,4})$/))) {
+    const mo = MONTHS[m[2].toLowerCase().slice(0,3)];
+    if (mo !== undefined) return mk(yr(m[3]), mo, m[1] ? +m[1] : 1);
+  }
+  if ((m = s.match(/^([A-Za-z]{3,9})\.?\s+(\d{1,2})(?:st|nd|rd|th)?,?\s+(\d{4})$/))) {
+    const mo = MONTHS[m[1].toLowerCase().slice(0,3)];
+    if (mo !== undefined) return mk(+m[3], mo, +m[2]);
+  }
+  if (/^\d{5}(\.\d+)?$/.test(s)) { const n = +s; if (n > 20000 && n < 80000) return Date.UTC(1899,11,30) + Math.round(n)*864e5; }
+  return null;
+}
+function parseNumber(raw){
+  let s = String(raw ?? "").trim().replace(/[£$€%\s]/g, "");
+  if (/^\(.*\)$/.test(s)) s = "-" + s.slice(1, -1);
+  if (/^[-+]?\d{1,3}(,\d{3})+(\.\d+)?$/.test(s)) s = s.replace(/,/g, "");
+  if (!/^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?$/i.test(s)) return NaN;
+  return parseFloat(s);
+}
+function decimalsOf(raw){
+  const s = String(raw).replace(/[^0-9.]/g, "");
+  const i = s.indexOf(".");
+  return i < 0 ? 0 : s.length - i - 1;
+}
+function splitLine(line){
+  if (line.includes("\t")) return line.split("\t");
+  if (line.includes(";")) return line.split(";");
+  if (line.includes(",")) {
+    const p = line.split(",");
+    return p.length === 2 ? p : [p.slice(0, -1).join(","), p[p.length-1]];
+  }
+  const m = line.trim().match(/^(.*\S)\s+(\S+)$/);
+  return m ? [m[1], m[2]] : [line.trim()];
+}
+
+function parseInput(text){
+  const notes = [];
+  const lines = text.split(/\r?\n/).map(l => l.replace(/\s+$/, "")).filter(l => l.trim() !== "");
+  if (!lines.length) return { points: [], notes, header: null };
+  let rows = lines.map(splitLine).map(r => r.map(c => c.trim().replace(/^"(.*)"$/, "$1")));
+  const singleCol = rows.every(r => r.filter(c => c !== "").length <= 1);
+  let header = null;
+  if (singleCol) rows = rows.map(r => [r.find(c => c !== "") ?? ""]);
+
+  const valueCell = r => singleCol ? r[0] : r[1];
+  if (isNaN(parseNumber(valueCell(rows[0]))) && rows.length > 1) header = rows.shift();
+  if (!singleCol && rows.some(r => r.filter(c => c !== "").length > 2)) notes.push("Only the first two columns were used: the first as the date or label, the second as the value.");
+
+  const skipped = [];
+  let points = [];
+  rows.forEach((r, i) => {
+    const raw = valueCell(r);
+    const v = parseNumber(raw);
+    if (isNaN(v)) { skipped.push(`row ${i + 1 + (header ? 1 : 0)} (“${raw || "blank"}”)`); return; }
+    points.push({ label: singleCol ? "" : (r[0] || ""), value: v, raw, dp: decimalsOf(raw) });
+  });
+  if (skipped.length) notes.push(`Skipped ${skipped.length} row${skipped.length > 1 ? "s" : ""} without a number: ${skipped.slice(0,3).join(", ")}${skipped.length > 3 ? "…" : ""}.`);
+
+  let dated = false;
+  if (!singleCol && points.length) {
+    const ts = points.map(p => parseDate(p.label));
+    const ok = ts.filter(t => t !== null).length;
+    if (ok === points.length) {
+      dated = true;
+      points.forEach((p, i) => p.t = ts[i]);
+      const sorted = points.every((p, i) => i === 0 || p.t >= points[i-1].t);
+      if (!sorted) {
+        points = points.map((p, i) => ({ ...p, o: i })).sort((a, b) => a.t - b.t || a.o - b.o);
+        notes.push("Your dates weren't in order, so the points have been sorted from earliest to latest.");
+      }
+      const dupes = points.filter((p, i) => i > 0 && p.t === points[i-1].t).length;
+      if (dupes) notes.push(`${dupes} date${dupes > 1 ? "s appear" : " appears"} more than once. A run chart needs one value per time period.`);
+    } else if (ok > 0) {
+      notes.push("Some labels couldn't be read as dates, so the points are kept in the order you pasted them.");
+    }
+  }
+  if (singleCol) points.forEach((p, i) => p.label = String(i + 1));
+  return { points, notes, header, singleCol, dated };
+}
+
+/* ---------- Analysis ---------- */
+function median(a){
+  const s = [...a].sort((x, y) => x - y), n = s.length;
+  if (!n) return NaN;
+  return n % 2 ? s[(n-1)/2] : (s[n/2 - 1] + s[n/2]) / 2;
+}
+function quantile(sorted, q){
+  const pos = (sorted.length - 1) * q, lo = Math.floor(pos), hi = Math.ceil(pos);
+  return sorted[lo] + (sorted[hi] - sorted[lo]) * (pos - lo);
+}
+const EPS = 1e-9;
+const sideOf = (v, med) => v > med + EPS ? 1 : v < med - EPS ? -1 : 0;
+
+// Rule 1: 6 or more consecutive points on one side of the median. Points on the median neither count nor break the run.
+function findShifts(vals, med){
+  const out = []; let side = 0, members = [];
+  const flush = () => { if (members.length >= 6) out.push({ side, idx: members.slice() }); };
+  vals.forEach((v, i) => {
+    const s = sideOf(v, med);
+    if (s === 0) return;
+    if (s === side) members.push(i);
+    else { flush(); side = s; members = [i]; }
+  });
+  flush();
+  return out;
+}
+// Rule 2: 5 or more consecutive points all going up or all going down. Repeated equal values neither count nor break the trend.
+function findTrends(vals){
+  const out = []; if (vals.length < 2) return out;
+  let dir = 0, members = [0], last = 0;
+  const flush = () => { if (dir !== 0 && members.length >= 5) out.push({ dir, idx: members.slice(), from: members[0], to: members[members.length-1] }); };
+  for (let i = 1; i < vals.length; i++) {
+    const d = Math.sign(vals[i] - vals[last]);
+    if (Math.abs(vals[i] - vals[last]) < EPS) continue;
+    if (d === dir) members.push(i);
+    else { flush(); dir = d; members = [last, i]; }
+    last = i;
+  }
+  flush();
+  return out;
+}
+// Rule 3: too many or too few runs.
+function countRuns(vals, med){
+  const sides = vals.map(v => sideOf(v, med)).filter(s => s !== 0);
+  const useful = sides.length, onMedian = vals.length - useful;
+  let runs = useful ? 1 : 0;
+  for (let i = 1; i < sides.length; i++) if (sides[i] !== sides[i-1]) runs++;
+  let lo = null, hi = null, source = "table";
+  if (useful >= 10 && useful <= 60) [lo, hi] = RUNS_TABLE[useful];
+  else if (useful > 60) {
+    const n1 = sides.filter(s => s > 0).length, n2 = useful - n1;
+    const mu = 2*n1*n2/useful + 1;
+    const sd = Math.sqrt(2*n1*n2*(2*n1*n2 - useful) / (useful*useful*(useful - 1)));
+    lo = Math.ceil(mu - 1.96*sd); hi = Math.floor(mu + 1.96*sd); source = "approx";
+  }
+  return { useful, onMedian, runs, lo, hi, source };
+}
+// Rule 4: astronomical points are a judgement call. Flag far outliers (beyond 3 × IQR) as candidates to look at.
+function findAstro(vals){
+  if (vals.length < 8) return [];
+  const s = [...vals].sort((a, b) => a - b);
+  const q1 = quantile(s, .25), q3 = quantile(s, .75), iqr = q3 - q1;
+  if (iqr <= EPS) return [];
+  const lo = q1 - 3*iqr, hi = q3 + 3*iqr;
+  return vals.map((v, i) => (v > hi ? { i, side: 1 } : v < lo ? { i, side: -1 } : null)).filter(Boolean);
+}
+
+function kindFor(sign, dir){
+  if (dir === "none") return "neutral";
+  return (sign > 0) === (dir === "up") ? "improve" : "concern";
+}
+
+function analyse(data, opts){
+  const pts = data.points, vals = pts.map(p => p.value), n = vals.length;
+  let baseN = n, baseNote = "";
+  if (opts.medMode === "first") baseN = Math.max(2, Math.min(n, opts.firstN || n));
+  if (opts.medMode === "change" && opts.change !== null) baseN = opts.change + 1;
+  const frozen = baseN < n;
+  const med = median(vals.slice(0, baseN));
+  const dp = Math.min(4, Math.max(0, ...pts.map(p => p.dp)));
+
+  const lbl = i => data.singleCol ? `point ${i+1}` : pts[i].label;
+  const range = (a, b) => data.singleCol ? `points ${a+1} to ${b+1}` : `${pts[a].label} to ${pts[b].label}`;
+  const word = (kind) => kind === "improve" ? "improvement" : kind === "concern" ? "concern" : "";
+
+  const pointKind = new Array(n).fill(null);
+  const pointRules = Array.from({ length: n }, () => []);
+  const mark = (idxs, kind, rule) => idxs.forEach(i => {
+    pointRules[i].push(rule);
+    if (!pointKind[i] || pointKind[i] === "neutral") pointKind[i] = kind;
+  });
+
+  // Rule 1
+  const shifts = findShifts(vals, med).map(s => {
+    const kind = kindFor(s.side, opts.dir);
+    mark(s.idx, kind, "shift");
+    return { kind, idx: s.idx, text: `${s.idx.length} points ${s.side > 0 ? "above" : "below"} the median, ${range(s.idx[0], s.idx[s.idx.length-1])}` };
+  });
+  // Rule 2
+  const trends = findTrends(vals).map(t => {
+    const kind = kindFor(t.dir, opts.dir);
+    const idx = []; for (let i = t.from; i <= t.to; i++) idx.push(i);
+    mark(idx, kind, "trend");
+    return { kind, idx, text: `${t.idx.length} points ${t.dir > 0 ? "rising" : "falling"}, ${range(t.from, t.to)}` };
+  });
+  // Rule 3 (baseline only when the median is frozen)
+  const runs = countRuns(vals.slice(0, baseN), med);
+  let runsStatus = "na", runsText = "";
+  const scope = frozen ? " in the baseline period" : "";
+  if (runs.lo === null) {
+    runsText = `There ${runs.useful === 1 ? "is" : "are"} ${runs.useful} useful observation${runs.useful === 1 ? "" : "s"}${scope} (points not on the median). This rule needs at least 10.`;
+  } else {
+    const expect = `With ${runs.useful} useful observations${runs.onMedian ? ` (${runs.onMedian} on the median left out)` : ""} we'd expect between ${runs.lo} and ${runs.hi} runs${runs.source === "approx" ? " (normal approximation)" : ""}.`;
+    if (runs.runs < runs.lo) { runsStatus = "signal"; runsText = `${runs.runs} runs${scope}: too few. ${expect} Too few runs means points are clustering on one side of the median, which suggests the process level has changed.`; }
+    else if (runs.runs > runs.hi) { runsStatus = "signal"; runsText = `${runs.runs} runs${scope}: too many. ${expect} Too many runs means points flip across the median more than chance would explain. Check whether data from different sources or processes are mixed together.`; }
+    else { runsStatus = "clear"; runsText = `${runs.runs} runs${scope}. ${expect}`; }
+  }
+  if (runsStatus === "signal") { for (let i = 0; i < baseN; i++) pointRules[i].push("runs"); }
+  // Rule 4
+  const astro = findAstro(vals).map(a => {
+    const kind = kindFor(a.side, opts.dir);
+    pointRules[a.i].push("astro");
+    return { kind, i: a.i, text: `${fmt(vals[a.i], dp)} at ${lbl(a.i)} sits well apart from the rest of the data` };
+  });
+
+  const rules = [
+    { key: "shift", name: "Shift", what: "6 or more consecutive points above or below the median. Points on the median are skipped.",
+      status: shifts.length ? "signal" : "clear", items: shifts,
+      none: "No run of 6 or more points on one side of the median." },
+    { key: "trend", name: "Trend", what: "5 or more consecutive points all going up or all going down. Repeated equal values are skipped.",
+      status: trends.length ? "signal" : "clear", items: trends,
+      none: "No run of 5 or more points steadily rising or falling." },
+    { key: "runs", name: "Number of runs", what: "A run is one or more points in a row on the same side of the median. Too many or too few runs signals non-random variation.",
+      status: runsStatus, items: [], none: runsText },
+    { key: "astro", name: "Astronomical point", what: "A point obviously different from the rest. This rule is a judgement call, so the tool only suggests points worth a look.",
+      status: astro.length ? "check" : "clear", items: astro,
+      none: "No point stands far apart from the rest. Look at the chart too: people who know the process may spot something the numbers don't." }
+  ];
+
+  const allSignals = [...shifts, ...trends];
+  const counts = { improve: 0, concern: 0, neutral: 0 };
+  allSignals.forEach(s => counts[s.kind]++);
+  if (runsStatus === "signal") counts.neutral++;
+
+  const notes = [];
+  if (n < 10) notes.push("With fewer than 10 points, there's not much to judge a pattern against. Keep adding data.");
+  if (frozen && baseN < 10) notes.push(`The baseline median uses only ${baseN} point${baseN === 1 ? "" : "s"}. A baseline of 10 to 12 or more gives a steadier median.`);
+  const above = shifts.some(s => shifts.length > 1 && s.text.includes("above")), below = shifts.some(s => s.text.includes("below"));
+  const stepHint = !frozen && above && below;
+
+  return { n, med, baseN, frozen, dp, rules, counts, pointKind, pointRules, astro, shifts, trends, runs, runsStatus, notes, stepHint, range, word };
+}
+
+/* ---------- Formatting ---------- */
+function fmt(v, dp){
+  return new Intl.NumberFormat("en-GB", { maximumFractionDigits: Math.min(dp + 1, 4) }).format(v);
+}
+function esc(s){ return String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c])); }
+function niceTicks(min, max, count){
+  if (max - min < EPS) { const pad = Math.abs(max) * .1 || 1; min -= pad; max += pad; }
+  const raw = (max - min) / count, mag = 10 ** Math.floor(Math.log10(raw)), e = raw / mag;
+  const step = (e >= 7.5 ? 10 : e >= 3.5 ? 5 : e >= 1.5 ? 2 : 1) * mag;
+  const lo = Math.floor(min / step) * step, hi = Math.ceil(max / step) * step;
+  const ticks = []; for (let v = lo; v <= hi + step / 2; v += step) ticks.push(+v.toFixed(10));
+  const dp = Math.max(0, -Math.floor(Math.log10(step) + 1e-9));
+  return { lo, hi, ticks, dp };
+}
+function palette(forceLight){
+  if (forceLight) return { surface:"#FFFFFF", ink:"#212B32", muted:"#4C6272", line:"#D8DDE0", improve:"#0072CE", concern:"#C9580A", neutral:"#7C2855", common:"#8A9AA5" };
+  const cs = getComputedStyle(document.documentElement), g = k => cs.getPropertyValue("--" + k).trim();
+  return { surface:g("surface"), ink:g("ink"), muted:g("muted"), line:g("line"), improve:g("improve"), concern:g("concern"), neutral:g("neutral"), common:g("common") };
+}
+
+/* ---------- Chart ---------- */
+let geom = null;
+function buildSVG(data, an, opts, pal, W, H, title){
+  const pts = data.points, n = pts.length, vals = pts.map(p => p.value);
+  const narrow = W < 520;
+  const m = { t: title ? 56 : 18, r: narrow ? 10 : 22, b: 50, l: narrow ? 42 : 56 };
+  const pw = W - m.l - m.r, ph = H - m.t - m.b;
+  const { lo, hi, ticks, dp } = niceTicks(Math.min(...vals, an.med), Math.max(...vals, an.med), ph < 260 ? 4 : 6);
+  const step = pw / n;
+  const x = i => m.l + (i + .5) * step;
+  const y = v => m.t + ph - (v - lo) / (hi - lo) * ph;
+  const font = `font-family="Figtree, Helvetica Neue, Arial, sans-serif"`;
+  const o = [];
+  o.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" ${font} role="img" aria-label="Run chart of ${n} points with median ${fmt(an.med, an.dp)}">`);
+  o.push(`<rect x="0" y="0" width="${W}" height="${H}" fill="${pal.surface}"/>`);
+  if (title) o.push(`<text x="${m.l}" y="30" font-size="20" font-weight="700" fill="${pal.ink}">${esc(title)}</text>`);
+
+  // Grid and y labels
+  ticks.forEach(t => {
+    const ty = y(t);
+    o.push(`<line x1="${m.l}" x2="${m.l + pw}" y1="${ty}" y2="${ty}" stroke="${pal.line}" stroke-width="1"/>`);
+    o.push(`<text x="${m.l - 8}" y="${ty + 4}" text-anchor="end" font-size="12" fill="${pal.muted}">${fmt(t, dp > 0 ? dp - 1 : 0)}</text>`);
+  });
+
+  // X labels, thinned to fit
+  const maxLen = Math.max(...pts.map(p => p.label.length), 1);
+  const labelW = Math.min(maxLen, 12) * 7 + 14;
+  const every = Math.max(1, Math.ceil(labelW / step));
+  for (let i = 0; i < n; i += every) {
+    const t = pts[i].label.length > 12 ? pts[i].label.slice(0, 11) + "…" : pts[i].label;
+    o.push(`<line x1="${x(i)}" x2="${x(i)}" y1="${m.t + ph}" y2="${m.t + ph + 5}" stroke="${pal.muted}"/>`);
+    o.push(`<text x="${x(i)}" y="${m.t + ph + 20}" text-anchor="middle" font-size="12" fill="${pal.muted}">${esc(t)}</text>`);
+  }
+  o.push(`<line x1="${m.l}" x2="${m.l + pw}" y1="${m.t + ph}" y2="${m.t + ph}" stroke="${pal.muted}" stroke-width="1"/>`);
+
+  // Change marker
+  if (opts.change !== null && opts.change < n - 1) {
+    const cx = m.l + (opts.change + 1) * step;
+    o.push(`<line x1="${cx}" x2="${cx}" y1="${m.t - 4}" y2="${m.t + ph}" stroke="${pal.ink}" stroke-width="1.5" stroke-dasharray="2 4"/>`);
+    o.push(`<text x="${cx + 6}" y="${m.t + 8}" font-size="12" font-weight="700" fill="${pal.ink}">Change</text>`);
+  }
+
+  // Median
+  const my = y(an.med), mx0 = m.l, mx1 = m.l + an.baseN * step;
+  o.push(`<line x1="${mx0}" x2="${mx1}" y1="${my}" y2="${my}" stroke="${pal.ink}" stroke-width="2"/>`);
+  if (an.frozen) o.push(`<line x1="${mx1}" x2="${m.l + pw}" y1="${my}" y2="${my}" stroke="${pal.ink}" stroke-width="2" stroke-dasharray="7 5"/>`);
+  const medLabel = `Median ${fmt(an.med, an.dp)}`;
+  o.push(`<text x="${m.l + pw}" y="${my - 7}" text-anchor="end" font-size="12" font-weight="700" fill="${pal.ink}" paint-order="stroke" stroke="${pal.surface}" stroke-width="4">${medLabel}</text>`);
+
+  // Data line
+  const path = vals.map((v, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join("");
+  o.push(`<path d="${path}" fill="none" stroke="${pal.muted}" stroke-width="1.5" stroke-linejoin="round" opacity=".7"/>`);
+
+  // Points
+  const r = n > 80 ? 3 : n > 40 ? 4 : 5;
+  const colour = k => k ? pal[k] : pal.common;
+  an.astro.forEach(a => {
+    o.push(`<circle class="ring r-astro" cx="${x(a.i)}" cy="${y(vals[a.i])}" r="${r + 5}" fill="none" stroke="${colour(a.kind)}" stroke-width="2"/>`);
+  });
+  vals.forEach((v, i) => {
+    const cls = ["pt", ...new Set(an.pointRules[i].map(k => "r-" + k))].join(" ");
+    const k = an.pointKind[i];
+    o.push(`<circle class="${cls}" data-i="${i}" cx="${x(i)}" cy="${y(v)}" r="${k ? r + 1 : r}" fill="${colour(k)}" stroke="${pal.surface}" stroke-width="1.5"/>`);
+  });
+  o.push(`</svg>`);
+  geom = { m, step, n, W };
+  return o.join("");
+}
+
+/* ---------- UI ---------- */
+const el = id => document.getElementById(id);
+const els = { data: el("data"), notes: el("notes"), measure: el("measure"), change: el("change"), medmode: el("medmode"), firstn: el("firstn"), firstnWrap: el("firstn-wrap"),
+  empty: el("empty"), verdict: el("verdict"), chartPanel: el("chart-panel"), chart: el("chart"), tip: el("tip"), legend: el("legend"), chartTitle: el("chart-title"),
+  rulesPanel: el("rules-panel"), rules: el("rules"), next: el("next"), check: el("check"), table: el("table") };
+
+let state = { data: null, an: null, opts: null };
+let measureTouched = false;
+
+function getOpts(n){
+  const dir = document.querySelector('input[name="dir"]:checked').value;
+  const cv = els.change.value;
+  const change = cv === "" ? null : Math.min(+cv, n - 1);
+  return { dir, change, medMode: els.medmode.value, firstN: parseInt(els.firstn.value, 10) || 12 };
+}
+
+function refreshChangeOptions(data){
+  const prev = els.change.value;
+  const opts = ['<option value="">No change marked</option>'];
+  data.points.slice(0, -1).forEach((p, i) => opts.push(`<option value="${i}">${esc(data.singleCol ? `Point ${i+1}` : p.label)}</option>`));
+  els.change.innerHTML = opts.join("");
+  if (prev !== "" && +prev < data.points.length - 1) els.change.value = prev;
+}
+
+function run(){
+  const data = parseInput(els.data.value);
+  els.notes.innerHTML = data.notes.map(t => `<li>${esc(t)}</li>`).join("");
+  if (data.header && !measureTouched) els.measure.value = data.singleCol ? data.header[0] : (data.header[1] || "");
+  const has = data.points.length >= 2;
+  els.empty.hidden = has;
+  [els.verdict, els.chartPanel, els.rulesPanel, els.next, els.check].forEach(s => s.hidden = !has);
+  if (!has) {
+    if (data.points.length === 1) els.notes.innerHTML += `<li>Add at least one more value to draw a chart.</li>`;
+    refreshChangeOptions({ points: [], singleCol: true });
+    state.data = null; return;
+  }
+  refreshChangeOptions(data);
+  const opts = getOpts(data.points.length);
+  if (opts.medMode === "change" && opts.change === null) els.notes.innerHTML += `<li>Mark a change point to use the points before it as the baseline. Using all points for now.</li>`;
+  const an = analyse(data, opts);
+  an.notes.forEach(t => els.notes.innerHTML += `<li>${esc(t)}</li>`);
+  state = { data, an, opts };
+  renderVerdict(); renderChart(); renderRules(); renderNext(); renderTable();
+}
+
+function renderVerdict(){
+  const { an } = state, c = an.counts;
+  const special = an.rules.some(r => r.status === "signal");
+  const astro = an.astro.length;
+  let h, p;
+  if (special) {
+    h = "Non-random variation found";
+    p = "The chart shows special cause variation: something beyond the usual workings of the process is affecting the results. The rules below show where.";
+  } else if (astro) {
+    h = "No non-random patterns, but one thing to check";
+    p = `None of the pattern rules are triggered. ${astro === 1 ? "One point stands" : `${astro} points stand`} well apart from the rest, which may be an astronomical point. That's a judgement call for people who know the process.`;
+  } else {
+    h = "Only random variation found";
+    p = "None of the rules are triggered. The variation looks like common cause variation: the process is stable and predictable at its current level.";
+  }
+  if (an.n < 10) p += " With so few points, treat this reading with caution.";
+  let tally = "";
+  if (special) {
+    const parts = [];
+    if (state.opts.dir !== "none") {
+      parts.push(`<span><i class="dot" style="background:var(--improve)"></i>${c.improve} signal${c.improve === 1 ? "" : "s"} of improvement</span>`);
+      parts.push(`<span><i class="dot" style="background:var(--concern)"></i>${c.concern} signal${c.concern === 1 ? "" : "s"} of concern</span>`);
+      if (c.neutral) parts.push(`<span><i class="dot" style="background:var(--neutral)"></i>${c.neutral} with no direction</span>`);
+    } else {
+      const total = c.improve + c.concern + c.neutral;
+      parts.push(`<span><i class="dot" style="background:var(--neutral)"></i>${total} signal${total === 1 ? "" : "s"}. Choose which direction is better to see whether ${total === 1 ? "it's" : "they're"} good news.</span>`);
+    }
+    tally = `<div class="tally">${parts.join("")}</div>`;
+  }
+  els.verdict.className = "panel verdict" + (special ? " special" : "");
+  els.verdict.innerHTML = `<h2>${h}</h2><p>${p}</p>${tally}`;
+}
+
+function renderChart(){
+  const { data, an, opts } = state;
+  const W = Math.max(320, Math.round(els.chart.clientWidth || 800));
+  const H = W < 520 ? 300 : Math.round(Math.min(440, Math.max(340, W * .45)));
+  const title = els.measure.value.trim();
+  els.chartTitle.textContent = title || "Run chart";
+  const old = els.chart.querySelector("svg"); if (old) old.remove();
+  els.chart.insertAdjacentHTML("afterbegin", buildSVG(data, an, opts, palette(false), W, H, ""));
+  const legend = [`<span><i class="ln"></i>Median${an.frozen ? " (baseline)" : ""}</span>`];
+  if (an.frozen) legend.push(`<span><i class="ln dash"></i>Baseline median extended</span>`);
+  legend.push(`<span><i class="dot" style="background:var(--common)"></i>Common cause</span>`);
+  if (opts.dir === "none") legend.push(`<span><i class="dot" style="background:var(--neutral)"></i>Special cause</span>`);
+  else {
+    const kinds = new Set(an.pointKind.filter(Boolean));
+    if (kinds.has("improve")) legend.push(`<span><i class="dot" style="background:var(--improve)"></i>Special cause: improvement</span>`);
+    if (kinds.has("concern")) legend.push(`<span><i class="dot" style="background:var(--concern)"></i>Special cause: concern</span>`);
+  }
+  if (an.astro.length) legend.push(`<span><i class="dot" style="background:transparent;border:2px solid var(--muted)"></i>Point to check</span>`);
+  els.legend.innerHTML = legend.join("");
+}
+
+function renderRules(){
+  const { an, opts } = state;
+  const chipText = { signal: "Signal", clear: "No signal", check: "Check", na: "Not enough data" };
+  const dotColour = k => `var(--${opts.dir === "none" ? "neutral" : k})`;
+  els.rules.innerHTML = an.rules.map((r, i) => {
+    let found;
+    if (r.items.length) {
+      found = `<ul>${r.items.map(s => `<li><i class="dot" style="background:${dotColour(s.kind)}"></i><span>${esc(s.text)}${opts.dir !== "none" && r.key !== "astro" ? ` <em>(${an.word(s.kind)})</em>` : ""}</span></li>`).join("")}</ul>`;
+      if (r.key === "astro") found += `<p class="what" style="margin-top:4px">Does this look obviously different to people who know the process? If so, find out what happened that period.</p>`;
+    } else found = esc(r.none);
+    return `<li tabindex="0" data-rule="${r.key}" aria-label="Rule ${i+1}: ${r.name}, ${chipText[r.status]}">
+      <span class="chip ${r.status}">${chipText[r.status]}</span>
+      <div><h4>Rule ${i+1}: ${r.name}</h4><p class="what">${esc(r.what)}</p><div class="found">${found}</div></div></li>`;
+  }).join("");
+}
+
+function renderNext(){
+  const { an } = state;
+  const special = an.rules.some(r => r.status === "signal");
+  const parts = ["<h3>What this means for your work</h3>"];
+  if (special) {
+    parts.push("<p>Special cause variation needs a different response from common cause variation. Find out what was going on at the flagged points: a change you made, a change in the patients or demand, or a change in how the data were collected.</p>");
+    parts.push("<p>Don't redesign the whole process on the strength of a special cause until you understand where it came from. If the signal follows a change you tested, it's evidence the change made a difference.</p>");
+  } else {
+    parts.push("<p>Common cause variation is built into the way the process works. Reacting to individual ups and downs, or asking why one week was worse than the last, tends to add variation rather than reduce it.</p>");
+    parts.push("<p>If this level of performance isn't good enough, the way forward is to change the process itself, then keep plotting to see whether the chart picks up the change.</p>");
+  }
+  if (an.stepHint) parts.push("<p><strong>Tip:</strong> there are long runs on both sides of the median. That often means the process changed level part way through. If you know when a change happened, mark it and set the median from the points before it, so the chart tests the new period against the old one.</p>");
+  else if (!an.frozen && state.opts.change !== null) parts.push("<p><strong>Tip:</strong> to test whether the marked change made a difference, set the median from the points before the change. The baseline median is then extended across the new period so you can look for shifts and trends against it.</p>");
+  els.next.innerHTML = parts.join("");
+}
+
+function renderTable(){
+  const { data, an } = state;
+  const rows = data.points.map((p, i) => {
+    const s = sideOf(p.value, an.med);
+    const where = i >= an.baseN ? (s > 0 ? "Above" : s < 0 ? "Below" : "On") + " (after baseline)" : s > 0 ? "Above" : s < 0 ? "Below" : "On median";
+    return `<tr><td class="num">${i+1}</td><td>${esc(data.singleCol ? "–" : p.label)}</td><td class="num">${fmt(p.value, p.dp)}</td><td>${where}</td></tr>`;
+  });
+  els.table.innerHTML = `<thead><tr><th>#</th><th>Date or label</th><th>Value</th><th>Side of median</th></tr></thead><tbody>${rows.join("")}</tbody>`;
+}
+
+/* Tooltip */
+function showTip(clientX){
+  if (!state.data || !geom) return;
+  const svg = els.chart.querySelector("svg"); if (!svg) return;
+  const rect = svg.getBoundingClientRect();
+  const sx = (clientX - rect.left) * geom.W / rect.width;
+  const i = Math.floor((sx - geom.m.l) / geom.step);
+  svg.querySelectorAll(".pt.hl").forEach(c => { c.classList.remove("hl"); c.setAttribute("stroke", palette(false).surface); });
+  if (i < 0 || i >= geom.n) { els.tip.classList.remove("on"); return; }
+  const c = svg.querySelector(`.pt[data-i="${i}"]`);
+  c.classList.add("hl"); c.setAttribute("stroke", palette(false).ink);
+  const { data, an } = state, p = data.points[i];
+  const ruleNames = { shift: "Shift", trend: "Trend", runs: "Runs", astro: "Point to check" };
+  const rs = [...new Set(an.pointRules[i])].filter(r => r !== "runs").map(r => ruleNames[r]);
+  const cr = c.getBoundingClientRect(), hr = els.chart.getBoundingClientRect();
+  els.tip.innerHTML = `<b>${esc(data.singleCol ? `Point ${i+1}` : p.label)}</b>: ${fmt(p.value, p.dp)}${rs.length ? `<br>${rs.join(", ")}` : ""}`;
+  let left = cr.left + cr.width/2 - hr.left;
+  left = Math.max(70, Math.min(hr.width - 70, left));
+  els.tip.style.left = left + "px";
+  els.tip.style.top = (cr.top - hr.top) + "px";
+  els.tip.classList.add("on");
+}
+els.chart.addEventListener("pointermove", e => showTip(e.clientX));
+els.chart.addEventListener("pointerdown", e => showTip(e.clientX));
+els.chart.addEventListener("pointerleave", () => { els.tip.classList.remove("on"); const svg = els.chart.querySelector("svg"); svg && svg.querySelectorAll(".pt.hl").forEach(c => { c.classList.remove("hl"); c.setAttribute("stroke", palette(false).surface); }); });
+
+/* Rule focus highlights points on the chart */
+function setFocus(key){ const svg = els.chart.querySelector("svg"); if (!svg) return; key ? svg.setAttribute("data-focus", key) : svg.removeAttribute("data-focus"); }
+els.rules.addEventListener("mouseover", e => { const li = e.target.closest("li[data-rule]"); if (li) setFocus(li.dataset.rule); });
+els.rules.addEventListener("mouseleave", () => setFocus(null));
+els.rules.addEventListener("focusin", e => { const li = e.target.closest("li[data-rule]"); if (li) setFocus(li.dataset.rule); });
+els.rules.addEventListener("focusout", () => setFocus(null));
+
+/* Exports */
+el("dl-png").addEventListener("click", () => {
+  if (!state.data) return;
+  const W = 1200, H = 600;
+  const svg = buildSVG(state.data, state.an, state.opts, palette(true), W, H, els.measure.value.trim() || "Run chart");
+  renderChart(); // restore on-screen geometry
+  const img = new Image();
+  const url = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml;charset=utf-8" }));
+  img.onload = () => {
+    const cv = document.createElement("canvas"); cv.width = W * 2; cv.height = H * 2;
+    const ctx = cv.getContext("2d"); ctx.scale(2, 2); ctx.drawImage(img, 0, 0);
+    URL.revokeObjectURL(url);
+    cv.toBlob(b => {
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(b);
+      a.download = (els.measure.value.trim() || "run-chart").replace(/[^\w\- ]+/g, "").trim().replace(/\s+/g, "-").toLowerCase() + ".png";
+      document.body.appendChild(a); a.click(); a.remove();
+    }, "image/png");
+  };
+  img.src = url;
+});
+
+el("copy").addEventListener("click", async () => {
+  if (!state.data) return;
+  const { an, opts } = state;
+  const lines = [];
+  lines.push(els.measure.value.trim() || "Run chart");
+  lines.push(els.verdict.querySelector("h2").textContent);
+  lines.push(`${an.n} points. Median ${fmt(an.med, an.dp)}${an.frozen ? ` (from the first ${an.baseN} points, extended)` : ""}.`);
+  an.rules.forEach((r, i) => {
+    const head = `Rule ${i+1} (${r.name}): `;
+    if (r.items.length) r.items.forEach(s => lines.push(head + s.text + (opts.dir !== "none" && r.key !== "astro" ? ` (${an.word(s.kind)})` : "")));
+    else lines.push(head + r.none);
+  });
+  try { await navigator.clipboard.writeText(lines.join("\n")); flash(el("copy"), "Copied"); }
+  catch { flash(el("copy"), "Couldn't copy"); }
+});
+function flash(btn, text){ const t = btn.textContent; btn.textContent = text; setTimeout(() => btn.textContent = t, 1600); }
+
+/* Inputs */
+let timer;
+const schedule = () => { clearTimeout(timer); timer = setTimeout(run, 180); };
+els.data.addEventListener("input", schedule);
+els.measure.addEventListener("input", () => { measureTouched = els.measure.value !== ""; if (state.data) { renderChart(); } });
+document.querySelectorAll('input[name="dir"]').forEach(r => r.addEventListener("change", run));
+els.change.addEventListener("change", run);
+els.medmode.addEventListener("change", () => { els.firstnWrap.hidden = els.medmode.value !== "first"; run(); });
+els.firstn.addEventListener("input", schedule);
+
+function loadExample(){
+  els.data.value = EXAMPLE;
+  measureTouched = false; els.measure.value = "";
+  document.getElementById("dir-up").checked = true;
+  run();
+  els.change.value = "14";
+  els.medmode.value = "change"; els.firstnWrap.hidden = true;
+  run();
+}
+el("example").addEventListener("click", loadExample);
+el("example2").addEventListener("click", loadExample);
+el("clear").addEventListener("click", () => {
+  els.data.value = ""; els.measure.value = ""; measureTouched = false;
+  els.medmode.value = "all"; els.firstnWrap.hidden = true;
+  document.getElementById("dir-none").checked = true;
+  run(); els.data.focus();
+});
+
+new ResizeObserver(() => { if (state.data) renderChart(); }).observe(els.chart);
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => state.data && renderChart());
+
+
+
+// Exposed for testing
+window.__runchart = { parseInput, analyse, findShifts, findTrends, countRuns, parseDate };
+run();
+})();
+</script>
+</body>
+</html>

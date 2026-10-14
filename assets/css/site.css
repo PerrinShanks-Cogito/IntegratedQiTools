@@ -1,0 +1,47 @@
+/* Landing page and 404 styles. Tool pages carry their own styles. */
+:root{
+  --blue:#005EB8; --navy:#003087; --bg:#F0F4F5; --surface:#FFFFFF; --text:#212B32;
+  --muted:#4C6272; --line:#D8DDE0; --yellow:#FFB81C; --green:#007F3B; --green-bg:#E3F2E9;
+  --shadow:0 2px 0 #D8DDE0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --blue:#5AA2EA; --navy:#9CC3EF; --bg:#0E1A24; --surface:#162533; --text:#E8EEF2;
+    --muted:#A3B6C3; --line:#2A3E4F; --green:#4CC17E; --green-bg:#143326; --shadow:0 2px 0 #0A131B;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --blue:#5AA2EA; --navy:#9CC3EF; --bg:#0E1A24; --surface:#162533; --text:#E8EEF2;
+  --muted:#A3B6C3; --line:#2A3E4F; --green:#4CC17E; --green-bg:#143326; --shadow:0 2px 0 #0A131B;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:400 1rem/1.5 Figtree,"Frutiger","Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--blue);text-underline-offset:3px}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:2px;border-radius:2px}
+.skip{position:absolute;left:-999px;top:0;background:var(--yellow);color:#212B32;padding:.5rem 1rem;z-index:2000;font-weight:700}
+.skip:focus{left:1rem}
+
+.wrap{max-width:1340px;margin:0 auto;padding:0 1.25rem}
+.hero{padding:2.5rem 0 1.5rem}
+.hero h1{font-size:clamp(1.75rem,4vw,2.5rem);line-height:1.15;margin:0 0 .6rem;font-weight:800;letter-spacing:-.01em}
+.hero p{font-size:1.1rem;color:var(--muted);max-width:44rem;margin:0}
+
+.group{margin:1.75rem 0 0}
+.group h2{font-size:1.15rem;margin:0 0 .75rem;color:var(--muted);font-weight:700}
+.grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,290px),1fr));gap:1rem}
+.card{position:relative;display:flex;flex-direction:column;gap:.5rem;background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow);padding:1.1rem 1.25rem 1.25rem;height:100%;transition:border-color .15s, transform .15s}
+.card:hover{border-color:var(--blue);transform:translateY(-2px)}
+.card:focus-within{border-color:var(--blue)}
+.card-head{display:flex;justify-content:space-between;align-items:center;gap:.75rem}
+.card h3{margin:0;font-size:1.2rem;font-weight:700}
+.card h3 a{color:var(--blue);text-decoration:none}
+.card h3 a::after{content:"";position:absolute;inset:0;border-radius:8px}
+.card p{margin:0;color:var(--muted)}
+.card .go{margin-top:auto;padding-top:.25rem;font-weight:600;color:var(--blue)}
+.status{flex:none;font-size:.78rem;font-weight:700;padding:.1rem .5rem;border-radius:99px;white-space:nowrap;background:var(--green-bg);color:var(--green)}
+
+.notice{margin:2.25rem 0 0;padding:1rem 1.25rem;background:var(--surface);border-left:6px solid var(--blue);border-radius:4px}
+.site-foot{margin-top:3rem;padding:1.5rem 0 2rem;border-top:1px solid var(--line);color:var(--muted);font-size:.92rem}
+.site-foot p{margin:.25rem 0}
