@@ -1,0 +1,32 @@
+---
+layout: default
+---
+<div class="wrap">
+  <section class="hero">
+    <h1>QI charting tools</h1>
+    <p>Free tools to map, measure and understand your improvement work. Paste your data and build a chart in your browser. Nothing is uploaded.</p>
+  </section>
+
+  {%- assign groups = site.data.tools | group_by: "group" %}
+  {%- for g in groups %}
+  <section class="group" aria-labelledby="g-{{ forloop.index }}">
+    <h2 id="g-{{ forloop.index }}">{{ g.name }}</h2>
+    <ul class="grid">
+      {%- for t in g.items %}
+      <li>
+        <article class="card">
+          <div class="card-head">
+            <h3><a href="{{ '/' | append: t.id | append: '/' | relative_url }}">{{ t.name }}</a></h3>
+            <span class="status">{{ t.status }}</span>
+          </div>
+          <p>{{ t.description }}</p>
+          <span class="go" aria-hidden="true">Open tool &rarr;</span>
+        </article>
+      </li>
+      {%- endfor %}
+    </ul>
+  </section>
+  {%- endfor %}
+
+  <div class="notice">Not sure which tool to use? Ask the <a href="{{ site.links.qi_coach }}" target="_blank" rel="noopener">QI Coach chatbot<span class="fh-sr"> (opens in a new tab)</span></a>, or <a href="{{ site.links.citi_academy }}" target="_blank" rel="noopener">book QI training with the CITI Academy<span class="fh-sr"> (opens in a new tab)</span></a>.</div>
+</div>

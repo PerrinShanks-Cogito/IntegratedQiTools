@@ -1,0 +1,49 @@
+# Tools in this app. Order here is the order on the landing page and in the
+# "QI charting tools" menu. `id` must match the tool's folder name.
+- id: process_map
+  name: Process map
+  status: Beta
+  group: Understand the system
+  description: Map each step of a process, mark waits and handoffs, and see where time and effort are lost before you redesign it.
+
+- id: driver_diagram
+  name: Driver diagram
+  status: Beta
+  group: Understand the system
+  description: Link your aim to the primary and secondary drivers that influence it, and the change ideas you plan to test.
+
+- id: pareto_chart
+  name: Pareto chart
+  status: Beta
+  group: Prioritise
+  description: Rank causes or categories by how often they occur so you can focus on the vital few that make the biggest difference.
+
+- id: bar_chart
+  name: Bar chart
+  status: Beta
+  group: Prioritise
+  description: Compare counts or values across categories, such as wards, teams or reasons, side by side.
+
+- id: run_chart
+  name: Run chart
+  status: Beta
+  group: Measure over time
+  description: Plot data over time and check it against the four run chart rules to spot shifts, trends and non-random patterns.
+
+- id: spc_tool
+  name: SPC chart
+  status: Beta
+  group: Measure over time
+  description: Build statistical process control charts with control limits to tell common cause from special cause variation.
+
+- id: histogram
+  name: Histogram
+  status: Beta
+  group: Explore your data
+  description: See the shape and spread of a set of measurements, such as waiting times or length of stay.
+
+- id: scatter_plot
+  name: Scatter plot
+  status: Beta
+  group: Explore your data
+  description: Plot pairs of values to see whether two measures are related, and how strongly.

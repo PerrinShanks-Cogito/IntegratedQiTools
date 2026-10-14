@@ -1,0 +1,60 @@
+/* Shared FOCUS header. Every selector is prefixed with .fh so it can sit
+   alongside each tool's own stylesheet without clashing. */
+.fh{
+  --fh-blue:#005EB8; --fh-navy:#003087; --fh-yellow:#FFB81C;
+  --fh-surface:#FFFFFF; --fh-ink:#212B32; --fh-muted:#4C6272; --fh-line:#D8DDE0; --fh-bg:#F0F4F5; --fh-link:#005EB8;
+  --fh-green:#007F3B; --fh-green-bg:#E3F2E9; --fh-blue-bg:#E6F0FA; --fh-navy-ink:#003087; --fh-dev-bg:#FFF4DB; --fh-dev:#6B4A00;
+  display:block; font-family:Figtree, "Frutiger", "Helvetica Neue", Arial, sans-serif; font-size:1rem; line-height:1.5;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .fh{
+    --fh-surface:#162533; --fh-ink:#E8EEF2; --fh-muted:#A3B6C3; --fh-line:#2A3E4F; --fh-bg:#0E1A24; --fh-link:#5AA2EA;
+    --fh-green:#4CC17E; --fh-green-bg:#143326; --fh-blue-bg:#15314B; --fh-navy-ink:#9CC3EF; --fh-dev-bg:#3A2E10; --fh-dev:#FFD27A;
+  }
+}
+:root[data-theme="dark"] .fh{
+  --fh-surface:#162533; --fh-ink:#E8EEF2; --fh-muted:#A3B6C3; --fh-line:#2A3E4F; --fh-bg:#0E1A24; --fh-link:#5AA2EA;
+  --fh-green:#4CC17E; --fh-green-bg:#143326; --fh-blue-bg:#15314B; --fh-navy-ink:#9CC3EF; --fh-dev-bg:#3A2E10; --fh-dev:#FFD27A;
+}
+.fh *,.fh *::before,.fh *::after{box-sizing:border-box}
+.fh :focus-visible{outline:3px solid var(--fh-yellow);outline-offset:2px;border-radius:2px}
+.fh-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+.fh-top{background:var(--fh-blue);color:#fff}
+.fh-sub{background:var(--fh-navy);color:#fff}
+.fh-inner{max-width:1340px;margin:0 auto;padding:.9rem 1.25rem;display:flex;flex-wrap:wrap;gap:.75rem 1.5rem;align-items:center;justify-content:space-between}
+.fh-sub .fh-inner{padding:.5rem 1.25rem;gap:.25rem 1.75rem;justify-content:flex-start;font-size:.92rem}
+
+.fh-brand{display:flex;align-items:baseline;gap:.6rem;color:#fff;text-decoration:none}
+.fh-brand:hover span{text-decoration:underline;text-underline-offset:3px}
+.fh-brand b{font-size:1.25rem;font-weight:800;letter-spacing:-.01em}
+.fh-brand span{opacity:.85;font-size:.95rem}
+.fh-nav{display:flex;flex-wrap:wrap;gap:.25rem}
+.fh-nav a{color:#fff;text-decoration:none;padding:.4rem .7rem;border-radius:4px;font-weight:600;font-size:.95rem}
+.fh-nav a:hover{background:rgba(255,255,255,.14)}
+
+.fh-dd{position:relative}
+.fh .fh-dd summary{font-weight:400;font-size:inherit;cursor:pointer;list-style:none;color:#fff;text-decoration:underline;text-underline-offset:3px;display:inline-flex;align-items:center;gap:.35rem}
+.fh-dd summary::-webkit-details-marker{display:none}
+.fh-dd summary::after{content:"";width:.45rem;height:.45rem;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-2px) rotate(45deg);transition:transform .15s}
+.fh-dd[open] summary::after{transform:translateY(2px) rotate(-135deg)}
+.fh-menu{position:absolute;z-index:1000;top:calc(100% + .5rem);left:0;width:min(380px,calc(100vw - 2.5rem));max-height:70vh;overflow:auto;background:var(--fh-surface);color:var(--fh-ink);border:1px solid var(--fh-line);border-radius:8px;box-shadow:0 12px 32px rgba(0,20,40,.25);padding:.4rem;text-align:left}
+
+.fh-list{list-style:none;margin:0;padding:0}
+.fh-list li{display:flex;justify-content:space-between;align-items:center;gap:.75rem;padding:.5rem .6rem;border-radius:4px;margin:0}
+.fh-list li+li{border-top:1px solid var(--fh-line)}
+.fh-list a{color:var(--fh-link);font-weight:600;text-underline-offset:3px}
+.fh-list .fh-here{font-weight:700;color:var(--fh-ink)}
+.fh-list .fh-off{color:var(--fh-muted)}
+.fh-support li{flex-direction:column;align-items:flex-start;gap:.1rem}
+.fh-desc{font-size:.85rem;color:var(--fh-muted)}
+.fh-note{font-size:.82rem;color:var(--fh-muted);margin:.4rem .6rem .2rem}
+
+.fh-tag{flex:none;font-size:.78rem;font-weight:700;padding:.1rem .5rem;border-radius:99px;white-space:nowrap}
+.fh-tag-beta{background:var(--fh-green-bg);color:var(--fh-green)}
+.fh-tag-alpha{background:var(--fh-blue-bg);color:var(--fh-navy-ink)}
+.fh-tag-dev{background:var(--fh-dev-bg);color:var(--fh-dev)}
+.fh-tag-idea{background:var(--fh-bg);color:var(--fh-muted);border:1px solid var(--fh-line)}
+.fh-tag-here{background:var(--fh-yellow);color:#212B32}
+
+@media print{.fh{display:none!important}}
