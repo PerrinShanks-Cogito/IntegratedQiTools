@@ -149,9 +149,12 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 
 {% include focus-header.html %}
 
-<div class="page-head">
-  <h1>Build a histogram</h1>
-  <p class="meta">Paste your measurements and see how they are spread out: where most values sit, how wide the spread is, and whether there is a long tail. Everything runs in your browser, so your data is never uploaded.</p>
+<div class="page-head fa-host">
+  <div class="fa-head-text">
+    <h1>Build a histogram</h1>
+    <p class="meta">Paste your measurements and see how they are spread out: where most values sit, how wide the spread is, and whether there is a long tail. Everything runs in your browser, so your data is never uploaded.</p>
+  </div>
+  <div data-focus-actions></div>
 </div>
 
 <main>
@@ -612,14 +615,6 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
       <p class="summary"><strong>${nf.format(st.n)}</strong> values, typically around <strong>${f(st.median)}</strong>, ranging from ${f(st.min)} to ${f(st.max)}.</p>
       <p class="focuson">${esc([shape, outTxt].filter(Boolean).join(' '))}</p>
       <div class="chartwrap" id="chart">${svg}</div>
-      <div class="btns">
-        <button type="button" class="primary" data-act="png">Download PNG</button>
-        <button type="button" data-act="svg">Download SVG</button>
-        <button type="button" data-act="copyimg">Copy chart</button>
-        <button type="button" data-act="csv">Download table (CSV)</button>
-        <button type="button" data-act="copytable">Copy table</button>
-        <span id="status" role="status" aria-live="polite"></span>
-      </div>
       <dl class="stats">${stats.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
       <div class="tablewrap">
         <table>
@@ -651,7 +646,7 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
     document.body.appendChild(a); a.click();
     setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
   }
-  function status(msg) { const st = $('status'); if (st) { st.textContent = msg; setTimeout(() => { if (st.textContent === msg) st.textContent = ''; }, 3000); } }
+  function status(msg) { FocusActions.say(msg); }
 
   function toPNG(cb) {
     const svg = svgEl(); if (!svg) return;
@@ -722,6 +717,16 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
   $('clearBtn').addEventListener('click', () => { els.data.value = ''; headerTouched = false; colTouched = false; els.hasHeader.checked = false; update(); els.data.focus(); });
   els.result.addEventListener('click', e => { const b = e.target.closest('button[data-act]'); if (b) act(b.dataset.act); });
 
+
+  // ---- shared toolbar (Open, Save, Export) ----
+  FocusActions.mount({
+    tool: 'histogram', toolName: 'histogram',
+    fileName: () => fileName(),
+    fields: 'section.panel[aria-labelledby="data-h"]',
+    afterOpen: () => update(),
+    ready: () => !!current,
+    exports: ['png', 'svg', 'copyimg', 'csv', 'copytable'].map(type => ({ type, run: () => act(type) }))
+  });
 })();
 </script>
 </body>

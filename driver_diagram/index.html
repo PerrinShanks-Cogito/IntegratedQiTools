@@ -194,26 +194,18 @@ dialog::backdrop{background:rgba(0,20,40,.5)}
 <body>
 {% include focus-header.html %}
 
-<div class="page-head">
-  <div>
+<div class="page-head fa-host">
+  <div class="fa-head-text">
     <h1>Build a driver diagram</h1>
     <p class="meta">Goal, drivers, projects and balancing measures, laid out left to right.</p>
-  </div>
-  <div class="actions">
-    <button class="btn" id="btnOutline" type="button">Edit as outline</button>
-    <button class="btn" id="btnExample" type="button">Load example</button>
-    <button class="btn" id="btnNew" type="button">New diagram</button>
-    <div class="menu">
-      <button class="btn primary" id="btnExport" type="button" aria-haspopup="true" aria-expanded="false">Export</button>
-      <div class="menu-list" id="exportMenu" role="menu">
-        <button role="menuitem" data-exp="png" type="button">PNG image<small>For slides and documents</small></button>
-        <button role="menuitem" data-exp="svg" type="button">SVG image<small>Scales without blurring</small></button>
-        <button role="menuitem" data-exp="json" type="button">Project file (.json)<small>Reopen and keep editing later</small></button>
-        <button role="menuitem" data-exp="import" type="button">Open project file…<small>Load a .json you saved</small></button>
-      </div>
+    <div class="actions" style="margin-top:.75rem">
+      <button class="btn" id="btnOutline" type="button">Edit as outline</button>
+      <button class="btn" id="btnExample" type="button">Load example</button>
+      <button class="btn" id="btnNew" type="button">New diagram</button>
     </div>
-    <input type="file" id="fileIn" accept=".json,application/json" class="sr" tabindex="-1" aria-hidden="true">
   </div>
+  <div data-focus-actions></div>
+  <input type="file" id="fileIn" accept=".json,application/json" class="sr" tabindex="-1" aria-hidden="true">
 </div>
 
 <main>
@@ -799,17 +791,16 @@ $("#btnNew").addEventListener("click",()=>{
 });
 function hasContent(){return !!(state.goal.text.trim()||state.drivers.length||state.balancing.length);}
 
-const expBtn=$("#btnExport"), expMenu=$("#exportMenu");
-expBtn.addEventListener("click",e=>{e.stopPropagation();const o=!expMenu.classList.contains("open");expMenu.classList.toggle("open",o);expBtn.setAttribute("aria-expanded",String(o));});
-document.addEventListener("click",()=>{expMenu.classList.remove("open");expBtn.setAttribute("aria-expanded","false");});
-document.addEventListener("keydown",e=>{if(e.key==="Escape"&&expMenu.classList.contains("open")){expMenu.classList.remove("open");expBtn.focus();}});
-expMenu.addEventListener("click",e=>{
-  const b=e.target.closest("[data-exp]"); if(!b) return;
-  const k=b.dataset.exp;
-  if(k==="svg") saveFile(slug()+".svg",layout(state,{export:true}).svg,"image/svg+xml");
-  else if(k==="json") saveFile(slug()+".json",JSON.stringify(state,null,2),"application/json");
-  else if(k==="png") exportPng();
-  else if(k==="import") $("#fileIn").click();
+/* Shared toolbar (Open, Save, Export) */
+FocusActions.mount({
+  tool:"driver_diagram", toolName:"driver diagram", fileName:()=>slug(), say:m=>toast(m),
+  save:()=>saveFile(slug()+".json",JSON.stringify(state,null,2),"application/json"),
+  open:()=>$("#fileIn").click(),
+  ready:()=>hasContent(),
+  exports:[
+    {type:"png",run:()=>exportPng()},
+    {type:"svg",run:()=>saveFile(slug()+".svg",layout(state,{export:true}).svg,"image/svg+xml")}
+  ]
 });
 function slug(){return (state.title||"driver-diagram").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,60)||"driver-diagram";}
 function exportPng(){

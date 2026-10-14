@@ -29,11 +29,19 @@ Tools (copied from [ImprovementTools](https://github.com/PerrinShanks-Cogito/Imp
   chatbot, and the "Get support" and "QI charting tools" menus. Its styles
   (`assets/css/focus-header.css`) are all prefixed `.fh` so they don't clash
   with each tool's own CSS.
+- `assets/js/focus-actions.js` – the shared toolbar at the top right of every
+  tool: **Open** (reopen a saved project file), **Save** (download a project
+  `.json`) and **Export** (a menu of PNG, SVG, CSV and copy options, using the
+  same labels in every tool). Each tool calls `FocusActions.mount()` with its
+  own export functions; chart tools save and reopen everything in their data
+  and settings panel. Styles are in `assets/css/focus-actions.css`, prefixed
+  `.fa`.
 - `_config.yml` – site settings and the header links (`links:`).
 - `<tool>/index.html` – each tool's original single-file page. The only
   changes from ImprovementTools are front matter (`tool_id`), the shared
   header in place of the tool's own, removal of the old per-tool menu script,
-  and links to other tools pointing inside this app rather than Netlify.
+  links to other tools pointing inside this app rather than Netlify, and the
+  shared Open / Save / Export toolbar in place of each tool's own export buttons.
 - `staticwebapp.config.json` – Azure Static Web Apps routing (custom 404,
   trailing slashes, security headers).
 
