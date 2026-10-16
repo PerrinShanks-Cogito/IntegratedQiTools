@@ -14,7 +14,7 @@
 
 - id: fishbone_diagram
   name: Fishbone diagram
-  status: Alpha
+  status: Beta
   group: Understand the system
   description: Map the causes behind a problem as a cause and effect (Ishikawa) diagram, grouped into categories such as People, Methods and Equipment.
 
