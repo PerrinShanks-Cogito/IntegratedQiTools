@@ -4,12 +4,15 @@ A Jekyll site that brings the FOCUS QI charting tools together in one app,
 with a landing page and a shared header. Every tool runs entirely in the
 browser; nothing a user pastes is uploaded.
 
-Tools (copied from [ImprovementTools](https://github.com/PerrinShanks-Cogito/ImprovementTools)):
+Tools (copied from [ImprovementTools](https://github.com/PerrinShanks-Cogito/ImprovementTools), apart from the
+fishbone diagram, which was built here following the IHI QI Essentials Toolkit
+instructions for a cause and effect diagram):
 
 | Tool | Path |
 | --- | --- |
 | Process map | `/process_map/` |
 | Driver diagram | `/driver_diagram/` |
+| Fishbone (cause and effect) diagram | `/fishbone_diagram/` |
 | Pareto chart | `/pareto_chart/` |
 | Bar chart | `/bar_chart/` |
 | Run chart | `/run_chart/` |
