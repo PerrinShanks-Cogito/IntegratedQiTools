@@ -6,7 +6,9 @@ browser; nothing a user pastes is uploaded.
 
 Tools (copied from [ImprovementTools](https://github.com/PerrinShanks-Cogito/ImprovementTools), apart from the
 fishbone diagram, which was built here following the IHI QI Essentials Toolkit
-instructions for a cause and effect diagram):
+instructions for a cause and effect diagram, and the demand and capacity model,
+which was built here from the NHS Improvement and NHS England demand and
+capacity core model (version 4.2) and its user guidance):
 
 | Tool | Path |
 | --- | --- |
@@ -19,6 +21,7 @@ instructions for a cause and effect diagram):
 | SPC chart | `/spc_tool/` |
 | Histogram | `/histogram/` |
 | Scatter plot | `/scatter_plot/` |
+| Demand and capacity model | `/demand_capacity/` |
 
 ## How it fits together
 

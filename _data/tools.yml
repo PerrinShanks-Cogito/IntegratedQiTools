@@ -53,3 +53,9 @@
   status: Beta
   group: Explore your data
   description: Plot pairs of values to see whether two measures are related, and how strongly.
+
+- id: demand_capacity
+  name: Demand and capacity model
+  status: Beta
+  group: Plan capacity
+  description: Compare the capacity your service needs with what it has, and see the waiting list you can sustain, using the NHS demand and capacity core model.
