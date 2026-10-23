@@ -1,0 +1,891 @@
+---
+tool_id: multiple_regression
+title: "Multiple regression"
+permalink: /multiple_regression/
+---
+<!DOCTYPE html>
+<!-- © Guy’s and St Thomas’ NHS Foundation Trust 2026. All rights reserved. -->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Multiple regression</title>
+<meta name="description" content="Paste a table of measurements and see how several factors together relate to one result. Nothing is uploaded.">
+<link rel="icon" type="image/png" sizes="64x64" href="data:image/png;base64,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">
+<link rel="apple-touch-icon" href="data:image/png;base64,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">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#005EB8; --navy:#003087; --bg:#F0F4F5; --surface:#FFFFFF; --text:#212B32;
+  --muted:#4C6272; --line:#D8DDE0; --yellow:#FFB81C; --green:#007F3B; --green-bg:#E3F2E9;
+  --blue-bg:#E6F0FA; --danger:#D5281B; --shadow:0 2px 0 #D8DDE0;
+  --l1:#005EB8; --l2:#6FA8DC; --l3:#9DB4CA; --proj:#D4A814; --bal:#6A4C93;
+  --warn:#A65300; --ok:#007F3B; --info:#4C6272;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --blue:#5AA2EA; --navy:#9CC3EF; --bg:#0E1A24; --surface:#162533; --text:#E8EEF2;
+    --muted:#A3B6C3; --line:#2A3E4F; --green:#4CC17E; --green-bg:#143326; --blue-bg:#15314B;
+    --danger:#FF7468; --shadow:0 2px 0 #0A131B; --l1:#5AA2EA; --l2:#3E7BB3; --l3:#4D6478;
+    --bal:#A889D4; --warn:#F0A54A; --ok:#4CC17E; --info:#A3B6C3;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --blue:#5AA2EA; --navy:#9CC3EF; --bg:#0E1A24; --surface:#162533; --text:#E8EEF2;
+  --muted:#A3B6C3; --line:#2A3E4F; --green:#4CC17E; --green-bg:#143326; --blue-bg:#15314B;
+  --danger:#FF7468; --shadow:0 2px 0 #0A131B; --l1:#5AA2EA; --l2:#3E7BB3; --l3:#4D6478;
+  --bal:#A889D4; --warn:#F0A54A; --ok:#4CC17E; --info:#A3B6C3;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Figtree,"Frutiger","Helvetica Neue",Arial,sans-serif;font-size:1rem;line-height:1.5}
+a{color:var(--blue)}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:2px;border-radius:2px}
+button,input,select,textarea{font:inherit;color:inherit}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* Header (shared FOCUS suite style) */
+.top{background:#005EB8;color:#fff}
+.top-inner{padding:.9rem 1.25rem;display:flex;flex-wrap:wrap;gap:.75rem 1.5rem;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:baseline;gap:.6rem;color:#fff}
+.brand b{font-size:1.25rem;font-weight:800;letter-spacing:-.01em}
+.brand span{opacity:.85;font-size:.95rem}
+.top nav{display:flex;flex-wrap:wrap;gap:.25rem}
+.top nav a{color:#fff;text-decoration:none;padding:.4rem .7rem;border-radius:4px;font-weight:600;font-size:.95rem}
+.top nav a:hover{background:rgba(255,255,255,.14)}
+.support{background:#003087;color:#fff}
+.support-inner{padding:.5rem 1.25rem;display:flex;flex-wrap:wrap;gap:.25rem 1.75rem;align-items:center;font-size:.92rem}
+.support a{color:#fff;text-underline-offset:3px}
+.dd{position:relative}
+.dd summary{cursor:pointer;list-style:none;text-decoration:underline;text-underline-offset:3px;display:inline-flex;align-items:center;gap:.35rem}
+.dd summary::-webkit-details-marker{display:none}
+.dd summary::after{content:"";width:.45rem;height:.45rem;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-2px) rotate(45deg);transition:transform .15s}
+.dd[open] summary::after{transform:translateY(2px) rotate(-135deg)}
+.dd-menu{position:absolute;z-index:30;top:calc(100% + .5rem);left:0;width:min(380px,calc(100vw - 2.5rem));max-height:70vh;overflow:auto;background:var(--surface);color:var(--text);border:1px solid var(--line);border-radius:8px;box-shadow:0 12px 32px rgba(0,20,40,.25);padding:.4rem}
+.toollist{list-style:none;margin:0;padding:0}
+.toollist li{display:flex;justify-content:space-between;align-items:center;gap:.75rem;padding:.5rem .6rem;border-radius:4px}
+.toollist li+li{border-top:1px solid var(--line)}
+.toollist a{color:var(--blue);font-weight:600}
+.toollist .off{color:var(--muted)}
+.toollist .here{font-weight:700}
+.supportlist li{flex-direction:column;align-items:flex-start;gap:.1rem}
+.menu-desc{font-size:.85rem;color:var(--muted)}
+.menu-note{font-size:.82rem;color:var(--muted);margin:.4rem .6rem .2rem}
+.tag{flex:none;font-size:.78rem;font-weight:700;padding:.1rem .5rem;border-radius:99px;white-space:nowrap}
+.tag.beta{background:var(--green-bg);color:var(--green)}
+.tag.alpha{background:var(--blue-bg);color:var(--navy)}
+.tag.dev{background:#FFF4DB;color:#6B4A00}
+.tag.idea{background:var(--bg);color:var(--muted);border:1px solid var(--line)}
+.tag.here{background:var(--yellow);color:#212B32}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .tag.dev{background:#3A2E10;color:#FFD27A}}
+:root[data-theme="dark"] .tag.dev{background:#3A2E10;color:#FFD27A}
+
+/* Page head */
+.page-head{padding:1rem 1.25rem}
+.page-head h1{margin:0;font-size:clamp(1.4rem,2.6vw,1.8rem);line-height:1.2;font-weight:800;letter-spacing:-.015em}
+.page-head .meta{color:var(--muted);margin:.15rem 0 0;max-width:70ch}
+
+/* Workspace */
+main{display:grid;grid-template-columns:minmax(300px,380px) minmax(0,1fr);gap:1.25rem;padding:0 1.25rem 1.25rem;align-items:start}
+@media (max-width:880px){main{grid-template-columns:1fr}}
+@media (max-width:420px){main{padding:0 1rem 1rem} .page-head,.top-inner,.support-inner,.notes{padding-left:1rem;padding-right:1rem}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow);padding:1.1rem;min-width:0}
+.panel h2{font-size:1.05rem;font-weight:700;margin:0 0 .75rem}
+.block{margin-bottom:1.1rem}
+label{display:block;font-weight:600;margin:0 0 .35rem}
+.hint{color:var(--muted);font-size:.88rem;margin:0 0 .5rem}
+textarea,input[type=text],input[type=number]{width:100%;padding:.5rem .65rem;border:2px solid var(--muted);border-radius:4px;background:var(--surface)}
+textarea{min-height:260px;resize:vertical;font:14px/1.45 Consolas,"Courier New",monospace}
+textarea:focus,input[type=text]:focus,input[type=number]:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px var(--yellow)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+@media (max-width:420px){.pair{grid-template-columns:1fr;gap:0}}
+.check{display:flex;gap:.6rem;align-items:flex-start;font-weight:400;margin-bottom:.6rem;cursor:pointer}
+.check input{width:20px;height:20px;margin:2px 0 0;flex:none;accent-color:var(--blue)}
+.check.off{color:var(--muted);cursor:default}
+#detected{font-size:.88rem;color:var(--muted);margin:.4rem 0 0;min-height:1.3em}
+
+/* Buttons */
+.btns{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+button{display:inline-flex;align-items:center;gap:.4rem;border-radius:4px;padding:.5rem .95rem;font-weight:700;cursor:pointer;background:var(--surface);color:var(--blue);border:2px solid var(--blue);line-height:1.2;white-space:nowrap}
+button:hover{background:var(--blue-bg)}
+button.primary{background:var(--green);color:#fff;border-color:var(--green);box-shadow:0 3px 0 #00401E}
+button.primary:hover{filter:brightness(1.07);background:var(--green)}
+button.primary:active{transform:translateY(2px);box-shadow:0 1px 0 #00401E}
+
+/* Result */
+.summary{font-size:clamp(1.3rem,2.6vw,1.85rem);line-height:1.25;font-weight:700;letter-spacing:-.01em;margin:0 0 .3rem;max-width:34ch}
+.summary strong{color:var(--blue);font-weight:800}
+.focuson{margin:0 0 1rem;color:var(--muted);max-width:70ch}
+.chartwrap{border:1px solid var(--line);border-radius:8px;overflow-x:auto;margin-bottom:.9rem;background:#fff}
+.chartwrap svg{width:100%;min-width:560px;height:auto;display:block}
+.empty{padding:3rem .5rem;text-align:center;color:var(--muted)}
+.empty p{margin:0 0 .9rem}
+#status{font-size:.88rem;color:var(--muted)}
+.reading{margin-top:1.4rem;border-top:1px solid var(--line);padding-top:1.1rem}
+.reading h3{font-size:1.05rem;font-weight:700;margin:0 0 .5rem}
+.reading p,.reading ul{max-width:75ch;margin:0 0 .75rem}
+.reading ul{padding-left:1.2rem}
+.reading li{margin-bottom:.35rem}
+.caution{background:var(--blue-bg);border-left:5px solid var(--blue);border-radius:0 4px 4px 0;padding:.7rem .9rem;max-width:75ch;margin:0 0 .9rem}
+.caution p{margin:0 0 .4rem}
+.caution ul{margin:0;padding-left:1.2rem}
+.flagnote{color:var(--warn);font-weight:600}
+.tablewrap{overflow-x:auto;margin-top:1.25rem}
+table{border-collapse:collapse;width:100%;font-size:.94rem}
+th,td{text-align:left;padding:.5rem .65rem;border-bottom:1px solid var(--line)}
+th{border-bottom:2px solid var(--text)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+tr.odd td{background:color-mix(in srgb, var(--warn) 10%, transparent)}
+.sw{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:.5rem;vertical-align:-1px}
+details.values{margin-top:1.25rem}
+details.values summary{cursor:pointer;font-weight:700;color:var(--blue)}
+details.values .tablewrap{margin-top:.6rem}
+
+/* Notes */
+.notes{padding:0 1.25rem 2rem;color:var(--muted);font-size:.92rem}
+.notes p{max-width:80ch;margin:0 0 .75rem}
+/* Centre the page in the same 1340px column as the FOCUS header */
+.page-head,main,.notes{box-sizing:border-box;max-width:1340px;margin-left:auto;margin-right:auto}
+.notice{background:var(--blue-bg);color:var(--text);border-left:5px solid var(--blue);border-radius:0 4px 4px 0;padding:.7rem .9rem;max-width:80ch}
+@media (prefers-reduced-motion: no-preference){button{transition:background .15s,filter .15s}}
+select{width:100%;padding:.5rem .65rem;border:2px solid var(--muted);border-radius:4px;background:var(--surface)}
+select:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px var(--yellow)}
+[hidden]{display:none !important}
+.picker{border:1px solid var(--line);border-radius:6px;padding:.6rem .7rem .1rem;max-height:280px;overflow:auto}
+.picker .check{margin-bottom:.5rem}
+.picker .kind{color:var(--muted);font-size:.85rem}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.6rem;margin:0 0 1rem}
+.stat{border:1px solid var(--line);border-radius:6px;padding:.55rem .75rem}
+.stat b{display:block;font-size:1.3rem;font-weight:800;font-variant-numeric:tabular-nums}
+.stat span{color:var(--muted);font-size:.85rem}
+.chartbar{display:flex;flex-wrap:wrap;gap:.5rem 1rem;align-items:end;margin:0 0 .6rem}
+.chartbar .block{margin:0;min-width:240px}
+td.sig{font-weight:700}
+.whatif{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:.6rem .9rem;margin:.4rem 0 .8rem;max-width:75ch}
+.whatif label{font-size:.9rem}
+.predout{font-size:1.05rem;max-width:75ch;margin:0 0 .5rem}
+.predout strong{color:var(--blue);font-size:1.3rem}
+</style>
+{% include focus-head.html %}
+</head>
+<body>
+
+{% include focus-header.html %}
+
+<div class="page-head fa-host">
+  <div class="fa-head-text">
+    <h1>Run a multiple regression</h1>
+    <p class="meta">Paste a table of measurements and see how several factors together relate to one result, and which of them matter most. Everything runs in your browser, so your data is never uploaded.</p>
+  </div>
+  <div data-focus-actions></div>
+</div>
+
+<main>
+  <section class="panel" aria-labelledby="data-h">
+    <h2 id="data-h">Your data</h2>
+
+    <div class="block">
+      <label for="data">Paste from Excel or a CSV</label>
+      <p class="hint">One row per observation (such as a day or a patient) and one column per measure. Include the result you want to explain and the factors you think affect it. Text columns with a few repeated values, such as ward or day type, can be used as factors too.</p>
+      <textarea id="data" spellcheck="false" placeholder="Attendances&#9;Doctors&#9;Minutes&#10;152&#9;8&#9;118&#10;171&#9;9&#9;124&#10;139&#9;7&#9;121"></textarea>
+      <p id="detected" aria-live="polite"></p>
+    </div>
+
+    <label class="check"><input type="checkbox" id="hasHeader"> First row is column headings</label>
+
+    <div class="btns" style="margin-bottom:1.5rem">
+      <button type="button" id="clearBtn">Clear</button>
+    </div>
+
+    <div id="modelBlock" hidden>
+      <h2>Model</h2>
+      <div class="block">
+        <label for="yCol">Result to explain (outcome)</label>
+        <select id="yCol"></select>
+      </div>
+      <div class="block">
+        <p class="hint" id="predHint" style="font-weight:600;color:var(--text);margin-bottom:.35rem">Factors to include (predictors)</p>
+        <div class="picker" id="picker" role="group" aria-labelledby="predHint"></div>
+      </div>
+    </div>
+
+    <h2>Chart settings</h2>
+    <div class="block">
+      <label for="title">Chart title</label>
+      <input type="text" id="title" placeholder="e.g. What drives time to be seen in ED">
+    </div>
+    <label class="check"><input type="checkbox" id="flagOdd" checked> Highlight unusual and influential rows</label>
+  </section>
+
+  <section class="panel" aria-labelledby="result-h">
+    <h2 id="result-h" class="sr">Result</h2>
+    <div id="result">
+      <div class="empty">
+        <p>Paste data on the left to build your model.</p>
+        <button type="button" class="primary" id="exampleBtn2">Try the example</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<section class="notes" aria-label="About multiple regression">
+  <p><b>What it does:</b> multiple regression fits the straight-line equation that best predicts one result from several factors at once. Each factor's coefficient is the change in the result for a one-unit rise in that factor <i>with the other factors held steady</i>, so it separates the effect of, say, staffing from the effect of how busy the department was. Text factors are compared against a reference category.</p>
+  <p><b>Before you act:</b> regression shows association, not cause and effect. A factor you didn't measure may be behind the pattern. Use it to choose which change ideas to test with PDSA cycles, check the result is stable on an SPC chart first, and aim for at least 10 rows for every factor in the model.</p>
+  <div class="notice">Want to build your skills? <a href="https://coh.gstt.nhs.uk/course/view.php?id=3199" target="_blank" rel="noopener">Book QI training with the CITI Academy</a>.</div>
+</section>
+
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const els = {
+    data: $('data'), hasHeader: $('hasHeader'), detected: $('detected'), title: $('title'),
+    yCol: $('yCol'), picker: $('picker'), modelBlock: $('modelBlock'), flagOdd: $('flagOdd'), result: $('result')
+  };
+  const COLORS = { point: '#005EB8', line: '#AE2573', ink: '#212B32', muted: '#4C6272', grid: '#E3E8EB', flag: '#A65300', infl: '#DA291C', off: '#9DB4CA' };
+  const FONT = 'Figtree, Frutiger, Helvetica Neue, Arial, sans-serif';
+  const nf = new Intl.NumberFormat('en-GB', { maximumFractionDigits: 2 });
+  const nf3 = new Intl.NumberFormat('en-GB', { maximumSignificantDigits: 3 });
+  const f2 = v => (Math.round(v * 100) / 100).toFixed(2);
+  const MAX_LEVELS = 12;
+  const CHARTS = { effects: 'Which factors matter most', fit: 'Actual against predicted', resid: 'Differences against predicted', order: 'Differences in row order' };
+
+  let headerTouched = false;
+  let current = null;
+  let timer = null;
+  let colSig = '';
+  let chartType = 'effects';
+  let whatIf = {};
+
+  // Example: daily ED time to be seen, with attendances, doctors on shift, older patients and day type
+  function exampleText() {
+    let seed = 7;
+    const rnd = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+    const gauss = () => Math.sqrt(-2 * Math.log(rnd() || 1e-9)) * Math.cos(2 * Math.PI * rnd());
+    const lines = ['Date\tAttendances\tDoctors on shift\tPatients aged 75+ (%)\tDay type\tMinutes to be seen'];
+    const d = new Date(Date.UTC(2025, 0, 6));
+    for (let k = 0; k < 42; k++) {
+      const wd = d.getUTCDay(), weekend = wd === 0 || wd === 6;
+      const att = Math.round((weekend ? 140 : 160) + 22 * gauss());
+      const doc = Math.max(5, Math.min(12, Math.round((weekend ? 7 : 9) + att / 80 - 2 + 1.1 * gauss())));
+      const old = Math.round(18 + 4 * gauss());
+      let mins = 52 + 0.62 * att - 5.5 * doc + 0.15 * old + (weekend ? 9 : 0) + 6 * gauss();
+      if (k === 23) mins += 34; // one unusual day (an IT outage)
+      lines.push(`${d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' })}\t${att}\t${doc}\t${old}\t${weekend ? 'Weekend' : 'Weekday'}\t${Math.round(mins)}`);
+      d.setUTCDate(d.getUTCDate() + 1);
+    }
+    return lines.join('\n');
+  }
+
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const trunc = (s, n) => s.length > n ? s.slice(0, n - 1) + '…' : s;
+  const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+  const lower = s => /^[A-Z][a-z]/.test(s) && !/^[A-Z][a-z]*[A-Z]/.test(s) ? s.charAt(0).toLowerCase() + s.slice(1) : s;
+  const slug = s => (s || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'multiple-regression';
+
+  // ---- parsing ----
+  function split(text) {
+    const lines = text.split(/\r?\n/).filter(l => l.trim() !== '');
+    if (!lines.length) return null;
+    let delim = 'ws';
+    if (lines.some(l => l.includes('\t'))) delim = '\t';
+    else if (lines.some(l => l.includes(';'))) delim = ';';
+    else if (lines.some(l => l.includes(','))) delim = ',';
+    const recs = lines.map(l => {
+      const f = delim === 'ws' ? l.trim().split(/\s+/) : l.split(delim).map(x => x.trim().replace(/^"(.*)"$/, '$1').trim());
+      while (f.length > 1 && f[f.length - 1] === '') f.pop();
+      return f;
+    });
+    return { recs, delim };
+  }
+  function num(raw, delim) {
+    if (raw === undefined) return NaN;
+    let v = String(raw).replace(/[%£$€\s]/g, '');
+    if (delim !== ',') v = v.replace(/,/g, '');
+    return v === '' ? NaN : Number(v);
+  }
+  // Each column is numeric, a category (a few repeated text values) or a label (anything else)
+  function classify(recs, delim, hasHeader) {
+    const ncol = Math.max(...recs.map(r => r.length));
+    const body = hasHeader ? recs.slice(1) : recs;
+    const cols = [];
+    for (let c = 0; c < ncol; c++) {
+      const cells = body.map(r => r[c]).filter(v => v !== undefined && v !== '');
+      const ok = cells.filter(v => isFinite(num(v, delim))).length;
+      let kind = 'label';
+      if (cells.length && ok / cells.length >= 0.8) kind = 'num';
+      else if (cells.length) {
+        const lv = new Set(cells).size;
+        if (lv >= 2 && lv <= MAX_LEVELS && lv < cells.length * 0.8) kind = 'cat';
+      }
+      cols.push({ i: c, kind, name: (hasHeader && recs[0][c]) || 'Column ' + (c + 1) });
+    }
+    return cols;
+  }
+  function headerGuess(text) {
+    const s = split(text); if (!s || s.recs.length < 2) return false;
+    const cols = classify(s.recs, s.delim, true);
+    return cols.some(c => c.kind === 'num' && !isFinite(num(s.recs[0][c.i], s.delim)));
+  }
+
+  // ---- linear algebra and distributions ----
+  const avg = a => a.reduce((s, v) => s + v, 0) / a.length;
+  const sd = a => { const m = avg(a); return Math.sqrt(a.reduce((s, v) => s + (v - m) ** 2, 0) / (a.length - 1)); };
+  function lgamma(z) {
+    const c = [76.18009172947146, -86.50532032941677, 24.01409824083091, -1.231739572450155, 0.1208650973866179e-2, -0.5395239384953e-5];
+    let x = z, y = z, t = x + 5.5; t -= (x + 0.5) * Math.log(t);
+    let s = 1.000000000190015; for (const k of c) s += k / ++y;
+    return -t + Math.log(2.5066282746310005 * s / x);
+  }
+  function betacf(a, b, x) {
+    const FPMIN = 1e-300;
+    let qab = a + b, qap = a + 1, qam = a - 1, c = 1, d = 1 - qab * x / qap;
+    if (Math.abs(d) < FPMIN) d = FPMIN; d = 1 / d; let h = d;
+    for (let m = 1; m <= 300; m++) {
+      const m2 = 2 * m;
+      let aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+      d = 1 + aa * d; if (Math.abs(d) < FPMIN) d = FPMIN; c = 1 + aa / c; if (Math.abs(c) < FPMIN) c = FPMIN; d = 1 / d; h *= d * c;
+      aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+      d = 1 + aa * d; if (Math.abs(d) < FPMIN) d = FPMIN; c = 1 + aa / c; if (Math.abs(c) < FPMIN) c = FPMIN; d = 1 / d;
+      const del = d * c; h *= del; if (Math.abs(del - 1) < 3e-14) break;
+    }
+    return h;
+  }
+  function ibeta(x, a, b) {
+    if (x <= 0) return 0; if (x >= 1) return 1;
+    const bt = Math.exp(lgamma(a + b) - lgamma(a) - lgamma(b) + a * Math.log(x) + b * Math.log(1 - x));
+    return x < (a + 1) / (a + b + 2) ? bt * betacf(a, b, x) / a : 1 - bt * betacf(b, a, 1 - x) / b;
+  }
+  const tP = (t, df) => ibeta(df / (df + t * t), df / 2, 0.5);           // two-sided p for t
+  const fP = (F, d1, d2) => ibeta(d2 / (d2 + d1 * F), d2 / 2, d1 / 2);   // upper tail p for F
+  function tCrit(df) { // two-sided 95% critical value
+    let lo = 0, hi = 1000;
+    for (let i = 0; i < 100; i++) { const mid = (lo + hi) / 2; if (tP(mid, df) > 0.05) lo = mid; else hi = mid; }
+    return (lo + hi) / 2;
+  }
+
+  // Least squares by modified Gram-Schmidt QR. Columns that add nothing new
+  // (perfectly explained by earlier ones) are dropped and reported.
+  function ols(X, y) {
+    const n = y.length, p = X[0].length;
+    const Q = [], R = [], keep = [], dropped = [];
+    for (let j = 0; j < p; j++) {
+      const v = X.map(r => r[j]);
+      const norm0 = Math.sqrt(v.reduce((s, a) => s + a * a, 0));
+      const rcol = [];
+      Q.forEach((q, k) => { let d = 0; for (let i = 0; i < n; i++) d += q[i] * v[i]; rcol.push(d); for (let i = 0; i < n; i++) v[i] -= d * q[i]; });
+      const nv = Math.sqrt(v.reduce((s, a) => s + a * a, 0));
+      if (norm0 === 0 || nv <= 1e-9 * norm0) { dropped.push(j); continue; }
+      Q.push(v.map(a => a / nv)); rcol.push(nv); R.push(rcol); keep.push(j);
+    }
+    const k = Q.length;
+    // R is stored by column: R[c][r] for r <= c. Invert the upper triangle.
+    const Ri = Array.from({ length: k }, () => new Array(k).fill(0));
+    for (let c = 0; c < k; c++) {
+      Ri[c][c] = 1 / R[c][c];
+      for (let r = c - 1; r >= 0; r--) {
+        let s = 0; for (let m = r + 1; m <= c; m++) s += R[m][r] * Ri[m][c];
+        Ri[r][c] = -s / R[r][r];
+      }
+    }
+    const qty = Q.map(q => q.reduce((s, a, i) => s + a * y[i], 0));
+    const b = Ri.map(row => row.reduce((s, a, c) => s + a * qty[c], 0));
+    // (X'X)^-1 = Ri Ri'
+    const C = Ri.map((ra, r) => Ri.map(rb => ra.reduce((s, a, m) => s + a * rb[m], 0)));
+    const lev = y.map((_, i) => Q.reduce((s, q) => s + q[i] * q[i], 0));
+    return { b, C, lev, keep, dropped };
+  }
+
+  // ---- model ----
+  function build(text, hasHeader, yIdx, useSet) {
+    const s = split(text);
+    if (!s) return null;
+    const cols = classify(s.recs, s.delim, hasHeader);
+    const body = hasHeader ? s.recs.slice(1) : s.recs;
+    const yc = cols[yIdx];
+    const xs = cols.filter(c => c.i !== yIdx && useSet.has(c.i) && (c.kind === 'num' || c.kind === 'cat'));
+    const labelCol = cols.find(c => c.kind === 'label');
+    const rows = []; let skipped = 0;
+    body.forEach((r, ri) => {
+      const y = num(r[yIdx], s.delim);
+      if (!isFinite(y)) { skipped++; return; }
+      const vals = {};
+      for (const c of xs) {
+        const raw = r[c.i];
+        if (c.kind === 'num') { const v = num(raw, s.delim); if (!isFinite(v)) { skipped++; return; } vals[c.i] = v; }
+        else { if (raw === undefined || raw === '') { skipped++; return; } vals[c.i] = raw; }
+      }
+      rows.push({ label: labelCol ? (r[labelCol.i] || 'Row ' + (ri + 1)) : 'Row ' + (ri + 1), y, vals });
+    });
+    // design matrix terms
+    const terms = [];
+    xs.forEach(c => {
+      if (c.kind === 'num') { terms.push({ col: c, name: c.name, kind: 'num' }); return; }
+      const counts = new Map(); rows.forEach(r => counts.set(r.vals[c.i], (counts.get(r.vals[c.i]) || 0) + 1));
+      const levels = [...counts.keys()];
+      if (levels.length < 2) return;
+      const ref = levels.reduce((a, l) => counts.get(l) > counts.get(a) ? l : a, levels[0]);
+      c.levels = levels; c.ref = ref;
+      levels.filter(l => l !== ref).forEach(l => terms.push({ col: c, level: l, ref, name: `${c.name}: ${l}`, kind: 'cat' }));
+    });
+    return { cols, yc, xs, rows, skipped, terms, labelCol };
+  }
+  function termValue(t, v) { return t.kind === 'num' ? v[t.col.i] : (v[t.col.i] === t.level ? 1 : 0); }
+
+  function fit(d) {
+    const n = d.rows.length;
+    const X = d.rows.map(r => [1].concat(d.terms.map(t => termValue(t, r.vals))));
+    const y = d.rows.map(r => r.y);
+    const q = ols(X, y);
+    if (!q.keep.length || q.keep[0] !== 0) return { bad: 'flat' };
+    const terms = q.keep.slice(1).map(j => d.terms[j - 1]);
+    const dropped = q.dropped.map(j => d.terms[j - 1]);
+    const k = terms.length, df = n - k - 1;
+    if (k === 0) return { bad: 'noterms', dropped };
+    if (df < 1) return { bad: 'few', need: k + 2, dropped };
+    const Xk = X.map(r => q.keep.map(j => r[j]));
+    const pred = Xk.map(r => r.reduce((s, a, j) => s + a * q.b[j], 0));
+    const res = y.map((v, i) => v - pred[i]);
+    const my = avg(y);
+    const sst = y.reduce((s, v) => s + (v - my) ** 2, 0), sse = res.reduce((s, e) => s + e * e, 0);
+    if (sst === 0) return { bad: 'flaty' };
+    const r2 = Math.max(0, 1 - sse / sst), adj = 1 - (1 - r2) * (n - 1) / df;
+    const s = Math.sqrt(sse / df);
+    const F = sse > 0 ? ((sst - sse) / k) / (sse / df) : Infinity;
+    const pF = sse > 0 ? fP(F, k, df) : 0;
+    const tc = tCrit(df), sdy = sd(y);
+    const coefs = q.b.map((b, j) => {
+      const se = s * Math.sqrt(Math.max(0, q.C[j][j]));
+      const t = se > 0 ? b / se : Infinity, p = se > 0 ? tP(Math.abs(t), df) : 0;
+      const out = { b, se, t, p, lo: b - tc * se, hi: b + tc * se };
+      if (j > 0) {
+        const term = terms[j - 1], xv = Xk.map(r => r[j]), mx = avg(xv);
+        const sxx = xv.reduce((a, v) => a + (v - mx) ** 2, 0);
+        out.term = term;
+        out.vif = q.C[j][j] * sxx;
+        out.scale = (term.kind === 'num' ? Math.sqrt(sxx / (n - 1)) : 1) / sdy;
+        out.min = Math.min(...xv); out.max = Math.max(...xv); out.mean = mx;
+      }
+      return out;
+    });
+    const stud = res.map((e, i) => s > 0 && q.lev[i] < 1 ? e / (s * Math.sqrt(1 - q.lev[i])) : 0);
+    const cook = stud.map((r, i) => q.lev[i] < 1 ? r * r / (k + 1) * q.lev[i] / (1 - q.lev[i]) : 0);
+    const odd = stud.map(r => n >= 8 && Math.abs(r) > 2.5);
+    const infl = cook.map(c => n >= 8 && c > 0.5);
+    let dw = NaN;
+    if (sse > 0) { let a = 0; for (let i = 1; i < n; i++) a += (res[i] - res[i - 1]) ** 2; dw = a / sse; }
+    return { n, k, df, terms, dropped, coefs, pred, res, stud, cook, odd, infl, r2, adj, s, F, pF, tc, dw, my, C: q.C, keep: q.keep };
+  }
+
+  // ---- charts ----
+  function niceTicks(min, max, count) {
+    const raw = (max - min || 1) / count, mag = Math.pow(10, Math.floor(Math.log10(raw))), nrm = raw / mag;
+    const step = (nrm < 1.5 ? 1 : nrm < 3 ? 2 : nrm < 7 ? 5 : 10) * mag;
+    const lo = Math.floor(min / step) * step, hi = Math.ceil(max / step) * step, ticks = [];
+    for (let v = lo; v <= hi + step * 1e-9; v += step) ticks.push(+v.toFixed(10));
+    return ticks;
+  }
+  function span(vals) {
+    let lo = Math.min(...vals), hi = Math.max(...vals);
+    if (lo === hi) { lo -= 1; hi += 1; }
+    const pad = (hi - lo) * 0.04;
+    return [lo - pad, hi + pad];
+  }
+  function svgOpen(W, H, o) {
+    const s = [`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(o.aria)}" font-family="${FONT}">`, `<rect width="${W}" height="${H}" fill="#ffffff"/>`];
+    if (o.title) s.push(`<text x="24" y="34" font-size="22" font-weight="700" fill="${COLORS.ink}">${esc(trunc(o.title, 70))}</text>`);
+    return s;
+  }
+  function legendRow(s, items, x, y) {
+    items.forEach(l => {
+      if (l.k === 'dot') s.push(`<circle cx="${x + 7}" cy="${y - 4}" r="6" fill="${l.c}"/>`);
+      else if (l.k === 'line') s.push(`<line x1="${x - 2}" y1="${y - 4}" x2="${x + 16}" y2="${y - 4}" stroke="${l.c}" stroke-width="2.5"${l.dash ? ' stroke-dasharray="6 4"' : ''}/>`);
+      else s.push(`<circle cx="${x + 7}" cy="${y - 4}" r="7" fill="none" stroke="${l.c}" stroke-width="2"/>`);
+      s.push(`<text x="${x + 22}" y="${y + 1}" font-size="13" fill="${COLORS.ink}">${esc(l.t)}</text>`);
+      x += 22 + l.t.length * 7.2 + 26;
+    });
+  }
+  // Standardised effect of each factor with its 95% confidence interval
+  function effectsSVG(m, o) {
+    const W = 960, ML = 300, MR = 40, rowH = 38, cs = m.coefs.slice(1);
+    const MT = (o.title ? 58 : 18) + 34, plotH = cs.length * rowH, MB = 96, H = MT + plotH + MB, plotW = W - ML - MR, base = MT + plotH;
+    const vals = cs.flatMap(c => [c.lo * c.scale, c.hi * c.scale]).concat([0]);
+    const xt = niceTicks(...span(vals), 8), x0 = xt[0], x1 = xt[xt.length - 1];
+    const X = v => ML + (v - x0) / (x1 - x0) * plotW;
+    const s = svgOpen(W, H, o);
+    legendRow(s, [{ c: COLORS.point, t: 'Clear link (p < 0.05)', k: 'dot' }, { c: COLORS.off, t: 'Could be chance', k: 'dot' }], ML, MT - 16);
+    xt.forEach(v => {
+      s.push(`<line x1="${X(v)}" y1="${MT}" x2="${X(v)}" y2="${base}" stroke="${COLORS.grid}" stroke-width="1"/>`);
+      s.push(`<text x="${X(v)}" y="${base + 20}" font-size="12" text-anchor="middle" fill="${COLORS.muted}">${nf.format(v)}</text>`);
+    });
+    s.push(`<line x1="${X(0)}" y1="${MT}" x2="${X(0)}" y2="${base}" stroke="${COLORS.ink}" stroke-width="1.5"/>`);
+    cs.forEach((c, i) => {
+      const y = MT + i * rowH + rowH / 2, sig = c.p < 0.05, col = sig ? COLORS.point : COLORS.off;
+      const tip = `${c.term.name}: standardised effect ${f2(c.b * c.scale)} (95% CI ${f2(c.lo * c.scale)} to ${f2(c.hi * c.scale)}), p = ${pText(c.p)}`;
+      s.push(`<g><title>${esc(tip)}</title>`);
+      s.push(`<text x="${ML - 14}" y="${y + 4}" font-size="13" text-anchor="end" fill="${COLORS.ink}"${sig ? ' font-weight="700"' : ''}>${esc(trunc(c.term.name, 40))}</text>`);
+      s.push(`<line x1="${X(c.lo * c.scale)}" y1="${y}" x2="${X(c.hi * c.scale)}" y2="${y}" stroke="${col}" stroke-width="3" stroke-linecap="round"/>`);
+      s.push(`<circle cx="${X(c.b * c.scale)}" cy="${y}" r="7" fill="${col}" stroke="#fff" stroke-width="1.5"/></g>`);
+    });
+    s.push(`<text x="${ML + plotW / 2}" y="${base + 46}" font-size="13" font-weight="700" text-anchor="middle" fill="${COLORS.ink}">Standardised effect on ${esc(trunc(o.yName, 60))}</text>`);
+    s.push(`<text x="24" y="${H - 28}" font-size="12" fill="${COLORS.muted}">Change in the result, in standard deviations, for a 1 standard deviation rise in the factor, or for a category against its reference.</text>`);
+    s.push(`<text x="24" y="${H - 11}" font-size="12" fill="${COLORS.muted}">Lines show 95% confidence intervals. A line that crosses zero means the factor's effect could be chance.</text>`);
+    s.push('</svg>');
+    return s.join('');
+  }
+  function pointsSVG(d, m, o, kind) {
+    const W = 960, ML = 80, MR = 30, plotH = 420;
+    const MT = (o.title ? 58 : 18) + 30, MB = 66, H = MT + plotH + MB, plotW = W - ML - MR, base = MT + plotH;
+    const ys = kind === 'fit' ? d.rows.map(r => r.y) : m.res;
+    const xs = kind === 'order' ? d.rows.map((_, i) => i + 1) : m.pred;
+    const xl = kind === 'order' ? 'Row (in the order pasted)' : 'Predicted ' + o.yName;
+    const yl = kind === 'fit' ? 'Actual ' + o.yName : 'Difference (actual − predicted)';
+    let [x0, x1] = span(kind === 'fit' ? xs.concat(ys) : xs), [y0, y1] = span(kind === 'fit' ? ys.concat(xs) : ys.concat([0, 2.5 * m.s, -2.5 * m.s]));
+    if (kind === 'fit') { x0 = y0 = Math.min(x0, y0); x1 = y1 = Math.max(x1, y1); }
+    if (kind === 'order') { x0 = Math.max(0, x0); }
+    const xt = niceTicks(x0, x1, 8), yt = niceTicks(y0, y1, 6);
+    x0 = xt[0]; x1 = xt[xt.length - 1]; y0 = yt[0]; y1 = yt[yt.length - 1];
+    const X = v => ML + (v - x0) / (x1 - x0) * plotW, Y = v => base - (v - y0) / (y1 - y0) * plotH;
+    const s = svgOpen(W, H, o);
+    const leg = [{ c: COLORS.point, t: 'One row', k: 'dot' }];
+    leg.push(kind === 'fit' ? { c: COLORS.line, t: 'Perfect prediction', k: 'line' } : { c: COLORS.line, t: 'No difference', k: 'line' });
+    if (kind !== 'fit') leg.push({ c: COLORS.muted, t: '2.5 × typical error', k: 'line', dash: true });
+    if (o.flagOdd && m.odd.some(Boolean)) leg.push({ c: COLORS.flag, t: 'Unusual', k: 'ring' });
+    if (o.flagOdd && m.infl.some(Boolean)) leg.push({ c: COLORS.infl, t: 'Influential', k: 'ring' });
+    legendRow(s, leg, ML, MT - 18);
+    yt.forEach(v => {
+      s.push(`<line x1="${ML}" y1="${Y(v)}" x2="${ML + plotW}" y2="${Y(v)}" stroke="${COLORS.grid}" stroke-width="1"/>`);
+      s.push(`<text x="${ML - 8}" y="${Y(v) + 4}" font-size="12" text-anchor="end" fill="${COLORS.muted}">${nf.format(v)}</text>`);
+    });
+    xt.forEach(v => {
+      s.push(`<line x1="${X(v)}" y1="${MT}" x2="${X(v)}" y2="${base}" stroke="${COLORS.grid}" stroke-width="1"/>`);
+      s.push(`<text x="${X(v)}" y="${base + 20}" font-size="12" text-anchor="middle" fill="${COLORS.muted}">${nf.format(v)}</text>`);
+    });
+    if (kind === 'fit') s.push(`<line x1="${X(x0)}" y1="${Y(x0)}" x2="${X(x1)}" y2="${Y(x1)}" stroke="${COLORS.line}" stroke-width="2.5"/>`);
+    else {
+      s.push(`<line x1="${ML}" y1="${Y(0)}" x2="${ML + plotW}" y2="${Y(0)}" stroke="${COLORS.line}" stroke-width="2.5"/>`);
+      [2.5, -2.5].forEach(z => s.push(`<line x1="${ML}" y1="${Y(z * m.s)}" x2="${ML + plotW}" y2="${Y(z * m.s)}" stroke="${COLORS.muted}" stroke-width="1.5" stroke-dasharray="6 4"/>`));
+      if (kind === 'order') s.push(`<polyline points="${xs.map((x, i) => X(x) + ',' + Y(ys[i])).join(' ')}" fill="none" stroke="${COLORS.point}" stroke-opacity="0.45" stroke-width="1.5"/>`);
+    }
+    d.rows.forEach((r, i) => {
+      const tip = `${r.label}: actual ${nf.format(r.y)}, predicted ${nf.format(m.pred[i])}, difference ${nf.format(m.res[i])}${m.odd[i] ? ', unusual' : ''}${m.infl[i] ? ', influential' : ''}`;
+      s.push(`<g><title>${esc(tip)}</title><circle cx="${X(xs[i])}" cy="${Y(ys[i])}" r="5.5" fill="${COLORS.point}" fill-opacity="0.85" stroke="#fff" stroke-width="1.5"/>`);
+      if (o.flagOdd && m.odd[i]) s.push(`<circle cx="${X(xs[i])}" cy="${Y(ys[i])}" r="10" fill="none" stroke="${COLORS.flag}" stroke-width="2.2"/>`);
+      if (o.flagOdd && m.infl[i]) s.push(`<circle cx="${X(xs[i])}" cy="${Y(ys[i])}" r="13.5" fill="none" stroke="${COLORS.infl}" stroke-width="2.2"/>`);
+      s.push('</g>');
+    });
+    s.push(`<line x1="${ML}" y1="${MT}" x2="${ML}" y2="${base}" stroke="${COLORS.ink}" stroke-width="1.5"/>`);
+    s.push(`<line x1="${ML}" y1="${base}" x2="${ML + plotW}" y2="${base}" stroke="${COLORS.ink}" stroke-width="1.5"/>`);
+    s.push(`<text transform="translate(22 ${MT + plotH / 2}) rotate(-90)" font-size="13" font-weight="700" text-anchor="middle" fill="${COLORS.ink}">${esc(trunc(yl, 60))}</text>`);
+    s.push(`<text x="${ML + plotW / 2}" y="${H - 16}" font-size="13" font-weight="700" text-anchor="middle" fill="${COLORS.ink}">${esc(trunc(xl, 90))}</text>`);
+    s.push('</svg>');
+    return s.join('');
+  }
+
+  // ---- plain-language reading ----
+  const pText = p => p < 0.001 ? '< 0.001' : nf3.format(p);
+  function chanceText(p) { return p < 0.001 ? 'less than 1 in 1,000' : p < 0.01 ? 'less than 1 in 100' : 'less than 1 in 20'; }
+  function effectText(c, yn) {
+    const t = c.term, up = c.b >= 0, amt = nf.format(Math.abs(c.b));
+    if (t.kind === 'cat') return `${esc(yn)} is about ${amt} ${up ? 'higher' : 'lower'} when ${esc(lower(t.col.name))} is <b>${esc(t.level)}</b> rather than ${esc(t.ref)}`;
+    return `each extra 1 of <b>${esc(lower(t.name))}</b> goes with ${up ? 'an increase' : 'a decrease'} of about ${amt} in ${esc(yn)}`;
+  }
+  function readingParts(d, m, yName) {
+    const yn = lower(yName), cs = m.coefs.slice(1);
+    const sig = cs.filter(c => c.p < 0.05).sort((a, b) => Math.abs(b.b * b.scale) - Math.abs(a.b * a.scale));
+    const non = cs.filter(c => c.p >= 0.05);
+    const paras = [], cautions = [];
+    if (m.pF >= 0.05) paras.push(`Taken together, the factors don't predict ${yn} better than chance would (p = ${pText(m.pF)}). There is no clear evidence here that any of them is linked to ${yn}.`);
+    else paras.push(`Together, the factors account for about ${Math.round(m.r2 * 100)}% of the variation in ${yn}; the rest comes from things not in the model. The chance of a fit this good in ${m.n} rows if none of the factors really mattered is ${chanceText(m.pF)}.`);
+    if (sig.length) {
+      paras.push(`Holding the other factors steady, ${sig.map(c => effectText(c, yn) + ` (95% confidence interval ${nf.format(c.lo)} to ${nf.format(c.hi)})`).join('; ')}.`);
+      const sigNum = sig.filter(c => c.term.kind === 'num');
+      if (sigNum.length > 1) paras.push(`Allowing for how much each one varies, a typical change in <b>${esc(lower(sigNum[0].term.name))}</b> makes the biggest difference to ${yn}.`);
+    }
+    if (non.length) paras.push(`There is no clear evidence of a link, once the other factors are allowed for, for ${non.map(c => `<b>${esc(c.term.name)}</b>`).join(', ')}. That doesn't prove ${non.length > 1 ? 'they make' : 'it makes'} no difference; the effect may be small or the data too few to show it.`);
+    cautions.push('Regression shows association, not cause and effect. A factor you didn\'t measure may be driving the result. Test your theory with a PDSA cycle.');
+    cautions.push('Each coefficient only describes the range of values you collected. Don\'t assume the pattern carries on beyond it.');
+    const perTerm = m.n / m.k;
+    if (perTerm < 10) cautions.push(`There are only ${nf.format(perTerm)} rows for each factor in the model. Aim for at least 10, or use fewer factors, otherwise the results can be unstable.`);
+    const vif = cs.filter(c => c.vif > 5);
+    if (vif.length) cautions.push(`${vif.map(c => esc(c.term.name)).join(', ')} ${vif.length > 1 ? 'are' : 'is'} strongly linked to the other factors (VIF above 5). The model struggles to separate overlapping factors, so ${vif.length > 1 ? 'their' : 'its'} coefficients are uncertain. Consider dropping one of a pair that measure much the same thing.`);
+    if (m.dropped.length) cautions.push(`${m.dropped.map(t => esc(t.name)).join(', ')} ${m.dropped.length > 1 ? 'were' : 'was'} left out because ${m.dropped.length > 1 ? 'they add' : 'it adds'} nothing beyond the other factors (${m.dropped.length > 1 ? 'they are' : 'it is'} an exact combination of them).`);
+    if (isFinite(m.dw) && m.n >= 15 && m.dw < 1.5) cautions.push(`If your rows are in time order, neighbouring rows tend to have similar differences from the prediction (Durbin–Watson ${f2(m.dw)}). Something that changes over time may be missing from the model, and the p-values will look more certain than they are. Check the result on an SPC chart.`);
+    return { paras, cautions, sig, non };
+  }
+  function readingHTML(d, m, yName) {
+    const r = readingParts(d, m, yName);
+    let h = '<div class="reading"><h3>What the model shows</h3>' + r.paras.map(p => `<p>${p}</p>`).join('');
+    h += '<div class="caution"><p><b>Before you act on it</b></p><ul>' + r.cautions.map(c => `<li>${c}</li>`).join('') + '</ul></div>';
+    const odd = d.rows.filter((_, i) => m.odd[i]).map(x => x.label), infl = d.rows.filter((_, i) => m.infl[i]).map(x => x.label);
+    if (odd.length) h += `<p class="flagnote">${odd.length} row${odd.length > 1 ? 's are' : ' is'} a long way from the prediction. Check for data errors or unusual circumstances: ${esc(odd.join(', '))}.</p>`;
+    if (infl.length) h += `<p class="flagnote">${infl.length} row${infl.length > 1 ? 's have' : ' has'} a strong pull on the results: ${esc(infl.join(', '))}. Try the model without ${infl.length > 1 ? 'them' : 'it'} to see how much the answer changes.</p>`;
+    return h + '</div>';
+  }
+  function summaryText() {
+    const { d, m, yName } = current, r = readingParts(d, m, yName);
+    const strip = s => s.replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+    const lines = [current.title || 'Multiple regression: ' + yName, '', `R² = ${Math.round(m.r2 * 100)}% (adjusted ${Math.round(m.adj * 100)}%), ${m.n} rows, ${m.k} factor${m.k > 1 ? 's' : ''}, p = ${pText(m.pF)}`, ''];
+    r.paras.forEach(p => lines.push(strip(p), ''));
+    lines.push('Before you act on it:'); r.cautions.forEach(c => lines.push('- ' + strip(c)));
+    return lines.join('\n');
+  }
+
+  // ---- what if: predict the result for chosen factor values ----
+  function whatIfHTML(d, m) {
+    const cols = [...new Set(m.terms.map(t => t.col))];
+    let h = '<div class="reading"><h3>Predict a result</h3><p class="hint">Choose values for each factor to see the result the model predicts, with the range a single new row would be expected to fall in 19 times out of 20.</p><div class="whatif">';
+    cols.forEach(c => {
+      const id = 'wi-' + c.i, key = c.name;
+      if (c.kind === 'num') {
+        const vals = d.rows.map(r => r.vals[c.i]);
+        if (!(key in whatIf)) whatIf[key] = +avg(vals).toFixed(2);
+        h += `<div><label for="${id}">${esc(c.name)}</label><input type="number" step="any" id="${id}" data-wi="${esc(key)}" value="${esc(whatIf[key])}"></div>`;
+      } else {
+        if (!c.levels.includes(whatIf[key])) whatIf[key] = c.ref;
+        h += `<div><label for="${id}">${esc(c.name)}</label><select id="${id}" data-wi="${esc(key)}">${c.levels.map(l => `<option${l === whatIf[key] ? ' selected' : ''}>${esc(l)}</option>`).join('')}</select></div>`;
+      }
+    });
+    return h + '</div><p class="predout" id="predOut" aria-live="polite"></p></div>';
+  }
+  function updatePrediction() {
+    const out = $('predOut'); if (!out || !current) return;
+    const { m, yName } = current;
+    const vals = {}; let ok = true; const outside = [];
+    [...new Set(m.terms.map(t => t.col))].forEach(c => {
+      const v = whatIf[c.name];
+      if (c.kind === 'num') { const x = Number(v); if (v === '' || !isFinite(x)) ok = false; vals[c.i] = x; }
+      else vals[c.i] = v;
+    });
+    if (!ok) { out.textContent = 'Enter a number for each factor.'; return; }
+    const x0 = [1].concat(m.terms.map(t => termValue(t, vals)));
+    const yhat = x0.reduce((s, a, j) => s + a * m.coefs[j].b, 0);
+    let q = 0; for (let a = 0; a < x0.length; a++) for (let b = 0; b < x0.length; b++) q += x0[a] * m.C[a][b] * x0[b];
+    const half = m.tc * m.s * Math.sqrt(1 + q);
+    m.coefs.slice(1).forEach((c, j) => { if (c.term.kind === 'num' && (x0[j + 1] < c.min || x0[j + 1] > c.max)) outside.push(c.term.name); });
+    out.innerHTML = `Predicted ${esc(lower(yName))}: <strong>${nf.format(yhat)}</strong> <span style="color:var(--muted)">(likely range ${nf.format(yhat - half)} to ${nf.format(yhat + half)})</span>` +
+      (outside.length ? `<br><span class="flagnote">${esc(outside.join(', '))} ${outside.length > 1 ? 'are' : 'is'} outside the values in your data, so treat this prediction with caution.</span>` : '');
+  }
+
+  // ---- model picker ----
+  function syncPicker(text, hasHeader) {
+    const s = split(text);
+    const cols = s ? classify(s.recs, s.delim, hasHeader) : [];
+    const sig = cols.map(c => c.kind + ':' + c.name).join('|');
+    const usable = cols.filter(c => c.kind === 'num' || c.kind === 'cat');
+    const nums = cols.filter(c => c.kind === 'num');
+    if (sig !== colSig) {
+      const prevY = els.yCol.value, prevName = els.yCol.selectedOptions[0] ? els.yCol.selectedOptions[0].textContent : '';
+      const prevUse = {};
+      els.picker.querySelectorAll('input').forEach(i => { prevUse[i.dataset.name] = i.checked; });
+      colSig = sig;
+      els.yCol.innerHTML = nums.map(c => `<option value="${c.i}">${esc(c.name)}</option>`).join('');
+      const keepY = nums.find(c => c.name === prevName) || nums.find(c => String(c.i) === prevY);
+      if (keepY) els.yCol.value = String(keepY.i); else if (nums.length) els.yCol.value = String(nums[nums.length - 1].i);
+      els.picker.innerHTML = usable.map(c => `<label class="check"><input type="checkbox" id="use-${c.i}" data-col="${c.i}" data-name="${esc(c.name)}"${prevUse[c.name] === false ? '' : ' checked'}> <span>${esc(c.name)} <span class="kind">${c.kind === 'cat' ? '(categories)' : ''}</span></span></label>`).join('');
+    }
+    const y = els.yCol.value;
+    els.picker.querySelectorAll('input').forEach(i => {
+      const isY = i.dataset.col === y;
+      i.disabled = isY;
+      i.closest('label').classList.toggle('off', isY);
+      i.closest('label').hidden = isY;
+    });
+    els.modelBlock.hidden = nums.length < 1 || usable.length < 2;
+    return { cols, nums, usable };
+  }
+
+  // ---- render ----
+  function update() {
+    const text = els.data.value;
+    if (!headerTouched) els.hasHeader.checked = headerGuess(text);
+    const pk = syncPicker(text, els.hasHeader.checked);
+    current = null;
+    if (!text.trim()) { els.detected.textContent = ''; return renderEmpty('Paste data on the left to build your model.'); }
+    if (!pk.nums.length || pk.usable.length < 2) { els.detected.textContent = 'Couldn’t find a column of numbers and at least one factor.'; return renderEmpty('Paste a column of numbers for the result and one or more columns for the factors.'); }
+    const yIdx = Number(els.yCol.value);
+    const useSet = new Set([...els.picker.querySelectorAll('input:checked:not(:disabled)')].map(i => Number(i.dataset.col)));
+    const d = build(text, els.hasHeader.checked, yIdx, useSet);
+    const nCat = d.xs.filter(c => c.kind === 'cat').length;
+    let note = `Reading ${d.rows.length} row${d.rows.length === 1 ? '' : 's'} and ${d.xs.length} factor${d.xs.length === 1 ? '' : 's'}${nCat ? ` (${nCat} with categories)` : ''}.`;
+    if (d.skipped) note += ` ${d.skipped} row${d.skipped > 1 ? 's' : ''} skipped (a value was missing or wasn’t a number).`;
+    els.detected.textContent = note;
+    if (!d.xs.length) return renderEmpty('Tick at least one factor to include in the model.');
+    const m = fit(d);
+    if (m.bad === 'few') return renderEmpty(`With ${d.terms.length} factor term${d.terms.length > 1 ? 's' : ''} you need at least ${m.need} complete rows, and ideally 10 or more for each factor.`);
+    if (m.bad === 'flaty') return renderEmpty('Every value of the result is the same, so there’s nothing to explain.');
+    if (m.bad) return renderEmpty('The factors you chose don’t vary, so there’s nothing to compare. Each factor needs at least two different values.');
+
+    const title = els.title.value.trim();
+    const yName = d.yc.name;
+    const nSig = m.coefs.slice(1).filter(c => c.p < 0.05).length;
+    const headline = m.pF >= 0.05 ? '<strong>No clear link</strong> between these factors and the result'
+      : `The factors explain <strong>${Math.round(m.r2 * 100)}%</strong> of the variation in ${esc(lower(yName))}`;
+    const sub = m.pF >= 0.05 ? `R² = ${Math.round(m.r2 * 100)}% across ${m.n} rows, which could easily be chance.`
+      : `${nSig} of ${m.k} factor${m.k > 1 ? 's show' : ' shows'} a clear link once the others are allowed for. ${m.n} rows.`;
+    if (!CHARTS[chartType]) chartType = 'effects';
+    const o = { title, yName, flagOdd: els.flagOdd.checked, aria: (title ? title + '. ' : '') + `${CHARTS[chartType]} for a regression of ${yName} on ${m.k} factors. R squared ${Math.round(m.r2 * 100)}%, ${m.n} rows.` };
+    const svg = chartType === 'effects' ? effectsSVG(m, o) : pointsSVG(d, m, o, chartType);
+    current = { d, m, title, yName };
+
+    const cs = m.coefs;
+    els.result.innerHTML = `
+      <p class="summary">${headline}</p>
+      <p class="focuson">${esc(sub)}</p>
+      <div class="stats">
+        <div class="stat"><b>${Math.round(m.r2 * 100)}%</b><span>R² (variation explained)</span></div>
+        <div class="stat"><b>${Math.round(m.adj * 100)}%</b><span>Adjusted R²</span></div>
+        <div class="stat"><b>${pText(m.pF)}</b><span>p-value for the model</span></div>
+        <div class="stat"><b>${nf.format(m.s)}</b><span>Typical prediction error</span></div>
+      </div>
+      <div class="chartbar"><div class="block"><label for="chartType">Chart</label><select id="chartType">${Object.keys(CHARTS).map(k => `<option value="${k}"${k === chartType ? ' selected' : ''}>${CHARTS[k]}</option>`).join('')}</select></div></div>
+      <div class="chartwrap" id="chart">${svg}</div>
+      ${readingHTML(d, m, yName)}
+      <div class="tablewrap">
+        <table>
+          <caption class="sr">Regression coefficients</caption>
+          <thead><tr><th>Term</th><th class="num">Coefficient</th><th class="num">95% CI</th><th class="num">Std. error</th><th class="num">t</th><th class="num">p</th><th class="num">Std. effect</th><th class="num">VIF</th></tr></thead>
+          <tbody>${cs.map((c, j) => `<tr>
+            <td${j && c.p < 0.05 ? ' class="sig"' : ''}>${j ? esc(c.term.name) + (c.term.kind === 'cat' ? ` <span class="kind" style="color:var(--muted)">vs ${esc(c.term.ref)}</span>` : '') : 'Intercept'}</td>
+            <td class="num">${nf3.format(c.b)}</td><td class="num">${nf3.format(c.lo)} to ${nf3.format(c.hi)}</td><td class="num">${nf3.format(c.se)}</td>
+            <td class="num">${f2(c.t)}</td><td class="num">${pText(c.p)}</td><td class="num">${j ? f2(c.b * c.scale) : '–'}</td><td class="num">${j ? f2(c.vif) : '–'}</td></tr>`).join('')}
+          </tbody>
+          <tfoot><tr><th colspan="8">F = ${f2(m.F)} on ${m.k} and ${m.df} degrees of freedom · R² = ${f2(m.r2)} · adjusted R² = ${f2(m.adj)} · residual standard error ${nf3.format(m.s)}${isFinite(m.dw) ? ` · Durbin–Watson ${f2(m.dw)}` : ''}</th></tr></tfoot>
+        </table>
+      </div>
+      ${whatIfHTML(d, m)}
+      <details class="values"><summary>Show each row with its prediction</summary>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th class="num">#</th><th>${esc(d.labelCol ? d.labelCol.name : 'Row')}</th><th class="num">Actual</th><th class="num">Predicted</th><th class="num">Difference</th><th class="num">Standardised difference</th><th class="num">Cook’s distance</th></tr></thead>
+          <tbody>${d.rows.map((r, i) => `<tr${m.odd[i] || m.infl[i] ? ' class="odd"' : ''}>
+            <td class="num">${i + 1}</td><td>${esc(r.label)}${m.odd[i] ? '<span class="sr"> (unusual)</span>' : ''}${m.infl[i] ? '<span class="sr"> (influential)</span>' : ''}</td>
+            <td class="num">${nf.format(r.y)}</td><td class="num">${nf.format(m.pred[i])}</td><td class="num">${nf.format(m.res[i])}</td><td class="num">${f2(m.stud[i])}</td><td class="num">${f2(m.cook[i])}</td></tr>`).join('')}
+          </tbody>
+        </table>
+      </div></details>`;
+    updatePrediction();
+  }
+  function renderEmpty(msg) {
+    current = null;
+    els.result.innerHTML = `<div class="empty"><p>${esc(msg)}</p><button type="button" class="primary" data-act="example">Try the example</button></div>`;
+  }
+  function schedule() { clearTimeout(timer); timer = setTimeout(update, 180); }
+
+  // ---- exports ----
+  function svgEl() { return document.querySelector('#chart svg'); }
+  function fileName() { return slug(current && current.title); }
+  let dlPromise = null;
+  function getDownloads() {
+    if (!window.claude || typeof window.claude.use !== 'function') return Promise.resolve(undefined);
+    if (!dlPromise) dlPromise = window.claude.use('downloads').catch(() => null);
+    return dlPromise;
+  }
+  async function downloadBlob(blob, name) {
+    const d = await getDownloads();
+    if (d) { const r = await d.save({ filename: name, data: blob }); return r && r.status !== 'declined'; }
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+    return true;
+  }
+  function status(msg) { FocusActions.say(msg); }
+  function toPNG(cb) {
+    const svg = svgEl(); if (!svg) return;
+    const vb = svg.viewBox.baseVal, scale = 2;
+    const str = new XMLSerializer().serializeToString(svg);
+    const img = new Image();
+    img.onload = () => {
+      const c = document.createElement('canvas');
+      c.width = vb.width * scale; c.height = vb.height * scale;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, c.width, c.height);
+      ctx.drawImage(img, 0, 0, c.width, c.height);
+      c.toBlob(cb, 'image/png');
+    };
+    img.onerror = () => status('Could not create the image.');
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(str);
+  }
+  function tableRows() {
+    const { d, m } = current;
+    const r4 = v => Math.round(v * 10000) / 10000;
+    const out = [['Term', 'Reference', 'Coefficient', 'CI lower (95%)', 'CI upper (95%)', 'Std. error', 't', 'p-value', 'Standardised effect', 'VIF']];
+    m.coefs.forEach((c, j) => out.push([j ? c.term.name : 'Intercept', j && c.term.kind === 'cat' ? c.term.ref : '', r4(c.b), r4(c.lo), r4(c.hi), r4(c.se), r4(c.t), r4(c.p), j ? r4(c.b * c.scale) : '', j ? r4(c.vif) : '']));
+    out.push([], ['R squared', r4(m.r2)], ['Adjusted R squared', r4(m.adj)], ['F', r4(m.F)], ['Model p-value', r4(m.pF)], ['Residual standard error', r4(m.s)], ['Durbin-Watson', isFinite(m.dw) ? r4(m.dw) : ''], ['Rows', m.n], ['Factor terms', m.k], []);
+    out.push(['#', d.labelCol ? d.labelCol.name : 'Row', 'Actual ' + d.yc.name, 'Predicted', 'Difference', 'Standardised difference', "Cook's distance", 'Unusual', 'Influential']);
+    d.rows.forEach((r, i) => out.push([i + 1, r.label, r.y, r4(m.pred[i]), r4(m.res[i]), r4(m.stud[i]), r4(m.cook[i]), m.odd[i] ? 'Yes' : 'No', m.infl[i] ? 'Yes' : 'No']));
+    return out;
+  }
+  const csvCell = v => /[",\n]/.test(String(v)) ? '"' + String(v).replace(/"/g, '""') + '"' : String(v);
+  async function copyText(t) {
+    try { await navigator.clipboard.writeText(t); return true; }
+    catch (e) {
+      const ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select();
+      const ok = document.execCommand('copy'); ta.remove(); return ok;
+    }
+  }
+  const saved = (ok, msg) => status(ok ? msg : 'Download cancelled.');
+  const failed = () => status('The file couldn’t be saved here. Try Copy instead.');
+  function act(a) {
+    if (a === 'example') return loadExample();
+    if (!current) return;
+    if (a === 'png') toPNG(b => downloadBlob(b, fileName() + '.png').then(ok => saved(ok, 'PNG downloaded.'), failed));
+    if (a === 'svg') downloadBlob(new Blob([new XMLSerializer().serializeToString(svgEl())], { type: 'image/svg+xml' }), fileName() + '.svg').then(ok => saved(ok, 'SVG downloaded.'), failed);
+    if (a === 'copyimg') {
+      if (!(navigator.clipboard && window.ClipboardItem)) return status('Your browser can’t copy images — use Download PNG.');
+      toPNG(async b => {
+        try { await navigator.clipboard.write([new ClipboardItem({ 'image/png': b })]); status('Chart copied — paste it into PowerPoint or Word.'); }
+        catch (e) { status('Copy was blocked — use Download PNG.'); }
+      });
+    }
+    if (a === 'csv') downloadBlob(new Blob([tableRows().map(r => r.map(csvCell).join(',')).join('\r\n')], { type: 'text/csv' }), fileName() + '.csv').then(ok => saved(ok, 'Table downloaded.'), failed);
+    if (a === 'copytable') copyText(tableRows().map(r => r.join('\t')).join('\n')).then(ok => status(ok ? 'Table copied — paste it into Excel.' : 'Copy was blocked.'));
+    if (a === 'copysummary') copyText(summaryText()).then(ok => status(ok ? 'Summary copied.' : 'Copy was blocked.'));
+  }
+  function loadExample() {
+    els.data.value = exampleText();
+    els.title.value = 'What drives time to be seen in ED (example)';
+    headerTouched = false; colSig = ''; whatIf = {}; chartType = 'effects';
+    els.picker.innerHTML = ''; els.yCol.innerHTML = '';
+    update();
+  }
+
+  // ---- events ----
+  els.data.addEventListener('input', () => { whatIf = {}; schedule(); });
+  els.hasHeader.addEventListener('change', () => { headerTouched = true; update(); });
+  els.title.addEventListener('input', schedule);
+  els.yCol.addEventListener('change', () => { whatIf = {}; update(); });
+  els.picker.addEventListener('change', update);
+  els.flagOdd.addEventListener('change', update);
+  $('exampleBtn2').addEventListener('click', loadExample);
+  $('clearBtn').addEventListener('click', () => { els.data.value = ''; els.title.value = ''; headerTouched = false; els.hasHeader.checked = false; colSig = ''; whatIf = {}; els.picker.innerHTML = ''; els.yCol.innerHTML = ''; update(); els.data.focus(); });
+  els.result.addEventListener('click', e => { const b = e.target.closest('button[data-act]'); if (b) act(b.dataset.act); });
+  els.result.addEventListener('change', e => { if (e.target.id === 'chartType') { chartType = e.target.value; update(); } });
+  els.result.addEventListener('input', e => { const k = e.target.dataset && e.target.dataset.wi; if (k) { whatIf[k] = e.target.value; updatePrediction(); } });
+  els.result.addEventListener('change', e => { const k = e.target.dataset && e.target.dataset.wi; if (k) { whatIf[k] = e.target.value; updatePrediction(); } });
+
+  update(); // start empty, ready for the user's data
+
+  // ---- shared toolbar (Open, Save, Export) ----
+  FocusActions.mount({
+    tool: 'multiple_regression', toolName: 'multiple regression',
+    example: loadExample, hasData: () => !!els.data.value.trim(),
+    fileName: () => fileName(),
+    fields: 'section.panel[aria-labelledby="data-h"]',
+    getExtra: () => ({ chartType, whatIf }),
+    setExtra: x => { if (x) { if (CHARTS[x.chartType]) chartType = x.chartType; if (x.whatIf) whatIf = Object.assign({}, x.whatIf); } },
+    afterOpen: () => update(),
+    ready: () => !!current,
+    exports: ['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) }))
+  });
+})();
+</script>
+{% include focus-footer.html %}
+</body>
+</html>

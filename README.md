@@ -8,7 +8,8 @@ Tools (copied from [ImprovementTools](https://github.com/PerrinShanks-Cogito/Imp
 fishbone diagram, which was built here following the IHI QI Essentials Toolkit
 instructions for a cause and effect diagram, and the demand and capacity model,
 which was built here from the NHS Improvement and NHS England demand and
-capacity core model (version 4.2) and its user guidance):
+capacity core model (version 4.2) and its user guidance, and the multiple
+regression tool, which was built here):
 
 | Tool | Path |
 | --- | --- |
@@ -21,6 +22,7 @@ capacity core model (version 4.2) and its user guidance):
 | SPC chart | `/spc_tool/` |
 | Histogram | `/histogram/` |
 | Scatter plot | `/scatter_plot/` |
+| Multiple regression | `/multiple_regression/` |
 | Demand and capacity model | `/demand_capacity/` |
 
 ## How it fits together
