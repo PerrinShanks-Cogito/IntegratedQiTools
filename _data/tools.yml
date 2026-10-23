@@ -90,6 +90,12 @@
   group: Explore your data
   description: See how several factors together relate to one result, such as staffing and demand against waiting times, and which of them matter most.
 
+- id: design_of_experiments
+  name: Design of experiments
+  status: Beta
+  group: Test changes
+  description: Plan an experiment that tests two to four changes at once, such as staffing, streaming and self check-in, and see which of them, alone or together, really change the result.
+
 - id: demand_capacity
   name: Demand and capacity model
   status: Beta
