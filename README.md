@@ -24,7 +24,7 @@ events SPC tool (version 2.0)):
 | Tree plot (treemap) | `/tree_plot/` |
 | Bar chart | `/bar_chart/` |
 | Run chart | `/run_chart/` |
-| SPC chart | `/spc_tool/` |
+| SPC chart (XmR) | `/spc_tool/` |
 | T chart (rare events) | `/t_chart/` |
 | Histogram | `/histogram/` |
 | Box and whisker plot | `/box_plot/` |
