@@ -1,0 +1,823 @@
+---
+tool_id: power_sample_size
+title: "Power and sample size"
+permalink: /power_sample_size/
+---
+<!DOCTYPE html>
+<!-- © Guy’s and St Thomas’ NHS Foundation Trust 2026. All rights reserved. -->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Power and sample size</title>
+<meta name="description" content="Work out how many people or measurements you need for a hypothesis test, how likely a test is to detect a real change, or the smallest change a sample can detect. Nothing is uploaded.">
+<link rel="icon" type="image/png" sizes="64x64" href="data:image/png;base64,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">
+<link rel="apple-touch-icon" href="data:image/png;base64,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">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#005EB8; --navy:#003087; --bg:#F0F4F5; --surface:#FFFFFF; --text:#212B32;
+  --muted:#4C6272; --line:#D8DDE0; --yellow:#FFB81C; --green:#007F3B; --green-bg:#E3F2E9;
+  --blue-bg:#E6F0FA; --danger:#D5281B; --shadow:0 2px 0 #D8DDE0; --warn:#A65300;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --blue:#5AA2EA; --navy:#9CC3EF; --bg:#0E1A24; --surface:#162533; --text:#E8EEF2;
+    --muted:#A3B6C3; --line:#2A3E4F; --green:#4CC17E; --green-bg:#143326; --blue-bg:#15314B;
+    --danger:#FF7468; --shadow:0 2px 0 #0A131B; --warn:#F0A54A;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --blue:#5AA2EA; --navy:#9CC3EF; --bg:#0E1A24; --surface:#162533; --text:#E8EEF2;
+  --muted:#A3B6C3; --line:#2A3E4F; --green:#4CC17E; --green-bg:#143326; --blue-bg:#15314B;
+  --danger:#FF7468; --shadow:0 2px 0 #0A131B; --warn:#F0A54A;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Figtree,"Frutiger","Helvetica Neue",Arial,sans-serif;font-size:1rem;line-height:1.5}
+a{color:var(--blue)}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:2px;border-radius:2px}
+button,input,select,textarea{font:inherit;color:inherit}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+[hidden]{display:none !important}
+
+/* Page head */
+.page-head{padding:1rem 1.25rem}
+.page-head h1{margin:0;font-size:clamp(1.4rem,2.6vw,1.8rem);line-height:1.2;font-weight:800;letter-spacing:-.015em}
+.page-head .meta{color:var(--muted);margin:.15rem 0 0;max-width:70ch}
+
+/* Workspace */
+main{display:grid;grid-template-columns:minmax(300px,380px) minmax(0,1fr);gap:1.25rem;padding:0 1.25rem 1.25rem;align-items:start}
+@media (max-width:880px){main{grid-template-columns:1fr}}
+@media (max-width:420px){main{padding:0 1rem 1rem} .page-head,.notes{padding-left:1rem;padding-right:1rem}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow);padding:1.1rem;min-width:0}
+.panel h2{font-size:1.05rem;font-weight:700;margin:0 0 .75rem}
+.block{margin-bottom:1.1rem}
+label{display:block;font-weight:600;margin:0 0 .35rem}
+.hint{color:var(--muted);font-size:.88rem;margin:0 0 .5rem}
+textarea,input[type=text],input[type=number]{width:100%;padding:.5rem .65rem;border:2px solid var(--muted);border-radius:4px;background:var(--surface)}
+textarea{min-height:260px;resize:vertical;font:14px/1.45 Consolas,"Courier New",monospace}
+textarea:focus,input[type=text]:focus,input[type=number]:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px var(--yellow)}
+select{width:100%;padding:.5rem .65rem;border:2px solid var(--muted);border-radius:4px;background:var(--surface)}
+select:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px var(--yellow)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+@media (max-width:420px){.pair{grid-template-columns:1fr;gap:0}}
+.check{display:flex;gap:.6rem;align-items:flex-start;font-weight:400;margin-bottom:.6rem;cursor:pointer}
+.check input{width:20px;height:20px;margin:2px 0 0;flex:none;accent-color:var(--blue)}
+#detected{font-size:.88rem;color:var(--muted);margin:.4rem 0 0;min-height:1.3em}
+
+/* Buttons */
+.btns{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+button{display:inline-flex;align-items:center;gap:.4rem;border-radius:4px;padding:.5rem .95rem;font-weight:700;cursor:pointer;background:var(--surface);color:var(--blue);border:2px solid var(--blue);line-height:1.2;white-space:nowrap}
+button:hover{background:var(--blue-bg)}
+button.primary{background:var(--green);color:#fff;border-color:var(--green);box-shadow:0 3px 0 #00401E}
+button.primary:hover{filter:brightness(1.07);background:var(--green)}
+button.primary:active{transform:translateY(2px);box-shadow:0 1px 0 #00401E}
+
+/* Result */
+.summary{font-size:clamp(1.3rem,2.6vw,1.85rem);line-height:1.25;font-weight:700;letter-spacing:-.01em;margin:0 0 .3rem;max-width:36ch}
+.summary strong{color:var(--blue);font-weight:800}
+.focuson{margin:0 0 1rem;color:var(--muted);max-width:70ch}
+.chartbar{display:flex;flex-wrap:wrap;gap:.5rem 1rem;align-items:end;margin:0 0 .6rem}
+.chartbar .block{margin:0;min-width:260px}
+.chartwrap{border:1px solid var(--line);border-radius:8px;overflow-x:auto;margin-bottom:.9rem;background:#fff}
+.chartwrap svg{width:100%;min-width:560px;height:auto;display:block}
+.empty{padding:3rem .5rem;text-align:center;color:var(--muted)}
+.empty p{margin:0 auto .9rem;max-width:60ch}
+.tablewrap{overflow-x:auto;margin-top:1.25rem}
+.tablewrap h3{font-size:1.05rem;font-weight:700;margin:0 0 .5rem}
+.tablewrap .hint{margin:.4rem 0 0}
+table{border-collapse:collapse;width:100%;font-size:.94rem}
+th,td{text-align:left;padding:.5rem .65rem;border-bottom:1px solid var(--line)}
+th{border-bottom:2px solid var(--text)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+td.sub{padding-left:1.6rem}
+td.good{color:var(--green);font-weight:700}
+td.ok{color:var(--blue);font-weight:700}
+td.poor{color:var(--danger);font-weight:700}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.6rem;margin:0 0 1rem}
+.stat{border:1px solid var(--line);border-radius:6px;padding:.55rem .75rem}
+.stat b{display:block;font-size:1.3rem;font-weight:800;font-variant-numeric:tabular-nums}
+.stat b.good{color:var(--green)} .stat b.ok{color:var(--blue)} .stat b.poor{color:var(--danger)}
+.stat span{color:var(--muted);font-size:.85rem}
+.legend-note{color:var(--muted);font-size:.88rem;margin:-.4rem 0 .9rem}
+.reading{margin-top:1.4rem;border-top:1px solid var(--line);padding-top:1.1rem}
+.reading h3{font-size:1.05rem;font-weight:700;margin:0 0 .5rem}
+.reading p{max-width:75ch;margin:0 0 .75rem}
+.warnbox{background:#FFF4DB;color:#6B4A00;border-left:5px solid var(--yellow);border-radius:0 4px 4px 0;padding:.6rem .8rem;margin:0 0 1rem;max-width:75ch}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .warnbox{background:#3A2E10;color:#FFD27A}}
+:root[data-theme="dark"] .warnbox{background:#3A2E10;color:#FFD27A}
+
+/* Notes */
+.notes{padding:0 1.25rem 2rem;color:var(--muted);font-size:.92rem}
+.notes p{max-width:80ch;margin:0 0 .75rem}
+/* Centre the page in the same 1340px column as the FOCUS header */
+.page-head,main,.notes{box-sizing:border-box;max-width:1340px;margin-left:auto;margin-right:auto}
+.notice{background:var(--blue-bg);color:var(--text);border-left:5px solid var(--blue);border-radius:0 4px 4px 0;padding:.7rem .9rem;max-width:80ch}
+@media (prefers-reduced-motion: no-preference){button{transition:background .15s,filter .15s}}
+.choices{border:0;margin:0 0 1.1rem;padding:0;min-width:0}
+.choices legend{font-weight:600;margin:0 0 .45rem;padding:0}
+.check input[type=radio]{border-radius:50%}
+.check small{display:block;color:var(--muted);font-size:.85rem}
+.err{color:var(--danger);font-size:.88rem;margin:.35rem 0 0;font-weight:600}
+input[aria-invalid=true]{border-color:var(--danger)}
+</style>
+{% include focus-head.html %}
+</head>
+<body>
+
+{% include focus-header.html %}
+
+<div class="page-head fa-host">
+  <div class="fa-head-text">
+    <h1>Power and sample size</h1>
+    <p class="meta">Plan a test before you collect the data: work out how many people or measurements you need, how likely your test is to pick up a real change, or the smallest change a sample can reliably detect. Everything runs in your browser, so nothing is uploaded.</p>
+  </div>
+  <div data-focus-actions></div>
+</div>
+
+<main>
+  <section class="panel" aria-labelledby="data-h">
+    <h2 id="data-h">Your test</h2>
+
+    <div class="block">
+      <label for="test">Hypothesis test</label>
+      <select id="test">
+        <option value="t1">1-sample t test or paired t test</option>
+        <option value="t2" selected>2-sample t test</option>
+        <option value="anova">One-way ANOVA</option>
+        <option value="p1">1-proportion test</option>
+        <option value="p2">2-proportions test</option>
+      </select>
+      <p class="hint" id="testHint" style="margin:.35rem 0 0"></p>
+    </div>
+    <div class="pair">
+      <div class="block">
+        <label for="sides">Test type</label>
+        <select id="sides">
+          <option value="2" selected>Two-sided</option>
+          <option value="1">One-sided</option>
+        </select>
+      </div>
+      <div class="block">
+        <label for="alpha">Significance level (α)</label>
+        <input type="number" id="alpha" step="0.01" min="0" max="0.5" value="0.05" inputmode="decimal">
+      </div>
+    </div>
+    <p class="hint" id="sidesHint" style="margin-top:-.6rem"></p>
+
+    <fieldset class="choices">
+      <legend>What do you want to work out?</legend>
+      <label class="check"><input type="radio" name="solve" value="power" checked><span>Power<small>The chance of detecting the change, for a given sample size</small></span></label>
+      <label class="check"><input type="radio" name="solve" value="n"><span>Sample size<small>How many you need to reach a target power</small></span></label>
+      <label class="check"><input type="radio" name="solve" value="diff"><span>Smallest detectable difference<small>The smallest change a given sample size can detect</small></span></label>
+    </fieldset>
+
+    <h2>Values</h2>
+    <div class="block" data-for="n">
+      <label for="n">Sample size</label>
+      <input type="number" id="n" step="1" min="2" value="90" inputmode="numeric" aria-describedby="nHint">
+      <p class="hint" id="nHint" style="margin:.35rem 0 0"></p>
+    </div>
+    <div class="block" data-for="power">
+      <label for="power">Desired power (%)</label>
+      <input type="number" id="power" step="1" min="1" max="99.9" value="80" inputmode="decimal" aria-describedby="powerHint">
+      <p class="hint" id="powerHint" style="margin:.35rem 0 0">80% is the usual target, 90% for important decisions.</p>
+    </div>
+    <div class="block" data-for="diff">
+      <label for="diff" id="diffLabel">Difference to detect</label>
+      <input type="number" id="diff" step="any" value="0.5" inputmode="decimal" aria-describedby="diffHint">
+      <p class="hint" id="diffHint" style="margin:.35rem 0 0"></p>
+    </div>
+    <div class="block">
+      <label for="sd" id="sdLabel">Standard deviation</label>
+      <input type="number" id="sd" step="any" min="0" value="1.4" inputmode="decimal" aria-describedby="sdHint">
+      <p class="hint" id="sdHint" style="margin:.35rem 0 0"></p>
+    </div>
+    <div class="block" data-for="levels">
+      <label for="levels">Number of groups</label>
+      <input type="number" id="levels" step="1" min="2" value="3" inputmode="numeric">
+    </div>
+
+    <div class="btns" style="margin-bottom:1.5rem">
+      <button type="button" id="clearBtn">Reset</button>
+    </div>
+
+    <h2>Chart settings</h2>
+    <div class="block">
+      <label for="title">Chart title</label>
+      <input type="text" id="title" placeholder="e.g. Length of stay: how many patients do we need?">
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="result-h">
+    <h2 id="result-h" class="sr">Result</h2>
+    <div id="result"></div>
+  </section>
+</main>
+
+<section class="notes" aria-label="About power and sample size">
+  <p><b>What it does:</b> before you run a hypothesis test, such as a t test, ANOVA or a test of proportions, it helps to know whether you have enough data to find what you are looking for. <i>Power</i> is the chance that the test will show a significant result when the change you care about really has happened. Give any two of sample size, power and the difference you want to detect, and this works out the third.</p>
+  <p><b>Choosing the values:</b> the difference to detect should be the smallest change that would matter in practice, not the change you hope for. Take the standard deviation from your baseline data, for example from a run chart or SPC chart of the measure; a larger standard deviation needs a larger sample. For proportions, the baseline is your current rate and the comparison is the rate you would want to be able to detect. The significance level (α) is the risk of a false alarm you will accept, usually 0.05. Use a one-sided test only if you decided in advance that you only care about a change in one direction.</p>
+  <p><b>How it is worked out:</b> the same methods as the AAS Data Analysis Toolkit. Power for t tests uses a normal approximation to the noncentral t distribution, and power for one-way ANOVA uses the noncentral F distribution, where the difference is between the largest and smallest group means with the other means midway between them. Tests of proportions use the normal approximation, and their sample sizes come from the usual formula. Sample sizes for 2-sample tests, ANOVA and the 2-proportions test are for each group; for a paired t test, the sample size is the number of pairs.</p>
+  <div class="notice">Want to build your skills? <a href="https://coh.gstt.nhs.uk/course/view.php?id=3199" target="_blank" rel="noopener">Book QI training with the CITI Academy</a>.</div>
+</section>
+
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const els = {
+    test: $('test'), sides: $('sides'), alpha: $('alpha'), n: $('n'), power: $('power'), diff: $('diff'),
+    sd: $('sd'), levels: $('levels'), title: $('title'), result: $('result')
+  };
+  const COLORS = { ink: '#212B32', muted: '#4C6272', grid: '#E8EDEE', axis: '#AEB7BD', line: '#005EB8', mark: '#D5281B', ref: '#007F3B', base: '#768692' };
+  const FONT = 'Figtree, Frutiger, Helvetica Neue, Arial, sans-serif';
+  const nf4 = new Intl.NumberFormat('en-GB', { maximumSignificantDigits: 4 });
+  const nfInt = new Intl.NumberFormat('en-GB', { maximumFractionDigits: 0 });
+  const TESTS = {
+    t1: { name: '1-sample t test or paired t test', short: '1-sample or paired t test', prop: false, groups: false },
+    t2: { name: '2-sample t test', short: '2-sample t test', prop: false, groups: true },
+    anova: { name: 'One-way ANOVA', short: 'one-way ANOVA', prop: false, groups: true },
+    p1: { name: '1-proportion test', short: '1-proportion test', prop: true, groups: false },
+    p2: { name: '2-proportions test', short: '2-proportions test', prop: true, groups: true }
+  };
+  const SOLVE = { power: 'Power', n: 'Sample size', diff: 'Smallest detectable difference' };
+  const MAX_N = 10000000;
+
+  let current = null;
+  let timer = null;
+
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const slug = s => (s || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'power-and-sample-size';
+  const pc = x => isFinite(x) ? (Math.round(x * 1000) / 10).toFixed(1).replace(/\.0$/, '') + '%' : '–';
+  const pcp = x => isFinite(x) ? nf4.format(+(x * 100).toPrecision(3)) + '%' : '–'; // a proportion as a percentage
+  const an = s => (/^(8|1[18](?![0-9]))/.test(s) ? 'an ' : 'a ') + s; // "an 80% chance", "a 66% chance"
+  const fmt = x => isFinite(x) ? nf4.format(+x.toPrecision(4)) : '–';
+  const solveMode = () => (document.querySelector('input[name="solve"]:checked') || {}).value || 'power';
+
+  // ---- distributions ----
+  function lgamma(z) {
+    const c = [76.18009172947146, -86.50532032941677, 24.01409824083091, -1.231739572450155, 0.1208650973866179e-2, -0.5395239384953e-5];
+    let x = z, y = z, t = x + 5.5; t -= (x + 0.5) * Math.log(t);
+    let s = 1.000000000190015; for (const k of c) s += k / ++y;
+    return -t + Math.log(2.5066282746310005 * s / x);
+  }
+  function betacf(a, b, x) {
+    const FPMIN = 1e-300;
+    let qab = a + b, qap = a + 1, qam = a - 1, c = 1, d = 1 - qab * x / qap;
+    if (Math.abs(d) < FPMIN) d = FPMIN; d = 1 / d; let h = d;
+    for (let m = 1; m <= 2000; m++) {
+      const m2 = 2 * m;
+      let aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+      d = 1 + aa * d; if (Math.abs(d) < FPMIN) d = FPMIN; c = 1 + aa / c; if (Math.abs(c) < FPMIN) c = FPMIN; d = 1 / d; h *= d * c;
+      aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+      d = 1 + aa * d; if (Math.abs(d) < FPMIN) d = FPMIN; c = 1 + aa / c; if (Math.abs(c) < FPMIN) c = FPMIN; d = 1 / d;
+      const del = d * c; h *= del; if (Math.abs(del - 1) < 3e-14) break;
+    }
+    return h;
+  }
+  function ibeta(x, a, b) {
+    if (x <= 0) return 0; if (x >= 1) return 1;
+    const bt = Math.exp(lgamma(a + b) - lgamma(a) - lgamma(b) + a * Math.log(x) + b * Math.log(1 - x));
+    return x < (a + 1) / (a + b + 2) ? bt * betacf(a, b, x) / a : 1 - bt * betacf(b, a, 1 - x) / b;
+  }
+  // Standard normal CDF (complementary error function, accurate to about 1e-7)
+  function normCdf(x) {
+    if (x === Infinity) return 1; if (x === -Infinity) return 0;
+    const z = Math.abs(x) / Math.SQRT2, t = 1 / (1 + 0.5 * z);
+    const r = t * Math.exp(-z * z - 1.26551223 + t * (1.00002368 + t * (0.37409196 + t * (0.09678418 + t * (-0.18628806 + t * (0.27886807 + t * (-1.13520398 + t * (1.48851587 + t * (-0.82215223 + t * 0.17087277)))))))));
+    return x >= 0 ? 1 - r / 2 : r / 2;
+  }
+  // Inverse standard normal (Acklam), with one Newton step
+  function normInv(p) {
+    if (p <= 0) return -Infinity; if (p >= 1) return Infinity;
+    const a = [-39.69683028665376, 220.9460984245205, -275.9285104469687, 138.357751867269, -30.66479806614716, 2.506628277459239];
+    const b = [-54.47609879822406, 161.5858368580409, -155.6989798598866, 66.80131188771972, -13.28068155288572];
+    const c = [-0.007784894002430293, -0.3223964580411365, -2.400758277161838, -2.549732539343734, 4.374664141464968, 2.938163982698783];
+    const d = [0.007784695709041462, 0.3224671290700398, 2.445134137142996, 3.754408661907416];
+    const pl = 0.02425;
+    let x;
+    if (p < pl) { const q = Math.sqrt(-2 * Math.log(p)); x = (((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1); }
+    else if (p <= 1 - pl) { const q = p - 0.5, r = q * q; x = (((((a[0] * r + a[1]) * r + a[2]) * r + a[3]) * r + a[4]) * r + a[5]) * q / (((((b[0] * r + b[1]) * r + b[2]) * r + b[3]) * r + b[4]) * r + 1); }
+    else { const q = Math.sqrt(-2 * Math.log(1 - p)); x = -(((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1); }
+    const e = normCdf(x) - p, u = e * Math.sqrt(2 * Math.PI) * Math.exp(x * x / 2);
+    return x - u / (1 + x * u / 2);
+  }
+  function tCdf(t, df) {
+    const p = 0.5 * ibeta(df / (df + t * t), df / 2, 0.5);
+    return t > 0 ? 1 - p : p;
+  }
+  // t value with lower-tail probability p (p above 0.5)
+  function tInv(p, df) {
+    let lo = 0, hi = 1;
+    while (tCdf(hi, df) < p && hi < 1e8) { lo = hi; hi *= 2; }
+    for (let i = 0; i < 100; i++) { const mid = (lo + hi) / 2; if (tCdf(mid, df) < p) lo = mid; else hi = mid; }
+    return (lo + hi) / 2;
+  }
+  // Critical value of F, returned as u = d1·F / (d1·F + d2), the beta-scale cut-off
+  function fCritU(alpha, d1, d2) {
+    let lo = 0, hi = 1;
+    for (let i = 0; i < 100; i++) { const mid = (lo + hi) / 2; if (1 - ibeta(mid, d1 / 2, d2 / 2) > alpha) lo = mid; else hi = mid; }
+    return (lo + hi) / 2;
+  }
+
+  // ---- power ----
+  // o: { test, sides, alpha, sd (or baseline proportion), levels }. x is the difference,
+  // or the comparison proportion for the proportions tests. n is per group.
+  function powerAt(o, n, x) {
+    if (o.test === 't1' || o.test === 't2') {
+      const k = o.test === 't1' ? 1 : 2, df = k * (n - 1);
+      const ncp = Math.sqrt(n / k) * Math.abs(x) / o.sd;
+      const tc = tInv(1 - o.alpha / o.sides, df);
+      const z = (tc * (1 - 1 / (4 * df)) - ncp) / Math.sqrt(1 + tc * tc / (2 * df));
+      return 1 - normCdf(z);
+    }
+    if (o.test === 'anova') {
+      const d1 = o.levels - 1, d2 = o.levels * (n - 1);
+      const lambda = n * x * x / (2 * o.sd * o.sd), m = lambda / 2;
+      const u = fCritU(o.alpha, d1, d2);
+      if (m === 0) return 1 - ibeta(u, d1 / 2, d2 / 2);
+      const jmax = Math.ceil(m + 12 * Math.sqrt(m) + 30);
+      let s = 0;
+      for (let j = 0; j <= jmax; j++) {
+        const w = Math.exp(-m + j * Math.log(m) - lgamma(j + 1));
+        if (w > 1e-17) s += w * ibeta(u, d1 / 2 + j, d2 / 2);
+      }
+      return Math.min(1, Math.max(0, 1 - s));
+    }
+    const z = normInv(1 - o.alpha / o.sides);
+    if (o.test === 'p1') {
+      const p0 = o.sd, p1 = x;
+      const se0 = Math.sqrt(p0 * (1 - p0) / n), se1 = Math.sqrt(p1 * (1 - p1) / n);
+      if (o.sides === 1) return p1 > p0 ? 1 - normCdf((p0 - p1 + z * se0) / se1) : normCdf((p0 - p1 - z * se0) / se1);
+      return 1 - normCdf((p0 - p1 + z * se0) / se1) + normCdf((p0 - p1 - z * se0) / se1);
+    }
+    const p2 = o.sd, p1 = x, pbar = (p1 + p2) / 2;
+    const sep = Math.sqrt(2 * pbar * (1 - pbar) / n), se = Math.sqrt((p1 * (1 - p1) + p2 * (1 - p2)) / n);
+    if (o.sides === 1) return normCdf((Math.abs(p2 - p1) - z * sep) / se);
+    return 1 - normCdf((p2 - p1 + z * sep) / se) + normCdf((p2 - p1 - z * sep) / se);
+  }
+
+  // Sample size (per group) to reach the target power
+  function sampleSize(o, x, target) {
+    if (TESTS[o.test].prop) {
+      const z = normInv(1 - o.alpha / o.sides), zb = normInv(target);
+      let n;
+      if (o.test === 'p1') { const p0 = o.sd; n = ((z * Math.sqrt(p0 * (1 - p0)) + zb * Math.sqrt(x * (1 - x))) / (x - p0)) ** 2; }
+      else { const p2 = o.sd, pbar = (x + p2) / 2; n = ((z * Math.sqrt(2 * pbar * (1 - pbar)) + zb * Math.sqrt(x * (1 - x) + p2 * (1 - p2))) / (x - p2)) ** 2; }
+      return Math.max(2, Math.ceil(n - 1e-9));
+    }
+    if (powerAt(o, 2, x) >= target) return 2;
+    let lo = 2, hi = 4;
+    while (powerAt(o, hi, x) < target) { lo = hi; hi *= 2; if (hi > MAX_N) return Infinity; }
+    while (hi - lo > 1) { const mid = Math.floor((lo + hi) / 2); if (powerAt(o, mid, x) >= target) hi = mid; else lo = mid; }
+    return hi;
+  }
+
+  // Smallest difference detectable with the target power. For proportions, returns the
+  // comparison proportions above and below the baseline (null where none is possible).
+  function minDiff(o, n, target) {
+    const bisect = (f, lo, hi) => { for (let i = 0; i < 80; i++) { const mid = (lo + hi) / 2; if (f(mid)) hi = mid; else lo = mid; } return hi; };
+    if (TESTS[o.test].prop) {
+      const p0 = o.sd, eps = 1e-9;
+      const up = powerAt(o, n, 1 - eps) >= target ? bisect(p => powerAt(o, n, p) >= target, p0, 1 - eps) : null;
+      const down = powerAt(o, n, eps) >= target ? 1 - bisect(q => powerAt(o, n, 1 - q) >= target, 1 - p0, 1 - eps) : null;
+      return { up, down };
+    }
+    let hi = o.sd;
+    while (powerAt(o, n, hi) < target) { hi *= 2; if (hi > o.sd * 1e6) return { d: Infinity }; }
+    return { d: bisect(d => powerAt(o, n, d) >= target, 0, hi) };
+  }
+
+  // ---- reading the inputs ----
+  function labels(test) {
+    const t = TESTS[test];
+    return {
+      diff: test === 'anova' ? 'Difference between the largest and smallest means' : t.prop ? 'Comparison proportion (%)' : 'Difference to detect',
+      diffHint: test === 'anova' ? 'The gap between the highest and lowest group averages that you want to detect, in the units of your measure.'
+        : t.prop ? 'The rate you want to be able to detect, as a percentage, for example 60 if you hope to move from 40% to 60%.'
+        : test === 't1' ? 'The change in the average you want to detect, compared with the target or the before value, in the units of your measure.'
+        : 'The gap between the two group averages that you want to detect, in the units of your measure.',
+      sd: t.prop ? 'Baseline proportion (%)' : 'Standard deviation',
+      sdHint: t.prop ? (test === 'p1' ? 'Your current rate, or the target you are comparing with, as a percentage.' : 'The rate in the comparison (control) group, as a percentage.')
+        : test === 't1' ? 'How much individual values vary, from your baseline data. For a paired test, use the standard deviation of the differences between pairs.'
+        : 'How much individual values vary within each group, from your baseline data.',
+      nHint: test === 't1' ? 'The number of measurements, or the number of pairs for a paired test.' : t.groups ? 'The number in each group.' : 'The number of people or items in the sample.',
+      testHint: {
+        t1: 'Compares an average with a target, or before and after values on the same people or items.',
+        t2: 'Compares the averages of two separate groups.',
+        anova: 'Compares the averages of three or more groups.',
+        p1: 'Compares a rate (a percentage) with a target or a past rate.',
+        p2: 'Compares the rates (percentages) in two separate groups.'
+      }[test]
+    };
+  }
+  function syncForm() {
+    const test = els.test.value, mode = solveMode(), L = labels(test);
+    $('diffLabel').textContent = L.diff; $('diffHint').textContent = L.diffHint;
+    $('sdLabel').textContent = L.sd; $('sdHint').textContent = L.sdHint;
+    $('nHint').textContent = L.nHint; $('testHint').textContent = L.testHint;
+    $('sidesHint').textContent = test === 'anova' ? 'ANOVA always tests for a difference in either direction, so the test type has no effect.' : '';
+    els.sides.disabled = test === 'anova';
+    document.querySelector('[data-for="levels"]').hidden = test !== 'anova';
+    document.querySelector('[data-for="n"]').hidden = mode === 'n';
+    document.querySelector('[data-for="power"]').hidden = mode === 'power';
+    document.querySelector('[data-for="diff"]').hidden = mode === 'diff';
+  }
+  function readInputs() {
+    const test = els.test.value, mode = solveMode(), t = TESTS[test];
+    const errs = [];
+    const val = el => el.value.trim() === '' ? NaN : Number(el.value);
+    const bad = (el, msg) => { el.setAttribute('aria-invalid', 'true'); errs.push(msg); };
+    [els.alpha, els.n, els.power, els.diff, els.sd, els.levels].forEach(el => el.removeAttribute('aria-invalid'));
+    const o = { test, mode, sides: test === 'anova' ? 2 : +els.sides.value, title: els.title.value.trim() };
+    o.alpha = val(els.alpha);
+    if (!(o.alpha > 0 && o.alpha < 0.5)) bad(els.alpha, 'The significance level must be more than 0 and less than 0.5, for example 0.05.');
+    if (t.prop) {
+      o.sd = val(els.sd) / 100;
+      if (!(o.sd > 0 && o.sd < 1)) bad(els.sd, 'The baseline proportion must be more than 0% and less than 100%.');
+    } else {
+      o.sd = val(els.sd);
+      if (!(o.sd > 0)) bad(els.sd, 'The standard deviation must be more than 0.');
+    }
+    if (test === 'anova') {
+      o.levels = val(els.levels);
+      if (!(Number.isInteger(o.levels) && o.levels >= 2 && o.levels <= 1000)) bad(els.levels, 'The number of groups must be a whole number, 2 or more.');
+    }
+    if (mode !== 'n') {
+      o.n = val(els.n);
+      if (!(Number.isInteger(o.n) && o.n >= 2 && o.n <= MAX_N)) bad(els.n, 'The sample size must be a whole number, 2 or more.');
+    }
+    if (mode !== 'power') {
+      o.power = val(els.power) / 100;
+      if (!(o.power > 0 && o.power < 1)) bad(els.power, 'The desired power must be more than 0% and less than 100%.');
+      else if (!errs.length && o.power <= o.alpha) bad(els.power, 'The desired power must be higher than the significance level.');
+    }
+    if (mode !== 'diff') {
+      if (t.prop) {
+        o.x = val(els.diff) / 100;
+        if (!(o.x > 0 && o.x < 1)) bad(els.diff, 'The comparison proportion must be more than 0% and less than 100%.');
+        else if (o.x === o.sd) bad(els.diff, 'The comparison proportion must differ from the baseline proportion.');
+      } else {
+        o.x = val(els.diff);
+        if (!(isFinite(o.x) && o.x !== 0)) bad(els.diff, 'The difference to detect must be a number other than 0.');
+      }
+    }
+    return { o, errs };
+  }
+
+  // ---- wording ----
+  function sampleWords(o, n) {
+    const t = TESTS[o.test], s = nfInt.format(n);
+    if (t.groups) return `${s} in each group`;
+    if (o.test === 't1') return `a sample of ${s} (or ${s} pairs)`;
+    return `a sample of ${s}`;
+  }
+  function changeWords(o, x) {
+    if (o.test === 'p1') return `a change from ${pcp(o.sd)} to ${pcp(x)}`;
+    if (o.test === 'p2') return `a difference between ${pcp(o.sd)} and ${pcp(x)}`;
+    if (o.test === 'anova') return `a difference of ${fmt(Math.abs(x))} between the highest and lowest of ${o.levels} group means`;
+    return `a difference of ${fmt(Math.abs(x))}`;
+  }
+  function setupWords(o) {
+    const sd = TESTS[o.test].prop ? '' : `, standard deviation ${fmt(o.sd)}`;
+    return `${TESTS[o.test].name}, ${o.test === 'anova' ? '' : (o.sides === 1 ? 'one-sided' : 'two-sided') + ', '}α = ${fmt(o.alpha)}${sd}`;
+  }
+
+  // ---- calculations ----
+  function solve(o) {
+    const r = { o };
+    if (o.mode === 'power') {
+      r.power = powerAt(o, o.n, o.x);
+      if (r.power < 0.8) r.n80 = sampleSize(o, o.x, 0.8);
+    } else if (o.mode === 'n') {
+      r.n = sampleSize(o, o.x, o.power);
+      if (isFinite(r.n)) r.actual = powerAt(o, r.n, o.x);
+    } else {
+      r.md = minDiff(o, o.n, o.power);
+    }
+    return r;
+  }
+  function headline(r) {
+    const o = r.o;
+    if (o.mode === 'power') return `With ${esc(sampleWords(o, o.n))}, the power is <strong>${pc(r.power)}</strong>`;
+    if (o.mode === 'n') return isFinite(r.n) ? `You need <strong>${nfInt.format(r.n)}</strong> ${TESTS[o.test].groups ? 'in each group' : o.test === 't1' ? 'measurements or pairs' : 'in the sample'}` : 'The sample size needed is <strong>over 10 million</strong>';
+    if (TESTS[o.test].prop) {
+      const { up, down } = r.md;
+      if (up == null && down == null) return 'No change can be detected with this power';
+      return `The smallest detectable change is to <strong>${[up != null ? pcp(up) : null, down != null ? pcp(down) : null].filter(Boolean).join('</strong> or <strong>')}</strong>`;
+    }
+    return isFinite(r.md.d) ? `The smallest detectable difference is <strong>${fmt(r.md.d)}</strong>` : 'No difference can be detected with this power';
+  }
+  function readingParts(r) {
+    const o = r.o, out = [];
+    if (o.mode === 'power') {
+      out.push(`With ${sampleWords(o, o.n)}, a ${TESTS[o.test].short} has ${an(pc(r.power))} chance of giving a significant result (at α = ${fmt(o.alpha)}) if there really is ${changeWords(o, o.x)}${TESTS[o.test].prop ? '' : ` and the standard deviation is ${fmt(o.sd)}`}.`);
+      if (r.power >= 0.8) out.push('That meets the usual target of 80% power, so the sample is large enough to detect a change of this size.');
+      else out.push(`That is below the usual target of 80% power, so there is a real risk of missing the change even if it has happened, and a non-significant result would not show that nothing changed. ${isFinite(r.n80) ? `You would need ${sampleWords(o, r.n80)} for 80% power.` : ''}`);
+    } else if (o.mode === 'n') {
+      if (!isFinite(r.n)) out.push('The change you want to detect is very small compared with the variation, so no practical sample could detect it. Look for a bigger change to detect, or a way to measure with less variation.');
+      else {
+        out.push(`To have ${an(pc(o.power))} chance of detecting ${changeWords(o, o.x)}${TESTS[o.test].prop ? '' : ` when the standard deviation is ${fmt(o.sd)}`}, you need ${sampleWords(o, r.n)}${TESTS[o.test].groups ? `, ${nfInt.format(r.n * (o.test === 'anova' ? o.levels : 2))} in total` : ''}. With that sample the power is ${pc(r.actual)}.`);
+        out.push('Allow for people who drop out or records with missing data by collecting a little more than this.');
+      }
+    } else {
+      if (TESTS[o.test].prop) {
+        const { up, down } = r.md;
+        const parts = [];
+        if (up != null) parts.push(`a rise from ${pcp(o.sd)} to ${pcp(up)} or more`);
+        if (down != null) parts.push(`a fall from ${pcp(o.sd)} to ${pcp(down)} or less`);
+        if (parts.length) out.push(`With ${sampleWords(o, o.n)}, the test has ${an(pc(o.power))} chance of detecting ${parts.join(', or ')}. ${o.sides === 1 ? 'For a one-sided test, use only the direction you planned to test.' : ''}`);
+        if (up == null || down == null) out.push(`There is no proportion ${up == null ? 'above' : 'below'} the baseline that can be detected with this power and sample size.`);
+      } else if (isFinite(r.md.d)) {
+        out.push(`With ${sampleWords(o, o.n)}, a ${TESTS[o.test].short} has ${an(pc(o.power))} chance of detecting a difference of ${fmt(r.md.d)}${o.test === 'anova' ? ' between the highest and lowest group means' : ''} or more, when the standard deviation is ${fmt(o.sd)}. That is ${fmt(r.md.d / o.sd)} standard deviations.`);
+      }
+      out.push('Smaller changes could still happen and go undetected. If the smallest change that would matter in practice is less than this, you need a larger sample.');
+    }
+    return out;
+  }
+
+  // ---- chart ----
+  function niceTicks(lo, hi, count) {
+    const span = hi - lo || 1, raw = span / count, mag = Math.pow(10, Math.floor(Math.log10(raw)));
+    const step = [1, 2, 2.5, 5, 10].map(m => m * mag).find(s => span / s <= count) || 10 * mag;
+    const out = []; for (let v = Math.ceil(lo / step) * step; v <= hi + step * 1e-9; v += step) out.push(+v.toPrecision(12));
+    return out;
+  }
+  function curveData(r) {
+    const o = r.o;
+    if (o.mode === 'diff') {
+      if (TESTS[o.test].prop) {
+        const xs = Array.from({ length: 199 }, (_, i) => (i + 1) / 200);
+        return { kind: 'prop', xs, ys: xs.map(p => powerAt(o, o.n, p)), xLabel: 'Comparison proportion', xFmt: v => pcp(v), x0: 0, x1: 1 };
+      }
+      const top = isFinite(r.md.d) ? r.md.d * 2 : o.sd * 2;
+      const xs = Array.from({ length: 101 }, (_, i) => top * i / 100);
+      return { kind: 'diff', xs, ys: xs.map(d => powerAt(o, o.n, d)), xLabel: o.test === 'anova' ? 'Difference between largest and smallest means' : 'Difference', xFmt: fmt, x0: 0, x1: top };
+    }
+    const n = o.mode === 'n' ? r.n : o.n;
+    const ref = isFinite(r.n80) ? Math.max(n, r.n80) : n;
+    const top = Math.max(10, Math.ceil(ref * 2));
+    const xs = [...new Set(Array.from({ length: 121 }, (_, i) => Math.round(2 + (top - 2) * i / 120)))];
+    return { kind: 'n', xs, ys: xs.map(m => powerAt(o, m, o.x)), xLabel: TESTS[o.test].groups ? 'Sample size (each group)' : 'Sample size', xFmt: v => nfInt.format(v), x0: 0, x1: top };
+  }
+  function chartSVG(r) {
+    const o = r.o, c = curveData(r);
+    const W = 760, H = 420, m = { l: 64, r: 24, t: o.title ? 52 : 24, b: 58 };
+    const pw = W - m.l - m.r, ph = H - m.t - m.b;
+    const X = v => m.l + (v - c.x0) / (c.x1 - c.x0) * pw, Y = v => m.t + (1 - v) * ph;
+    let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.aria)}" font-family="${FONT}"><rect width="${W}" height="${H}" fill="#fff"/>`;
+    if (o.title) s += `<text x="${W / 2}" y="30" text-anchor="middle" font-size="18" font-weight="700" fill="${COLORS.ink}">${esc(o.title)}</text>`;
+    [0, 0.2, 0.4, 0.6, 0.8, 1].forEach(v => {
+      s += `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="${COLORS.grid}"/>`;
+      s += `<text x="${m.l - 8}" y="${Y(v) + 4}" text-anchor="end" font-size="12" fill="${COLORS.muted}">${v * 100}%</text>`;
+    });
+    const xt = c.kind === 'prop' ? [0, 0.2, 0.4, 0.6, 0.8, 1] : niceTicks(c.x0, c.x1, 8);
+    xt.forEach(v => {
+      s += `<line x1="${X(v)}" x2="${X(v)}" y1="${H - m.b}" y2="${H - m.b + 5}" stroke="${COLORS.axis}"/>`;
+      s += `<text x="${X(v)}" y="${H - m.b + 19}" text-anchor="middle" font-size="12" fill="${COLORS.muted}">${esc(c.kind === 'prop' ? Math.round(v * 100) + '%' : c.xFmt(v))}</text>`;
+    });
+    s += `<line x1="${m.l}" x2="${W - m.r}" y1="${H - m.b}" y2="${H - m.b}" stroke="${COLORS.axis}"/><line x1="${m.l}" x2="${m.l}" y1="${m.t}" y2="${H - m.b}" stroke="${COLORS.axis}"/>`;
+    s += `<text x="${m.l + pw / 2}" y="${H - 14}" text-anchor="middle" font-size="13" font-weight="600" fill="${COLORS.ink}">${esc(c.xLabel)}</text>`;
+    s += `<text transform="translate(16 ${m.t + ph / 2}) rotate(-90)" text-anchor="middle" font-size="13" font-weight="600" fill="${COLORS.ink}">Power</text>`;
+    // target power line
+    const target = o.mode === 'power' ? 0.8 : o.power;
+    s += `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(target)}" y2="${Y(target)}" stroke="${COLORS.ref}" stroke-width="1.5" stroke-dasharray="6 4"/>`;
+    s += `<text x="${W - m.r - 4}" y="${Y(target) - 6}" text-anchor="end" font-size="12" fill="${COLORS.ref}">${o.mode === 'power' ? '80% (usual target)' : 'Target ' + pc(target)}</text>`;
+    if (c.kind === 'prop') {
+      s += `<line x1="${X(o.sd)}" x2="${X(o.sd)}" y1="${m.t}" y2="${H - m.b}" stroke="${COLORS.base}" stroke-dasharray="3 3"/>`;
+      s += `<text x="${X(o.sd) + 5}" y="${m.t + 12}" font-size="12" fill="${COLORS.muted}">Baseline ${esc(pcp(o.sd))}</text>`;
+    }
+    s += `<path d="${c.xs.map((x, i) => (i ? 'L' : 'M') + X(x).toFixed(1) + ' ' + Y(c.ys[i]).toFixed(1)).join('')}" fill="none" stroke="${COLORS.line}" stroke-width="2.5"/>`;
+    c.xs.forEach((x, i) => { if (i % 4 === 0) s += `<circle cx="${X(x).toFixed(1)}" cy="${Y(c.ys[i]).toFixed(1)}" r="6" fill="transparent"><title>${esc(c.xLabel)}: ${esc(c.xFmt(x))}, power ${pc(c.ys[i])}</title></circle>`; });
+    const marks = [];
+    if (o.mode === 'power') marks.push({ x: o.n, y: r.power, label: `n = ${nfInt.format(o.n)}, power ${pc(r.power)}` });
+    if (o.mode === 'n' && isFinite(r.n)) marks.push({ x: r.n, y: r.actual, label: `n = ${nfInt.format(r.n)}, power ${pc(r.actual)}` });
+    if (o.mode === 'diff') {
+      if (c.kind === 'prop') {
+        if (r.md.up != null) marks.push({ x: r.md.up, y: powerAt(o, o.n, r.md.up), label: pcp(r.md.up) });
+        if (r.md.down != null) marks.push({ x: r.md.down, y: powerAt(o, o.n, r.md.down), label: pcp(r.md.down) });
+      } else if (isFinite(r.md.d)) marks.push({ x: r.md.d, y: powerAt(o, o.n, r.md.d), label: `Difference ${fmt(r.md.d)}` });
+    }
+    marks.forEach(k => {
+      const cx = X(k.x), cy = Y(k.y), right = cx > m.l + pw * 0.7;
+      s += `<line x1="${cx}" x2="${cx}" y1="${cy}" y2="${H - m.b}" stroke="${COLORS.mark}" stroke-dasharray="3 3"/>`;
+      s += `<circle cx="${cx}" cy="${cy}" r="6" fill="${COLORS.mark}" stroke="#fff" stroke-width="2"><title>${esc(k.label)}</title></circle>`;
+      s += `<text x="${cx + (right ? -10 : 10)}" y="${cy + 18}" text-anchor="${right ? 'end' : 'start'}" font-size="13" font-weight="700" fill="${COLORS.mark}">${esc(k.label)}</text>`;
+    });
+    return s + '</svg>';
+  }
+
+  // ---- tables ----
+  function otherSizes(r) {
+    const o = r.o, base = o.mode === 'n' ? r.n : o.n;
+    return [...new Set([0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 3].map(f => Math.max(2, Math.round(base * f))))].sort((a, b) => a - b);
+  }
+  function tableData(r) {
+    const o = r.o, t = TESTS[o.test], nHead = t.groups ? 'Sample size (each group)' : 'Sample size';
+    if (o.mode !== 'diff') {
+      if (o.mode === 'n' && !isFinite(r.n)) return null;
+      return { title: 'Power at other sample sizes', head: [nHead, 'Power'], rows: otherSizes(r).map(n => [nfInt.format(n), pc(powerAt(o, n, o.x))]), raw: otherSizes(r).map(n => [n, +powerAt(o, n, o.x).toFixed(4)]) };
+    }
+    const ns = otherSizes(r), mds = ns.map(n => minDiff(o, n, o.power));
+    if (t.prop) {
+      const p = v => v == null ? 'None' : pcp(v);
+      return { title: `Smallest detectable change at other sample sizes (${pc(o.power)} power)`, head: [nHead, 'Comparison above baseline', 'Comparison below baseline'],
+        rows: ns.map((n, i) => [nfInt.format(n), p(mds[i].up), p(mds[i].down)]), raw: ns.map((n, i) => [n, mds[i].up == null ? '' : +mds[i].up.toFixed(6), mds[i].down == null ? '' : +mds[i].down.toFixed(6)]) };
+    }
+    return { title: `Smallest detectable difference at other sample sizes (${pc(o.power)} power)`, head: [nHead, 'Smallest difference'],
+      rows: ns.map((n, i) => [nfInt.format(n), fmt(mds[i].d)]), raw: ns.map((n, i) => [n, +mds[i].d.toPrecision(6)]) };
+  }
+  function tableHTML(td) {
+    if (!td) return '';
+    return `<div class="tablewrap"><h3>${esc(td.title)}</h3><table><thead><tr>${td.head.map((h, i) => `<th${i ? ' class="num"' : ''}>${esc(h)}</th>`).join('')}</tr></thead><tbody>${td.rows.map(row => `<tr>${row.map((v, i) => `<td${i ? ' class="num"' : ''}>${esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+  }
+  function inputRows(r) {
+    const o = r.o, t = TESTS[o.test], rows = [['Hypothesis test', t.name]];
+    if (o.test !== 'anova') rows.push(['Test type', o.sides === 1 ? 'One-sided' : 'Two-sided']);
+    rows.push(['Significance level (α)', o.alpha]);
+    if (o.test === 'anova') rows.push(['Number of groups', o.levels]);
+    rows.push([t.prop ? 'Baseline proportion' : 'Standard deviation', t.prop ? pcp(o.sd) : o.sd]);
+    if (o.mode !== 'diff') rows.push([t.prop ? 'Comparison proportion' : labels(o.test).diff, t.prop ? pcp(o.x) : o.x]);
+    if (o.mode !== 'n') rows.push([t.groups ? 'Sample size (each group)' : 'Sample size', o.n]);
+    if (o.mode !== 'power') rows.push(['Desired power', pc(o.power)]);
+    if (o.mode === 'power') rows.push(['Power', pc(r.power)]);
+    if (o.mode === 'n') rows.push([t.groups ? 'Sample size needed (each group)' : 'Sample size needed', isFinite(r.n) ? r.n : 'Over 10 million'], ['Power at that sample size', pc(r.actual)]);
+    if (o.mode === 'diff') {
+      if (t.prop) rows.push(['Smallest detectable comparison above baseline', r.md.up == null ? 'None' : pcp(r.md.up)], ['Smallest detectable comparison below baseline', r.md.down == null ? 'None' : pcp(r.md.down)]);
+      else rows.push(['Smallest detectable difference', isFinite(r.md.d) ? +r.md.d.toPrecision(6) : 'None']);
+    }
+    return rows;
+  }
+  function tableRows() {
+    const out = [[current.o.title || 'Power and sample size'], ['Calculating', SOLVE[current.o.mode]]].concat(inputRows(current));
+    const td = tableData(current);
+    if (td) out.push([], [td.title], td.head, ...td.raw);
+    return out;
+  }
+  function summaryText() {
+    const lines = [current.o.title || 'Power and sample size', '', setupWords(current.o), ''];
+    readingParts(current).forEach(p => lines.push(p.trim(), ''));
+    return lines.join('\n').trim();
+  }
+
+  // ---- render ----
+  function update() {
+    current = null;
+    syncForm();
+    const { o, errs } = readInputs();
+    if (errs.length) return renderEmpty(errs);
+    const r = solve(o);
+    current = r;
+    const stats = [];
+    if (o.mode === 'power') {
+      stats.push([pc(r.power), 'Power', r.power >= 0.8 ? 'good' : 'poor']);
+      if (isFinite(r.n80)) stats.push([nfInt.format(r.n80), `Sample size for 80% power${TESTS[o.test].groups ? ' (each group)' : ''}`, '']);
+    } else if (o.mode === 'n' && isFinite(r.n)) {
+      stats.push([nfInt.format(r.n), TESTS[o.test].groups ? 'Sample size, each group' : 'Sample size', 'ok']);
+      if (TESTS[o.test].groups) stats.push([nfInt.format(r.n * (o.test === 'anova' ? o.levels : 2)), 'Total sample size', '']);
+      stats.push([pc(r.actual), 'Power at this sample size', '']);
+    } else if (o.mode === 'diff') {
+      if (TESTS[o.test].prop) {
+        stats.push([r.md.up == null ? 'None' : pcp(r.md.up), 'Comparison above baseline', 'ok'], [r.md.down == null ? 'None' : pcp(r.md.down), 'Comparison below baseline', 'ok']);
+      } else if (isFinite(r.md.d)) stats.push([fmt(r.md.d), 'Smallest detectable difference', 'ok'], [fmt(r.md.d / o.sd), 'In standard deviations', '']);
+    }
+    o.aria = (o.title ? o.title + '. ' : '') + 'Power curve. ' + headline(r).replace(/<[^>]+>/g, '') + '.';
+    const legend = o.mode === 'diff'
+      ? (TESTS[o.test].prop ? `The curve shows the power to detect each comparison proportion with ${sampleWords(o, o.n)}. It is lowest at the baseline and rises the further the comparison is from it.` : `The curve shows the power to detect each size of difference with ${sampleWords(o, o.n)}.`)
+      : 'The curve shows how power rises with sample size for the change you want to detect. Beyond a point, adding more data gains little.';
+    els.result.innerHTML = `
+      <p class="summary">${headline(r)}</p>
+      <p class="focuson">${esc(setupWords(o))}.</p>
+      ${stats.length ? `<div class="stats">${stats.map(s => `<div class="stat"><b${s[2] ? ` class="${s[2]}"` : ''}>${esc(s[0])}</b><span>${esc(s[1])}</span></div>`).join('')}</div>` : ''}
+      <div class="chartwrap" id="chart">${chartSVG(r)}</div>
+      <p class="legend-note">${esc(legend)} The dashed green line marks ${o.mode === 'power' ? 'the usual target of 80% power' : 'your target power'}. Hover over the chart to see the figures.</p>
+      <div class="reading"><h3>What this means</h3>${readingParts(r).map(x => `<p>${esc(x)}</p>`).join('')}</div>
+      ${tableHTML(tableData(r))}`;
+  }
+  function renderEmpty(msgs) {
+    current = null;
+    els.result.innerHTML = `<div class="empty">${msgs.map(m => `<p class="err" style="margin:0 auto .5rem">${esc(m)}</p>`).join('')}<button type="button" class="primary" data-act="example" style="margin-top:.5rem">Try the example</button></div>`;
+  }
+  function schedule() { clearTimeout(timer); timer = setTimeout(update, 250); }
+
+  // ---- exports ----
+  function svgEl() { return document.querySelector('#chart svg'); }
+  function fileName() { return slug(current && current.o.title); }
+  let dlPromise = null;
+  function getDownloads() {
+    if (!window.claude || typeof window.claude.use !== 'function') return Promise.resolve(undefined);
+    if (!dlPromise) dlPromise = window.claude.use('downloads').catch(() => null);
+    return dlPromise;
+  }
+  async function downloadBlob(blob, name) {
+    const d = await getDownloads();
+    if (d) { const r = await d.save({ filename: name, data: blob }); return r && r.status !== 'declined'; }
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+    return true;
+  }
+  function status(msg) { FocusActions.say(msg); }
+  function toPNG(cb) {
+    const svg = svgEl(); if (!svg) return;
+    const vb = svg.viewBox.baseVal, scale = 2;
+    const str = new XMLSerializer().serializeToString(svg);
+    const img = new Image();
+    img.onload = () => {
+      const c = document.createElement('canvas');
+      c.width = vb.width * scale; c.height = vb.height * scale;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, c.width, c.height);
+      ctx.drawImage(img, 0, 0, c.width, c.height);
+      c.toBlob(cb, 'image/png');
+    };
+    img.onerror = () => status('Could not create the image.');
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(str);
+  }
+  const csvCell = v => v === undefined ? '' : /[",\n]/.test(String(v)) ? '"' + String(v).replace(/"/g, '""') + '"' : String(v);
+  async function copyText(t) {
+    try { await navigator.clipboard.writeText(t); return true; }
+    catch (e) {
+      const ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select();
+      const ok = document.execCommand('copy'); ta.remove(); return ok;
+    }
+  }
+  const saved = (ok, msg) => status(ok ? msg : 'Download cancelled.');
+  const failed = () => status('The file couldn’t be saved here. Try Copy instead.');
+  function act(a) {
+    if (a === 'example') return loadExample();
+    if (!current) return;
+    if (a === 'png') toPNG(b => downloadBlob(b, fileName() + '.png').then(ok => saved(ok, 'PNG downloaded.'), failed));
+    if (a === 'svg') downloadBlob(new Blob([new XMLSerializer().serializeToString(svgEl())], { type: 'image/svg+xml' }), fileName() + '.svg').then(ok => saved(ok, 'SVG downloaded.'), failed);
+    if (a === 'copyimg') {
+      if (!(navigator.clipboard && window.ClipboardItem)) return status('Your browser can’t copy images — use Download PNG.');
+      toPNG(async b => {
+        try { await navigator.clipboard.write([new ClipboardItem({ 'image/png': b })]); status('Chart copied — paste it into PowerPoint or Word.'); }
+        catch (e) { status('Copy was blocked — use Download PNG.'); }
+      });
+    }
+    if (a === 'csv') downloadBlob(new Blob([tableRows().map(r => r.map(csvCell).join(',')).join('\r\n')], { type: 'text/csv' }), fileName() + '.csv').then(ok => saved(ok, 'Table downloaded.'), failed);
+    if (a === 'copytable') copyText(tableRows().map(r => r.join('\t')).join('\n')).then(ok => status(ok ? 'Table copied — paste it into Excel.' : 'Copy was blocked.'));
+    if (a === 'copysummary') copyText(summaryText()).then(ok => status(ok ? 'Summary copied.' : 'Copy was blocked.'));
+  }
+  function setSolve(v) { document.querySelectorAll('input[name="solve"]').forEach(el => { el.checked = el.value === v; }); }
+  function resetForm() {
+    els.test.value = 't2'; els.sides.value = '2'; els.alpha.value = '0.05';
+    els.n.value = ''; els.power.value = '80'; els.diff.value = ''; els.sd.value = ''; els.levels.value = '3'; els.title.value = '';
+    setSolve('n');
+    family = 'mean';
+  }
+  // Example: how many patients on each ward to detect a 1-day difference in length of stay
+  function loadExample() {
+    els.test.value = 't2'; els.sides.value = '2'; els.alpha.value = '0.05';
+    els.n.value = '50'; els.power.value = '80'; els.diff.value = '1'; els.sd.value = '2.5'; els.levels.value = '3';
+    els.title.value = 'Length of stay on two wards: patients needed (example)';
+    setSolve('n');
+    family = 'mean';
+    update();
+  }
+
+  // ---- events ----
+  [els.alpha, els.n, els.power, els.diff, els.sd, els.levels, els.title].forEach(el => el.addEventListener('input', schedule));
+  els.test.addEventListener('change', () => { swapFamily(); update(); });
+  els.sides.addEventListener('change', update);
+  document.querySelectorAll('input[name="solve"]').forEach(el => el.addEventListener('change', update));
+  $('clearBtn').addEventListener('click', () => { resetForm(); update(); els.test.focus(); });
+  // Keep separate values for tests of means and of proportions, so switching between them
+  // brings back what was last entered for that kind of test
+  const stash = { mean: { sd: '1.4', diff: '0.5' }, prop: { sd: '40', diff: '60' } };
+  let family = TESTS[els.test.value].prop ? 'prop' : 'mean';
+  function swapFamily() {
+    const now = TESTS[els.test.value].prop ? 'prop' : 'mean';
+    if (now === family) return;
+    stash[family] = { sd: els.sd.value, diff: els.diff.value };
+    els.sd.value = stash[now].sd; els.diff.value = stash[now].diff;
+    family = now;
+  }
+  els.result.addEventListener('click', e => { const b = e.target.closest('button[data-act]'); if (b) act(b.dataset.act); });
+
+  update();
+
+  // ---- shared toolbar (Open, Save, Export) ----
+  FocusActions.mount({
+    tool: 'power_sample_size', toolName: 'power and sample size',
+    example: loadExample, hasData: () => !!els.title.value.trim(),
+    fileName: () => fileName(),
+    fields: 'section.panel[aria-labelledby="data-h"]',
+    afterOpen: () => { family = TESTS[els.test.value].prop ? 'prop' : 'mean'; update(); },
+    ready: () => !!current,
+    exports: ['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) }))
+  });
+})();
+</script>
+{% include focus-footer.html %}
+</body>
+</html>
