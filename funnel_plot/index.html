@@ -1,0 +1,745 @@
+---
+tool_id: funnel_plot
+title: "Funnel plot"
+permalink: /funnel_plot/
+---
+<!DOCTYPE html>
+<!-- © Guy’s and St Thomas’ NHS Foundation Trust 2026. All rights reserved. -->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Funnel plot</title>
+<meta name="description" content="Paste your counts and population sizes and build a funnel plot in your browser to see which populations stand out once size is taken into account. Nothing is uploaded.">
+<link rel="icon" type="image/png" sizes="64x64" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAASnklEQVR42u1aeXhV1bX/rb3PuVNGEggBRAYL+AKIiuIICXWsViq+l9iKgFgNQhWVarW2r5eLr6LVWgUtk9b6qai54gi2dahc1FKUSSoRVMaYgZCQObn3nL33en+cGwyIbZh8vveyvu9+SU6Sffb6rWnv31pAl3RJl3RJl3RJl/x/Ffnt3BYTCkslehRK7IQARhEwVHifHhL51wj0h8DOawDE/q/Yggn5+RYAceBv6IDPVyXfAsLicN5K3wrFUSSAqEZS+5GXhHN37N57Ulw5Q7WhgYK4p5swFkkyJFAvhSizJW1OT/Nt3BF7aDMRsbdWWACl1L7W/wIACiUQ1QTgtEtuy91W0XJFm+IrHFedZiAzGALMAMAH7JpAYAh2jRRyk88n/5zu42er1ixYb/atW2IA4m8pAGEBRBgADx09s29ZQ9utba6epIzMZmMAVgCzBqBAOLgSzBJENkgCZEHCZZ8lX88I+e7fvWZejDsA/C0DwNuUEEDGsGkzmxP6Fy7LLBgHYKMAMgALkLA85QRAHbbJAGAANgBrgOEkNfGBbEhi+Hz0VL9uwTs2v/tQJfLzLcRi6tsBQHIzQ0dP67ut1vwhrsX5rJOKEwCQBbIhBEFANUhBn1iCtghJ5bYUrUZDOkp1MwYDNHOeYQwyZHu4Ga1BbMCQkAFhC12eEeDrazYs/pOXJA8OAn3Tyueedv3ptc3iRVfTcTAJBYIAAxA+IUkrvy2WB2zfMzk9rfc+feOhSuavZAAQgAULF9qRP348rLnFHdeW0FcploPZKIC1BsAgaUkpkBGSM+rWz5/HXwPCNwNAYaFENKp7jbph9J5GXq6USQOU8nxbSCklfJKfS/PLOXvWz9/I++0vXyK/YP/1YqXcMbYnTw4HXl5XeXWLw79ULPtBOxrEBCZIOyAyQnxX3br5czg/bCEWUd8wAGEBREzf06cPrWpS77vKZABGgxkQPmlLU94tVU6vWbPg1X0ZvBBA9F9mcQLChPwVoj3G8y68NWt7eesDcZemsHYMiAEmI2y/lRHQ19dtWPRYuzG+KQAICNOoi/emfrSjbU1Ci0FgpcEApE8GLF59QrYo3PTu/DIvOeYxEDGH9Z78sEQsoghAxslTb26K4yHtukkQBEtLome6Pbriw0dXdawO8li7PpX+3uz1D1sY177vwjie2wtb+m2zclxBr4tXLH2gBvlhCzt/r4EYH/a7dsaMd5qElVj921VZfU8vS2hxORtjQAAzyYRSBVeMvewPpaU93PYjtDzWcZ918tQLWhzrt6wdL+EJS/ot/vTEnNB5f33hvkYvOT6pjjzSwgIrCoApYw1GFtut6xauTe99apvLvgvZKAaMMSLQvWxvg52ofvANFBZKlJYyHcvYD4ch7n2+bG1CW8M91yeSllB9u/vP2PH+Ix8xmGwQ66+e9Q5NcUAgkkxu4bAFwGBZpRTrFrnBocWvtDhiHExCgUlYlnD75aYN2xr73VaEwySOWclDxMx7reoyh30nwbgGzATLJ4M27tnx/iMfAUwDS576SdpfXlk75MVnrwAAlJTIQ4r7wkKJSMQgElEj7poz/pzZc0cgElGIRAxGAoZBg3MzptmkGgAhANaKbX9VTcttABgrII4NALECQwCaW9WNbJhBMCApbDhlBf17P+BZibjJdfrX2dapzWxyAQA9elDnkyuYolE9Knx/Xs+b7561Y2/Lw5uqahb3+emvbx3/4MJetGiRi7ywvf6t+yuCAfEASZ+nq3E4ofQPTz/vzmzEIkocq7I3YMyMQdrQGBiXwCCSNgV8ct6yZZFW7IAFAMSUEPG4EYbdQ7s9Aswsut88+7HSmpbVjps4lYiqYUxjU0vbZW9tq/q09y133ylKIw7CYTFkQNZ8C249SNhgozR8GZur934fB7t7H7n7e2vWNCQuMmRbALsgYQmTaM1NoSUACP1hkqoQiASIOm/58CxiZsr4SfitNteMGpAZGp+VmrrC9tl2IBjgXumpz/dL8f+wztF35MyYPVdEImbNy/fW+iy8CGEDRJqZ2VU8jo4JADEvszqOyWdmAGRAFqSkVZ//fWE5ECYUFJjDqywlgiIRkzsjcjcYgy7omzWxvKLuJrch3mC3uRt0Tf3bTU1tPXc3t15/am7q+Y0JZ3r/m2dfwQAFgtYrghhgtmAUaWNGTbj6/pSjDQABUf18SYlUzMPB2nsmBCwpVzBAnoesOLy1o0Vmyn2PpbU4zi19UoI3/n133dyUUf17uOPz0twRuQNw4bCTs68a+WGGz7dqW23zNUFBd9XGE3MEwKkpqR8IdptBwgIMG+beKz8vH3KUAfCK2X8tXp0Ng95gAwBCwMAnxQYAjJxSPlzrA+A3y8vPJNAu22+lI67XZI447pH6JvW7moqG0TV7Wq7ctW33b3b87pf3ucoc1z01uFkzZ06Y92T2rtgDVUKK7SABMGuGJVoTiUFHGYBZBAANzYksBqd6dA5LYoNgSFYAAKJ5nQcgHBYoKZEoLJEoKTT9b45cVOvoWUabzC/2Nt5Rq/XZ7pIPsnLW73qbM4PM9Y06rbLZ5NwUXtQYd06sbm6b5WgTWr5le3TSs8/2Z43PICQAMgxCQus+RxeAwlICgITiVEAQwAZEBNZaghsP+YATiRgUFWnkbWIsWmS98F75X7NzM0pF0DbZ6Smv5Qb869TYwaPLBmSf56tudKS0ZEO6zznZn/KrFL/9eVZq6BlbyraAsH/dKmWFZYs2z0m97CQgsqyjCkDU++KqZDDQvsDghKs6b/l3whbGRtTIF547p9USl316edGdGjDTli+9bk9t/cR4db0/fUDmOHdbbc8vWlq6BXNSyk6p637X7uzAKY09Q/32bGpIFwRHa/UFYNzdc3/xdnQuEBpevN9rFBtxdAGA596WxW0EA4AEmJmkZYX8wbTOKf+OhbFj1YUvlYz8W6L1xVZfMGfQC0uQaVubN7S2LmYbyEzxVZVXNuQhN2gCu+LipL6hX+zaVnmCu5XXDDn1Ozu3SOe1Ubk9J60s270kxedf1AKAGRQYyqF2VjVJsTcfk5Ng74yUOiK0JX/UDIEWJ9GrY5gcTPrt2GFh7Fh16bKXRq5y2l5vIeTYdfX4zE3csa658QkD4MRg6rQJx58w0r+rvsKXgPi3NDlj+7ulI5stOTFhWzeVfrS973dSA5NXVe2dbZNo2X3N9+9BOCykADObXl5i9g5TJFB5lAGIMACMOydUQySqvGMGGYZAIoFhAAjVefQ1LC/tnDIlftGrS09d2VT/enMokHMcY/GYHr0u8hsTZ58fQ4Sc8Y/Lr1zw6E1XVeT1yDg/uLPhH1u3VE+x0gJlQSl3kDYfW4IaNjbEXyAgZdKgzDF02mkKkQifedntaUbjBLABCJKgEbLs7UfbAxgolLMjEUcK+gwkkxmHobQeQwB7dNb+FBcZY4GIL1320si/tTT+qSkUzOkXd57ZdeXkaW9eMu6Nk1LSrhwq5MxN/37VPA6HrcLCQrn+N3d+snjSRWf4bfl8Y5tTWN8WPytuzPgE4/ysoPXLprm/OvfhW2+tR35YAuDPKpqHG8geYG0AKQimvkeG/ORIcgChsFCgOo+QU8qIRr3TXb+QzTuhA365LKFxIRsWMC5chXOHnHdn9ua3763Fp+fb+1YRAspw85Q3lw2M1tSsbA4GQv3j7jMVP5p8NemJhJISufryolc7VAYVTX5fdPbZbQDuE8B9g267J+L3WRs/vudnS+s6eBUKZgEAmludSw35ALguSPoF8ceb3pm7+zAAYEJ+gUQspjpya18yM0/Gi4vDoejq6mywZhAk2ChNgczddY1XAFiMv1VIAG5yk2ABeXyoW3OK3VCRGXc3br9y4kQq/VwAsxhFpMFhgehQQlHRl++LRIx3NwhLA5hcJO6OIWFQWCiBQiBapJP9BBMOh333PFf2I2jltZWEhF/yGy4D1iEpjgIJkEIM6vvF4dCHGxrOZEG5QqnyqZdmrVqxAaENO/ZM+ePKyumuoe94TAwJEIO1Qmsr3/JOOPzE2MpK3SH2IUn4I+ecUz3n3XdH3XnuuU1ExGAG2nt+9LU8IbcTITHAfKUe5+dLxGLq4ZcrixR8A8AJDZAt2TFZqcGlzZ0jRfdvOJ588c97bK+sv7YtoYsV00BAgGAgSG8Bc1DBf7zX7NAG1IFwYdZkBWRmMMnOAuj+zOP37M3q9vM+za3Tyva2PA4A6PaWQd35AoMrkrniX90bkn/zaW/C4MGMPXs46SkEFIrJk/PsJavLP3YVDQRrF8K2A1K9k9j8+HmM8D87B7QrHtEEIG/0zL67Glqnbtpe82MFK5e18ZT0zjykhTUEDIDbNNqvucky6F18iVg7pqlN3Dv0BzP/sumVB7+AIQkiWLbVhKlTO3AC7aEV6UzlOfjjkcUW1i5yX/jwuntcY58AjmuApBCgUEDMiSdLsvWvFB889uYhlTXO9C3VTZMUW5kwBuC4R3DuZ2FlkmcMuU9xZoKwpXcWVAwwK2Nlb9va8rQA8plIccJRrW3x7/V+7skMDSMJQh9e/WEWwaDozlw1ZMnSl6PRRW7OKTeMq23ln0EntNdO9lk+od6s++ixt4CwQDSirf0VB4CIIQDHnzXzlNrm1pu2VrT+SLEV+FJxkqCDAdeRX2SAfFJKgt/WK4xB97hrDwO7DOPouA6NSesz6Tf+rIBiWNbuYGAC+X0TjqgAGwOkpKBpR9nOj6PRpb3OvnH0ntrEM1p7tDggSJJKdAuJGZX8ZehTRxpLAOh55o3nNDSrWxKOHq8hJbQDgFXSsp1hbowgIfy2/Et6qj2v5sNHlh935o0nlu911imlfSAjQMTkksgamVOeMnHY046rWkxcBUkIvS/xHboHEHx+yukZ2lD7k9fr9ii85LomDdAGDE1W0E6zEzc1fvz4Ix27Q9Su/PFnTBtZ3cSzXa0v0SwB7QAEnWSNqJObMELaIjNNXFO/dsGTXkx4TcnsU4qvrm+TT2k3oUAsATJQkH7XRM8sX18cw0f1R3oKEwAyBv54aqMtH9VaS8AYMDSsoB0UzhPxTx67lg9olxMA5J42Lb+2xfzZVQjAOAwic0iKJy9XgJSW0BXXFlgDFi3qpZEPgVhEIT/folhMZY4ovqMhLu81KuE1L4kIMkAWuU1BvzV78Kj0xWsX3dcAAnD9QhuJii9p8vQszzMa93p7St/LmDvXARELCfQ6+5bv1tS1zXK1HG2cOIOY2y0flO5rf5x1wfiioiiAqOnYhqAhZ9+etrWmdqNiqz+M64LIPkTfM2AYkLSk5UN6SF9Zt25hyYFNyHYQ0k+aeltzgu7X2gWSnBlAkqQPEuqzgE1/yEgJLK38YO5nhv+5tUf/IJz5SVnN2BZXXxd39CXaCMC42iPNAbICMmjp6O3/cd7VkUiRmyxY+61KmSOmT2ho00+zdjXoUFplbMBgkJQkbdjCfJERoLtq1i94ipNhdRDK2AJiqtuI64qa4mKRMpQB4yiPNAEgpCRhQRjHsSStl5I+sCR9QoTKuGsa04J20EBmu447UDGPVK45XbPsadjj+0HwGq9kWVIKpAZoTtPGBXd5QDIdrNtM/iHXzkmwfQeMazrXK2QDpqTiErYwn6cE7PlDe6c98d7ye+vwtcrvPyjR76ziE3c3YK6j5QVm/wkPApEFsgDvmACAwWwgiMDJeQqvKmmATYf/ExZJH3xCb8lMkz+t/mD+cu4wj3TQC03qsOL/bHYo0gkA2uu6EELAJ8zGoM965NLhwSVPP/3blo7zP51tnAoCup18w8SmuLldGTHcGE4OSO2bFWJviIK93gEzf/m8PRLIhrBAQsKCqvJbct738sTcaPT3zZ0akupzxvQzqurcv2utVTIE6CCKCwgfCQH4JVal+K25v77hpKVT209vnlUPscf5pWUWFhfbt6+m8Y7Lk5UyYzRZqcwepegNRLUbkJIDU+RdMYgg2dWWJdeEfHLJ8OMCS2LLHqw5FGMQAQgNLX6iRfuugdui9j31QLYg/JDCwCfxVnqK/XDN2keXabOfJc2RNHcPqMkYOHpm373Nree4is9S2gzVhvsAyGSwRUwaQKOQVCVAW1IC9ocZGfb721c8tGlfwjxEYxAQFhfflGWv/OumxxOKJmgWyRRKsKDYZ9GraanBh/Z88PCK5Es8HuBIFT8YtxDdf0JEANDMNPG2B0JVu7TVrUeqLizIafthUZE+IKjJu/mt0J0Zjjywy0rtJFn2KdPHtDn6eySoJ4F2dcuwX/vivblrTbvLFpbSQTmAo91czV8hvAGOAvM1CVUA+QL5BUAM5jDHar7qCQcfHAoLL57+x4TQmXnpI1h8/3isziPEVuBootslXdIlXdIlXdIlXfJtlP8GWNFQfNJmF5IAAAAASUVORK5CYII=">
+<link rel="apple-touch-icon" href="data:image/png;base64,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">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#005EB8; --navy:#003087; --bg:#F0F4F5; --surface:#FFFFFF; --text:#212B32;
+  --muted:#4C6272; --line:#D8DDE0; --yellow:#FFB81C; --green:#007F3B; --green-bg:#E3F2E9;
+  --blue-bg:#E6F0FA; --danger:#D5281B; --shadow:0 2px 0 #D8DDE0;
+  --l1:#005EB8; --l2:#6FA8DC; --l3:#9DB4CA; --proj:#D4A814; --bal:#6A4C93;
+  --warn:#A65300; --ok:#007F3B; --info:#4C6272;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --blue:#5AA2EA; --navy:#9CC3EF; --bg:#0E1A24; --surface:#162533; --text:#E8EEF2;
+    --muted:#A3B6C3; --line:#2A3E4F; --green:#4CC17E; --green-bg:#143326; --blue-bg:#15314B;
+    --danger:#FF7468; --shadow:0 2px 0 #0A131B; --l1:#5AA2EA; --l2:#3E7BB3; --l3:#4D6478;
+    --bal:#A889D4; --warn:#F0A54A; --ok:#4CC17E; --info:#A3B6C3;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --blue:#5AA2EA; --navy:#9CC3EF; --bg:#0E1A24; --surface:#162533; --text:#E8EEF2;
+  --muted:#A3B6C3; --line:#2A3E4F; --green:#4CC17E; --green-bg:#143326; --blue-bg:#15314B;
+  --danger:#FF7468; --shadow:0 2px 0 #0A131B; --l1:#5AA2EA; --l2:#3E7BB3; --l3:#4D6478;
+  --bal:#A889D4; --warn:#F0A54A; --ok:#4CC17E; --info:#A3B6C3;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Figtree,"Frutiger","Helvetica Neue",Arial,sans-serif;font-size:1rem;line-height:1.5}
+a{color:var(--blue)}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:2px;border-radius:2px}
+button,input,select,textarea{font:inherit;color:inherit}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* Header (shared FOCUS suite style) */
+.top{background:#005EB8;color:#fff}
+.top-inner{padding:.9rem 1.25rem;display:flex;flex-wrap:wrap;gap:.75rem 1.5rem;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:baseline;gap:.6rem;color:#fff}
+.brand b{font-size:1.25rem;font-weight:800;letter-spacing:-.01em}
+.brand span{opacity:.85;font-size:.95rem}
+.top nav{display:flex;flex-wrap:wrap;gap:.25rem}
+.top nav a{color:#fff;text-decoration:none;padding:.4rem .7rem;border-radius:4px;font-weight:600;font-size:.95rem}
+.top nav a:hover{background:rgba(255,255,255,.14)}
+.support{background:#003087;color:#fff}
+.support-inner{padding:.5rem 1.25rem;display:flex;flex-wrap:wrap;gap:.25rem 1.75rem;align-items:center;font-size:.92rem}
+.support a{color:#fff;text-underline-offset:3px}
+.dd{position:relative}
+.dd summary{cursor:pointer;list-style:none;text-decoration:underline;text-underline-offset:3px;display:inline-flex;align-items:center;gap:.35rem}
+.dd summary::-webkit-details-marker{display:none}
+.dd summary::after{content:"";width:.45rem;height:.45rem;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-2px) rotate(45deg);transition:transform .15s}
+.dd[open] summary::after{transform:translateY(2px) rotate(-135deg)}
+.dd-menu{position:absolute;z-index:30;top:calc(100% + .5rem);left:0;width:min(380px,calc(100vw - 2.5rem));max-height:70vh;overflow:auto;background:var(--surface);color:var(--text);border:1px solid var(--line);border-radius:8px;box-shadow:0 12px 32px rgba(0,20,40,.25);padding:.4rem}
+.toollist{list-style:none;margin:0;padding:0}
+.toollist li{display:flex;justify-content:space-between;align-items:center;gap:.75rem;padding:.5rem .6rem;border-radius:4px}
+.toollist li+li{border-top:1px solid var(--line)}
+.toollist a{color:var(--blue);font-weight:600}
+.toollist .off{color:var(--muted)}
+.toollist .here{font-weight:700}
+.supportlist li{flex-direction:column;align-items:flex-start;gap:.1rem}
+.menu-desc{font-size:.85rem;color:var(--muted)}
+.menu-note{font-size:.82rem;color:var(--muted);margin:.4rem .6rem .2rem}
+.tag{flex:none;font-size:.78rem;font-weight:700;padding:.1rem .5rem;border-radius:99px;white-space:nowrap}
+.tag.beta{background:var(--green-bg);color:var(--green)}
+.tag.alpha{background:var(--blue-bg);color:var(--navy)}
+.tag.dev{background:#FFF4DB;color:#6B4A00}
+.tag.idea{background:var(--bg);color:var(--muted);border:1px solid var(--line)}
+.tag.here{background:var(--yellow);color:#212B32}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .tag.dev{background:#3A2E10;color:#FFD27A}}
+:root[data-theme="dark"] .tag.dev{background:#3A2E10;color:#FFD27A}
+
+/* Page head */
+.page-head{padding:1rem 1.25rem}
+.page-head h1{margin:0;font-size:clamp(1.4rem,2.6vw,1.8rem);line-height:1.2;font-weight:800;letter-spacing:-.015em}
+.page-head .meta{color:var(--muted);margin:.15rem 0 0;max-width:70ch}
+
+/* Workspace */
+main{display:grid;grid-template-columns:minmax(300px,380px) minmax(0,1fr);gap:1.25rem;padding:0 1.25rem 1.25rem;align-items:start}
+@media (max-width:880px){main{grid-template-columns:1fr}}
+@media (max-width:420px){main{padding:0 1rem 1rem} .page-head,.top-inner,.support-inner,.notes{padding-left:1rem;padding-right:1rem}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow);padding:1.1rem;min-width:0}
+.panel h2{font-size:1.05rem;font-weight:700;margin:0 0 .75rem}
+.block{margin-bottom:1.1rem}
+label{display:block;font-weight:600;margin:0 0 .35rem}
+.hint{color:var(--muted);font-size:.88rem;margin:0 0 .5rem}
+textarea,input[type=text],input[type=number]{width:100%;padding:.5rem .65rem;border:2px solid var(--muted);border-radius:4px;background:var(--surface)}
+textarea{min-height:260px;resize:vertical;font:14px/1.45 Consolas,"Courier New",monospace}
+textarea:focus,input[type=text]:focus,input[type=number]:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px var(--yellow)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+@media (max-width:420px){.pair{grid-template-columns:1fr;gap:0}}
+.check{display:flex;gap:.6rem;align-items:flex-start;font-weight:400;margin-bottom:.6rem;cursor:pointer}
+.check input{width:20px;height:20px;margin:2px 0 0;flex:none;accent-color:var(--blue)}
+.check.off{color:var(--muted);cursor:default}
+#detected{font-size:.88rem;color:var(--muted);margin:.4rem 0 0;min-height:1.3em}
+
+/* Buttons */
+.btns{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+button{display:inline-flex;align-items:center;gap:.4rem;border-radius:4px;padding:.5rem .95rem;font-weight:700;cursor:pointer;background:var(--surface);color:var(--blue);border:2px solid var(--blue);line-height:1.2;white-space:nowrap}
+button:hover{background:var(--blue-bg)}
+button.primary{background:var(--green);color:#fff;border-color:var(--green);box-shadow:0 3px 0 #00401E}
+button.primary:hover{filter:brightness(1.07);background:var(--green)}
+button.primary:active{transform:translateY(2px);box-shadow:0 1px 0 #00401E}
+
+/* Result */
+.summary{font-size:clamp(1.3rem,2.6vw,1.85rem);line-height:1.25;font-weight:700;letter-spacing:-.01em;margin:0 0 .3rem;max-width:34ch}
+.summary strong{color:var(--blue);font-weight:800}
+.focuson{margin:0 0 1rem;color:var(--muted);max-width:70ch}
+.chartwrap{border:1px solid var(--line);border-radius:8px;overflow-x:auto;margin-bottom:.9rem;background:#fff}
+.chartwrap svg{width:100%;min-width:560px;height:auto;display:block}
+.empty{padding:3rem .5rem;text-align:center;color:var(--muted)}
+.empty p{margin:0 0 .9rem}
+#status{font-size:.88rem;color:var(--muted)}
+.tablewrap{overflow-x:auto;margin-top:1.25rem}
+table{border-collapse:collapse;width:100%;font-size:.94rem}
+th,td{text-align:left;padding:.5rem .65rem;border-bottom:1px solid var(--line)}
+th{border-bottom:2px solid var(--text)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+.sw{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:.5rem;vertical-align:-1px}
+
+/* Notes */
+.notes{padding:0 1.25rem 2rem;color:var(--muted);font-size:.92rem}
+.notes p{max-width:80ch;margin:0 0 .75rem}
+/* Centre the page in the same 1340px column as the FOCUS header */
+.page-head,main,.notes{box-sizing:border-box;max-width:1340px;margin-left:auto;margin-right:auto}
+.notice{background:var(--blue-bg);color:var(--text);border-left:5px solid var(--blue);border-radius:0 4px 4px 0;padding:.7rem .9rem;max-width:80ch}
+@media (prefers-reduced-motion: no-preference){button{transition:background .15s,filter .15s}}
+select{width:100%;padding:.5rem .65rem;border:2px solid var(--muted);border-radius:4px;background:var(--surface)}
+select:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px var(--yellow)}
+[hidden]{display:none !important}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.6rem;margin:0 0 1rem}
+.stat{border:1px solid var(--line);border-radius:6px;padding:.55rem .75rem}
+.stat b{display:block;font-size:1.3rem;font-weight:800;font-variant-numeric:tabular-nums}
+.stat span{color:var(--muted);font-size:.85rem}
+.reading{margin-top:1.4rem;border-top:1px solid var(--line);padding-top:1.1rem}
+.reading h3{font-size:1.05rem;font-weight:700;margin:0 0 .5rem}
+.reading p{max-width:75ch;margin:0 0 .75rem}
+.tablewrap{position:relative}
+.legend-note{color:var(--muted);font-size:.88rem;margin:-.4rem 0 .9rem}
+td.warn{color:var(--warn);font-weight:600}
+tr.out td{background:#FFF1E0}
+td.flag{color:var(--warn);font-weight:700}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) tr.out td{background:#3A2A14}}
+:root[data-theme="dark"] tr.out td{background:#3A2A14}
+</style>
+{% include focus-head.html %}
+</head>
+<body>
+
+{% include focus-header.html %}
+
+<div class="page-head fa-host">
+  <div class="fa-head-text">
+    <h1>Build a funnel plot</h1>
+    <p class="meta">Compare a rate across populations of different sizes, such as falls on each ward or referrals from each GP practice, and see which stand out once size is taken into account. Everything runs in your browser, so your data is never uploaded.</p>
+  </div>
+  <div data-focus-actions></div>
+</div>
+
+<main>
+  <section class="panel" aria-labelledby="data-h">
+    <h2 id="data-h">Your data</h2>
+
+    <div class="block">
+      <label for="data">Paste from Excel or a CSV</label>
+      <p class="hint">Three columns, with one row for each population: its name, the number of events or observations (falls, referrals, patients seen), and the population size (bed days, registered patients, admissions). Every row should cover the same time period.</p>
+      <textarea id="data" spellcheck="false" placeholder="Ward A&#9;12&#9;2450&#10;Ward B&#9;7&#9;1980&#10;Ward C&#9;21&#9;3120"></textarea>
+      <p id="detected" aria-live="polite"></p>
+    </div>
+
+    <label class="check"><input type="checkbox" id="hasHeader"> First row is column headings</label>
+
+    <div class="btns" style="margin-bottom:1.5rem">
+      <button type="button" id="clearBtn">Clear</button>
+    </div>
+
+    <h2>Chart settings</h2>
+    <div class="block">
+      <label for="title">Chart title</label>
+      <input type="text" id="title" placeholder="e.g. Dermatology referrals by GP practice">
+    </div>
+    <div class="block">
+      <label for="dates">Date range of the study</label>
+      <input type="text" id="dates" placeholder="e.g. April 2025 to March 2026">
+    </div>
+    <div class="pair">
+      <div class="block">
+        <label for="measure">What you are counting</label>
+        <input type="text" id="measure" placeholder="e.g. Referrals">
+      </div>
+      <div class="block">
+        <label for="popLabel">Population type</label>
+        <input type="text" id="popLabel" placeholder="e.g. Registered patients">
+      </div>
+    </div>
+    <div class="block">
+      <label for="scale">Show the rate as</label>
+      <select id="scale">
+        <option value="1">Standard (events ÷ population)</option>
+        <option value="100">Percentage</option>
+        <option value="1000">Per 1,000</option>
+        <option value="10000">Per 10,000</option>
+        <option value="100000">Per 100,000</option>
+      </select>
+    </div>
+    <div class="block">
+      <label for="centre">Centre line</label>
+      <select id="centre" aria-describedby="centreHint">
+        <option value="pooled">Overall rate (all events ÷ all populations)</option>
+        <option value="mean">Average of the populations’ rates</option>
+      </select>
+      <p class="hint" id="centreHint" style="margin:.35rem 0 0">The overall rate is the usual choice. The average of the rates, used in the NHS Improvement spreadsheet, gives small populations as much weight as large ones.</p>
+    </div>
+    <div class="pair">
+      <div class="block">
+        <label for="xMin">Horizontal axis minimum</label>
+        <input type="number" id="xMin" min="0" placeholder="Automatic">
+      </div>
+      <div class="block">
+        <label for="xMax">Horizontal axis maximum</label>
+        <input type="number" id="xMax" min="0" placeholder="Automatic">
+      </div>
+    </div>
+    <label class="check"><input type="checkbox" id="showWarn" checked> Show the 95% limits as well as the 99.7% limits</label>
+    <label class="check"><input type="checkbox" id="labels" checked> Label the outliers on the chart</label>
+  </section>
+
+  <section class="panel" aria-labelledby="result-h">
+    <h2 id="result-h" class="sr">Result</h2>
+    <div id="result">
+      <div class="empty">
+        <p>Paste data on the left to build your chart.</p>
+        <button type="button" class="primary" id="exampleBtn2">Try the example</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<section class="notes" aria-label="About funnel plots">
+  <p><b>How to read it:</b> a funnel plot is a scatter plot of rates against population size. It compares populations over the same time period, for example the rate of referral for a condition from each GP practice. The population size runs along the bottom and the rate up the side. The solid line is the average and the dashed lines are the limits: they are wide for small populations, where chance alone moves the rate a long way, and narrow for large ones, which gives the plot its funnel shape.</p>
+  <p><b>What stands out:</b> a point outside the 99.7% limits is unusual: it is very unlikely to be there by chance alone, so investigate further. Start with the data (is everything counted the same way in each place?), then look at differences in the patients or the process. Being outside the limits depends on both the rate and the population size, so the outliers may not be the populations with the highest or lowest rates. A small population can have the highest rate and still be within its limits.</p>
+  <p><b>How the limits are worked out:</b> the limits are the average plus or minus 3 standard errors (99.7%), and 1.96 standard errors for the 95% limits, using the binomial standard error for proportions. If any population has more events than its size (for example several falls per patient), the Poisson standard error is used instead. When many points fall outside the limits, real differences between populations, such as case mix, may be making the limits too narrow; treat them as a guide and consider adjusting for case mix. Built from the NHS Improvement funnel plot tool (version 2.0, February 2022).</p>
+  <div class="notice">Want to build your skills? <a href="https://coh.gstt.nhs.uk/course/view.php?id=3199" target="_blank" rel="noopener">Book QI training with the CITI Academy</a>.</div>
+</section>
+
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const els = {
+    data: $('data'), hasHeader: $('hasHeader'), detected: $('detected'), title: $('title'), dates: $('dates'), measure: $('measure'),
+    popLabel: $('popLabel'), scale: $('scale'), centre: $('centre'), xMin: $('xMin'), xMax: $('xMax'), showWarn: $('showWarn'),
+    labels: $('labels'), result: $('result')
+  };
+  const COLORS = { ink: '#212B32', muted: '#4C6272', grid: '#E8EDEE', axis: '#AEB7BD', point: '#005EB8', centre: '#003087', limit: '#AE2573', warn: '#768692', outlier: '#ED8B00', outlierEdge: '#A65300' };
+  const FONT = 'Figtree, Frutiger, Helvetica Neue, Arial, sans-serif';
+  const nf = new Intl.NumberFormat('en-GB', { maximumFractionDigits: 2 });
+  const MAX_ROWS = 200;
+  const Z_CONTROL = 3, Z_WARN = 1.96;
+
+  let headerTouched = false;
+  let current = null;
+  let timer = null;
+
+  // Example: referrals to dermatology from 24 GP practices over a year, with registered list sizes (made-up data)
+  const EXAMPLE = [
+    'Practice\tReferrals\tRegistered patients',
+    'Abbey Road Surgery\t131\t11840', 'Brook Lane Practice\t62\t5320', 'Castle Medical Centre\t248\t21650',
+    'Dene Park Surgery\t41\t3120', 'Elm Grove Practice\t176\t12480', 'Fairfield Health Centre\t96\t8950',
+    'Green Street Surgery\t19\t2410', 'Harbour View Practice\t143\t13760', 'Ivy House Surgery\t74\t6230',
+    'Juniper Medical Practice\t58\t7540', 'Kingsway Health Centre\t219\t18320', 'Linden Surgery\t33\t2960',
+    'Market Square Practice\t112\t9870', 'Northgate Medical Centre\t157\t16240', 'Oak Tree Surgery\t48\t4110',
+    'Park View Practice\t90\t7680', 'Queens Road Surgery\t131\t15890', 'Riverside Medical Centre\t205\t17410',
+    'St Mary’s Surgery\t67\t5480', 'Tower Hill Practice\t118\t10260', 'Upton Health Centre\t31\t2050',
+    'Victoria Surgery\t154\t14320', 'Westfield Practice\t84\t6970', 'Yew Tree Medical Centre\t101\t8640'
+  ].join('\n');
+
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const trunc = (s, n) => s.length > n ? s.slice(0, Math.max(1, n - 1)) + '…' : s;
+  const slug = s => (s || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'funnel-plot';
+  const lower = s => /^[A-Z][a-z]/.test(s) && !/^[A-Z][a-z]*[A-Z]/.test(s) ? s.charAt(0).toLowerCase() + s.slice(1) : s;
+  const list = a => a.length > 1 ? a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1] : (a[0] || '');
+  const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+
+  // ---- parsing ----
+  function split(text) {
+    const lines = text.split(/\r?\n/).filter(l => l.trim() !== '');
+    if (!lines.length) return null;
+    let delim = '\t';
+    if (!lines.some(l => l.includes('\t'))) delim = lines.some(l => l.includes(';')) ? ';' : (lines.some(l => l.includes(',')) ? ',' : '\t');
+    const recs = lines.map(l => l.split(delim).map(x => x.trim().replace(/^"(.*)"$/, '$1').trim()));
+    return { recs, delim };
+  }
+  function num(raw, delim) {
+    if (raw === undefined) return NaN;
+    let v = String(raw).replace(/[%£$€\s]/g, '');
+    if (delim !== ',') v = v.replace(/,/g, '');
+    return v === '' ? NaN : Number(v);
+  }
+  const isNum = (v, delim) => v !== undefined && v !== '' && isFinite(num(v, delim));
+  function numShare(recs, c, delim) {
+    const cells = recs.slice(recs.length > 1 ? 1 : 0).map(r => r[c]).filter(v => v !== undefined && v !== '');
+    return cells.length ? cells.filter(v => isNum(v, delim)).length / cells.length : 0;
+  }
+  // The last two number columns are the events and the population size; the first
+  // column, if it isn't numbers, holds the names.
+  function shape(recs, delim) {
+    const ncol = Math.max(...recs.map(r => r.length));
+    const numeric = [];
+    for (let c = 0; c < ncol; c++) if (numShare(recs, c, delim) >= 0.6) numeric.push(c);
+    if (numeric.length < 2) return null;
+    const ev = numeric[numeric.length - 2], pop = numeric[numeric.length - 1];
+    const name = numeric[0] === 0 && ev === 0 ? -1 : 0;
+    const headerGuess = recs.length > 1 && (!isNum(recs[0][ev], delim) || !isNum(recs[0][pop], delim));
+    return { ncol, ev, pop, name, headerGuess };
+  }
+
+  function parse(text, hasHeader) {
+    const s = split(text);
+    if (!s) return null;
+    const { recs, delim } = s;
+    const sh = shape(recs, delim);
+    if (!sh) return { rows: [], skipped: 0, noShape: true };
+    const head = hasHeader ? recs[0] : null;
+    const body = hasHeader ? recs.slice(1) : recs;
+    const rows = [];
+    let skipped = 0, extra = 0;
+    body.forEach((r, i) => {
+      const e = num(r[sh.ev], delim), n = num(r[sh.pop], delim);
+      if (!isFinite(e) || !isFinite(n) || e < 0 || n <= 0) { skipped++; return; }
+      if (rows.length >= MAX_ROWS) { extra++; return; }
+      const name = (sh.name >= 0 && r[sh.name]) || 'Row ' + (i + 1);
+      rows.push({ name, e, n });
+    });
+    return {
+      rows, skipped, extra, ncol: sh.ncol, used: sh.name >= 0 ? 3 : 2,
+      nameHead: (head && sh.name >= 0 && head[sh.name]) || 'Name',
+      evHead: (head && head[sh.ev]) || '', popHead: (head && head[sh.pop]) || ''
+    };
+  }
+
+  // ---- statistics ----
+  // Limits around the centre line p for a population of size n: binomial for
+  // proportions, Poisson when events can outnumber the population.
+  function limitsAt(p, n, z, poisson) {
+    const se = poisson ? Math.sqrt(p / n) : Math.sqrt(p * (1 - p) / n);
+    return { lo: Math.max(0, p - z * se), hi: poisson ? p + z * se : Math.min(1, p + z * se) };
+  }
+  function analyse(rows, centreMethod) {
+    const E = rows.reduce((a, r) => a + r.e, 0), N = rows.reduce((a, r) => a + r.n, 0);
+    rows.forEach(r => { r.p = r.e / r.n; });
+    const p = centreMethod === 'mean' ? rows.reduce((a, r) => a + r.p, 0) / rows.length : E / N;
+    const poisson = rows.some(r => r.e > r.n) || p >= 1;
+    const out = rows.map(r => {
+      const c = limitsAt(p, r.n, Z_CONTROL, poisson), w = limitsAt(p, r.n, Z_WARN, poisson);
+      const status = r.p > c.hi ? 'above' : r.p < c.lo ? 'below' : (r.p > w.hi || r.p < w.lo) ? 'warn' : 'within';
+      return Object.assign({}, r, { lcl: c.lo, ucl: c.hi, lwl: w.lo, uwl: w.hi, status });
+    });
+    return { rows: out, p, E, N, poisson };
+  }
+
+  // ---- axis ----
+  function niceStep(range, target) {
+    const raw = range / target, mag = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / mag;
+    return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * mag;
+  }
+  function axis(lo, hi, target, fixLo, fixHi) {
+    if (lo === hi) { const d = Math.abs(lo) * 0.1 || 1; lo -= d; hi += d; }
+    const step = niceStep(hi - lo, target || 6);
+    const a = fixLo ? lo : Math.floor(lo / step) * step, b = fixHi ? hi : Math.ceil(hi / step) * step;
+    const ticks = [];
+    for (let t = Math.ceil(a / step - 1e-9) * step; t <= b + step * 1e-6; t += step) ticks.push(+t.toPrecision(12));
+    return { min: a, max: b, ticks };
+  }
+
+  // ---- formatting ----
+  // Rates are shown to about three significant figures.
+  function fr(v) {
+    if (!isFinite(v)) return '–';
+    const a = Math.abs(v);
+    const d = a === 0 ? 0 : Math.min(6, Math.max(1, 2 - Math.floor(Math.log10(a))));
+    return v.toLocaleString('en-GB', { maximumFractionDigits: d });
+  }
+  function rateUnit(o) {
+    if (o.scale === 1) return '';
+    if (o.scale === 100) return '%';
+    return ' per ' + nf.format(o.scale) + (o.popName ? ' ' + lower(o.popName) : '');
+  }
+  const rateText = (v, o) => fr(v * o.scale) + rateUnit(o);
+  function yLabel(o) {
+    const m = o.measure || 'Rate';
+    if (o.scale === 1) return o.measure ? `${m} as a proportion` : 'Rate';
+    if (o.scale === 100) return `${m} (%)`;
+    return `${m} per ${nf.format(o.scale)}${o.popName ? ' ' + lower(o.popName) : ''}`;
+  }
+
+  // ---- drawing ----
+  const charW = size => size * 0.56;
+  function renderSVG(a, o) {
+    const W = 960, M = 16;
+    const legend = [['point', 'Population'], ['centre', o.centreMethod === 'mean' ? 'Average of rates' : 'Overall rate'], ['limit', '99.7% limits']];
+    if (o.showWarn) legend.push(['warn', '95% limits']);
+    if (a.rows.some(r => r.status === 'above' || r.status === 'below')) legend.push(['outlier', 'Outlier']);
+    const MT = (o.chartTitle ? 44 : 8) + 30;
+    const ML = 96, MR = 28, plotW = W - ML - MR, plotH = 420, MB = 62, H = MT + plotH + MB;
+    const k = o.scale;
+
+    // horizontal axis: population size
+    const nMax = Math.max(...a.rows.map(r => r.n)), nMin = Math.min(...a.rows.map(r => r.n));
+    const xLo = o.xMin != null ? o.xMin : 0, xHi = o.xMax != null ? o.xMax : nMax * 1.04;
+    const ax = axis(xLo, xHi, 7, o.xMin != null, o.xMax != null);
+    const x = v => ML + (v - ax.min) / (ax.max - ax.min) * plotW;
+
+    // vertical axis: the points, and the limits for the smallest population shown
+    const shown = a.rows.filter(r => r.n >= ax.min && r.n <= ax.max);
+    const nRef = Math.max(shown.length ? Math.min(...shown.map(r => r.n)) : nMin, ax.min, 1e-9);
+    const refC = limitsAt(a.p, nRef, Z_CONTROL, a.poisson);
+    const ys = (shown.length ? shown : a.rows).map(r => r.p).concat([a.p, refC.lo, refC.hi]).map(v => v * k);
+    let lo = Math.min(...ys), hi = Math.max(...ys);
+    if (lo >= 0 && lo < hi * 0.4) lo = 0;
+    const ay = axis(lo, hi + (hi - lo) * 0.04, 6);
+    if (ay.min < 0 && lo >= 0) { ay.ticks = ay.ticks.filter(t => t >= 0); ay.min = 0; }
+    const y = v => MT + plotH - (v * k - ay.min) / (ay.max - ay.min) * plotH;
+    const f = v => Math.round(v * 10) / 10;
+
+    const s = [];
+    s.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.aria)}" font-family="${FONT}">`);
+    s.push(`<rect width="${W}" height="${H}" fill="#ffffff"/>`);
+    s.push(`<defs><clipPath id="fpClip"><rect x="${ML}" y="${MT}" width="${plotW}" height="${plotH}"/></clipPath></defs>`);
+    if (o.chartTitle) s.push(`<text x="${M}" y="30" font-size="20" font-weight="700" fill="${COLORS.ink}">${esc(trunc(o.chartTitle, 80))}</text>`);
+
+    // legend, right-aligned above the plot
+    const keyW = t => 30 + charW(12) * t.length + 16;
+    let lx = W - MR - legend.reduce((acc, [, t]) => acc + keyW(t), 0);
+    const ly = MT - 16;
+    legend.forEach(([kind, t]) => {
+      const cx = lx + 11;
+      if (kind === 'point') s.push(`<circle cx="${cx}" cy="${ly}" r="4.5" fill="${COLORS.point}" fill-opacity="0.85"/>`);
+      if (kind === 'centre') s.push(`<line x1="${cx - 11}" y1="${ly}" x2="${cx + 11}" y2="${ly}" stroke="${COLORS.centre}" stroke-width="2.5"/>`);
+      if (kind === 'limit') s.push(`<line x1="${cx - 11}" y1="${ly}" x2="${cx + 11}" y2="${ly}" stroke="${COLORS.limit}" stroke-width="2" stroke-dasharray="6 4"/>`);
+      if (kind === 'warn') s.push(`<line x1="${cx - 11}" y1="${ly}" x2="${cx + 11}" y2="${ly}" stroke="${COLORS.warn}" stroke-width="1.5" stroke-dasharray="2 3"/>`);
+      if (kind === 'outlier') s.push(`<path d="M${cx} ${ly - 6}L${cx + 6} ${ly}L${cx} ${ly + 6}L${cx - 6} ${ly}Z" fill="${COLORS.outlier}" stroke="${COLORS.outlierEdge}" stroke-width="1"/>`);
+      s.push(`<text x="${lx + 27}" y="${ly + 4}" font-size="12" fill="${COLORS.muted}">${esc(t)}</text>`);
+      lx += keyW(t);
+    });
+
+    // grid and axes
+    ay.ticks.forEach(t => {
+      const yy = f(MT + plotH - (t - ay.min) / (ay.max - ay.min) * plotH);
+      s.push(`<line x1="${ML}" y1="${yy}" x2="${W - MR}" y2="${yy}" stroke="${COLORS.grid}" stroke-width="1"/>`);
+      s.push(`<text x="${ML - 8}" y="${yy + 4}" font-size="12" text-anchor="end" fill="${COLORS.muted}">${esc(fr(t))}</text>`);
+    });
+    ax.ticks.forEach(t => {
+      const xx = f(x(t));
+      s.push(`<line x1="${xx}" y1="${MT + plotH}" x2="${xx}" y2="${MT + plotH + 5}" stroke="${COLORS.axis}"/>`);
+      s.push(`<text x="${xx}" y="${MT + plotH + 20}" font-size="12" text-anchor="middle" fill="${COLORS.muted}">${esc(nf.format(t))}</text>`);
+    });
+    s.push(`<line x1="${ML}" y1="${MT}" x2="${ML}" y2="${MT + plotH}" stroke="${COLORS.axis}"/>`);
+    s.push(`<line x1="${ML}" y1="${MT + plotH}" x2="${W - MR}" y2="${MT + plotH}" stroke="${COLORS.axis}"/>`);
+    s.push(`<text transform="translate(${M + 8} ${MT + plotH / 2}) rotate(-90)" font-size="13" font-weight="600" text-anchor="middle" fill="${COLORS.ink}">${esc(trunc(yLabel(o), 60))}</text>`);
+    s.push(`<text x="${ML + plotW / 2}" y="${MT + plotH + 48}" font-size="13" font-weight="600" text-anchor="middle" fill="${COLORS.ink}">${esc(trunc(o.popName || 'Population size', 70))}</text>`);
+
+    // funnel: limits worked out along the whole axis, packed towards small populations where they curve most
+    s.push('<g clip-path="url(#fpClip)">');
+    const STEPS = 240, start = Math.max(ax.min, (ax.max - ax.min) / 4000);
+    const ns = [];
+    for (let i = 0; i <= STEPS; i++) ns.push(start + (ax.max - start) * Math.pow(i / STEPS, 2));
+    const curve = (z, side) => 'M' + ns.map(n => `${f(x(n))} ${f(Math.max(MT - 40, Math.min(MT + plotH + 40, y(limitsAt(a.p, n, z, a.poisson)[side]))))}`).join('L');
+    if (o.showWarn) ['lo', 'hi'].forEach(side => s.push(`<path d="${curve(Z_WARN, side)}" fill="none" stroke="${COLORS.warn}" stroke-width="1.5" stroke-dasharray="2 3"/>`));
+    ['lo', 'hi'].forEach(side => s.push(`<path d="${curve(Z_CONTROL, side)}" fill="none" stroke="${COLORS.limit}" stroke-width="2" stroke-dasharray="6 4"/>`));
+    s.push(`<line x1="${ML}" y1="${f(y(a.p))}" x2="${W - MR}" y2="${f(y(a.p))}" stroke="${COLORS.centre}" stroke-width="2.5"/>`);
+
+    // points, outliers drawn last so they sit on top
+    const pts = a.rows.slice().sort((p, q) => (p.status === 'above' || p.status === 'below') - (q.status === 'above' || q.status === 'below'));
+    pts.forEach(r => {
+      const out = r.status === 'above' || r.status === 'below';
+      const cx = f(x(r.n)), cy = f(y(r.p));
+      const res = r.status === 'above' ? 'above the upper 99.7% limit' : r.status === 'below' ? 'below the lower 99.7% limit' : r.status === 'warn' ? 'outside the 95% limits but within the 99.7% limits' : 'within the limits';
+      const tip = `${r.name}: ${nf.format(r.e)}${o.measure ? ' ' + lower(o.measure) : ' events'} in ${nf.format(r.n)}${o.popName ? ' ' + lower(o.popName) : ''}. Rate ${rateText(r.p, o)}; 99.7% limits ${rateText(r.lcl, o)} to ${rateText(r.ucl, o)}. ${res.charAt(0).toUpperCase() + res.slice(1)}.`;
+      s.push(`<g><title>${esc(tip)}</title>`);
+      if (out) s.push(`<path d="M${cx} ${f(cy - 7)}L${f(cx + 7)} ${cy}L${cx} ${f(cy + 7)}L${f(cx - 7)} ${cy}Z" fill="${COLORS.outlier}" stroke="${COLORS.outlierEdge}" stroke-width="1.2"/>`);
+      else s.push(`<circle cx="${cx}" cy="${cy}" r="5" fill="${COLORS.point}" fill-opacity="0.8" stroke="#ffffff" stroke-width="1"/>`);
+      s.push('</g>');
+    });
+    s.push('</g>');
+
+    // outlier labels, kept inside the plot
+    if (o.labels) {
+      pts.filter(r => r.status === 'above' || r.status === 'below').forEach(r => {
+        const cx = x(r.n), cy = y(r.p);
+        if (cx < ML || cx > W - MR || cy < MT || cy > MT + plotH) return;
+        const t = trunc(r.name, 26), w = charW(12) * t.length;
+        const right = cx + 10 + w < W - MR;
+        const ty = Math.max(MT + 12, Math.min(MT + plotH - 4, cy + 4));
+        s.push(`<text x="${f(right ? cx + 10 : cx - 10)}" y="${f(ty)}" font-size="12" font-weight="600" text-anchor="${right ? 'start' : 'end'}" fill="${COLORS.ink}" stroke="#ffffff" stroke-width="3" paint-order="stroke">${esc(t)}</text>`);
+      });
+    }
+    s.push('</svg>');
+    return { svg: s.join(''), hidden: a.rows.length - shown.length };
+  }
+
+  // ---- plain-language reading ----
+  function readingParts(a, o) {
+    const paras = [];
+    const rows = a.rows, n = rows.length;
+    const above = rows.filter(r => r.status === 'above'), below = rows.filter(r => r.status === 'below'), warn = rows.filter(r => r.status === 'warn');
+    const names = rs => list(rs.map(r => '<b>' + esc(r.name) + '</b>'));
+    paras.push(o.centreMethod === 'mean'
+      ? `The average of the ${n} populations’ rates is <b>${esc(rateText(a.p, o))}</b>. This is the centre line, and the limits are worked out around it.`
+      : `Across all ${n} populations there ${a.E === 1 ? 'was' : 'were'} ${nf.format(a.E)}${o.measure ? ' ' + esc(lower(o.measure)) : ' events'} in ${nf.format(a.N)}${o.popName ? ' ' + esc(lower(o.popName)) : ''}, an overall rate of <b>${esc(rateText(a.p, o))}</b>. This is the centre line, and the limits are worked out around it.`);
+    if (!above.length && !below.length) {
+      paras.push(`Every population is within the 99.7% limits, so the differences between them are no more than you would expect by chance, given their sizes.`);
+    } else {
+      if (above.length) paras.push(`${names(above)} ${above.length === 1 ? 'is' : 'are'} above the upper limit: ${above.length === 1 ? 'its rate is' : 'their rates are'} higher than chance alone would explain for ${above.length === 1 ? 'a population of its size' : 'populations of their size'}.`);
+      if (below.length) paras.push(`${names(below)} ${below.length === 1 ? 'is' : 'are'} below the lower limit: ${below.length === 1 ? 'its rate is' : 'their rates are'} lower than chance alone would explain.`);
+      paras.push(`A point outside the limits is unusual and worth investigating. Check the data first, such as whether events are counted and recorded the same way everywhere, then look for differences in the patients or the process${below.length ? '. A low outlier may be doing something others can learn from' : ''}.`);
+    }
+    const top = rows.slice().sort((p, q) => q.p - p.p)[0];
+    if (n > 2 && top.status !== 'above' && above.length) paras.push(`${esc(top.name)} has the highest rate, ${esc(rateText(top.p, o))}, but its population is small enough that this is within its limits. Whether a rate stands out depends on the population size as well as the rate.`);
+    if (o.showWarn && warn.length) paras.push(`${names(warn)} ${warn.length === 1 ? 'is' : 'are'} outside the 95% limits but inside the 99.7% limits. About 1 population in 20 lands here by chance, so keep an eye on ${warn.length === 1 ? 'it' : 'them'} rather than acting yet.`);
+    if (n >= 10 && (above.length + below.length) / n > 0.2) paras.push(`More than a fifth of the populations are outside the limits. This often happens with large populations, where real differences such as case mix make the limits too narrow. Treat the limits as a guide and consider adjusting for case mix.`);
+    if (n < 5) paras.push(`There ${n === 1 ? 'is only 1 population' : `are only ${n} populations`}. A funnel plot is most useful when comparing many populations; add more if you can.`);
+    if (a.poisson) paras.push(`At least one population has more events than its size, so the limits use the Poisson standard error, for rates, rather than the binomial, for proportions.`);
+    return paras;
+  }
+  function summaryText() {
+    const { a, o } = current;
+    const strip = s => s.replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+    const lines = [o.chartTitle || 'Funnel plot', ''];
+    readingParts(a, o).forEach(p => lines.push(strip(p), ''));
+    return lines.join('\n').trim();
+  }
+
+  // ---- table ----
+  const STATUS = { above: 'Above upper limit', below: 'Below lower limit', warn: 'Outside 95% limits', within: 'Within limits' };
+  // Highest rate first, as in the NHS Improvement spreadsheet.
+  const ordered = () => current.a.rows.slice().sort((p, q) => q.p - p.p);
+  const r6 = v => +(+v.toPrecision(6));
+  function tableRows() {
+    const { o } = current;
+    const unit = o.scale === 1 ? 'Rate' : o.scale === 100 ? 'Rate (%)' : `Rate per ${nf.format(o.scale)}`;
+    const out = [[o.nameHead, o.measure || 'Events', o.popName || 'Population', unit, 'Lower 99.7% limit', 'Upper 99.7% limit', 'Lower 95% limit', 'Upper 95% limit', 'Result']];
+    ordered().forEach(r => out.push([r.name, r.e, r.n, r6(r.p * o.scale), r6(r.lcl * o.scale), r6(r.ucl * o.scale), r6(r.lwl * o.scale), r6(r.uwl * o.scale), STATUS[r.status]]));
+    return out;
+  }
+  function tableHTML() {
+    const { o } = current;
+    const unit = o.scale === 1 ? 'Rate' : o.scale === 100 ? 'Rate (%)' : `Rate per ${nf.format(o.scale)}`;
+    let h = '<div class="tablewrap"><table><caption class="sr">Table of results, highest rate first</caption><thead><tr>';
+    h += `<th>${esc(o.nameHead)}</th>` + [o.measure || 'Events', o.popName || 'Population', unit, '99.7% limits'].map(t => `<th class="num">${esc(t)}</th>`).join('') + '<th>Result</th>';
+    h += '</tr></thead><tbody>';
+    ordered().forEach(r => {
+      const out = r.status === 'above' || r.status === 'below';
+      h += `<tr${out ? ' class="out"' : ''}><td>${esc(r.name)}</td><td class="num">${nf.format(r.e)}</td><td class="num">${nf.format(r.n)}</td>` +
+        `<td class="num"><b>${esc(fr(r.p * o.scale))}</b></td><td class="num">${esc(fr(r.lcl * o.scale))} – ${esc(fr(r.ucl * o.scale))}</td>` +
+        `<td${out ? ' class="flag"' : ''}>${STATUS[r.status === 'warn' && !o.showWarn ? 'within' : r.status]}</td></tr>`;
+    });
+    h += '</tbody></table></div>';
+    return h;
+  }
+
+  // ---- render ----
+  function optNum(el) { const v = el.value.trim() === '' ? NaN : Number(el.value); return isFinite(v) && v >= 0 ? v : null; }
+  function update() {
+    const text = els.data.value;
+    const sp = split(text);
+    if (!headerTouched) { const sh = sp && sp.recs.length > 1 && shape(sp.recs, sp.delim); els.hasHeader.checked = !!(sh && sh.headerGuess); }
+    current = null;
+    if (!text.trim()) { els.detected.textContent = ''; return renderEmpty('Paste data on the left to build your chart.'); }
+    const p = parse(text, els.hasHeader.checked);
+    if (!p || p.noShape || !p.rows.length) {
+      els.detected.textContent = p && p.skipped ? `Couldn’t read any rows: each needs a count of 0 or more and a population above 0.` : 'Couldn’t find two columns of numbers.';
+      return renderEmpty('Paste three columns: a name, the number of events and the population size.');
+    }
+    let note = `Reading ${plural(p.rows.length, 'population', 'populations')}, with ${p.used === 3 ? 'a name, ' : 'no names, '}the number of events and the population size.`;
+    if (p.ncol > p.used) note += ` ${p.ncol - p.used === 1 ? '1 column is' : (p.ncol - p.used) + ' columns are'} not used.`;
+    if (p.extra) note += ` Only the first ${MAX_ROWS} populations are used.`;
+    if (p.skipped) note += ` ${plural(p.skipped, 'row', 'rows')} skipped (need a count of 0 or more and a population above 0).`;
+
+    const centreMethod = els.centre.value;
+    const a = analyse(p.rows, centreMethod);
+    let xMin = optNum(els.xMin), xMax = optNum(els.xMax);
+    if (xMin != null && xMax != null && xMax <= xMin) { note += ' The axis maximum must be more than the minimum, so automatic limits are used.'; xMin = xMax = null; }
+
+    const measure = els.measure.value.trim() || p.evHead;
+    const popName = els.popLabel.value.trim() || p.popHead;
+    const dates = els.dates.value.trim();
+    const o = {
+      measure, popName, dates, centreMethod, xMin, xMax, nameHead: p.nameHead,
+      scale: Number(els.scale.value) || 1, showWarn: els.showWarn.checked, labels: els.labels.checked
+    };
+    o.chartTitle = [els.title.value.trim() || (els.measure.value.trim() ? yLabel(o) : ''), dates].filter(Boolean).join(', ');
+    const outs = a.rows.filter(r => r.status === 'above' || r.status === 'below');
+    o.aria = (o.chartTitle ? o.chartTitle + '. ' : '') + `Funnel plot of ${plural(a.rows.length, 'population', 'populations')}. Centre line ${rateText(a.p, o)}. ` +
+      (outs.length ? `Outside the 99.7% limits: ${outs.slice(0, 10).map(r => `${r.name} (${STATUS[r.status].toLowerCase()})`).join(', ')}${outs.length > 10 ? ' and more' : ''}.` : 'Every population is within the 99.7% limits.');
+    const drawn = renderSVG(a, o);
+    if (drawn.hidden) note += ` ${plural(drawn.hidden, 'population is', 'populations are')} outside the horizontal axis range you set, so not drawn.`;
+    els.detected.textContent = note;
+    current = { a, o };
+
+    const above = a.rows.filter(r => r.status === 'above').length, below = a.rows.filter(r => r.status === 'below').length;
+    const headline = outs.length
+      ? `<strong>${outs.length} of ${a.rows.length}</strong> populations ${outs.length === 1 ? 'is' : 'are'} outside the limits`
+      : `All <strong>${a.rows.length}</strong> populations are within the limits`;
+    const sub = outs.length
+      ? 'Points outside the dashed 99.7% limits are unusual for a population of their size: investigate them further.'
+      : 'The differences between the populations are no more than you would expect by chance, given their sizes.';
+    els.result.innerHTML = `
+      <p class="summary">${headline}</p>
+      <p class="focuson">${esc(sub)}</p>
+      <div class="stats">
+        <div class="stat"><b>${a.rows.length}</b><span>Populations</span></div>
+        <div class="stat"><b>${esc(fr(a.p * o.scale))}${o.scale === 100 ? '%' : ''}</b><span>${centreMethod === 'mean' ? 'Average rate' : 'Overall rate'}${o.scale > 100 ? ' per ' + nf.format(o.scale) : ''}</span></div>
+        <div class="stat"><b>${above}</b><span>Above upper limit</span></div>
+        <div class="stat"><b>${below}</b><span>Below lower limit</span></div>
+      </div>
+      <div class="chartwrap" id="chart">${drawn.svg}</div>
+      <p class="legend-note">Hover over a point to see its figures. Rows outside the 99.7% limits are highlighted in the table.</p>
+      <div class="reading"><h3>What the chart shows</h3>${readingParts(a, o).map(x => `<p>${x}</p>`).join('')}</div>
+      ${tableHTML()}`;
+  }
+  function renderEmpty(msg) {
+    current = null;
+    els.result.innerHTML = `<div class="empty"><p>${esc(msg)}</p><button type="button" class="primary" data-act="example">Try the example</button></div>`;
+  }
+  function schedule() { clearTimeout(timer); timer = setTimeout(update, 180); }
+
+  // ---- exports ----
+  function svgEl() { return document.querySelector('#chart svg'); }
+  function fileName() { return slug(current && current.o.chartTitle); }
+  let dlPromise = null;
+  function getDownloads() {
+    if (!window.claude || typeof window.claude.use !== 'function') return Promise.resolve(undefined);
+    if (!dlPromise) dlPromise = window.claude.use('downloads').catch(() => null);
+    return dlPromise;
+  }
+  async function downloadBlob(blob, name) {
+    const d = await getDownloads();
+    if (d) { const r = await d.save({ filename: name, data: blob }); return r && r.status !== 'declined'; }
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+    return true;
+  }
+  function status(msg) { FocusActions.say(msg); }
+  function toPNG(cb) {
+    const svg = svgEl(); if (!svg) return;
+    const vb = svg.viewBox.baseVal, scale = 2;
+    const str = new XMLSerializer().serializeToString(svg);
+    const img = new Image();
+    img.onload = () => {
+      const c = document.createElement('canvas');
+      c.width = vb.width * scale; c.height = vb.height * scale;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, c.width, c.height);
+      ctx.drawImage(img, 0, 0, c.width, c.height);
+      c.toBlob(cb, 'image/png');
+    };
+    img.onerror = () => status('Could not create the image.');
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(str);
+  }
+  const csvCell = v => /[",\n]/.test(String(v)) ? '"' + String(v).replace(/"/g, '""') + '"' : String(v);
+  async function copyText(t) {
+    try { await navigator.clipboard.writeText(t); return true; }
+    catch (e) {
+      const ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select();
+      const ok = document.execCommand('copy'); ta.remove(); return ok;
+    }
+  }
+  const saved = (ok, msg) => status(ok ? msg : 'Download cancelled.');
+  const failed = () => status('The file couldn’t be saved here. Try Copy instead.');
+  function act(a) {
+    if (a === 'example') return loadExample();
+    if (!current) return;
+    if (a === 'png') toPNG(b => downloadBlob(b, fileName() + '.png').then(ok => saved(ok, 'PNG downloaded.'), failed));
+    if (a === 'svg') downloadBlob(new Blob([new XMLSerializer().serializeToString(svgEl())], { type: 'image/svg+xml' }), fileName() + '.svg').then(ok => saved(ok, 'SVG downloaded.'), failed);
+    if (a === 'copyimg') {
+      if (!(navigator.clipboard && window.ClipboardItem)) return status('Your browser can’t copy images — use Download PNG.');
+      toPNG(async b => {
+        try { await navigator.clipboard.write([new ClipboardItem({ 'image/png': b })]); status('Chart copied — paste it into PowerPoint or Word.'); }
+        catch (e) { status('Copy was blocked — use Download PNG.'); }
+      });
+    }
+    if (a === 'csv') downloadBlob(new Blob([tableRows().map(r => r.map(csvCell).join(',')).join('\r\n')], { type: 'text/csv' }), fileName() + '.csv').then(ok => saved(ok, 'Table downloaded.'), failed);
+    if (a === 'copytable') copyText(tableRows().map(r => r.join('\t')).join('\n')).then(ok => status(ok ? 'Table copied — paste it into Excel.' : 'Copy was blocked.'));
+    if (a === 'copysummary') copyText(summaryText()).then(ok => status(ok ? 'Summary copied.' : 'Copy was blocked.'));
+  }
+  function loadExample() {
+    els.data.value = EXAMPLE;
+    els.title.value = 'Dermatology referrals by GP practice (example)';
+    els.dates.value = 'April 2025 to March 2026';
+    els.measure.value = 'Referrals';
+    els.popLabel.value = 'Registered patients';
+    els.scale.value = '10000';
+    els.centre.value = 'pooled';
+    els.xMin.value = ''; els.xMax.value = '';
+    headerTouched = false;
+    update();
+  }
+
+  // ---- events ----
+  els.data.addEventListener('input', schedule);
+  els.hasHeader.addEventListener('change', () => { headerTouched = true; update(); });
+  [els.title, els.dates, els.measure, els.popLabel, els.xMin, els.xMax].forEach(el => el.addEventListener('input', schedule));
+  [els.scale, els.centre, els.showWarn, els.labels].forEach(el => el.addEventListener('change', update));
+  $('exampleBtn2').addEventListener('click', loadExample);
+  $('clearBtn').addEventListener('click', () => {
+    ['data', 'title', 'dates', 'measure', 'popLabel', 'xMin', 'xMax'].forEach(k => { els[k].value = ''; });
+    headerTouched = false; els.hasHeader.checked = false; update(); els.data.focus();
+  });
+  els.result.addEventListener('click', e => { const b = e.target.closest('button[data-act]'); if (b) act(b.dataset.act); });
+
+  update(); // start empty, ready for the user's data
+
+  // ---- shared toolbar (Open, Save, Export) ----
+  FocusActions.mount({
+    tool: 'funnel_plot', toolName: 'funnel plot',
+    example: loadExample, hasData: () => !!els.data.value.trim(),
+    fileName: () => fileName(),
+    fields: 'section.panel[aria-labelledby="data-h"]',
+    afterOpen: () => { headerTouched = true; update(); },
+    ready: () => !!current,
+    exports: ['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) }))
+  });
+})();
+</script>
+{% include focus-footer.html %}
+</body>
+</html>

@@ -72,6 +72,12 @@
   group: Explore your data
   description: Test whether counts split differently between groups, such as patients assessed on time or late on each ward, or differ from the split you expected.
 
+- id: funnel_plot
+  name: Funnel plot
+  status: Beta
+  group: Explore your data
+  description: Compare a rate across populations of different sizes, such as falls on each ward or referrals from each GP practice, and see which stand out once size is taken into account.
+
 - id: scatter_plot
   name: Scatter plot
   status: Beta
