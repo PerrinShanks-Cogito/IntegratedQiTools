@@ -54,6 +54,12 @@
   group: Explore your data
   description: See the shape and spread of a set of measurements, such as waiting times or length of stay.
 
+- id: box_plot
+  name: Box and whisker plot
+  status: Beta
+  group: Explore your data
+  description: Compare the middle, spread and unusual values of a measure across groups, such as waiting times by site or length of stay by ward.
+
 - id: scatter_plot
   name: Scatter plot
   status: Beta
