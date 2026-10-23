@@ -102,8 +102,8 @@
   group: Explore your data
   description: See how long things last before they fail, such as equipment until its first repair, how likely they are to keep working over time, and whether failures come early, at random or from wearing out.
 
-- id: gage_rr
-  name: Gage R&R
+- id: gauge_rr
+  name: Gauge R&R
   status: Beta
   group: Test changes
   description: Check whether a measurement can be trusted, such as blood pressure readings or wound sizes, by seeing how much of its variation comes from the person and the equipment rather than from real differences.
