@@ -91,7 +91,7 @@
   description: See how several factors together relate to one result, such as staffing and demand against waiting times, and which of them matter most.
 
 - id: gage_rr
-  name: Gage R&R
+  name: Gauge R&R
   status: Beta
   group: Test changes
   description: Check whether a measurement can be trusted, such as blood pressure readings or wound sizes, by seeing how much of its variation comes from the person and the equipment rather than from real differences.
