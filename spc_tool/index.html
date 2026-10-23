@@ -428,12 +428,25 @@ function compute(){
       if (i < e){ if (d !== 0){ ts = i - 1; tdir = d; } else { ts = i; tdir = 0; } }
     }
     if (state.twoThree){
+      // All three points in the window are part of the signal (as in Making Data Count charts).
+      // A point beyond 2 sigma keeps its own side; any other point takes the side of the latest window it falls in.
+      const tt = new Map(), own = new Set();
       for (let i = s; i + 2 < e; i++){
         const w = [i, i + 1, i + 2];
-        const hi = w.filter(j => x[j] > g.up2), lo = w.filter(j => x[j] < g.lo2);
-        if (hi.length >= 2){ hi.forEach(j => mark(j, 'hi', 'twothree')); events.push({ rule: 'twothree', side: 'hi', from: hi[0], to: hi[hi.length - 1] }); }
-        if (lo.length >= 2){ lo.forEach(j => mark(j, 'lo', 'twothree')); events.push({ rule: 'twothree', side: 'lo', from: lo[0], to: lo[lo.length - 1] }); }
+        for (const sname of ['hi', 'lo']){
+          const beyond = w.filter(j => sname === 'hi' ? x[j] > g.up2 : x[j] < g.lo2);
+          if (beyond.length < 2) continue;
+          w.forEach(j => { if (!own.has(j)) tt.set(j, sname); });
+          beyond.forEach(j => own.add(j));
+        }
       }
+      const pts = [...tt.keys()].sort((a, b) => a - b);
+      pts.forEach((j, k) => {
+        const sname = tt.get(j); mark(j, sname, 'twothree');
+        const p = events[events.length - 1];
+        if (k && p.rule === 'twothree' && p.side === sname && p.to === pts[k - 1] && j === p.to + 1) p.to = j;
+        else events.push({ rule: 'twothree', side: sname, from: j, to: j });
+      });
     }
   }
   // merge overlapping / adjacent events of the same kind
