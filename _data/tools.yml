@@ -24,6 +24,12 @@
   group: Prioritise
   description: Rank causes or categories by how often they occur so you can focus on the vital few that make the biggest difference.
 
+- id: tree_plot
+  name: Tree plot
+  status: Beta
+  group: Prioritise
+  description: See how a total breaks down into groups and the items within them, such as incidents by directorate, ward and type, with each box sized by its share.
+
 - id: bar_chart
   name: Bar chart
   status: Beta

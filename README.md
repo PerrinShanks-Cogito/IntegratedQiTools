@@ -9,7 +9,7 @@ fishbone diagram, which was built here following the IHI QI Essentials Toolkit
 instructions for a cause and effect diagram, and the demand and capacity model,
 which was built here from the NHS Improvement and NHS England demand and
 capacity core model (version 4.2) and its user guidance, and the multiple
-regression tool, which was built here):
+regression tool and tree plot (treemap), which were both built here):
 
 | Tool | Path |
 | --- | --- |
@@ -17,6 +17,7 @@ regression tool, which was built here):
 | Driver diagram | `/driver_diagram/` |
 | Fishbone (cause and effect) diagram | `/fishbone_diagram/` |
 | Pareto chart | `/pareto_chart/` |
+| Tree plot (treemap) | `/tree_plot/` |
 | Bar chart | `/bar_chart/` |
 | Run chart | `/run_chart/` |
 | SPC chart | `/spc_tool/` |
