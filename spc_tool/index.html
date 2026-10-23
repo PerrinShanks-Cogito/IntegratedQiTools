@@ -230,7 +230,7 @@ td button{font-size:12px;padding:2px 8px}
         <h2 class="sec">Control limits</h2>
         <label class="check"><input type="radio" name="base" value="all" checked> Calculate from all points</label>
         <label class="check"><input type="radio" name="base" value="first"> <span class="inline-n">Fix after the first <input type="number" id="baseN" min="2" value="20" aria-label="Number of baseline points"> points</span></label>
-        <label class="check"><input type="checkbox" id="screen" checked> Leave out unusually large moving ranges when calculating limits</label>
+        <label class="check"><input type="checkbox" id="screen"> Leave out unusually large moving ranges when calculating limits</label>
         <p class="hint" style="margin-top:12px">To recalculate limits after a known change, click that point on the chart, or use the table of values.</p>
         <div class="chips" id="breakChips"></div>
         <label class="check"><input type="checkbox" id="showMR" checked> Show moving range chart</label>
@@ -264,7 +264,7 @@ const $ = s => document.querySelector(s);
 const state = {
   rows: [], header: null, skipped: [], decimals: 0,
   breaks: new Set(), dir: 'up', target: null, useBaseN: false, baseN: 20,
-  screen: true, floor: false, showMR: true, shiftLen: 7, trendLen: 7, twoThree: true,
+  screen: false, floor: false, showMR: true, shiftLen: 7, trendLen: 7, twoThree: true,
   title: '', yLabel: ''
 };
 let model = null;
@@ -393,9 +393,9 @@ function compute(){
   const segOf = i => segs.find(g => i >= g.s && i < g.e);
   const mr = x.map((v, i) => { const g = segOf(i); return i > g.s ? Math.abs(v - x[i - 1]) : null; });
 
-  const flags = x.map(() => ({ hi: false, lo: false, rules: new Set() }));
+  const flags = x.map(() => ({ hi: false, lo: false, rules: new Set(), sides: {} }));
   let events = [];
-  const mark = (i, side, rule) => { flags[i][side] = true; flags[i].rules.add(rule); };
+  const mark = (i, side, rule) => { flags[i][side] = true; flags[i].rules.add(rule); flags[i].sides[rule] = side; };
 
   for (const g of segs){
     if (!g.ok) continue;
@@ -428,11 +428,13 @@ function compute(){
       if (i < e){ if (d !== 0){ ts = i - 1; tdir = d; } else { ts = i; tdir = 0; } }
     }
     if (state.twoThree){
+      // As in the Making Data Count Excel tool: all three points must be on the same side of the mean,
+      // and only the points beyond 2 sigma are flagged.
       for (let i = s; i + 2 < e; i++){
         const w = [i, i + 1, i + 2];
         const hi = w.filter(j => x[j] > g.up2), lo = w.filter(j => x[j] < g.lo2);
-        if (hi.length >= 2){ hi.forEach(j => mark(j, 'hi', 'twothree')); events.push({ rule: 'twothree', side: 'hi', from: hi[0], to: hi[hi.length - 1] }); }
-        if (lo.length >= 2){ lo.forEach(j => mark(j, 'lo', 'twothree')); events.push({ rule: 'twothree', side: 'lo', from: lo[0], to: lo[lo.length - 1] }); }
+        if (hi.length >= 2 && w.every(j => x[j] > mean)){ hi.forEach(j => mark(j, 'hi', 'twothree')); events.push({ rule: 'twothree', side: 'hi', from: hi[0], to: hi[hi.length - 1] }); }
+        if (lo.length >= 2 && w.every(j => x[j] <= mean)){ lo.forEach(j => mark(j, 'lo', 'twothree')); events.push({ rule: 'twothree', side: 'lo', from: lo[0], to: lo[lo.length - 1] }); }
       }
     }
   }
@@ -449,7 +451,8 @@ function compute(){
   const status = x.map((v, i) => {
     const f = flags[i];
     if (!f.hi && !f.lo) return 'common';
-    const side = f.hi && f.lo ? (v >= segOf(i).mean ? 'hi' : 'lo') : (f.hi ? 'hi' : 'lo');
+    // Conflicting signals follow the Excel tool's priority: trend, shift, two of three, single point
+    const side = f.hi && f.lo ? f.sides[['trend', 'shift', 'twothree', 'outside'].find(r => f.sides[r])] : (f.hi ? 'hi' : 'lo');
     if (state.dir === 'none') return side === 'hi' ? 'neither-hi' : 'neither-lo';
     return (state.dir === 'up') === (side === 'hi') ? 'improve' : 'concern';
   });
