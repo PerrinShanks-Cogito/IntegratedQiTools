@@ -1,0 +1,1020 @@
+---
+tool_id: chi_squared
+title: "Chi-squared test"
+permalink: /chi_squared/
+---
+<!DOCTYPE html>
+<!-- © Guy’s and St Thomas’ NHS Foundation Trust 2026. All rights reserved. -->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Chi-squared test</title>
+<meta name="description" content="Paste your counts and run a chi-squared test in your browser to see whether the split across categories really differs between groups, or from what you expected. Nothing is uploaded.">
+<link rel="icon" type="image/png" sizes="64x64" href="data:image/png;base64,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">
+<link rel="apple-touch-icon" href="data:image/png;base64,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">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#005EB8; --navy:#003087; --bg:#F0F4F5; --surface:#FFFFFF; --text:#212B32;
+  --muted:#4C6272; --line:#D8DDE0; --yellow:#FFB81C; --green:#007F3B; --green-bg:#E3F2E9;
+  --blue-bg:#E6F0FA; --danger:#D5281B; --shadow:0 2px 0 #D8DDE0;
+  --l1:#005EB8; --l2:#6FA8DC; --l3:#9DB4CA; --proj:#D4A814; --bal:#6A4C93;
+  --warn:#A65300; --ok:#007F3B; --info:#4C6272;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --blue:#5AA2EA; --navy:#9CC3EF; --bg:#0E1A24; --surface:#162533; --text:#E8EEF2;
+    --muted:#A3B6C3; --line:#2A3E4F; --green:#4CC17E; --green-bg:#143326; --blue-bg:#15314B;
+    --danger:#FF7468; --shadow:0 2px 0 #0A131B; --l1:#5AA2EA; --l2:#3E7BB3; --l3:#4D6478;
+    --bal:#A889D4; --warn:#F0A54A; --ok:#4CC17E; --info:#A3B6C3;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --blue:#5AA2EA; --navy:#9CC3EF; --bg:#0E1A24; --surface:#162533; --text:#E8EEF2;
+  --muted:#A3B6C3; --line:#2A3E4F; --green:#4CC17E; --green-bg:#143326; --blue-bg:#15314B;
+  --danger:#FF7468; --shadow:0 2px 0 #0A131B; --l1:#5AA2EA; --l2:#3E7BB3; --l3:#4D6478;
+  --bal:#A889D4; --warn:#F0A54A; --ok:#4CC17E; --info:#A3B6C3;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Figtree,"Frutiger","Helvetica Neue",Arial,sans-serif;font-size:1rem;line-height:1.5}
+a{color:var(--blue)}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:2px;border-radius:2px}
+button,input,select,textarea{font:inherit;color:inherit}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* Header (shared FOCUS suite style) */
+.top{background:#005EB8;color:#fff}
+.top-inner{padding:.9rem 1.25rem;display:flex;flex-wrap:wrap;gap:.75rem 1.5rem;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:baseline;gap:.6rem;color:#fff}
+.brand b{font-size:1.25rem;font-weight:800;letter-spacing:-.01em}
+.brand span{opacity:.85;font-size:.95rem}
+.top nav{display:flex;flex-wrap:wrap;gap:.25rem}
+.top nav a{color:#fff;text-decoration:none;padding:.4rem .7rem;border-radius:4px;font-weight:600;font-size:.95rem}
+.top nav a:hover{background:rgba(255,255,255,.14)}
+.support{background:#003087;color:#fff}
+.support-inner{padding:.5rem 1.25rem;display:flex;flex-wrap:wrap;gap:.25rem 1.75rem;align-items:center;font-size:.92rem}
+.support a{color:#fff;text-underline-offset:3px}
+.dd{position:relative}
+.dd summary{cursor:pointer;list-style:none;text-decoration:underline;text-underline-offset:3px;display:inline-flex;align-items:center;gap:.35rem}
+.dd summary::-webkit-details-marker{display:none}
+.dd summary::after{content:"";width:.45rem;height:.45rem;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-2px) rotate(45deg);transition:transform .15s}
+.dd[open] summary::after{transform:translateY(2px) rotate(-135deg)}
+.dd-menu{position:absolute;z-index:30;top:calc(100% + .5rem);left:0;width:min(380px,calc(100vw - 2.5rem));max-height:70vh;overflow:auto;background:var(--surface);color:var(--text);border:1px solid var(--line);border-radius:8px;box-shadow:0 12px 32px rgba(0,20,40,.25);padding:.4rem}
+.toollist{list-style:none;margin:0;padding:0}
+.toollist li{display:flex;justify-content:space-between;align-items:center;gap:.75rem;padding:.5rem .6rem;border-radius:4px}
+.toollist li+li{border-top:1px solid var(--line)}
+.toollist a{color:var(--blue);font-weight:600}
+.toollist .off{color:var(--muted)}
+.toollist .here{font-weight:700}
+.supportlist li{flex-direction:column;align-items:flex-start;gap:.1rem}
+.menu-desc{font-size:.85rem;color:var(--muted)}
+.menu-note{font-size:.82rem;color:var(--muted);margin:.4rem .6rem .2rem}
+.tag{flex:none;font-size:.78rem;font-weight:700;padding:.1rem .5rem;border-radius:99px;white-space:nowrap}
+.tag.beta{background:var(--green-bg);color:var(--green)}
+.tag.alpha{background:var(--blue-bg);color:var(--navy)}
+.tag.dev{background:#FFF4DB;color:#6B4A00}
+.tag.idea{background:var(--bg);color:var(--muted);border:1px solid var(--line)}
+.tag.here{background:var(--yellow);color:#212B32}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .tag.dev{background:#3A2E10;color:#FFD27A}}
+:root[data-theme="dark"] .tag.dev{background:#3A2E10;color:#FFD27A}
+
+/* Page head */
+.page-head{padding:1rem 1.25rem}
+.page-head h1{margin:0;font-size:clamp(1.4rem,2.6vw,1.8rem);line-height:1.2;font-weight:800;letter-spacing:-.015em}
+.page-head .meta{color:var(--muted);margin:.15rem 0 0;max-width:70ch}
+
+/* Workspace */
+main{display:grid;grid-template-columns:minmax(300px,380px) minmax(0,1fr);gap:1.25rem;padding:0 1.25rem 1.25rem;align-items:start}
+@media (max-width:880px){main{grid-template-columns:1fr}}
+@media (max-width:420px){main{padding:0 1rem 1rem} .page-head,.top-inner,.support-inner,.notes{padding-left:1rem;padding-right:1rem}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow);padding:1.1rem;min-width:0}
+.panel h2{font-size:1.05rem;font-weight:700;margin:0 0 .75rem}
+.block{margin-bottom:1.1rem}
+label{display:block;font-weight:600;margin:0 0 .35rem}
+.hint{color:var(--muted);font-size:.88rem;margin:0 0 .5rem}
+textarea,input[type=text],input[type=number]{width:100%;padding:.5rem .65rem;border:2px solid var(--muted);border-radius:4px;background:var(--surface)}
+textarea{min-height:260px;resize:vertical;font:14px/1.45 Consolas,"Courier New",monospace}
+textarea:focus,input[type=text]:focus,input[type=number]:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px var(--yellow)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+@media (max-width:420px){.pair{grid-template-columns:1fr;gap:0}}
+.check{display:flex;gap:.6rem;align-items:flex-start;font-weight:400;margin-bottom:.6rem;cursor:pointer}
+.check input{width:20px;height:20px;margin:2px 0 0;flex:none;accent-color:var(--blue)}
+.check.off{color:var(--muted);cursor:default}
+#detected{font-size:.88rem;color:var(--muted);margin:.4rem 0 0;min-height:1.3em}
+
+/* Buttons */
+.btns{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+button{display:inline-flex;align-items:center;gap:.4rem;border-radius:4px;padding:.5rem .95rem;font-weight:700;cursor:pointer;background:var(--surface);color:var(--blue);border:2px solid var(--blue);line-height:1.2;white-space:nowrap}
+button:hover{background:var(--blue-bg)}
+button.primary{background:var(--green);color:#fff;border-color:var(--green);box-shadow:0 3px 0 #00401E}
+button.primary:hover{filter:brightness(1.07);background:var(--green)}
+button.primary:active{transform:translateY(2px);box-shadow:0 1px 0 #00401E}
+
+/* Result */
+.summary{font-size:clamp(1.3rem,2.6vw,1.85rem);line-height:1.25;font-weight:700;letter-spacing:-.01em;margin:0 0 .3rem;max-width:34ch}
+.summary strong{color:var(--blue);font-weight:800}
+.focuson{margin:0 0 1rem;color:var(--muted);max-width:70ch}
+.chartwrap{border:1px solid var(--line);border-radius:8px;overflow-x:auto;margin-bottom:.9rem;background:#fff}
+.chartwrap svg{width:100%;min-width:560px;height:auto;display:block}
+.empty{padding:3rem .5rem;text-align:center;color:var(--muted)}
+.empty p{margin:0 0 .9rem}
+#status{font-size:.88rem;color:var(--muted)}
+.tablewrap{overflow-x:auto;margin-top:1.25rem}
+table{border-collapse:collapse;width:100%;font-size:.94rem}
+th,td{text-align:left;padding:.5rem .65rem;border-bottom:1px solid var(--line)}
+th{border-bottom:2px solid var(--text)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+.sw{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:.5rem;vertical-align:-1px}
+
+/* Notes */
+.notes{padding:0 1.25rem 2rem;color:var(--muted);font-size:.92rem}
+.notes p{max-width:80ch;margin:0 0 .75rem}
+/* Centre the page in the same 1340px column as the FOCUS header */
+.page-head,main,.notes{box-sizing:border-box;max-width:1340px;margin-left:auto;margin-right:auto}
+.notice{background:var(--blue-bg);color:var(--text);border-left:5px solid var(--blue);border-radius:0 4px 4px 0;padding:.7rem .9rem;max-width:80ch}
+@media (prefers-reduced-motion: no-preference){button{transition:background .15s,filter .15s}}
+select{width:100%;padding:.5rem .65rem;border:2px solid var(--muted);border-radius:4px;background:var(--surface)}
+select:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px var(--yellow)}
+[hidden]{display:none !important}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.6rem;margin:0 0 1rem}
+.stat{border:1px solid var(--line);border-radius:6px;padding:.55rem .75rem}
+.stat b{display:block;font-size:1.3rem;font-weight:800;font-variant-numeric:tabular-nums}
+.stat span{color:var(--muted);font-size:.85rem}
+.reading{margin-top:1.4rem;border-top:1px solid var(--line);padding-top:1.1rem}
+.reading h3{font-size:1.05rem;font-weight:700;margin:0 0 .5rem}
+.reading p{max-width:75ch;margin:0 0 .75rem}
+.tablewrap{position:relative}
+.legend-note{color:var(--muted);font-size:.88rem;margin:-.4rem 0 .9rem}
+td.warn{color:var(--warn);font-weight:600}
+td.yes{color:var(--green);font-weight:700}
+.tablewrap h3{font-size:1.05rem;font-weight:700;margin:0 0 .5rem}
+.tablewrap .hint{margin:.4rem 0 0}
+</style>
+.pc{color:var(--muted);font-size:.85em;margin-left:.4rem;font-weight:400}
+td.out{font-weight:800;color:var(--navy)}
+.empty .btns{justify-content:center}
+td.tot,th.tot{font-weight:700}
+</style>
+{% include focus-head.html %}
+</head>
+<body>
+
+{% include focus-header.html %}
+
+<div class="page-head fa-host">
+  <div class="fa-head-text">
+    <h1>Run a chi-squared test</h1>
+    <p class="meta">Paste counts, such as patients seen on time or late on each ward, and test whether the split really differs between groups or just varies by chance. Or compare one set of counts with the split you expected. Everything runs in your browser, so your data is never uploaded.</p>
+  </div>
+  <div data-focus-actions></div>
+</div>
+
+<main>
+  <section class="panel" aria-labelledby="data-h">
+    <h2 id="data-h">Your data</h2>
+
+    <div class="block">
+      <label for="data">Paste from Excel or a CSV</label>
+      <p class="hint">Either a table of counts, with the groups down the first column and a column of counts for each category; or one row for each person or event, with a column for their group and a column for their category (add a third column of counts if each row stands for more than one). To compare with an expected split, paste a column of categories and a column of counts, with an optional third column of expected counts or percentages.</p>
+      <textarea id="data" spellcheck="false" placeholder="Ward&#9;On time&#9;Late&#10;Ward 1&#9;82&#9;18&#10;Ward 2&#9;51&#9;29"></textarea>
+      <p id="detected" aria-live="polite"></p>
+    </div>
+
+    <label class="check"><input type="checkbox" id="hasHeader"> First row is column headings</label>
+
+    <div class="btns" style="margin-bottom:1.5rem">
+      <button type="button" id="clearBtn">Clear</button>
+    </div>
+
+    <h2>Test settings</h2>
+    <div class="block">
+      <label for="mode">Test</label>
+      <select id="mode" aria-describedby="modeHint">
+        <option value="independence">Compare groups (test of independence)</option>
+        <option value="gof">Compare with an expected split (goodness of fit)</option>
+      </select>
+      <p class="hint" id="modeHint" style="margin:.35rem 0 0">Compare groups asks whether the split across categories is the same in every group. Compare with an expected split asks whether one set of counts matches the split you expected: equal across categories, unless you add a column of expected counts.</p>
+    </div>
+    <div class="block">
+      <label for="alpha">Significance level</label>
+      <select id="alpha">
+        <option value="0.05">5% (95% confidence, the usual choice)</option>
+        <option value="0.01">1% (99% confidence, stricter)</option>
+        <option value="0.1">10% (90% confidence, looser)</option>
+      </select>
+    </div>
+
+    <h2>Chart settings</h2>
+    <div class="block">
+      <label for="title">Chart title</label>
+      <input type="text" id="title" placeholder="e.g. Risk assessment within 6 hours, by ward">
+    </div>
+    <div class="block">
+      <label for="valLabel">What is being counted</label>
+      <input type="text" id="valLabel" placeholder="e.g. Patients">
+    </div>
+    <div class="block">
+      <label for="order">Order of the groups</label>
+      <select id="order">
+        <option value="entered">As in your data</option>
+        <option value="sizeDesc">Largest count first</option>
+        <option value="name">Name, A to Z</option>
+      </select>
+    </div>
+    <label class="check" id="swapWrap"><input type="checkbox" id="swap"> Swap the groups and categories</label>
+  </section>
+
+  <section class="panel" aria-labelledby="result-h">
+    <h2 id="result-h" class="sr">Result</h2>
+    <div id="result">
+      <div class="empty">
+        <p>Paste data on the left to run the test.</p>
+        <button type="button" class="primary" id="exampleBtn2">Try the example</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<section class="notes" aria-label="About the chi-squared test">
+  <p><b>What it does:</b> a chi-squared test works on counts: how many people, events or items fall into each category. Comparing groups (a test of independence) asks whether the split across categories is the same in every group, for example whether the share of patients assessed late is the same on each ward. Comparing with an expected split (a goodness of fit test) asks whether one set of counts matches what you expected, for example whether falls are spread evenly across the days of the week. Both compare the counts you have with the counts you would expect if there were no difference. The p-value is the chance of seeing a gap at least this large by chance alone; a p-value below your significance level is taken as evidence of a real difference.</p>
+  <p><b>Which cells stand out:</b> a significant result says the pattern differs somewhere, not where. The adjusted residual for each cell measures how far its count is from the expected count, allowing for the size of its row and column. Cells beyond the critical value (adjusted for the number of cells, so that checking many cells doesn’t throw up false alarms) are marked as standing out. Cramér’s V (or Cohen’s w for an expected split) shows how strong the difference is, from 0 for none upwards.</p>
+  <p><b>Things to check:</b> use actual counts, not percentages or averages, and count each person or event once. The test is reliable when the expected counts are large enough: none below 1 and no more than one in five below 5. If they are smaller, combine categories or collect more data; for a 2 × 2 table, Fisher’s exact test is used instead. The chi-squared test looks at a snapshot, not change over time, so use a run chart or SPC chart to see whether a process is stable. A real difference isn’t always a large or important one: look at the percentages, too.</p>
+  <div class="notice">Want to build your skills? <a href="https://coh.gstt.nhs.uk/course/view.php?id=3199" target="_blank" rel="noopener">Book QI training with the CITI Academy</a>.</div>
+</section>
+
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const els = {
+    data: $('data'), hasHeader: $('hasHeader'), detected: $('detected'), mode: $('mode'), alpha: $('alpha'),
+    title: $('title'), valLabel: $('valLabel'), order: $('order'), swap: $('swap'), swapWrap: $('swapWrap'), result: $('result')
+  };
+  const COLORS = { ink: '#212B32', muted: '#4C6272', grid: '#E8EDEE', axis: '#AEB7BD', bar: '#005EB8', expected: '#ED8B00' };
+  const SERIES = ['#005EB8', '#AE2573', '#007F3B', '#ED8B00', '#330072', '#00A499', '#768692', '#DA291C', '#41B6E6', '#8A1538'];
+  const DARK_TEXT = new Set(['#ED8B00', '#00A499', '#768692', '#41B6E6']);
+  const FONT = 'Figtree, Frutiger, Helvetica Neue, Arial, sans-serif';
+  const nf = new Intl.NumberFormat('en-GB', { maximumFractionDigits: 2 });
+  const nf1 = new Intl.NumberFormat('en-GB', { maximumFractionDigits: 1 });
+  const MAX_ROWS = 30, MAX_COLS = 10, MAX_CATS = 40;
+
+  let headerTouched = false;
+  let modeTouched = false;
+  let current = null;
+  let timer = null;
+
+  // Examples (made-up data)
+  const EXAMPLE = [
+    'Ward\tWithin 6 hours\tLate\tNot done',
+    'Ward A\t82\t12\t6',
+    'Ward B\t51\t17\t12',
+    'Ward C\t108\t9\t3',
+    'Ward D\t40\t17\t13'
+  ].join('\n');
+  const EXAMPLE_GOF = [
+    'Day\tFalls',
+    'Monday\t17', 'Tuesday\t15', 'Wednesday\t16', 'Thursday\t13', 'Friday\t15', 'Saturday\t28', 'Sunday\t31'
+  ].join('\n');
+
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const trunc = (s, n) => s.length > n ? s.slice(0, Math.max(1, n - 1)) + '…' : s;
+  const slug = s => (s || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'chi-squared';
+  const lower = s => /^[A-Z][a-z]/.test(s) && !/^[A-Z][a-z]*[A-Z]/.test(s) ? s.charAt(0).toLowerCase() + s.slice(1) : s;
+  const list = a => a.length > 1 ? a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1] : (a[0] || '');
+  const pf = p => p == null ? '–' : p < 0.001 ? '< 0.001' : p.toFixed(3);
+  const pIs = p => p < 0.001 ? 'p < 0.001' : 'p = ' + p.toFixed(3);
+  const pct = a => Math.round((1 - a) * 100) + '%';
+  const share = x => isFinite(x) ? Math.round(x * 100) + '%' : '–';
+  const sum = a => a.reduce((s, v) => s + v, 0);
+
+  // ---- parsing ----
+  function split(text) {
+    const lines = text.split(/\r?\n/).filter(l => l.trim() !== '');
+    if (!lines.length) return null;
+    let delim = '\t';
+    if (!lines.some(l => l.includes('\t'))) delim = lines.some(l => l.includes(';')) ? ';' : (lines.some(l => l.includes(',')) ? ',' : '\t');
+    const recs = lines.map(l => l.split(delim).map(x => x.trim().replace(/^"(.*)"$/, '$1').trim()));
+    return { recs, delim };
+  }
+  function num(raw, delim) {
+    if (raw === undefined) return NaN;
+    let v = String(raw).replace(/[%£$€\s]/g, '');
+    if (delim !== ',') v = v.replace(/,/g, '');
+    return v === '' ? NaN : Number(v);
+  }
+  const isNum = (v, delim) => v !== undefined && v !== '' && isFinite(num(v, delim));
+  function numShare(recs, c, delim) {
+    const cells = recs.slice(recs.length > 1 ? 1 : 0).map(r => r[c]).filter(v => v !== undefined && v !== '');
+    return cells.length ? cells.filter(v => isNum(v, delim)).length / cells.length : 0;
+  }
+  // "table": category names down the first column, then columns of counts.
+  // "grid": columns of counts with no names.
+  // "records": one row per person or event, with one or two category columns and an optional count column.
+  function shape(recs, delim) {
+    const ncol = Math.max(...recs.map(r => r.length));
+    const numeric = [];
+    for (let c = 0; c < ncol; c++) numeric.push(numShare(recs, c, delim) >= 0.6);
+    const unique = c => recs.length > 2 && !recs.slice(1).some(r => (r[c] || '').toLowerCase() === (recs[0][c] || '').toLowerCase());
+    if (numeric.every(Boolean)) {
+      return { kind: 'grid', ncol, headerGuess: recs.length > 1 && recs[0].some(v => v !== '' && !isNum(v, delim)) };
+    }
+    if (!numeric[0] && ncol >= 2 && numeric.slice(1).every(Boolean)) {
+      return { kind: 'table', ncol, headerGuess: recs.length > 1 && recs[0].slice(1).some(v => v !== '' && !isNum(v, delim)) };
+    }
+    const cats = ncol >= 2 && !numeric[1] ? 2 : 1;
+    const weight = ncol > cats && numeric[ncol - 1];
+    const headerGuess = weight ? recs.length > 1 && !isNum(recs[0][ncol - 1], delim) : [...Array(cats).keys()].every(unique);
+    return { kind: 'records', ncol, cats, weight, headerGuess };
+  }
+  function suggestMode(sh) {
+    if (sh.kind === 'records') return sh.cats === 1 ? 'gof' : 'independence';
+    const countCols = sh.kind === 'table' ? sh.ncol - 1 : sh.ncol;
+    return countCols === 1 ? 'gof' : 'independence';
+  }
+
+  // Keeps names in order of first appearance, merging repeats (ignoring case and spacing).
+  function keyer() {
+    const map = new Map(), names = [];
+    return {
+      names,
+      get(name) {
+        name = (name || '').trim() || '(blank)';
+        const k = name.toLowerCase().replace(/\s+/g, ' ');
+        if (!map.has(k)) { map.set(k, names.length); names.push(name); }
+        return map.get(k);
+      }
+    };
+  }
+
+  function parse(text, hasHeader, mode) {
+    const s = split(text);
+    if (!s) return null;
+    const { recs, delim } = s;
+    const sh = shape(recs, delim);
+    const head = hasHeader ? recs[0] : null;
+    const body = hasHeader ? recs.slice(1) : recs;
+    const out = { kind: sh.kind, ncol: sh.ncol, skipped: 0, negative: 0, notes: [] };
+    const cell = raw => {
+      if (raw === undefined || raw === '') return 0;
+      const v = num(raw, delim);
+      if (!isFinite(v)) { out.skipped++; return 0; }
+      if (v < 0) { out.negative++; return 0; }
+      return v;
+    };
+    if (mode === 'independence') {
+      out.rowName = 'Group'; out.colName = 'Category';
+      if (sh.kind === 'records') {
+        if (sh.cats < 2) { out.error = 'A test of independence needs a column for each person’s group and a column for their category. To compare one column of categories with an expected split, choose “Compare with an expected split” under Test.'; return out; }
+        const R = keyer(), C = keyer(), cells = new Map();
+        for (const r of body) {
+          const w = sh.weight ? cell(r[sh.ncol - 1]) : 1;
+          const i = R.get(r[0]), j = C.get(r[1]), k = i + ',' + j;
+          cells.set(k, (cells.get(k) || 0) + w);
+        }
+        out.rows = R.names; out.cols = C.names;
+        out.obs = R.names.map((_, i) => C.names.map((_, j) => cells.get(i + ',' + j) || 0));
+        if (head) { out.rowName = head[0] || out.rowName; out.colName = head[1] || out.colName; }
+        if (sh.ncol > (sh.weight ? 3 : 2)) out.notes.push('Only the first two columns' + (sh.weight ? ' and the last' : '') + ' are used.');
+      } else {
+        const first = sh.kind === 'table' ? 1 : 0;
+        if (sh.ncol - first < 2) { out.error = 'A test of independence needs at least two columns of counts. To compare one column of counts with an expected split, choose “Compare with an expected split” under Test.'; return out; }
+        const R = keyer(), rowsObs = [];
+        body.forEach((r, n) => {
+          const i = R.get(first ? r[0] : 'Row ' + (n + 1));
+          if (!rowsObs[i]) rowsObs[i] = new Array(sh.ncol - first).fill(0);
+          for (let c = first; c < sh.ncol; c++) rowsObs[i][c - first] += cell(r[c]);
+        });
+        out.rows = R.names; out.obs = rowsObs;
+        out.cols = [];
+        for (let c = first; c < sh.ncol; c++) out.cols.push((head && head[c]) || 'Column ' + (c + 1));
+        if (head && first && head[0]) out.rowName = head[0];
+      }
+    } else {
+      out.catName = 'Category';
+      const K = keyer(), obs = [], exp = [];
+      let hasExp = false;
+      if (sh.kind === 'records') {
+        for (const r of body) {
+          const i = K.get(r[0]);
+          obs[i] = (obs[i] || 0) + (sh.weight ? cell(r[sh.ncol - 1]) : 1);
+        }
+        if (head && head[0]) out.catName = head[0];
+        if (sh.cats > 1) out.notes.push('Only the first column of categories is used.');
+      } else {
+        const first = sh.kind === 'table' ? 1 : 0;
+        hasExp = sh.ncol - first >= 2;
+        let blankExp = 0;
+        body.forEach((r, n) => {
+          const i = K.get(first ? r[0] : 'Category ' + (n + 1));
+          obs[i] = (obs[i] || 0) + cell(r[first]);
+          if (hasExp) {
+            if (r[first + 1] === undefined || r[first + 1] === '') blankExp++;
+            exp[i] = (exp[i] || 0) + cell(r[first + 1]);
+          }
+        });
+        if (blankExp) { out.error = `${blankExp} row${blankExp > 1 ? 's have' : ' has'} no expected count. Fill in the expected column for every category, or remove it to expect an equal split.`; return out; }
+        if (head && first && head[0]) out.catName = head[0];
+        if (sh.ncol - first > 2) out.notes.push('Only the first two columns of numbers are used.');
+      }
+      out.cats = K.names; out.obs = obs.map(v => v || 0); out.exp = hasExp ? exp.map(v => v || 0) : null;
+    }
+    return out;
+  }
+
+  // ---- distributions ----
+  function lgamma(z) {
+    const c = [76.18009172947146, -86.50532032941677, 24.01409824083091, -1.231739572450155, 0.1208650973866179e-2, -0.5395239384953e-5];
+    let x = z, y = z, t = x + 5.5; t -= (x + 0.5) * Math.log(t);
+    let s = 1.000000000190015; for (const k of c) s += k / ++y;
+    return -t + Math.log(2.5066282746310005 * s / x);
+  }
+  // Upper regularised incomplete gamma function, Q(a, x).
+  function gammaQ(a, x) {
+    if (x <= 0) return 1;
+    const front = Math.exp(-x + a * Math.log(x) - lgamma(a));
+    if (x < a + 1) {
+      let ap = a, del = 1 / a, s = del;
+      for (let n = 0; n < 1000; n++) { ap++; del *= x / ap; s += del; if (Math.abs(del) < Math.abs(s) * 1e-15) break; }
+      return Math.max(0, 1 - s * front);
+    }
+    const FPMIN = 1e-300;
+    let b = x + 1 - a, c = 1 / FPMIN, d = 1 / b, h = d;
+    for (let i = 1; i < 1000; i++) {
+      const an = -i * (i - a); b += 2;
+      d = an * d + b; if (Math.abs(d) < FPMIN) d = FPMIN;
+      c = b + an / c; if (Math.abs(c) < FPMIN) c = FPMIN;
+      d = 1 / d; const del = d * c; h *= del; if (Math.abs(del - 1) < 1e-15) break;
+    }
+    return Math.min(1, front * h);
+  }
+  const chiP = (x, df) => gammaQ(df / 2, x / 2);             // upper tail p for chi-squared
+  const zP = z => gammaQ(0.5, z * z / 2);                      // two-sided p for a standard normal
+  function zCrit(alpha) {
+    let lo = 0, hi = 40;
+    for (let i = 0; i < 100; i++) { const mid = (lo + hi) / 2; if (zP(mid) > alpha) lo = mid; else hi = mid; }
+    return (lo + hi) / 2;
+  }
+  // Fisher's exact test for a 2 × 2 table (two-sided, summing tables no more likely than the one observed).
+  function fisher(t) {
+    const [[a, b], [c, d]] = t;
+    const r1 = a + b, r2 = c + d, c1 = a + c, c2 = b + d, N = r1 + r2;
+    const lf = n => lgamma(n + 1);
+    const base = lf(r1) + lf(r2) + lf(c1) + lf(c2) - lf(N);
+    const lp = x => base - lf(x) - lf(r1 - x) - lf(c1 - x) - lf(r2 - c1 + x);
+    const obs = lp(a);
+    let p = 0;
+    for (let x = Math.max(0, c1 - r2); x <= Math.min(r1, c1); x++) { const l = lp(x); if (l <= obs + 1e-7) p += Math.exp(l); }
+    return Math.min(1, p);
+  }
+  function strength(v, dfmin) {
+    const s = Math.sqrt(Math.max(1, dfmin));
+    return v < 0.1 / s ? 'very weak' : v < 0.3 / s ? 'weak' : v < 0.5 / s ? 'moderate' : 'strong';
+  }
+
+  // ---- statistics ----
+  function independence(rows, cols, obs, alpha) {
+    const r = rows.length, c = cols.length;
+    const rt = obs.map(sum), ct = cols.map((_, j) => sum(obs.map(row => row[j]))), N = sum(rt);
+    const E = rt.map(a => ct.map(b => a * b / N));
+    let chi2 = 0;
+    const cells = [];
+    obs.forEach((row, i) => row.forEach((o, j) => {
+      const e = E[i][j], d = o - e;
+      chi2 += d * d / e;
+      const z = d / Math.sqrt(e * (1 - rt[i] / N) * (1 - ct[j] / N));
+      cells.push({ i, j, o, e, z: isFinite(z) ? z : 0 });
+    }));
+    const df = (r - 1) * (c - 1), p = chiP(chi2, df);
+    const dfmin = Math.min(r, c) - 1, V = Math.sqrt(chi2 / (N * dfmin));
+    const m = r === 2 && c === 2 ? 1 : r * c;      // every cell of a 2 × 2 table has the same residual
+    const crit = zCrit(alpha / m);
+    cells.forEach(x => { x.out = Math.abs(x.z) > crit; });
+    const flatE = E.flat(), small = flatE.filter(e => e < 5).length, minE = Math.min(...flatE);
+    const cochranOK = minE >= 1 && small <= 0.2 * flatE.length;
+    const whole = obs.flat().every(v => Number.isInteger(v));
+    const fish = r === 2 && c === 2 && whole ? fisher(obs) : null;
+    const useFisher = fish != null && !cochranOK;
+    return { r, c, rt, ct, N, E, chi2, df, p, V, dfmin, crit, cells, small, minE, cochranOK, whole, fish, useFisher, pMain: useFisher ? fish : p };
+  }
+  function goodness(cats, obs, w, alpha) {
+    const k = cats.length, N = sum(obs), W = sum(w);
+    const E = w.map(x => N * x / W);
+    let chi2 = 0;
+    const cells = obs.map((o, i) => {
+      const e = E[i], d = o - e;
+      chi2 += d * d / e;
+      const z = d / Math.sqrt(e * (1 - w[i] / W));
+      return { i, o, e, z: isFinite(z) ? z : 0 };
+    });
+    const df = k - 1, p = chiP(chi2, df), effect = Math.sqrt(chi2 / N);
+    const crit = zCrit(alpha / (k === 2 ? 1 : k));
+    cells.forEach(x => { x.out = Math.abs(x.z) > crit; });
+    const small = E.filter(e => e < 5).length, minE = Math.min(...E);
+    const cochranOK = minE >= 1 && small <= 0.2 * k;
+    return { k, N, E, chi2, df, p, effect, crit, cells, small, minE, cochranOK, whole: obs.every(v => Number.isInteger(v)), pMain: p };
+  }
+
+  // ---- axis ----
+  function niceStep(range, target) {
+    const raw = range / target, mag = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / mag;
+    return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * mag;
+  }
+  function axis(lo, hi) {
+    if (lo === hi) { const d = Math.abs(lo) * 0.1 || 1; lo -= d; hi += d; }
+    const step = niceStep(hi - lo, 6);
+    const a = Math.floor(lo / step) * step, b = Math.ceil(hi / step) * step;
+    const ticks = [];
+    for (let t = a; t <= b + step / 2; t += step) ticks.push(+t.toPrecision(12));
+    return { min: a, max: b, ticks };
+  }
+
+  // ---- drawing ----
+  const charW = size => size * 0.56;
+  const f = v => Math.round(v * 10) / 10;
+  const arrow = x => x.out ? (x.z > 0 ? '▲ ' : '▼ ') : '';
+  function svgOpen(s, W, H, o) {
+    s.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.aria)}" font-family="${FONT}">`);
+    s.push(`<rect width="${W}" height="${H}" fill="#ffffff"/>`);
+    if (o.title) s.push(`<text x="16" y="30" font-size="20" font-weight="700" fill="${COLORS.ink}">${esc(trunc(o.title, 80))}</text>`);
+  }
+  // Legend items laid out left to right, wrapping onto new lines; returns the number of lines.
+  function legendLayout(items, x0, maxX) {
+    const keyW = t => 26 + charW(12) * t.length + 18;
+    let x = x0, line = 0;
+    const placed = items.map(it => {
+      const w = keyW(it.text);
+      if (x + w > maxX && x > x0) { x = x0; line++; }
+      const p = Object.assign({ x, line }, it); x += w; return p;
+    });
+    return { placed, lines: line + 1 };
+  }
+
+  // Independence: one 100% bar for each group, split by category, with an overall bar for comparison.
+  function renderTable(o) {
+    const { rows, cols, obs } = o.table, t = o.t;
+    const W = 960, M = 16;
+    const longest = Math.max(...rows.map(r => r.length), 7);
+    const ML = Math.min(230, Math.max(90, charW(13) * Math.min(longest, 34) + 26)), MR = 84;
+    const plotW = W - ML - MR;
+    const items = cols.map((c, j) => ({ kind: 'sw', color: SERIES[j], text: trunc(c, 30) }));
+    items.push({ kind: 'out', text: 'Outlined: stands out from the overall split' });
+    const titleH = o.title ? 44 : 8;
+    const lg = legendLayout(items, M, W - M);
+    const MT = titleH + lg.lines * 22 + 18;
+    const barH = 28, gap = 12, extra = 18;
+    const plotH = rows.length * (barH + gap) + extra + barH;
+    const H = MT + plotH + 34 + M;
+    const x = v => ML + v * plotW;
+
+    const s = [];
+    svgOpen(s, W, H, o);
+    lg.placed.forEach(it => {
+      const ly = titleH + 14 + it.line * 22;
+      if (it.kind === 'sw') s.push(`<rect x="${f(it.x)}" y="${ly - 6}" width="14" height="14" rx="2" fill="${it.color}"/>`);
+      else s.push(`<rect x="${f(it.x)}" y="${ly - 6}" width="14" height="14" rx="2" fill="#ffffff" stroke="${COLORS.ink}" stroke-width="2.5"/>`);
+      s.push(`<text x="${f(it.x + 22)}" y="${ly + 5}" font-size="12" fill="${COLORS.muted}">${esc(it.text)}</text>`);
+    });
+    for (let v = 0; v <= 100; v += 20) {
+      const xx = f(x(v / 100));
+      s.push(`<line x1="${xx}" y1="${MT - 4}" x2="${xx}" y2="${MT + plotH}" stroke="${COLORS.grid}" stroke-width="1"/>`);
+      s.push(`<text x="${xx}" y="${MT + plotH + 20}" font-size="12" text-anchor="middle" fill="${COLORS.muted}">${v}%</text>`);
+    }
+    const bar = (yy, name, counts, total, cellsFor, bold) => {
+      s.push(`<text x="${ML - 10}" y="${f(yy + barH / 2 + 4.5)}" font-size="13" font-weight="${bold ? 800 : 600}" text-anchor="end" fill="${COLORS.ink}">${esc(trunc(name, Math.floor((ML - 20) / charW(13))))}</text>`);
+      let acc = 0;
+      counts.forEach((cnt, j) => {
+        const fr = total > 0 ? cnt / total : 0, x0 = x(acc), w = fr * plotW;
+        acc += fr;
+        if (w <= 0) return;
+        const col = SERIES[j], c = cellsFor ? cellsFor[j] : null;
+        const tip = `${name}, ${cols[j]}: ${nf.format(cnt)} of ${nf.format(total)} (${share(fr)})` + (c ? `, expected ${nf1.format(c.e)}` : '');
+        s.push(`<g><title>${esc(tip)}</title><rect x="${f(x0)}" y="${f(yy)}" width="${f(w)}" height="${barH}" fill="${col}" stroke="#ffffff" stroke-width="1"/>`);
+        if (c && c.out) s.push(`<rect x="${f(x0 + 1.5)}" y="${f(yy + 1.5)}" width="${f(Math.max(0, w - 3))}" height="${barH - 3}" fill="none" stroke="${COLORS.ink}" stroke-width="2.5"/>`);
+        const label = (c ? arrow(c) : '') + share(fr);
+        if (w > charW(12) * label.length + 10) s.push(`<text x="${f(x0 + w / 2)}" y="${f(yy + barH / 2 + 4.5)}" font-size="12" font-weight="700" text-anchor="middle" fill="${DARK_TEXT.has(col) ? COLORS.ink : '#ffffff'}">${esc(label)}</text>`);
+        s.push('</g>');
+      });
+      s.push(`<text x="${W - MR + 8}" y="${f(yy + barH / 2 + 4.5)}" font-size="12" fill="${COLORS.muted}">n = ${esc(nf.format(total))}</text>`);
+    };
+    rows.forEach((name, i) => bar(MT + i * (barH + gap), name, obs[i], t.rt[i], t.cells.filter(c => c.i === i).sort((a, b) => a.j - b.j), false));
+    const oy = MT + rows.length * (barH + gap) + extra;
+    s.push(`<line x1="${M}" y1="${f(oy - extra / 2 - gap / 2)}" x2="${W - M}" y2="${f(oy - extra / 2 - gap / 2)}" stroke="${COLORS.axis}" stroke-dasharray="4 3"/>`);
+    bar(oy, 'Overall', t.ct, t.N, null, true);
+    s.push('</svg>');
+    return s.join('');
+  }
+
+  // Goodness of fit: observed counts as bars, with the expected count marked on each.
+  function renderFit(o) {
+    const { cats, obs } = o.fit, t = o.t;
+    const W = 960, M = 16, k = cats.length;
+    const MT = (o.title ? 44 : 8) + 34;
+    const ML = 72 + (o.valName ? 22 : 0), MR = 24;
+    const plotW = W - ML - MR, band = plotW / k, bw = Math.max(6, Math.min(70, band * 0.6));
+    const longest = Math.max(...cats.map(c => c.length));
+    const rotate = charW(13) * Math.min(longest, 28) > band - 8;
+    const labelH = rotate ? Math.min(140, 18 + charW(13) * Math.min(longest, 22) * 0.64) + 18 : 30;
+    const plotH = 380, H = MT + plotH + labelH + M;
+    const ax = axis(0, Math.max(...obs, ...t.E) * 1.08);
+    const y = v => MT + plotH - (v - ax.min) / (ax.max - ax.min) * plotH;
+
+    const s = [];
+    svgOpen(s, W, H, o);
+    const items = [{ kind: 'bar', text: 'Observed count' }, { kind: 'exp', text: 'Expected count' }, { kind: 'out', text: 'Outlined: stands out from expected' }];
+    const lg = legendLayout(items, 0, W);
+    const total = lg.placed[lg.placed.length - 1].x + 26 + charW(12) * items[items.length - 1].text.length;
+    const shift = W - MR - total, ly = MT - 18;
+    lg.placed.forEach(it => {
+      const lx = it.x + shift;
+      if (it.kind === 'bar') s.push(`<rect x="${f(lx)}" y="${ly - 7}" width="14" height="14" rx="2" fill="${COLORS.bar}"/>`);
+      if (it.kind === 'exp') s.push(`<line x1="${f(lx - 2)}" y1="${ly}" x2="${f(lx + 16)}" y2="${ly}" stroke="${COLORS.expected}" stroke-width="3" stroke-dasharray="5 3"/>`);
+      if (it.kind === 'out') s.push(`<rect x="${f(lx)}" y="${ly - 7}" width="14" height="14" rx="2" fill="#ffffff" stroke="${COLORS.ink}" stroke-width="2.5"/>`);
+      s.push(`<text x="${f(lx + 22)}" y="${ly + 4}" font-size="12" fill="${COLORS.muted}">${esc(it.text)}</text>`);
+    });
+    ax.ticks.forEach(tk => {
+      const yy = f(y(tk));
+      s.push(`<line x1="${ML}" y1="${yy}" x2="${W - MR}" y2="${yy}" stroke="${COLORS.grid}" stroke-width="1"/>`);
+      s.push(`<text x="${ML - 8}" y="${yy + 4}" font-size="12" text-anchor="end" fill="${COLORS.muted}">${esc(nf.format(tk))}</text>`);
+    });
+    s.push(`<line x1="${ML}" y1="${MT}" x2="${ML}" y2="${MT + plotH}" stroke="${COLORS.axis}"/>`);
+    s.push(`<line x1="${ML}" y1="${MT + plotH}" x2="${W - MR}" y2="${MT + plotH}" stroke="${COLORS.axis}"/>`);
+    if (o.valName) s.push(`<text transform="translate(${M + 6} ${MT + plotH / 2}) rotate(-90)" font-size="13" font-weight="600" text-anchor="middle" fill="${COLORS.ink}">${esc(trunc(o.valName, 50))}</text>`);
+    cats.forEach((name, i) => {
+      const c = t.cells[i], cx = ML + band * (i + 0.5), top = y(c.o), base = y(0);
+      s.push(`<g><title>${esc(`${name}: ${nf.format(c.o)} observed, ${nf1.format(c.e)} expected`)}</title>`);
+      s.push(`<rect x="${f(cx - bw / 2)}" y="${f(top)}" width="${f(bw)}" height="${f(base - top)}" fill="${COLORS.bar}"/>`);
+      if (c.out) s.push(`<rect x="${f(cx - bw / 2 + 1.5)}" y="${f(top + 1.5)}" width="${f(bw - 3)}" height="${f(Math.max(0, base - top - 3))}" fill="none" stroke="${COLORS.ink}" stroke-width="2.5"/>`);
+      const ey = f(y(c.e));
+      s.push(`<line x1="${f(cx - bw / 2 - 6)}" y1="${ey}" x2="${f(cx + bw / 2 + 6)}" y2="${ey}" stroke="${COLORS.expected}" stroke-width="3" stroke-dasharray="6 3"/>`);
+      const ty = Math.min(top, y(c.e)) - 8;
+      s.push(`<text x="${f(cx)}" y="${f(ty)}" font-size="12" font-weight="700" text-anchor="middle" fill="${COLORS.ink}">${esc(arrow(c) + nf.format(c.o))}</text>`);
+      s.push('</g>');
+      const lyy = MT + plotH + 18;
+      if (rotate) s.push(`<text transform="translate(${f(cx + 4)} ${lyy}) rotate(-40)" font-size="13" font-weight="600" text-anchor="end" fill="${COLORS.ink}">${esc(trunc(name, 22))}</text>`);
+      else s.push(`<text x="${f(cx)}" y="${lyy}" font-size="13" font-weight="600" text-anchor="middle" fill="${COLORS.ink}">${esc(trunc(name, Math.max(3, Math.floor((band - 6) / charW(13)))))}</text>`);
+    });
+    s.push('</svg>');
+    return s.join('');
+  }
+
+  // ---- plain-language reading ----
+  function readingParts() {
+    const { o, t } = current;
+    const unit = o.valName ? ' ' + esc(lower(o.valName)) : '';
+    const paras = [];
+    const sig = t.pMain < o.alpha;
+    const chiText = `χ²(${t.df}) = ${nf.format(t.chi2)}, ${pIs(t.p)}`;
+    const chance = `would happen less than ${Math.round(o.alpha * 100)}% of the time`;
+    let standouts = t.cells.filter(c => c.out).sort((a, b) => Math.abs(b.z) - Math.abs(a.z));
+    if (o.mode === 'independence') {
+      const { rows, cols } = o.table;
+      const test = t.useFisher ? `Fisher’s exact test, ${pIs(t.fish)}` : chiText;
+      paras.push(sig
+        ? `<b>There is evidence that the split across categories differs between the groups</b> (${test}). Differences this large ${chance} if every group really had the same split.`
+        : `<b>There isn’t enough evidence that the split across categories differs between the groups</b> (${test}). The differences you can see could well be down to chance. That doesn’t prove the groups are the same: with more data a real but small difference might show up.`);
+      paras.push(`The difference is ${strength(t.V, t.dfmin)} (Cramér’s V = ${nf.format(t.V)}, on a scale from 0 for no difference to 1 for groups that don’t overlap at all).`);
+      // In a 2 × 2 table every cell stands out together, so name only the ones above expected.
+      if (t.r === 2 && t.c === 2 && standouts.length) standouts = standouts.filter(c => c.z > 0);
+      if (standouts.length) {
+        const shown = standouts.slice(0, 6).map(c => `${esc(rows[c.i])} has ${c.z > 0 ? 'more' : 'fewer'} “${esc(cols[c.j])}” than expected (${nf.format(c.o)}${unit}, ${share(c.o / t.rt[c.i])} of the group, against ${nf1.format(c.e)} expected and ${share(t.ct[c.j] / t.N)} overall)`);
+        paras.push(`${standouts.length === 1 ? 'One cell stands out' : `${standouts.length} cells stand out`} from the overall split: ${list(shown)}${standouts.length > 6 ? ', among others' : ''}.`);
+      } else if (sig) {
+        paras.push('No single cell stands out once you allow for how many cells there are. The difference may be spread across several groups; more data would help pin it down.');
+      }
+      if (!t.cochranOK) {
+        paras.push(`${t.small} of the ${t.r * t.c} cells ${t.small === 1 ? 'has' : 'have'} an expected count below 5 (the smallest is ${nf1.format(t.minE)}). ${t.useFisher ? 'So the result uses Fisher’s exact test, which doesn’t need large counts.' : 'The chi-squared p-value may be unreliable. Try combining small groups or categories, or collecting more data.'}`);
+      } else if (t.fish != null) {
+        paras.push(`For a 2 × 2 table, Fisher’s exact test gives ${pIs(t.fish)}, compared with ${pIs(t.p)} for the chi-squared test.`);
+      }
+    } else {
+      const { cats } = o.fit;
+      const what = o.fit.exp ? 'the expected split you gave' : 'an equal split across the categories';
+      paras.push(sig
+        ? `<b>There is evidence that the counts differ from ${what}</b> (${chiText}). Differences this large ${chance} if the counts really followed that split.`
+        : `<b>There isn’t enough evidence that the counts differ from ${what}</b> (${chiText}). The differences you can see could well be down to chance. That doesn’t prove the counts follow that split: with more data a real but small difference might show up.`);
+      paras.push(`The difference is ${strength(t.effect, 1)} (Cohen’s w = ${nf.format(t.effect)}).`);
+      if (standouts.length) {
+        const shown = standouts.slice(0, 6).map(c => `${esc(cats[c.i])} has ${c.z > 0 ? 'more' : 'fewer'} than expected (${nf.format(c.o)}${unit}, against ${nf1.format(c.e)})`);
+        paras.push(`${standouts.length === 1 ? 'One category stands out' : `${standouts.length} categories stand out`}: ${list(shown)}${standouts.length > 6 ? ', among others' : ''}.`);
+      } else if (sig) {
+        paras.push('No single category stands out once you allow for how many there are. The difference may be spread across several categories.');
+      }
+      if (!t.cochranOK) paras.push(`${t.small} of the ${t.k} categories ${t.small === 1 ? 'has' : 'have'} an expected count below 5 (the smallest is ${nf1.format(t.minE)}), so the p-value may be unreliable. Try combining small categories, or collecting more data.`);
+    }
+    if (!t.whole) paras.push('Some counts aren’t whole numbers. The chi-squared test needs actual counts of people or events, not percentages, rates or averages.');
+    return paras;
+  }
+  function summaryText() {
+    const strip = s => s.replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+    const lines = [current.o.title || 'Chi-squared test', ''];
+    readingParts().forEach(p => lines.push(strip(p), ''));
+    return lines.join('\n').trim();
+  }
+
+  // ---- tables ----
+  const r4 = x => isFinite(x) ? Math.round(x * 1e4) / 1e4 : x;
+  const pcsv = p => p < 0.0001 ? '<0.0001' : r4(p);
+  function tableRows() {
+    const { o, t } = current;
+    const out = [];
+    if (o.mode === 'independence') {
+      const { rows, cols, obs } = o.table;
+      const cell = (i, j) => t.cells.find(c => c.i === i && c.j === j);
+      out.push(['Observed counts', ...cols, 'Total']);
+      rows.forEach((r, i) => out.push([r, ...obs[i], t.rt[i]]));
+      out.push(['Total', ...t.ct, t.N]);
+      out.push([], ['Row percentages', ...cols, 'Total']);
+      rows.forEach((r, i) => out.push([r, ...obs[i].map(v => r4(v / t.rt[i] * 100)), 100]));
+      out.push(['Overall', ...t.ct.map(v => r4(v / t.N * 100)), 100]);
+      out.push([], ['Expected counts', ...cols]);
+      rows.forEach((r, i) => out.push([r, ...cols.map((_, j) => r4(t.E[i][j]))]));
+      out.push([], ['Adjusted residuals', ...cols]);
+      rows.forEach((r, i) => out.push([r, ...cols.map((_, j) => r4(cell(i, j).z))]));
+      out.push([], ['Test', 'Statistic', 'df', 'p']);
+      out.push(['Chi-squared', r4(t.chi2), t.df, pcsv(t.p)]);
+      if (t.fish != null) out.push(['Fisher’s exact', '', '', pcsv(t.fish)]);
+      out.push(['Cramér’s V', r4(t.V), '', '']);
+      out.push(['Critical value for adjusted residuals', r4(t.crit), '', '']);
+    } else {
+      const { cats } = o.fit;
+      out.push([o.fit.catName, 'Observed', 'Expected', 'Observed %', 'Expected %', 'Adjusted residual', 'Stands out']);
+      t.cells.forEach(c => out.push([cats[c.i], c.o, r4(c.e), r4(c.o / t.N * 100), r4(c.e / t.N * 100), r4(c.z), c.out ? 'Yes' : 'No']));
+      out.push(['Total', t.N, r4(sum(t.E)), 100, 100, '', '']);
+      out.push([], ['Test', 'Statistic', 'df', 'p']);
+      out.push(['Chi-squared', r4(t.chi2), t.df, pcsv(t.p)]);
+      out.push(['Cohen’s w', r4(t.effect), '', '']);
+      out.push(['Critical value for adjusted residuals', r4(t.crit), '', '']);
+    }
+    return out;
+  }
+  function tableHTML() {
+    const { o, t } = current;
+    let h = '';
+    if (o.mode === 'independence') {
+      const { rows, cols, obs } = o.table;
+      const cell = (i, j) => t.cells.find(c => c.i === i && c.j === j);
+      const headRow = first => `<thead><tr><th>${esc(first)}</th>${cols.map(c => `<th class="num">${esc(c)}</th>`).join('')}`;
+      h += `<div class="tablewrap"><h3>Counts</h3><table><caption class="sr">Observed counts with the percentage of each group</caption>${headRow(o.table.rowName)}<th class="num tot">Total</th></tr></thead><tbody>`;
+      rows.forEach((r, i) => {
+        h += `<tr><td>${esc(r)}</td>${obs[i].map((v, j) => { const c = cell(i, j); return `<td class="num${c.out ? ' out' : ''}">${esc(arrow(c))}${nf.format(v)}<span class="pc">(${share(v / t.rt[i])})</span></td>`; }).join('')}<td class="num tot">${nf.format(t.rt[i])}</td></tr>`;
+      });
+      h += `<tr><td class="tot">Overall</td>${t.ct.map(v => `<td class="num tot">${nf.format(v)}<span class="pc">(${share(v / t.N)})</span></td>`).join('')}<td class="num tot">${nf.format(t.N)}</td></tr>`;
+      h += '</tbody></table><p class="hint">The figure in brackets is the share of each group’s total. ▲ and ▼ mark counts that stand out as higher or lower than expected.</p></div>';
+
+      h += `<div class="tablewrap"><h3>Expected counts</h3><table><caption class="sr">Counts expected if every group had the same split</caption>${headRow(o.table.rowName)}</tr></thead><tbody>`;
+      rows.forEach((r, i) => { h += `<tr><td>${esc(r)}</td>${cols.map((_, j) => `<td class="num${t.E[i][j] < 5 ? ' warn' : ''}">${nf1.format(t.E[i][j])}</td>`).join('')}</tr>`; });
+      h += '</tbody></table><p class="hint">What each count would be if every group had the overall split. Counts below 5 are highlighted: the test is reliable when none is below 1 and no more than one in five is below 5.</p></div>';
+
+      h += `<div class="tablewrap"><h3>Adjusted residuals</h3><table><caption class="sr">How far each count is from its expected count</caption>${headRow(o.table.rowName)}</tr></thead><tbody>`;
+      rows.forEach((r, i) => { h += `<tr><td>${esc(r)}</td>${cols.map((_, j) => { const c = cell(i, j); return `<td class="num${c.out ? ' out' : ''}">${nf.format(c.z)}</td>`; }).join('')}</tr>`; });
+      h += `</tbody></table><p class="hint">How many standard errors each count is above (positive) or below (negative) its expected count. Cells beyond ±${nf.format(t.crit)} stand out at the ${Math.round(o.alpha * 100)}% level${t.r * t.c > 4 ? `, adjusted for the ${t.r * t.c} cells` : ''}.</p></div>`;
+
+      h += `<div class="tablewrap"><h3>Test results</h3><table><caption class="sr">Test results</caption><thead><tr><th>Test</th><th class="num">Statistic</th><th class="num">df</th><th class="num">p</th></tr></thead><tbody>`;
+      h += `<tr><td>Chi-squared test of independence</td><td class="num">${nf.format(t.chi2)}</td><td class="num">${t.df}</td><td class="num">${t.useFisher ? pf(t.p) : `<b>${pf(t.p)}</b>`}</td></tr>`;
+      if (t.fish != null) h += `<tr><td>Fisher’s exact test</td><td></td><td></td><td class="num">${t.useFisher ? `<b>${pf(t.fish)}</b>` : pf(t.fish)}</td></tr>`;
+      h += `<tr><td>Cramér’s V</td><td class="num">${nf.format(t.V)}</td><td></td><td></td></tr>`;
+      h += '</tbody></table></div>';
+    } else {
+      const { cats } = o.fit;
+      h += `<div class="tablewrap"><h3>Each category</h3><table><caption class="sr">Observed and expected counts for each category</caption><thead><tr><th>${esc(o.fit.catName)}</th>${['Observed', 'Expected', 'Observed share', 'Expected share', 'Adjusted residual'].map(x => `<th class="num">${x}</th>`).join('')}</tr></thead><tbody>`;
+      t.cells.forEach(c => {
+        h += `<tr><td>${esc(cats[c.i])}</td><td class="num${c.out ? ' out' : ''}"><b>${esc(arrow(c))}${nf.format(c.o)}</b></td><td class="num${c.e < 5 ? ' warn' : ''}">${nf1.format(c.e)}</td><td class="num">${share(c.o / t.N)}</td><td class="num">${share(c.e / t.N)}</td><td class="num${c.out ? ' out' : ''}">${nf.format(c.z)}</td></tr>`;
+      });
+      h += `<tr><td class="tot">Total</td><td class="num tot">${nf.format(t.N)}</td><td class="num tot">${nf.format(sum(t.E))}</td><td class="num tot">100%</td><td class="num tot">100%</td><td></td></tr>`;
+      h += `</tbody></table><p class="hint">The adjusted residual is how many standard errors each count is above or below its expected count. Categories beyond ±${nf.format(t.crit)} stand out at the ${Math.round(o.alpha * 100)}% level${t.k > 2 ? `, adjusted for the ${t.k} categories` : ''}. Expected counts below 5 are highlighted.</p></div>`;
+      h += `<div class="tablewrap"><h3>Test results</h3><table><caption class="sr">Test results</caption><thead><tr><th>Test</th><th class="num">Statistic</th><th class="num">df</th><th class="num">p</th></tr></thead><tbody>`;
+      h += `<tr><td>Chi-squared goodness of fit</td><td class="num">${nf.format(t.chi2)}</td><td class="num">${t.df}</td><td class="num"><b>${pf(t.p)}</b></td></tr>`;
+      h += `<tr><td>Cohen’s w</td><td class="num">${nf.format(t.effect)}</td><td></td><td></td></tr>`;
+      h += '</tbody></table></div>';
+    }
+    return h;
+  }
+
+  // ---- render ----
+  const orderIdx = (names, sizes, ord) => {
+    const idx = names.map((_, i) => i);
+    if (ord === 'sizeDesc') idx.sort((a, b) => sizes[b] - sizes[a]);
+    if (ord === 'name') idx.sort((a, b) => names[a].localeCompare(names[b], 'en-GB', { numeric: true }));
+    return idx;
+  };
+  function update() {
+    const text = els.data.value;
+    const sp = split(text);
+    const sh = sp ? shape(sp.recs, sp.delim) : null;
+    if (!headerTouched) els.hasHeader.checked = !!(sp && sp.recs.length > 1 && sh.headerGuess);
+    if (!modeTouched && sh) els.mode.value = suggestMode(sh);
+    const mode = els.mode.value;
+    els.swap.disabled = mode !== 'independence';
+    els.swapWrap.classList.toggle('off', mode !== 'independence');
+    current = null;
+    if (!text.trim()) { els.detected.textContent = ''; return renderEmpty('Paste data on the left to run the test.'); }
+    const p = parse(text, els.hasHeader.checked, mode);
+    if (!p) return renderEmpty('Couldn’t find any data.');
+    if (p.error) { els.detected.textContent = ''; return renderEmpty(p.error); }
+    const extraNote = () => {
+      let n = p.notes.join(' ');
+      if (p.skipped) n += ` ${p.skipped} cell${p.skipped > 1 ? 's' : ''} skipped (not a number).`;
+      if (p.negative) n += ` ${p.negative} negative count${p.negative > 1 ? 's' : ''} skipped.`;
+      return n ? ' ' + n.trim() : '';
+    };
+    const alpha = +els.alpha.value;
+    const title = els.title.value.trim();
+    const valName = els.valLabel.value.trim();
+    const o = { title, valName, alpha, mode };
+    let svg, headline, sub, tiles;
+
+    if (mode === 'independence') {
+      let rows = p.rows, cols = p.cols, obs = p.obs;
+      if (els.swap.checked) { [rows, cols] = [cols, rows]; obs = rows.map((_, i) => cols.map((_, j) => p.obs[j][i])); }
+      const rowName = els.swap.checked ? p.colName : p.rowName, colName = els.swap.checked ? p.rowName : p.colName;
+      // Drop groups and categories with no counts at all: they have no expected counts.
+      const keepR = rows.map((_, i) => sum(obs[i]) > 0), keepC = cols.map((_, j) => sum(obs.map(r => r[j])) > 0);
+      const dropped = keepR.filter(k => !k).length + keepC.filter(k => !k).length;
+      rows = rows.filter((_, i) => keepR[i]); cols = cols.filter((_, j) => keepC[j]);
+      obs = obs.filter((_, i) => keepR[i]).map(r => r.filter((_, j) => keepC[j]));
+      let note = `Reading a table of ${rows.length} group${rows.length === 1 ? '' : 's'} by ${cols.length} categor${cols.length === 1 ? 'y' : 'ies'}` + (p.kind === 'records' ? ', counted from one row per person or event.' : '.');
+      if (dropped) note += ` Left out ${dropped} group${dropped > 1 ? 's or categories' : ' or category'} with no counts.`;
+      els.detected.textContent = note + extraNote();
+      if (rows.length < 2 || cols.length < 2) return renderEmpty('A test of independence needs at least two groups and two categories with counts in them.');
+      if (rows.length > MAX_ROWS) return renderEmpty(`There are ${rows.length} groups. The chart can show up to ${MAX_ROWS}: combine some groups first.`);
+      if (cols.length > MAX_COLS) return renderEmpty(`There are ${cols.length} categories. The chart can show up to ${MAX_COLS}: combine some categories${rows.length <= MAX_COLS ? ', or tick “Swap the groups and categories”' : ''}.`);
+      const t = independence(rows, cols, obs, alpha);
+      // Reorder rows for display after the test (the result doesn't depend on order).
+      const idx = orderIdx(rows, t.rt, els.order.value);
+      const pos = new Map(idx.map((old, nw) => [old, nw]));
+      rows = idx.map(i => rows[i]); obs = idx.map(i => obs[i]);
+      t.rt = idx.map(i => t.rt[i]); t.E = idx.map(i => t.E[i]);
+      t.cells.forEach(c => { c.i = pos.get(c.i); });
+      o.table = { rows, cols, obs, rowName, colName };
+      o.t = t;
+      const sig = t.pMain < alpha;
+      o.aria = (title ? title + '. ' : '') + `Share of each of ${rows.length} groups in each of ${cols.length} categories. ` +
+        rows.slice(0, 8).map((r, i) => `${r}: ` + cols.map((c, j) => `${c} ${share(obs[i][j] / t.rt[i])}`).join(', ')).join('; ') + (rows.length > 8 ? '; and more.' : '.') +
+        ` ${sig ? 'The split differs between groups' : 'No clear difference between the groups'}, ${pIs(t.pMain)}.`;
+      current = { o, t };
+      svg = renderTable(o);
+      headline = sig ? 'The groups <strong>differ</strong>' : 'No clear difference between the groups';
+      sub = `${t.useFisher ? 'Fisher’s exact test' : 'Chi-squared test of independence'} on ${nf.format(t.N)}${valName ? ' ' + lower(valName) : ' counts'} in ${rows.length} groups and ${cols.length} categories, at the ${Math.round(alpha * 100)}% significance level.`;
+      tiles = [[pf(t.pMain), t.useFisher ? 'p-value (Fisher’s exact)' : 'p-value'], [nf.format(t.chi2), `Chi-squared (df = ${t.df})`], [nf.format(t.V), 'Cramér’s V (strength)'], [nf.format(t.N), 'Total count']];
+    } else {
+      let cats = p.cats, obs = p.obs, w = p.exp ? p.exp.slice() : cats.map(() => 1);
+      const impossible = cats.filter((_, i) => w[i] === 0 && obs[i] > 0);
+      if (impossible.length) { els.detected.textContent = ''; return renderEmpty(`${list(impossible.slice(0, 3))}${impossible.length > 3 ? ' and others have' : impossible.length > 1 ? ' have' : ' has'} counts but an expected count of 0. Every category with counts needs an expected count above 0.`); }
+      const keep = cats.map((_, i) => w[i] > 0);
+      const dropped = keep.filter(k => !k).length;
+      cats = cats.filter((_, i) => keep[i]); obs = obs.filter((_, i) => keep[i]); w = w.filter((_, i) => keep[i]);
+      let note = `Reading ${cats.length} categor${cats.length === 1 ? 'y' : 'ies'}` + (p.kind === 'records' ? ', counted from one row per person or event' : '') + (p.exp ? ', with the expected split from your second column of numbers.' : ', compared with an equal split.');
+      if (dropped) note += ` Left out ${dropped} categor${dropped > 1 ? 'ies' : 'y'} expected to be 0.`;
+      els.detected.textContent = note + extraNote();
+      if (cats.length < 2) return renderEmpty('Comparing with an expected split needs at least two categories.');
+      if (cats.length > MAX_CATS) return renderEmpty(`There are ${cats.length} categories. The chart can show up to ${MAX_CATS}: combine some categories first.`);
+      if (!(sum(obs) > 0)) return renderEmpty('All the counts are zero.');
+      const t = goodness(cats, obs, w, alpha);
+      const idx = orderIdx(cats, obs, els.order.value);
+      cats = idx.map(i => cats[i]); obs = idx.map(i => obs[i]);
+      t.E = idx.map(i => t.E[i]); t.cells = idx.map((i, n) => Object.assign(t.cells[i], { i: n }));
+      o.fit = { cats, obs, exp: p.exp, catName: p.catName };
+      o.t = t;
+      const sig = t.p < alpha;
+      o.aria = (title ? title + '. ' : '') + `Observed and expected counts for ${cats.length} categories. ` +
+        cats.slice(0, 10).map((c, i) => `${c}: ${nf.format(obs[i])} observed, ${nf1.format(t.E[i])} expected`).join('; ') + (cats.length > 10 ? '; and more.' : '.') +
+        ` ${sig ? 'The counts differ from what was expected' : 'No clear difference from what was expected'}, ${pIs(t.p)}.`;
+      current = { o, t };
+      svg = renderFit(o);
+      headline = sig ? 'The counts <strong>differ</strong> from what was expected' : 'No clear difference from what was expected';
+      sub = `Chi-squared goodness of fit test on ${nf.format(t.N)}${valName ? ' ' + lower(valName) : ' counts'} in ${cats.length} categories, against ${p.exp ? 'your expected split' : 'an equal split'}, at the ${Math.round(alpha * 100)}% significance level.`;
+      tiles = [[pf(t.p), 'p-value'], [nf.format(t.chi2), `Chi-squared (df = ${t.df})`], [nf.format(t.effect), 'Cohen’s w (strength)'], [nf.format(t.N), 'Total count']];
+    }
+
+    els.result.innerHTML = `
+      <p class="summary">${headline}</p>
+      <p class="focuson">${esc(sub)}</p>
+      <div class="stats">${tiles.map(([b, s]) => `<div class="stat"><b>${b}</b><span>${s}</span></div>`).join('')}</div>
+      <div class="chartwrap" id="chart">${svg}</div>
+      <p class="legend-note">${mode === 'independence' ? 'Each bar shows how one group splits across the categories, with the overall split at the bottom for comparison.' : 'Each bar is the count in one category; the dashed line is the count expected.'} Outlined parts, marked ▲ or ▼, stand out as higher or lower than expected. Hover over the chart to see the figures.</p>
+      <div class="reading"><h3>What the test shows</h3>${readingParts().map(x => `<p>${x}</p>`).join('')}</div>
+      ${tableHTML()}`;
+  }
+  function renderEmpty(msg) {
+    current = null;
+    els.result.innerHTML = `<div class="empty"><p>${esc(msg)}</p><div class="btns"><button type="button" class="primary" data-act="example">Try the example</button><button type="button" data-act="example2">Try an expected split example</button></div></div>`;
+  }
+  function schedule() { clearTimeout(timer); timer = setTimeout(update, 180); }
+
+  // ---- exports ----
+  function svgEl() { return document.querySelector('#chart svg'); }
+  function fileName() { return slug(current && current.o.title); }
+  let dlPromise = null;
+  function getDownloads() {
+    if (!window.claude || typeof window.claude.use !== 'function') return Promise.resolve(undefined);
+    if (!dlPromise) dlPromise = window.claude.use('downloads').catch(() => null);
+    return dlPromise;
+  }
+  async function downloadBlob(blob, name) {
+    const d = await getDownloads();
+    if (d) { const r = await d.save({ filename: name, data: blob }); return r && r.status !== 'declined'; }
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+    return true;
+  }
+  function status(msg) { FocusActions.say(msg); }
+  function toPNG(cb) {
+    const svg = svgEl(); if (!svg) return;
+    const vb = svg.viewBox.baseVal, scale = 2;
+    const str = new XMLSerializer().serializeToString(svg);
+    const img = new Image();
+    img.onload = () => {
+      const c = document.createElement('canvas');
+      c.width = vb.width * scale; c.height = vb.height * scale;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, c.width, c.height);
+      ctx.drawImage(img, 0, 0, c.width, c.height);
+      c.toBlob(cb, 'image/png');
+    };
+    img.onerror = () => status('Could not create the image.');
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(str);
+  }
+  const csvCell = v => v === undefined ? '' : /[",\n]/.test(String(v)) ? '"' + String(v).replace(/"/g, '""') + '"' : String(v);
+  async function copyText(t) {
+    try { await navigator.clipboard.writeText(t); return true; }
+    catch (e) {
+      const ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select();
+      const ok = document.execCommand('copy'); ta.remove(); return ok;
+    }
+  }
+  const saved = (ok, msg) => status(ok ? msg : 'Download cancelled.');
+  const failed = () => status('The file couldn’t be saved here. Try Copy instead.');
+  function act(a) {
+    if (a === 'example') return loadExample();
+    if (a === 'example2') return loadExampleFit();
+    if (!current) return;
+    if (a === 'png') toPNG(b => downloadBlob(b, fileName() + '.png').then(ok => saved(ok, 'PNG downloaded.'), failed));
+    if (a === 'svg') downloadBlob(new Blob([new XMLSerializer().serializeToString(svgEl())], { type: 'image/svg+xml' }), fileName() + '.svg').then(ok => saved(ok, 'SVG downloaded.'), failed);
+    if (a === 'copyimg') {
+      if (!(navigator.clipboard && window.ClipboardItem)) return status('Your browser can’t copy images — use Download PNG.');
+      toPNG(async b => {
+        try { await navigator.clipboard.write([new ClipboardItem({ 'image/png': b })]); status('Chart copied — paste it into PowerPoint or Word.'); }
+        catch (e) { status('Copy was blocked — use Download PNG.'); }
+      });
+    }
+    if (a === 'csv') downloadBlob(new Blob([tableRows().map(r => r.map(csvCell).join(',')).join('\r\n')], { type: 'text/csv' }), fileName() + '.csv').then(ok => saved(ok, 'Tables downloaded.'), failed);
+    if (a === 'copytable') copyText(tableRows().map(r => r.join('\t')).join('\n')).then(ok => status(ok ? 'Tables copied — paste them into Excel.' : 'Copy was blocked.'));
+    if (a === 'copysummary') copyText(summaryText()).then(ok => status(ok ? 'Summary copied.' : 'Copy was blocked.'));
+  }
+  function loadExample() {
+    els.data.value = EXAMPLE;
+    els.title.value = 'Risk assessment within 6 hours of admission, by ward (example)';
+    els.valLabel.value = 'Patients';
+    els.order.value = 'entered';
+    els.alpha.value = '0.05';
+    els.swap.checked = false;
+    headerTouched = false; modeTouched = false;
+    update();
+  }
+  function loadExampleFit() {
+    els.data.value = EXAMPLE_GOF;
+    els.title.value = 'Inpatient falls by day of the week (example)';
+    els.valLabel.value = 'Falls';
+    els.order.value = 'entered';
+    els.alpha.value = '0.05';
+    els.swap.checked = false;
+    headerTouched = false; modeTouched = false;
+    update();
+  }
+
+  // ---- events ----
+  els.data.addEventListener('input', schedule);
+  els.hasHeader.addEventListener('change', () => { headerTouched = true; update(); });
+  els.mode.addEventListener('change', () => { modeTouched = true; update(); });
+  [els.title, els.valLabel].forEach(el => el.addEventListener('input', schedule));
+  [els.alpha, els.order, els.swap].forEach(el => el.addEventListener('change', update));
+  $('exampleBtn2').addEventListener('click', loadExample);
+  $('clearBtn').addEventListener('click', () => { els.data.value = ''; els.title.value = ''; els.valLabel.value = ''; headerTouched = false; modeTouched = false; els.hasHeader.checked = false; els.swap.checked = false; update(); els.data.focus(); });
+  els.result.addEventListener('click', e => { const b = e.target.closest('button[data-act]'); if (b) act(b.dataset.act); });
+
+  update(); // start empty, ready for the user's data
+
+  // ---- shared toolbar (Open, Save, Export) ----
+  FocusActions.mount({
+    tool: 'chi_squared', toolName: 'Chi-squared test',
+    example: loadExample, hasData: () => !!els.data.value.trim(),
+    fileName: () => fileName(),
+    fields: 'section.panel[aria-labelledby="data-h"]',
+    afterOpen: () => { headerTouched = true; modeTouched = true; update(); },
+    ready: () => !!current,
+    exports: ['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) }))
+  });
+})();
+</script>
+{% include focus-footer.html %}
+</body>
+</html>

@@ -66,6 +66,12 @@
   group: Explore your data
   description: Test whether the averages of several groups really differ, such as length of stay across wards, and see which groups stand apart.
 
+- id: chi_squared
+  name: Chi-squared test
+  status: Beta
+  group: Explore your data
+  description: Test whether counts split differently between groups, such as patients assessed on time or late on each ward, or differ from the split you expected.
+
 - id: scatter_plot
   name: Scatter plot
   status: Beta
