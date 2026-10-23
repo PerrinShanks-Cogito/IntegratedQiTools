@@ -48,6 +48,12 @@
   group: Measure over time
   description: Build statistical process control charts with control limits to tell common cause from special cause variation.
 
+- id: t_chart
+  name: T chart (rare events)
+  status: Beta
+  group: Measure over time
+  description: Chart the time between rare events, such as never events or falls with harm, to see whether they are becoming more or less frequent when they happen too seldom for an ordinary SPC chart.
+
 - id: histogram
   name: Histogram
   status: Beta
