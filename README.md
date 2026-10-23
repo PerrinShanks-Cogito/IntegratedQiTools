@@ -10,7 +10,7 @@ instructions for a cause and effect diagram, and the demand and capacity model,
 which was built here from the NHS Improvement and NHS England demand and
 capacity core model (version 4.2) and its user guidance, and the multiple
 regression tool, tree plot (treemap), box and whisker plot, ANOVA and
-chi-squared test, which were all built here, and the design of experiments tool, which was built here from the DOE sheet of the AAS Data Analysis Toolkit, and the funnel plot, which was
+chi-squared test, which were all built here, and the design of experiments and attribute agreement analysis tools, which were built here from the DOE and Attribute Agreement Analysis sheets of the AAS Data Analysis Toolkit, and the funnel plot, which was
 built here from the NHS Improvement funnel plot tool (version 2.0)):
 
 | Tool | Path |
@@ -30,6 +30,7 @@ built here from the NHS Improvement funnel plot tool (version 2.0)):
 | Funnel plot | `/funnel_plot/` |
 | Scatter plot | `/scatter_plot/` |
 | Multiple regression | `/multiple_regression/` |
+| Attribute agreement analysis | `/attribute_agreement/` |
 | Design of experiments (2-level factorial) | `/design_of_experiments/` |
 | Demand and capacity model | `/demand_capacity/` |
 
