@@ -93,7 +93,7 @@
 - id: attribute_agreement
   name: Attribute agreement analysis
   status: Beta
-  group: Explore your data
+  group: Test changes
   description: Check whether people rating the same cases, such as pressure ulcer categories or triage levels, agree with themselves, with each other and with an expert standard.
 
 - id: design_of_experiments
