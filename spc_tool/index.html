@@ -498,7 +498,7 @@ function renderChart(kind, W, H, p, interactive, oy){
   const vals = kind === 'x' ? m.x : m.mr;
   const labels = state.rows.map(r => r.label);
   const longLabels = labels.some(l => l.length > 6);
-  const M = { l: 58, r: 74, t: 14, b: kind === 'x' ? (longLabels ? 64 : 34) : 30 };
+  const M = { l: 58, r: rightMargin(m), t: 14, b: kind === 'x' ? (longLabels ? 64 : 34) : 30 };
   const pw = W - M.l - M.r, ph = H - M.t - M.b;
   const ys = [];
   vals.forEach(v => { if (v !== null) ys.push(v); });
@@ -582,6 +582,15 @@ function renderChart(kind, W, H, p, interactive, oy){
   });
   return s;
 }
+
+// Room for the right-hand line labels; shared by both charts so their points line up
+function rightLabels(m){
+  const g = m.segs[m.segs.length - 1];
+  const t = g.ok ? ['Upper ' + fmt(g.ucl), 'Mean ' + fmt(g.mean), 'Lower ' + fmt(g.lcl), 'Upper ' + fmt(g.mrUcl), 'Mean ' + fmt(g.mrBar)] : [];
+  if (state.target !== null) t.push('Target ' + fmt(state.target));
+  return t;
+}
+function rightMargin(m){ return Math.max(74, 12 + Math.ceil(Math.max(0, ...rightLabels(m).map(t => t.length)) * 6.6)); }
 
 function chartSVG(kind, W, H, interactive){
   const p = livePalette();
