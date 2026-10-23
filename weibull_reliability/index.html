@@ -1,0 +1,777 @@
+---
+tool_id: weibull_reliability
+title: "Weibull reliability analysis"
+permalink: /weibull_reliability/
+---
+<!DOCTYPE html>
+<!-- © Guy’s and St Thomas’ NHS Foundation Trust 2026. All rights reserved. -->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Weibull reliability analysis</title>
+<meta name="description" content="Paste times to failure and fit a Weibull distribution to see how likely things are to keep working over time, when they tend to fail and whether failures speed up with age. Nothing is uploaded.">
+<link rel="icon" type="image/png" sizes="64x64" href="data:image/png;base64,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">
+<link rel="apple-touch-icon" href="data:image/png;base64,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">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#005EB8; --navy:#003087; --bg:#F0F4F5; --surface:#FFFFFF; --text:#212B32;
+  --muted:#4C6272; --line:#D8DDE0; --yellow:#FFB81C; --green:#007F3B; --green-bg:#E3F2E9;
+  --blue-bg:#E6F0FA; --danger:#D5281B; --shadow:0 2px 0 #D8DDE0; --warn:#A65300;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --blue:#5AA2EA; --navy:#9CC3EF; --bg:#0E1A24; --surface:#162533; --text:#E8EEF2;
+    --muted:#A3B6C3; --line:#2A3E4F; --green:#4CC17E; --green-bg:#143326; --blue-bg:#15314B;
+    --danger:#FF7468; --shadow:0 2px 0 #0A131B; --warn:#F0A54A;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --blue:#5AA2EA; --navy:#9CC3EF; --bg:#0E1A24; --surface:#162533; --text:#E8EEF2;
+  --muted:#A3B6C3; --line:#2A3E4F; --green:#4CC17E; --green-bg:#143326; --blue-bg:#15314B;
+  --danger:#FF7468; --shadow:0 2px 0 #0A131B; --warn:#F0A54A;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Figtree,"Frutiger","Helvetica Neue",Arial,sans-serif;font-size:1rem;line-height:1.5}
+a{color:var(--blue)}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:2px;border-radius:2px}
+button,input,select,textarea{font:inherit;color:inherit}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+[hidden]{display:none !important}
+
+/* Page head */
+.page-head{padding:1rem 1.25rem}
+.page-head h1{margin:0;font-size:clamp(1.4rem,2.6vw,1.8rem);line-height:1.2;font-weight:800;letter-spacing:-.015em}
+.page-head .meta{color:var(--muted);margin:.15rem 0 0;max-width:70ch}
+
+/* Workspace */
+main{display:grid;grid-template-columns:minmax(300px,380px) minmax(0,1fr);gap:1.25rem;padding:0 1.25rem 1.25rem;align-items:start}
+@media (max-width:880px){main{grid-template-columns:1fr}}
+@media (max-width:420px){main{padding:0 1rem 1rem} .page-head,.notes{padding-left:1rem;padding-right:1rem}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow);padding:1.1rem;min-width:0}
+.panel h2{font-size:1.05rem;font-weight:700;margin:0 0 .75rem}
+.block{margin-bottom:1.1rem}
+label{display:block;font-weight:600;margin:0 0 .35rem}
+.hint{color:var(--muted);font-size:.88rem;margin:0 0 .5rem}
+textarea,input[type=text],input[type=number]{width:100%;padding:.5rem .65rem;border:2px solid var(--muted);border-radius:4px;background:var(--surface)}
+textarea{min-height:260px;resize:vertical;font:14px/1.45 Consolas,"Courier New",monospace}
+textarea:focus,input[type=text]:focus,input[type=number]:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px var(--yellow)}
+select{width:100%;padding:.5rem .65rem;border:2px solid var(--muted);border-radius:4px;background:var(--surface)}
+select:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px var(--yellow)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+@media (max-width:420px){.pair{grid-template-columns:1fr;gap:0}}
+.check{display:flex;gap:.6rem;align-items:flex-start;font-weight:400;margin-bottom:.6rem;cursor:pointer}
+.check input{width:20px;height:20px;margin:2px 0 0;flex:none;accent-color:var(--blue)}
+#detected{font-size:.88rem;color:var(--muted);margin:.4rem 0 0;min-height:1.3em}
+
+/* Buttons */
+.btns{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+button{display:inline-flex;align-items:center;gap:.4rem;border-radius:4px;padding:.5rem .95rem;font-weight:700;cursor:pointer;background:var(--surface);color:var(--blue);border:2px solid var(--blue);line-height:1.2;white-space:nowrap}
+button:hover{background:var(--blue-bg)}
+button.primary{background:var(--green);color:#fff;border-color:var(--green);box-shadow:0 3px 0 #00401E}
+button.primary:hover{filter:brightness(1.07);background:var(--green)}
+button.primary:active{transform:translateY(2px);box-shadow:0 1px 0 #00401E}
+
+/* Result */
+.summary{font-size:clamp(1.3rem,2.6vw,1.85rem);line-height:1.25;font-weight:700;letter-spacing:-.01em;margin:0 0 .3rem;max-width:36ch}
+.summary strong{color:var(--blue);font-weight:800}
+.focuson{margin:0 0 1rem;color:var(--muted);max-width:70ch}
+.chartbar{display:flex;flex-wrap:wrap;gap:.5rem 1rem;align-items:end;margin:0 0 .6rem}
+.chartbar .block{margin:0;min-width:260px}
+.chartwrap{border:1px solid var(--line);border-radius:8px;overflow-x:auto;margin-bottom:.9rem;background:#fff}
+.chartwrap svg{width:100%;min-width:560px;height:auto;display:block}
+.empty{padding:3rem .5rem;text-align:center;color:var(--muted)}
+.empty p{margin:0 auto .9rem;max-width:60ch}
+.tablewrap{overflow-x:auto;margin-top:1.25rem}
+.tablewrap h3{font-size:1.05rem;font-weight:700;margin:0 0 .5rem}
+.tablewrap .hint{margin:.4rem 0 0}
+table{border-collapse:collapse;width:100%;font-size:.94rem}
+th,td{text-align:left;padding:.5rem .65rem;border-bottom:1px solid var(--line)}
+th{border-bottom:2px solid var(--text)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+td.sub{padding-left:1.6rem}
+td.good{color:var(--green);font-weight:700}
+td.ok{color:var(--blue);font-weight:700}
+td.poor{color:var(--danger);font-weight:700}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.6rem;margin:0 0 1rem}
+.stat{border:1px solid var(--line);border-radius:6px;padding:.55rem .75rem}
+.stat b{display:block;font-size:1.3rem;font-weight:800;font-variant-numeric:tabular-nums}
+.stat b.good{color:var(--green)} .stat b.ok{color:var(--blue)} .stat b.poor{color:var(--danger)}
+.stat span{color:var(--muted);font-size:.85rem}
+.legend-note{color:var(--muted);font-size:.88rem;margin:-.4rem 0 .9rem}
+.reading{margin-top:1.4rem;border-top:1px solid var(--line);padding-top:1.1rem}
+.reading h3{font-size:1.05rem;font-weight:700;margin:0 0 .5rem}
+.reading p{max-width:75ch;margin:0 0 .75rem}
+.warnbox{background:#FFF4DB;color:#6B4A00;border-left:5px solid var(--yellow);border-radius:0 4px 4px 0;padding:.6rem .8rem;margin:0 0 1rem;max-width:75ch}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .warnbox{background:#3A2E10;color:#FFD27A}}
+:root[data-theme="dark"] .warnbox{background:#3A2E10;color:#FFD27A}
+
+/* Notes */
+.notes{padding:0 1.25rem 2rem;color:var(--muted);font-size:.92rem}
+.notes p{max-width:80ch;margin:0 0 .75rem}
+/* Centre the page in the same 1340px column as the FOCUS header */
+.page-head,main,.notes{box-sizing:border-box;max-width:1340px;margin-left:auto;margin-right:auto}
+.notice{background:var(--blue-bg);color:var(--text);border-left:5px solid var(--blue);border-radius:0 4px 4px 0;padding:.7rem .9rem;max-width:80ch}
+@media (prefers-reduced-motion: no-preference){button{transition:background .15s,filter .15s}}
+.chartbar select{min-width:240px}
+.err{color:var(--danger);font-weight:600}
+input[aria-invalid=true]{border-color:var(--danger)}
+details.adv{margin:0 0 1.1rem}
+details.adv summary{cursor:pointer;font-weight:600;color:var(--blue);margin-bottom:.6rem}
+.inline-btn{padding:.25rem .6rem;font-size:.88rem}
+</style>
+{% include focus-head.html %}
+</head>
+<body>
+
+{% include focus-header.html %}
+
+<div class="page-head fa-host">
+  <div class="fa-head-text">
+    <h1>Weibull reliability analysis</h1>
+    <p class="meta">Paste how long each item lasted before it failed, such as days until a piece of equipment broke down, and fit a Weibull distribution. See how likely things are to keep working over time, when they tend to fail, and whether failures speed up with age. Everything runs in your browser, so your data is never uploaded.</p>
+  </div>
+  <div data-focus-actions></div>
+</div>
+
+<main>
+  <section class="panel" aria-labelledby="data-h">
+    <h2 id="data-h">Your data</h2>
+
+    <div class="block">
+      <label for="data">Paste times to failure</label>
+      <p class="hint">One time per row, from Excel or a CSV: for example hours, days or cycles until each item failed. Use the same unit throughout.</p>
+      <textarea id="data" spellcheck="false" placeholder="Days to failure&#10;95&#10;66&#10;143&#10;48"></textarea>
+      <p id="detected" aria-live="polite"></p>
+    </div>
+    <label class="check"><input type="checkbox" id="hasHeader"> First row is a column heading</label>
+
+    <div class="btns" style="margin-bottom:1.5rem">
+      <button type="button" id="clearBtn">Clear</button>
+    </div>
+
+    <h2>Model</h2>
+    <div class="block">
+      <label for="model">Distribution</label>
+      <select id="model" aria-describedby="modelHint">
+        <option value="2">2-parameter Weibull</option>
+        <option value="3">3-parameter Weibull (with a threshold)</option>
+      </select>
+      <p class="hint" id="modelHint" style="margin:.35rem 0 0">Use a threshold if nothing can fail before a certain time, for example a guaranteed minimum life.</p>
+    </div>
+    <div class="block" id="thresholdBlock" hidden>
+      <label for="threshold">Threshold</label>
+      <input type="number" step="any" id="threshold" placeholder="Leave blank to find the best value" aria-describedby="thresholdHint">
+      <p class="hint" id="thresholdHint" style="margin:.35rem 0 0">The earliest time a failure can happen. Leave blank to use the value that makes the probability plot straightest, or type your own. It must be less than the shortest time.</p>
+    </div>
+    <div class="block">
+      <label for="censor">Still working at (censor time)</label>
+      <input type="number" step="any" min="0" id="censor" placeholder="Optional" aria-describedby="censorHint">
+      <p class="hint" id="censorHint" style="margin:.35rem 0 0">If the study stopped before everything failed, give the time it stopped. Any time at or above this is counted as an item still working, not a failure.</p>
+    </div>
+    <div class="pair">
+      <div class="block">
+        <label for="lsl">Lower specification limit</label>
+        <input type="number" step="any" id="lsl" placeholder="Optional">
+      </div>
+      <div class="block">
+        <label for="usl">Upper specification limit</label>
+        <input type="number" step="any" id="usl" placeholder="Optional">
+      </div>
+    </div>
+    <p class="hint" style="margin-top:-.6rem">For example, a minimum life the equipment should reach. You’ll see the percentage expected to fail before the lower limit and to last beyond the upper limit.</p>
+
+    <h2>Predictions</h2>
+    <div class="pair">
+      <div class="block">
+        <label for="atTime">Chance of surviving to time</label>
+        <input type="number" step="any" min="0" id="atTime" placeholder="e.g. 60">
+      </div>
+      <div class="block">
+        <label for="atPct">Time by which this % still work</label>
+        <input type="number" step="any" min="0" max="100" id="atPct" value="50">
+      </div>
+    </div>
+
+    <details class="adv" id="adv">
+      <summary>Advanced: set the shape and scale yourself</summary>
+      <p class="hint">Leave blank to use the fitted values. If you set them, the histogram, survival and hazard charts and the predictions use your values instead, for example to compare with a manufacturer’s figures.</p>
+      <div class="pair">
+        <div class="block">
+          <label for="shapeIn">Shape</label>
+          <input type="number" step="any" min="0" id="shapeIn" placeholder="Fitted">
+        </div>
+        <div class="block">
+          <label for="scaleIn">Scale</label>
+          <input type="number" step="any" min="0" id="scaleIn" placeholder="Fitted">
+        </div>
+      </div>
+    </details>
+
+    <h2>Chart settings</h2>
+    <div class="block">
+      <label for="title">Chart title</label>
+      <input type="text" id="title" placeholder="e.g. Infusion pumps: days in use before repair">
+    </div>
+    <div class="block">
+      <label for="unit">Time unit</label>
+      <input type="text" id="unit" placeholder="e.g. days">
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="result-h">
+    <h2 id="result-h" class="sr">Result</h2>
+    <div id="result"></div>
+  </section>
+</main>
+
+<section class="notes" aria-label="About Weibull reliability analysis">
+  <p><b>What it does:</b> the Weibull distribution describes how long things last before they fail. Its <i>shape</i> tells you how the risk of failure changes with age, and its <i>scale</i> is the time by which about 63% of items have failed (the characteristic life). A <i>threshold</i>, in the 3-parameter model, shifts the whole distribution to start at a minimum life.</p>
+  <p><b>Reading the shape:</b> a shape below 1 means the risk of failure falls with age, so failures happen early, often from faults in manufacture, installation or set-up. A shape close to 1 means failures happen at random, whatever the age. A shape above 1 means the risk rises with age, as items wear out, so planned replacement or maintenance before that point can prevent failures.</p>
+  <p><b>Checking the fit:</b> if the Weibull distribution fits, the points on the probability plot lie close to a straight line. A curve bending down at the start often means a threshold is needed. The shape and scale are maximum likelihood estimates, which take account of items still working when the study stopped. The probability plot uses median ranks of the failures out of all items.</p>
+  <div class="notice">Want to build your skills? <a href="https://coh.gstt.nhs.uk/course/view.php?id=3199" target="_blank" rel="noopener">Book QI training with the CITI Academy</a>.</div>
+</section>
+
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const els = {
+    data: $('data'), hasHeader: $('hasHeader'), detected: $('detected'), model: $('model'), threshold: $('threshold'),
+    censor: $('censor'), lsl: $('lsl'), usl: $('usl'), atTime: $('atTime'), atPct: $('atPct'),
+    shapeIn: $('shapeIn'), scaleIn: $('scaleIn'), title: $('title'), unit: $('unit'), result: $('result')
+  };
+  const COLORS = { ink: '#212B32', muted: '#4C6272', grid: '#E8EDEE', axis: '#AEB7BD', line: '#005EB8', point: '#005EB8', fit: '#D5281B', bar: '#41B6E6', lsl: '#AE2573', usl: '#AE2573', censor: '#768692', mark: '#ED8B00' };
+  const FONT = 'Figtree, Frutiger, Helvetica Neue, Arial, sans-serif';
+  const nf4 = new Intl.NumberFormat('en-GB', { maximumSignificantDigits: 4 });
+  const CHARTS = { prob: 'Probability plot', hist: 'Histogram with fitted curve', surv: 'Survival (reliability) curve', haz: 'Hazard (failure rate) curve' };
+
+  let headerTouched = false;
+  let chartType = 'prob';
+  let current = null;
+  let timer = null;
+
+  // Example: days each of 40 infusion pumps was in use before it first needed repair (made-up data)
+  const EXAMPLE = ['Days to first repair'].concat('95, 66, 143, 48, 125, 101, 43, 121, 36, 111, 47, 53, 109, 177, 60, 79, 139, 220, 132, 105, 243, 39, 185, 90, 65, 59, 92, 174, 71, 132, 141, 102, 127, 45, 44, 76, 148, 110, 93, 133'.split(', ')).join('\n');
+
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const slug = s => (s || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'weibull-reliability';
+  const fmt = x => isFinite(x) ? nf4.format(+x.toPrecision(4)) : '–';
+  const pc = x => isFinite(x) ? (Math.round(x * 1000) / 10).toFixed(1) + '%' : '–';
+  const sum = a => a.reduce((s, v) => s + v, 0);
+  const avg = a => sum(a) / a.length;
+  const sdev = a => { const m = avg(a); return Math.sqrt(sum(a.map(v => (v - m) ** 2)) / (a.length - 1)); };
+  const val = el => el.value.trim() === '' ? NaN : Number(el.value);
+
+  // ---- parsing ----
+  function num(raw, delim) {
+    if (raw === undefined) return NaN;
+    let v = String(raw).replace(/[%£$€\s]/g, '');
+    if (delim !== ',') v = v.replace(/,/g, '');
+    return v === '' ? NaN : Number(v);
+  }
+  function parse(text, hasHeader) {
+    const lines = text.split(/\r?\n/).filter(l => l.trim() !== '');
+    if (!lines.length) return null;
+    let delim = '\t';
+    if (!lines.some(l => l.includes('\t'))) delim = lines.some(l => l.includes(';')) ? ';' : (lines.some(l => l.includes(',')) ? ',' : '\t');
+    const recs = lines.map(l => l.split(delim).map(x => x.trim().replace(/^"(.*)"$/, '$1').trim()));
+    const first = r => r.find(c => c !== '' && isFinite(num(c, delim)));
+    const headerGuess = recs.length > 1 && first(recs[0]) === undefined;
+    const head = hasHeader ? recs[0] : null, body = hasHeader ? recs.slice(1) : recs;
+    const xs = []; let skipped = 0;
+    body.forEach(r => { const c = first(r); if (c === undefined) skipped++; else xs.push(num(c, delim)); });
+    return { xs, skipped, headerGuess, name: head ? head.filter(Boolean).join(' ') : '' };
+  }
+
+  // ---- maths ----
+  function lgamma(z) {
+    const c = [76.18009172947146, -86.50532032941677, 24.01409824083091, -1.231739572450155, 0.1208650973866179e-2, -0.5395239384953e-5];
+    let x = z, y = z, t = x + 5.5; t -= (x + 0.5) * Math.log(t);
+    let s = 1.000000000190015; for (const k of c) s += k / ++y;
+    return -t + Math.log(2.5066282746310005 * s / x);
+  }
+  const gamma = z => Math.exp(lgamma(z));
+
+  // Maximum likelihood fit of a Weibull distribution to failures y (already less the threshold),
+  // with m items still working at time c (also less the threshold).
+  function mleFit(y, m, c) {
+    const r = y.length, all = m > 0 ? y.concat([c]) : y.slice(), wt = m > 0 ? y.map(() => 1).concat([m]) : y.map(() => 1);
+    const top = Math.max(...all), ln = all.map(v => Math.log(v)), lnTop = Math.log(top), meanLnF = avg(y.map(v => Math.log(v)));
+    // Profile likelihood equation for the shape, which falls as the shape rises
+    const g = b => {
+      let s0 = 0, s1 = 0;
+      for (let i = 0; i < all.length; i++) { const p = wt[i] * Math.exp(b * (ln[i] - lnTop)); s0 += p; s1 += p * ln[i]; }
+      return 1 / b + meanLnF - s1 / s0;
+    };
+    let lo = 1, hi = 1;
+    while (g(lo) < 0 && lo > 1e-6) lo /= 2;
+    while (g(hi) > 0 && hi < 1e4) hi *= 2;
+    for (let i = 0; i < 200; i++) { const mid = Math.sqrt(lo * hi); if (g(mid) > 0) lo = mid; else hi = mid; }
+    const beta = Math.sqrt(lo * hi);
+    let s0 = 0;
+    for (let i = 0; i < all.length; i++) s0 += wt[i] * Math.exp(beta * (ln[i] - lnTop));
+    const alpha = top * Math.pow(s0 / r, 1 / beta);
+    return { beta, alpha };
+  }
+  // Points for the probability plot: median (Hazen) ranks of the failures out of all items
+  function probPoints(y, N) {
+    return y.map((v, i) => { const F = (i + 0.5) / N; return { t: v, F, x: Math.log(v), y: Math.log(-Math.log(1 - F)) }; });
+  }
+  function rsq(pts) {
+    const n = pts.length, mx = avg(pts.map(p => p.x)), my = avg(pts.map(p => p.y));
+    let sxy = 0, sxx = 0, syy = 0;
+    pts.forEach(p => { sxy += (p.x - mx) * (p.y - my); sxx += (p.x - mx) ** 2; syy += (p.y - my) ** 2; });
+    return sxx > 0 && syy > 0 ? sxy * sxy / (sxx * syy) : NaN;
+  }
+  // The threshold that makes the probability plot straightest (highest R²)
+  function bestThreshold(fails, N) {
+    const min = fails[0];
+    const score = th => rsq(probPoints(fails.map(v => v - th), N));
+    const span = min > 0 ? min : Math.abs(min) || 1;
+    let lo = min - span * 20, hi = min - span * 1e-6;
+    if (lo < 0 && min > 0) lo = 0;
+    // coarse search, then golden section around the best point
+    let best = lo, bestS = -Infinity;
+    for (let i = 0; i <= 200; i++) { const th = lo + (hi - lo) * i / 200; const s = score(th); if (s > bestS) { bestS = s; best = th; } }
+    const step = (hi - lo) / 200;
+    let a = Math.max(lo, best - step), b = Math.min(hi, best + step);
+    const gr = (Math.sqrt(5) - 1) / 2;
+    for (let i = 0; i < 80; i++) {
+      const c = b - gr * (b - a), d = a + gr * (b - a);
+      if (score(c) > score(d)) b = d; else a = c;
+    }
+    return +((a + b) / 2).toPrecision(5);
+  }
+
+  // Weibull functions, for times t on the original scale
+  const surv = (m, t) => t <= m.theta ? 1 : Math.exp(-Math.pow((t - m.theta) / m.alpha, m.beta));
+  const pdf = (m, t) => { if (t <= m.theta) return 0; const z = (t - m.theta) / m.alpha; return m.beta / m.alpha * Math.pow(z, m.beta - 1) * Math.exp(-Math.pow(z, m.beta)); };
+  const hazard = (m, t) => t <= m.theta ? (m.beta < 1 ? NaN : 0) : m.beta / m.alpha * Math.pow((t - m.theta) / m.alpha, m.beta - 1);
+  const timeAtSurv = (m, p) => m.theta + m.alpha * Math.pow(-Math.log(p), 1 / m.beta);
+
+  // ---- analysis ----
+  function analyse() {
+    const d = parse(els.data.value, els.hasHeader.checked);
+    if (!d || !d.xs.length) return { empty: 'Paste your times to failure on the left to analyse them.' };
+    const xs = d.xs.slice().sort((a, b) => a - b), N = xs.length;
+    const errs = [];
+    [els.threshold, els.censor, els.shapeIn, els.scaleIn, els.atPct, els.atTime, els.lsl, els.usl].forEach(el => el.removeAttribute('aria-invalid'));
+    const bad = (el, msg) => { el.setAttribute('aria-invalid', 'true'); errs.push(msg); };
+    const censor = val(els.censor);
+    const hasCensor = isFinite(censor);
+    const fails = hasCensor ? xs.filter(v => v < censor) : xs, m = N - fails.length;
+    let note = `Reading ${N} time${N === 1 ? '' : 's'}${hasCensor ? `: ${fails.length} failure${fails.length === 1 ? '' : 's'} and ${m} still working at ${fmt(censor)}` : ''}.`;
+    if (d.skipped) note += ` ${d.skipped} row${d.skipped > 1 ? 's' : ''} skipped (no number).`;
+    const three = els.model.value === '3';
+    let theta = 0, autoTheta = false;
+    if (fails.length < 3) return { d, note, empty: hasCensor ? 'At least three items need to have failed before the censor time to fit a Weibull distribution.' : 'Paste at least three times to fit a Weibull distribution.' };
+    if (new Set(fails).size < 2) return { d, note, empty: 'The failure times are all the same, so a distribution can’t be fitted.' };
+    if (three) {
+      const th = val(els.threshold);
+      if (isFinite(th)) { theta = th; if (theta >= fails[0]) bad(els.threshold, `The threshold must be less than the shortest time, ${fmt(fails[0])}.`); }
+      else { theta = bestThreshold(fails, N); autoTheta = true; }
+    } else if (fails[0] <= 0) errs.push('Times must all be more than 0 for a 2-parameter Weibull. Use the 3-parameter model with a threshold if some times are 0 or less.');
+    if (hasCensor && censor <= theta) bad(els.censor, 'The censor time must be more than the threshold.');
+    const shapeIn = val(els.shapeIn), scaleIn = val(els.scaleIn);
+    if (els.shapeIn.value.trim() !== '' && !(shapeIn > 0)) bad(els.shapeIn, 'The shape must be more than 0.');
+    if (els.scaleIn.value.trim() !== '' && !(scaleIn > 0)) bad(els.scaleIn, 'The scale must be more than 0.');
+    const atPct = val(els.atPct), atTime = val(els.atTime), lsl = val(els.lsl), usl = val(els.usl);
+    if (els.atPct.value.trim() !== '' && !(atPct > 0 && atPct < 100)) bad(els.atPct, 'The percentage still working must be more than 0 and less than 100.');
+    if (els.atTime.value.trim() !== '' && !isFinite(atTime)) bad(els.atTime, 'The survival time must be a number.');
+    if (isFinite(lsl) && isFinite(usl) && usl <= lsl) bad(els.usl, 'The upper specification limit should be more than the lower one.');
+    if (errs.length) return { d, note, errs };
+
+    const y = fails.map(v => v - theta), cy = hasCensor ? censor - theta : NaN;
+    const fit = mleFit(y, m, cy);
+    const fitted = { beta: fit.beta, alpha: fit.alpha, theta };
+    const model = { beta: shapeIn > 0 ? shapeIn : fit.beta, alpha: scaleIn > 0 ? scaleIn : fit.alpha, theta };
+    const manual = shapeIn > 0 || scaleIn > 0;
+    const pts = probPoints(y, N);
+    const r2 = rsq(pts);
+    const mean = model.theta + model.alpha * gamma(1 + 1 / model.beta);
+    const sd = model.alpha * Math.sqrt(Math.max(0, gamma(1 + 2 / model.beta) - gamma(1 + 1 / model.beta) ** 2));
+    const o = {
+      title: els.title.value.trim(), unit: els.unit.value.trim(), name: d.name || 'Time', three, autoTheta, hasCensor, censor,
+      lsl, usl, atTime, atPct: isFinite(atPct) ? atPct : NaN
+    };
+    const pred = {
+      atTime: isFinite(atTime) ? surv(model, atTime) : NaN,
+      atPct: isFinite(atPct) && atPct > 0 && atPct < 100 ? timeAtSurv(model, atPct / 100) : NaN,
+      lsl: isFinite(lsl) ? 1 - surv(model, lsl) : NaN,
+      usl: isFinite(usl) ? surv(model, usl) : NaN,
+      median: timeAtSurv(model, 0.5), b10: timeAtSurv(model, 0.9),
+      predFails: hasCensor ? N * (1 - surv(model, censor)) : NaN
+    };
+    return { d, note, o, xs, fails, N, m, fitted, model, manual, pts, r2, mean, sd, pred,
+      dataMean: hasCensor ? NaN : avg(xs), dataSd: hasCensor ? NaN : sdev(xs) };
+  }
+
+  // ---- wording ----
+  const u = o => o.unit ? ' ' + o.unit : '';
+  function shapeWords(b) {
+    if (b < 0.95) return { tag: 'Early failures', text: 'the risk of failure falls with age, so items tend to fail early, which points to faults in manufacture, installation or set-up' };
+    if (b <= 1.05) return { tag: 'Random failures', text: 'failures happen at random, at about the same rate whatever the age' };
+    return { tag: 'Wear-out failures', text: 'the risk of failure rises with age, so items wear out' };
+  }
+  function readingParts(r) {
+    const { o, model, pred } = r, sw = shapeWords(model.beta), out = [];
+    out.push(`The shape is ${fmt(model.beta)}, so ${sw.text}.${model.beta > 1.05 ? ' Planned replacement or maintenance before items reach the age where failures climb can prevent them.' : model.beta < 0.95 ? ' Look at what happens when items are new, such as checks before first use, rather than at replacing older ones.' : ' Replacing items early won’t prevent failures, as older items are no more likely to fail than new ones.'}`);
+    out.push(`Half of items are expected to fail by ${fmt(pred.median)}${u(o)} (the median life) and 10% by ${fmt(pred.b10)}${u(o)}. The average life is ${fmt(r.mean)}${u(o)}${o.three ? `, and no failures are expected before the threshold of ${fmt(model.theta)}${u(o)}` : ''}.`);
+    const p = [];
+    if (isFinite(pred.atTime)) p.push(`The chance an item is still working at ${fmt(o.atTime)}${u(o)} is ${pc(pred.atTime)}.`);
+    if (isFinite(pred.lsl)) p.push(`${pc(pred.lsl)} are expected to fail before the lower specification limit of ${fmt(o.lsl)}${u(o)}.`);
+    if (isFinite(pred.usl)) p.push(`${pc(pred.usl)} are expected to last beyond the upper specification limit of ${fmt(o.usl)}${u(o)}.`);
+    if (p.length) out.push(p.join(' '));
+    if (r.manual) out.push('These predictions use the shape and scale you set, not the fitted values.');
+    out.push(isFinite(r.r2) && r.r2 >= 0.95 ? `The points on the probability plot lie close to a straight line (R² = ${fmt(r.r2)}), so the Weibull distribution fits well.`
+      : r.r2 >= 0.9 ? `The points on the probability plot lie fairly close to a straight line (R² = ${fmt(r.r2)}), so the Weibull distribution is a reasonable fit. Check the plot for points that bend away from the line, especially at the ends.`
+      : `The points on the probability plot are not very straight (R² = ${fmt(r.r2)}), so treat the predictions with caution.${o.three ? '' : ' If the points curve, try the 3-parameter model with a threshold.'} Check too whether the data mixes different kinds of failure, which are better analysed separately.`);
+    return out;
+  }
+
+  // ---- charts ----
+  function niceTicks(lo, hi, count) {
+    const span = hi - lo || 1, raw = span / count, mag = Math.pow(10, Math.floor(Math.log10(raw)));
+    const step = [1, 2, 2.5, 5, 10].map(k => k * mag).find(s => span / s <= count) || 10 * mag;
+    const out = []; for (let v = Math.ceil(lo / step - 1e-9) * step; v <= hi + step * 1e-9; v += step) out.push(+v.toPrecision(12));
+    return { ticks: out, step, top: Math.ceil(hi / step - 1e-9) * step };
+  }
+  function frame(o, W, H, m) {
+    let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.aria)}" font-family="${FONT}"><rect width="${W}" height="${H}" fill="#fff"/>`;
+    if (o.title) s += `<text x="${W / 2}" y="30" text-anchor="middle" font-size="18" font-weight="700" fill="${COLORS.ink}">${esc(o.title)}</text>`;
+    return s;
+  }
+  function axes(s, W, H, m, xLabel, yLabel) {
+    const ph = H - m.t - m.b, pw = W - m.l - m.r;
+    s += `<line x1="${m.l}" x2="${W - m.r}" y1="${H - m.b}" y2="${H - m.b}" stroke="${COLORS.axis}"/><line x1="${m.l}" x2="${m.l}" y1="${m.t}" y2="${H - m.b}" stroke="${COLORS.axis}"/>`;
+    s += `<text x="${m.l + pw / 2}" y="${H - 14}" text-anchor="middle" font-size="13" font-weight="600" fill="${COLORS.ink}">${esc(xLabel)}</text>`;
+    s += `<text transform="translate(16 ${m.t + ph / 2}) rotate(-90)" text-anchor="middle" font-size="13" font-weight="600" fill="${COLORS.ink}">${esc(yLabel)}</text>`;
+    return s;
+  }
+  function vline(s, x, m, H, color, label, row) {
+    s += `<line x1="${x}" x2="${x}" y1="${m.t}" y2="${H - m.b}" stroke="${color}" stroke-width="1.5" stroke-dasharray="6 4"/>`;
+    s += `<text x="${x + 4}" y="${m.t + 13 + (row || 0) * 15}" font-size="12" font-weight="600" fill="${color}">${esc(label)}</text>`;
+    return s;
+  }
+  const timeLabel = o => o.name + (o.unit && !o.name.toLowerCase().includes(o.unit.toLowerCase()) ? ` (${o.unit})` : '');
+  function specLines(s, r, X, m, H, x0, x1) {
+    const { o } = r; let row = 0;
+    if (isFinite(o.lsl) && o.lsl >= x0 && o.lsl <= x1) s = vline(s, X(o.lsl), m, H, COLORS.lsl, 'LSL ' + fmt(o.lsl), row++);
+    if (isFinite(o.usl) && o.usl >= x0 && o.usl <= x1) s = vline(s, X(o.usl), m, H, COLORS.usl, 'USL ' + fmt(o.usl), row++);
+    if (o.hasCensor && o.censor >= x0 && o.censor <= x1) s = vline(s, X(o.censor), m, H, COLORS.censor, 'Censor ' + fmt(o.censor), row++);
+    return s;
+  }
+  function timeRange(r) {
+    const { o, model, xs } = r;
+    const cands = [xs[xs.length - 1], timeAtSurv(model, 0.01)];
+    [o.lsl, o.usl, o.atTime, o.hasCensor ? o.censor : NaN, r.pred.atPct].forEach(v => { if (isFinite(v)) cands.push(v); });
+    const lo = Math.min(0, model.theta, xs[0]);
+    return { x0: lo, x1: Math.max(...cands) * 1.05 };
+  }
+  function curveSVG(r, kind) {
+    const { o, model } = r, W = 760, H = 420, m = { l: 70, r: 24, t: o.title ? 52 : 24, b: 58 };
+    const pw = W - m.l - m.r, ph = H - m.t - m.b;
+    const { x0, x1 } = timeRange(r);
+    const n = 300, xs = Array.from({ length: n + 1 }, (_, i) => x0 + (x1 - x0) * i / n);
+    const ys = xs.map(t => kind === 'surv' ? surv(model, t) : hazard(model, t));
+    const fin = ys.filter(isFinite);
+    let yMax = kind === 'surv' ? 1 : Math.max(...fin);
+    if (kind === 'haz' && model.beta < 1) yMax = Math.min(yMax, (hazard(model, model.theta + (x1 - model.theta) * 0.02)) || yMax);
+    const yt = kind === 'surv' ? { ticks: [0, 0.2, 0.4, 0.6, 0.8, 1], top: 1 } : niceTicks(0, yMax * 1.05, 6);
+    if (yt.top > yt.ticks[yt.ticks.length - 1]) yt.ticks.push(yt.top);
+    const yTop = yt.top || 1;
+    const X = v => m.l + (v - x0) / (x1 - x0) * pw, Y = v => m.t + (1 - Math.min(v, yTop) / yTop) * ph;
+    let s = frame(o, W, H, m);
+    yt.ticks.forEach(v => {
+      s += `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="${COLORS.grid}"/>`;
+      s += `<text x="${m.l - 8}" y="${Y(v) + 4}" text-anchor="end" font-size="12" fill="${COLORS.muted}">${kind === 'surv' ? v * 100 + '%' : esc(fmt(v))}</text>`;
+    });
+    niceTicks(x0, x1, 8).ticks.forEach(v => {
+      s += `<line x1="${X(v)}" x2="${X(v)}" y1="${H - m.b}" y2="${H - m.b + 5}" stroke="${COLORS.axis}"/><text x="${X(v)}" y="${H - m.b + 19}" text-anchor="middle" font-size="12" fill="${COLORS.muted}">${esc(fmt(v))}</text>`;
+    });
+    s = axes(s, W, H, m, timeLabel(o), kind === 'surv' ? 'Still working' : 'Failure rate (per unit of time)');
+    s = specLines(s, r, X, m, H, x0, x1);
+    s += `<path d="${xs.map((x, i) => isFinite(ys[i]) ? `${i && isFinite(ys[i - 1]) ? 'L' : 'M'}${X(x).toFixed(1)} ${Y(ys[i]).toFixed(1)}` : '').join('')}" fill="none" stroke="${COLORS.line}" stroke-width="2.5"/>`;
+    xs.forEach((x, i) => { if (i % 10 === 0 && isFinite(ys[i])) s += `<circle cx="${X(x).toFixed(1)}" cy="${Y(ys[i]).toFixed(1)}" r="6" fill="transparent"><title>${esc(fmt(x))}${esc(u(o))}: ${kind === 'surv' ? pc(ys[i]) + ' still working' : 'failure rate ' + fmt(ys[i])}</title></circle>`; });
+    if (kind === 'surv') {
+      const marks = [];
+      if (isFinite(r.pred.atTime)) marks.push({ x: o.atTime, y: r.pred.atTime, label: `${pc(r.pred.atTime)} at ${fmt(o.atTime)}` });
+      if (isFinite(r.pred.atPct)) marks.push({ x: r.pred.atPct, y: o.atPct / 100, label: `${fmt(o.atPct)}% at ${fmt(r.pred.atPct)}` });
+      marks.forEach((k, i) => {
+        const cx = X(k.x), cy = Y(k.y), right = cx > m.l + pw * 0.65;
+        s += `<circle cx="${cx}" cy="${cy}" r="6" fill="${COLORS.mark}" stroke="#fff" stroke-width="2"><title>${esc(k.label)}</title></circle>`;
+        s += `<text x="${cx + (right ? -10 : 10)}" y="${cy - 10 - i * 2}" text-anchor="${right ? 'end' : 'start'}" font-size="13" font-weight="700" fill="${COLORS.mark}">${esc(k.label)}</text>`;
+      });
+    }
+    return s + '</svg>';
+  }
+  function histSVG(r) {
+    const { o, model, fails } = r, W = 760, H = 420, m = { l: 60, r: 24, t: o.title ? 52 : 24, b: 58 };
+    const pw = W - m.l - m.r, ph = H - m.t - m.b;
+    const lo0 = fails[0], hi0 = fails[fails.length - 1];
+    const bins = Math.max(6, Math.min(30, Math.round(1.5 * Math.sqrt(fails.length))));
+    const step = niceTicks(lo0, hi0, bins).step;
+    const start = Math.floor(fails[0] / step) * step;
+    const nb = Math.max(1, Math.floor((hi0 - start) / step) + 1);
+    const counts = Array(nb).fill(0);
+    fails.forEach(v => counts[Math.min(nb - 1, Math.floor((v - start) / step))]++);
+    let x0 = Math.min(start, model.theta), x1 = start + nb * step;
+    [o.lsl, o.usl, o.hasCensor ? o.censor : NaN].forEach(v => { if (isFinite(v) && v < x0 + (x1 - x0) * 3 && v > x0 - (x1 - x0)) { x0 = Math.min(x0, v); x1 = Math.max(x1, v + step / 2); } });
+    const scale = r.N * step;
+    const cx = Array.from({ length: 301 }, (_, i) => x0 + (x1 - x0) * i / 300), cy = cx.map(t => pdf(model, t) * scale);
+    const yMax = Math.max(...counts, ...cy.filter(isFinite)) * 1.08;
+    const yt = niceTicks(0, yMax, 6), yTop = yt.top;
+    if (yt.top > yt.ticks[yt.ticks.length - 1]) yt.ticks.push(yt.top);
+    const X = v => m.l + (v - x0) / (x1 - x0) * pw, Y = v => m.t + (1 - Math.min(v, yTop) / yTop) * ph;
+    let s = frame(o, W, H, m);
+    yt.ticks.forEach(v => { s += `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="${COLORS.grid}"/><text x="${m.l - 8}" y="${Y(v) + 4}" text-anchor="end" font-size="12" fill="${COLORS.muted}">${esc(fmt(v))}</text>`; });
+    counts.forEach((c, i) => {
+      const a = start + i * step, b = a + step;
+      s += `<rect x="${X(a) + 1}" y="${Y(c)}" width="${Math.max(0, X(b) - X(a) - 2)}" height="${Y(0) - Y(c)}" fill="${COLORS.bar}"><title>${esc(fmt(a))} to ${esc(fmt(b))}: ${c} failure${c === 1 ? '' : 's'}</title></rect>`;
+    });
+    niceTicks(x0, x1, 8).ticks.forEach(v => { s += `<line x1="${X(v)}" x2="${X(v)}" y1="${H - m.b}" y2="${H - m.b + 5}" stroke="${COLORS.axis}"/><text x="${X(v)}" y="${H - m.b + 19}" text-anchor="middle" font-size="12" fill="${COLORS.muted}">${esc(fmt(v))}</text>`; });
+    s = axes(s, W, H, m, timeLabel(o), 'Number of failures');
+    s = specLines(s, r, X, m, H, x0, x1);
+    s += `<path d="${cx.map((x, i) => `${i ? 'L' : 'M'}${X(x).toFixed(1)} ${Y(cy[i]).toFixed(1)}`).join('')}" fill="none" stroke="${COLORS.fit}" stroke-width="2.5"/>`;
+    return s + '</svg>';
+  }
+  function probSVG(r) {
+    const { o, fitted, pts, model } = r, W = 760, H = 460, m = { l: 64, r: 24, t: o.title ? 52 : 24, b: 58 };
+    const pw = W - m.l - m.r, ph = H - m.t - m.b;
+    const tv = pts.map(p => p.t);
+    const lx0 = Math.log(Math.min(...tv)), lx1 = Math.log(Math.max(...tv, fitted.alpha));
+    const pad = (lx1 - lx0) * 0.08 || 0.5, x0 = lx0 - pad, x1 = lx1 + pad;
+    const Fs = pts.map(p => p.F), lnF = F => Math.log(-Math.log(1 - F));
+    const yLo = Math.min(lnF(Math.min(...Fs)), lnF(0.01)), yHi = Math.max(lnF(Math.max(...Fs)), lnF(0.99));
+    const X = v => m.l + (v - x0) / (x1 - x0) * pw, Y = v => m.t + (1 - (v - yLo) / (yHi - yLo)) * ph;
+    let s = frame(o, W, H, m);
+    [0.01, 0.02, 0.05, 0.1, 0.2, 0.3, 0.5, 0.632, 0.8, 0.9, 0.95, 0.99, 0.999].forEach(F => {
+      const v = lnF(F); if (v < yLo - 1e-9 || v > yHi + 1e-9) return;
+      s += `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="${COLORS.grid}"${F === 0.632 ? ' stroke-dasharray="4 3"' : ''}/><text x="${m.l - 8}" y="${Y(v) + 4}" text-anchor="end" font-size="12" fill="${COLORS.muted}">${+(F * 100).toPrecision(3)}%</text>`;
+    });
+    // log-scale x ticks: 1, 2, 5 × powers of ten
+    const ticks = [];
+    for (let e = Math.floor(x0 / Math.LN10) - 1; e <= Math.ceil(x1 / Math.LN10) + 1; e++) [1, 2, 5].forEach(k => { const v = k * Math.pow(10, e), lv = Math.log(v); if (lv >= x0 && lv <= x1) ticks.push(v); });
+    const shown = ticks.length > 12 ? ticks.filter(v => /^1/.test(String(v))) : ticks;
+    shown.forEach(v => { const lv = Math.log(v); s += `<line x1="${X(lv)}" x2="${X(lv)}" y1="${m.t}" y2="${H - m.b}" stroke="${COLORS.grid}"/><text x="${X(lv)}" y="${H - m.b + 19}" text-anchor="middle" font-size="12" fill="${COLORS.muted}">${esc(fmt(v))}</text>`; });
+    s = axes(s, W, H, m, (o.three ? timeLabel(o) + ' minus threshold' : timeLabel(o)) + ', log scale', 'Percentage failed');
+    // fitted line: ln(-ln(1-F)) = beta (ln t - ln alpha)
+    const fy = lx => fitted.beta * (lx - Math.log(fitted.alpha));
+    const clipX = v => Math.min(x1, Math.max(x0, v));
+    const ax = clipX(yLo / fitted.beta + Math.log(fitted.alpha)), bx = clipX(yHi / fitted.beta + Math.log(fitted.alpha));
+    s += `<line x1="${X(ax)}" y1="${Y(fy(ax))}" x2="${X(bx)}" y2="${Y(fy(bx))}" stroke="${COLORS.fit}" stroke-width="2"/>`;
+    pts.forEach(p => { s += `<circle cx="${X(p.x).toFixed(1)}" cy="${Y(p.y).toFixed(1)}" r="4" fill="${COLORS.point}" fill-opacity=".85"><title>${esc(fmt(p.t + model.theta))}${esc(u(o))}: ${pc(p.F)} failed</title></circle>`; });
+    s += `<text x="${W - m.r - 6}" y="${H - m.b - 10}" text-anchor="end" font-size="12" fill="${COLORS.muted}">Fitted shape ${esc(fmt(fitted.beta))}, scale ${esc(fmt(fitted.alpha))}${o.three ? ', threshold ' + esc(fmt(fitted.theta)) : ''}; R² ${esc(fmt(r.r2))}</text>`;
+    return s + '</svg>';
+  }
+
+  // ---- tables ----
+  function statRows(r) {
+    const { o, fitted, model, pred } = r, rows = [];
+    rows.push(['Shape (β)', fitted.beta, r.manual && model.beta !== fitted.beta ? model.beta : null]);
+    rows.push(['Scale (η, characteristic life)', fitted.alpha, r.manual && model.alpha !== fitted.alpha ? model.alpha : null]);
+    if (o.three) rows.push([`Threshold${o.autoTheta ? ' (best fit)' : ''}`, fitted.theta, null]);
+    return rows;
+  }
+  function summaryRows(r) {
+    const { o, pred } = r, rows = [];
+    rows.push(['Number of items', r.N]);
+    rows.push(['Failures', r.fails.length]);
+    if (o.hasCensor) rows.push(['Still working at ' + fmt(o.censor), r.m], ['Predicted failures before ' + fmt(o.censor), Math.round(pred.predFails)]);
+    rows.push(['Mean life, from the model', r.mean]);
+    if (isFinite(r.dataMean)) rows.push(['Mean of the data', r.dataMean]);
+    rows.push(['Standard deviation, from the model', r.sd]);
+    if (isFinite(r.dataSd)) rows.push(['Standard deviation of the data', r.dataSd]);
+    rows.push(['Median life (50% failed)', pred.median], ['B10 life (10% failed)', pred.b10], ['Probability plot R²', r.r2]);
+    if (isFinite(pred.atTime)) rows.push([`Chance of surviving to ${fmt(o.atTime)}`, pc(pred.atTime)]);
+    if (isFinite(pred.atPct)) rows.push([`Time by which ${fmt(o.atPct)}% still work`, pred.atPct]);
+    if (isFinite(pred.lsl)) rows.push([`Failing before the LSL (${fmt(o.lsl)})`, pc(pred.lsl)]);
+    if (isFinite(pred.usl)) rows.push([`Lasting beyond the USL (${fmt(o.usl)})`, pc(pred.usl)]);
+    return rows;
+  }
+  const show = v => typeof v === 'number' ? (Number.isInteger(v) ? String(v) : fmt(v)) : v;
+  function tableHTML(r) {
+    const manualCol = r.manual;
+    let h = `<div class="tablewrap"><h3>Fitted Weibull distribution</h3><table><thead><tr><th>Parameter</th><th class="num">Fitted</th>${manualCol ? '<th class="num">Used for predictions</th>' : ''}</tr></thead><tbody>`;
+    statRows(r).forEach(row => { h += `<tr><td>${esc(row[0])}</td><td class="num">${esc(fmt(row[1]))}</td>${manualCol ? `<td class="num">${row[2] != null ? esc(fmt(row[2])) : esc(fmt(row[1]))}</td>` : ''}</tr>`; });
+    h += '</tbody></table></div>';
+    h += `<div class="tablewrap"><h3>Summary and predictions</h3><table><tbody>`;
+    summaryRows(r).forEach(row => { h += `<tr><td>${esc(row[0])}</td><td class="num">${esc(show(row[1]))}</td></tr>`; });
+    return h + '</tbody></table></div>';
+  }
+  const r6 = x => typeof x === 'number' && isFinite(x) ? +x.toPrecision(6) : x;
+  function tableRows() {
+    const r = current, out = [[r.o.title || 'Weibull reliability analysis'], [], ['Parameter', 'Fitted', 'Used for predictions']];
+    statRows(r).forEach(row => out.push([row[0], r6(row[1]), r6(row[2] != null ? row[2] : row[1])]));
+    out.push([], ['Summary and predictions']);
+    summaryRows(r).forEach(row => out.push([row[0], r6(row[1])]));
+    out.push([], ['Probability plot points'], [r.o.name, 'Percentage failed (median rank)']);
+    r.pts.forEach(p => out.push([r6(p.t + r.model.theta), r6(p.F * 100)]));
+    return out;
+  }
+  function summaryText() {
+    const lines = [current.o.title || 'Weibull reliability analysis', ''];
+    lines.push(`Shape ${fmt(current.model.beta)}, scale ${fmt(current.model.alpha)}${current.o.three ? `, threshold ${fmt(current.model.theta)}` : ''}.`, '');
+    readingParts(current).forEach(p => lines.push(p, ''));
+    return lines.join('\n').trim();
+  }
+
+  // ---- render ----
+  function update() {
+    current = null;
+    $('thresholdBlock').hidden = els.model.value !== '3';
+    if (els.shapeIn.value.trim() || els.scaleIn.value.trim()) $('adv').open = true;
+    const text = els.data.value;
+    if (!headerTouched) { const g = parse(text, false); els.hasHeader.checked = !!(g && g.headerGuess); }
+    if (!text.trim()) { els.detected.textContent = ''; return renderEmpty(['Paste your times to failure on the left to analyse them.']); }
+    const r = analyse();
+    els.detected.textContent = r.note || '';
+    if (r.empty) return renderEmpty([r.empty]);
+    if (r.errs) return renderEmpty(r.errs);
+    current = r;
+    if (r.o.three && r.o.autoTheta) els.threshold.placeholder = `Best fit: ${fmt(r.fitted.theta)} (leave blank to keep)`;
+    else els.threshold.placeholder = 'Leave blank to find the best value';
+    if (!CHARTS[chartType]) chartType = 'prob';
+    const { o, model, pred } = r, sw = shapeWords(model.beta);
+    o.aria = (o.title ? o.title + '. ' : '') + `${CHARTS[chartType]}. Weibull shape ${fmt(model.beta)}, scale ${fmt(model.alpha)}${o.three ? `, threshold ${fmt(model.theta)}` : ''}. ${sw.tag}.`;
+    const svg = chartType === 'hist' ? histSVG(r) : chartType === 'surv' ? curveSVG(r, 'surv') : chartType === 'haz' ? curveSVG(r, 'haz') : probSVG(r);
+    const legend = {
+      prob: 'Each dot is a failure, plotted on Weibull scales; the red line is the fitted distribution. If the Weibull distribution fits, the dots lie close to the line. The dashed grid line marks 63.2%, which the line crosses at the scale.',
+      hist: 'Bars show how many items failed in each period; the red curve is the fitted distribution, scaled to the number of items.',
+      surv: 'The percentage of items expected to still be working at each time. Orange dots mark your predictions.',
+      haz: 'The failure rate among items still working at each time. A falling curve means early failures, a flat one random failures, and a rising one wear-out.'
+    }[chartType];
+    const stats = [[fmt(model.beta), 'Shape (β)'], [fmt(model.alpha), 'Scale (η)']];
+    if (o.three) stats.push([fmt(model.theta), o.autoTheta ? 'Threshold (best fit)' : 'Threshold']);
+    stats.push([fmt(pred.median), 'Median life' + (o.unit ? ` (${o.unit})` : '')]);
+    if (isFinite(pred.atTime)) stats.push([pc(pred.atTime), `Still working at ${fmt(o.atTime)}`]);
+    if (isFinite(pred.atPct)) stats.push([fmt(pred.atPct), `Time by which ${fmt(o.atPct)}% still work`]);
+    if (isFinite(pred.lsl)) stats.push([pc(pred.lsl), `Failing before LSL (${fmt(o.lsl)})`]);
+    if (isFinite(pred.usl)) stats.push([pc(pred.usl), `Lasting beyond USL (${fmt(o.usl)})`]);
+    stats.push([fmt(r.r2), 'Probability plot R²', r.r2 >= 0.95 ? 'good' : r.r2 >= 0.9 ? 'ok' : 'poor']);
+    els.result.innerHTML = `
+      <p class="summary"><strong>${esc(sw.tag)}</strong>: half are expected to fail by <strong>${esc(fmt(pred.median))}${esc(u(o))}</strong></p>
+      <p class="focuson">${esc(`${o.three ? '3' : '2'}-parameter Weibull, ${r.N} items, ${r.fails.length} failures${o.hasCensor ? `, ${r.m} still working at ${fmt(o.censor)}` : ''}.${r.manual ? ' Predictions use the shape and scale you set.' : ''}`)}</p>
+      <div class="stats">${stats.map(s => `<div class="stat"><b${s[2] ? ` class="${s[2]}"` : ''}>${esc(s[0])}</b><span>${esc(s[1])}</span></div>`).join('')}</div>
+      <div class="chartbar"><div class="block"><label for="chartType">Chart</label><select id="chartType">${Object.keys(CHARTS).map(c => `<option value="${c}"${c === chartType ? ' selected' : ''}>${CHARTS[c]}</option>`).join('')}</select></div></div>
+      <div class="chartwrap" id="chart">${svg}</div>
+      <p class="legend-note">${esc(legend)} Hover over the chart to see the figures.</p>
+      <div class="reading"><h3>What the analysis shows</h3>${readingParts(r).map(x => `<p>${esc(x)}</p>`).join('')}</div>
+      ${tableHTML(r)}`;
+  }
+  function renderEmpty(msgs) {
+    current = null;
+    els.result.innerHTML = `<div class="empty">${msgs.map((m, i) => `<p${msgs.length > 1 || /must|should|need|can’t|Times/.test(m) ? ' class="err"' : ''} style="margin:0 auto .5rem">${esc(m)}</p>`).join('')}<button type="button" class="primary" data-act="example" style="margin-top:.5rem">Try the example</button></div>`;
+  }
+  function schedule() { clearTimeout(timer); timer = setTimeout(update, 200); }
+
+  // ---- exports ----
+  function svgEl() { return document.querySelector('#chart svg'); }
+  function fileName() { return slug(current && current.o.title); }
+  let dlPromise = null;
+  function getDownloads() {
+    if (!window.claude || typeof window.claude.use !== 'function') return Promise.resolve(undefined);
+    if (!dlPromise) dlPromise = window.claude.use('downloads').catch(() => null);
+    return dlPromise;
+  }
+  async function downloadBlob(blob, name) {
+    const d = await getDownloads();
+    if (d) { const r = await d.save({ filename: name, data: blob }); return r && r.status !== 'declined'; }
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+    return true;
+  }
+  function status(msg) { FocusActions.say(msg); }
+  function toPNG(cb) {
+    const svg = svgEl(); if (!svg) return;
+    const vb = svg.viewBox.baseVal, scale = 2;
+    const str = new XMLSerializer().serializeToString(svg);
+    const img = new Image();
+    img.onload = () => {
+      const c = document.createElement('canvas');
+      c.width = vb.width * scale; c.height = vb.height * scale;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, c.width, c.height);
+      ctx.drawImage(img, 0, 0, c.width, c.height);
+      c.toBlob(cb, 'image/png');
+    };
+    img.onerror = () => status('Could not create the image.');
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(str);
+  }
+  const csvCell = v => v === undefined || v === null ? '' : /[",\n]/.test(String(v)) ? '"' + String(v).replace(/"/g, '""') + '"' : String(v);
+  async function copyText(t) {
+    try { await navigator.clipboard.writeText(t); return true; }
+    catch (e) {
+      const ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select();
+      const ok = document.execCommand('copy'); ta.remove(); return ok;
+    }
+  }
+  const saved = (ok, msg) => status(ok ? msg : 'Download cancelled.');
+  const failed = () => status('The file couldn’t be saved here. Try Copy instead.');
+  function act(a) {
+    if (a === 'example') return loadExample();
+    if (!current) return;
+    if (a === 'png') toPNG(b => downloadBlob(b, fileName() + '.png').then(ok => saved(ok, 'PNG downloaded.'), failed));
+    if (a === 'svg') downloadBlob(new Blob([new XMLSerializer().serializeToString(svgEl())], { type: 'image/svg+xml' }), fileName() + '.svg').then(ok => saved(ok, 'SVG downloaded.'), failed);
+    if (a === 'copyimg') {
+      if (!(navigator.clipboard && window.ClipboardItem)) return status('Your browser can’t copy images — use Download PNG.');
+      toPNG(async b => {
+        try { await navigator.clipboard.write([new ClipboardItem({ 'image/png': b })]); status('Chart copied — paste it into PowerPoint or Word.'); }
+        catch (e) { status('Copy was blocked — use Download PNG.'); }
+      });
+    }
+    if (a === 'csv') downloadBlob(new Blob([tableRows().map(r => r.map(csvCell).join(',')).join('\r\n')], { type: 'text/csv' }), fileName() + '.csv').then(ok => saved(ok, 'Tables downloaded.'), failed);
+    if (a === 'copytable') copyText(tableRows().map(r => r.map(v => v == null ? '' : v).join('\t')).join('\n')).then(ok => status(ok ? 'Tables copied — paste them into Excel.' : 'Copy was blocked.'));
+    if (a === 'copysummary') copyText(summaryText()).then(ok => status(ok ? 'Summary copied.' : 'Copy was blocked.'));
+  }
+  function clearAll() {
+    ['data', 'threshold', 'censor', 'lsl', 'usl', 'atTime', 'shapeIn', 'scaleIn', 'title', 'unit'].forEach(k => { els[k].value = ''; });
+    els.atPct.value = '50'; els.model.value = '2'; headerTouched = false; els.hasHeader.checked = false;
+  }
+  function loadExample() {
+    clearAll();
+    els.data.value = EXAMPLE;
+    els.title.value = 'Infusion pumps: days in use before first repair (example)';
+    els.unit.value = 'days'; els.atTime.value = '60'; els.atPct.value = '90'; els.lsl.value = '30';
+    chartType = 'prob';
+    update();
+  }
+
+  // ---- events ----
+  els.data.addEventListener('input', schedule);
+  els.hasHeader.addEventListener('change', () => { headerTouched = true; update(); });
+  ['threshold', 'censor', 'lsl', 'usl', 'atTime', 'atPct', 'shapeIn', 'scaleIn', 'title', 'unit'].forEach(k => els[k].addEventListener('input', schedule));
+  els.model.addEventListener('change', update);
+  $('clearBtn').addEventListener('click', () => { clearAll(); update(); els.data.focus(); });
+  els.result.addEventListener('click', e => { const b = e.target.closest('button[data-act]'); if (b) act(b.dataset.act); });
+  els.result.addEventListener('change', e => { if (e.target.id === 'chartType') { chartType = e.target.value; update(); $('chartType').focus(); } });
+
+  update();
+
+  // ---- shared toolbar (Open, Save, Export) ----
+  FocusActions.mount({
+    tool: 'weibull_reliability', toolName: 'Weibull reliability analysis',
+    example: loadExample, hasData: () => !!els.data.value.trim(),
+    fileName: () => fileName(),
+    fields: 'section.panel[aria-labelledby="data-h"]',
+    getExtra: () => ({ chartType }),
+    setExtra: x => { if (x && CHARTS[x.chartType]) chartType = x.chartType; },
+    afterOpen: () => { headerTouched = true; update(); },
+    ready: () => !!current,
+    exports: ['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) }))
+  });
+})();
+</script>
+{% include focus-footer.html %}
+</body>
+</html>

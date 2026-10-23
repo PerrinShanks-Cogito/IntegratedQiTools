@@ -90,8 +90,14 @@
   group: Explore your data
   description: See how several factors together relate to one result, such as staffing and demand against waiting times, and which of them matter most.
 
-- id: gauge_rr
-  name: Gauge R&R
+- id: weibull_reliability
+  name: Weibull reliability analysis
+  status: Beta
+  group: Explore your data
+  description: See how long things last before they fail, such as equipment until its first repair, how likely they are to keep working over time, and whether failures come early, at random or from wearing out.
+
+- id: gage_rr
+  name: Gage R&R
   status: Beta
   group: Test changes
   description: Check whether a measurement can be trusted, such as blood pressure readings or wound sizes, by seeing how much of its variation comes from the person and the equipment rather than from real differences.
