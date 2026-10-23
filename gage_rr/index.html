@@ -887,6 +887,29 @@ td.poor{color:var(--danger);font-weight:700}
     update();
   }
 
+  // ---- blank data collection sheet ----
+  // In the table layout the parse step reads: appraiser and trial, then one column for each part.
+  function dataSheet() {
+    const parts = 10, apps = ['Appraiser A', 'Appraiser B', 'Appraiser C'], trials = 3;
+    const head = ['Appraiser', 'Trial', ...Array.from({ length: parts }, (_, i) => 'Part ' + (i + 1))].map(v => ({ v, s: 'head' }));
+    const rows = [head];
+    apps.forEach(a => { for (let t = 1; t <= trials; t++) rows.push([a, t, ...Array(parts).fill({ v: '', s: 'input' })]); });
+    const notes = [
+      'Running the study',
+      '1. Choose about 10 parts (items) that cover the range you normally see, picked at random from everyday work. Label them 1 to 10, ideally where the appraisers can’t see the label.',
+      '2. Choose two or three people who usually take the measurement. Replace “Appraiser A”, “B” and “C” with their names.',
+      '3. Each person measures every part, in a random order, without seeing their earlier results. Repeat for each trial.',
+      '4. Write each measurement in the shaded box for that appraiser, trial and part. Delete any columns or rows you don’t need, or add more.',
+      '',
+      'Analysing the results',
+      'Select the whole table on the Data sheet, including the headings, copy it and paste it into the Gage R&R tool.'
+    ];
+    return [
+      { name: 'Data', cols: [16, 8, ...Array(parts).fill(10)], rows, freeze: 1 },
+      { name: 'Instructions', cols: [100], rows: notes.map((v, i) => [{ v, s: i === 0 || v === 'Analysing the results' ? 'title' : 'wrap' }]) }
+    ];
+  }
+
   // ---- events ----
   els.data.addEventListener('input', schedule);
   els.hasHeader.addEventListener('change', () => { headerTouched = true; update(); });
@@ -908,7 +931,8 @@ td.poor{color:var(--danger);font-weight:700}
     setExtra: x => { if (x && CHARTS[x.chartType]) chartType = x.chartType; },
     afterOpen: () => { headerTouched = true; update(); },
     ready: () => !!current,
-    exports: ['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) }))
+    exports: ['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) })),
+    template: { fileName: 'gage-rr-data-sheet.xlsx', sheets: dataSheet }
   });
 })();
 </script>
