@@ -60,6 +60,12 @@
   group: Explore your data
   description: Compare the middle, spread and unusual values of a measure across groups, such as waiting times by site or length of stay by ward.
 
+- id: anova
+  name: ANOVA
+  status: Beta
+  group: Explore your data
+  description: Test whether the averages of several groups really differ, such as length of stay across wards, and see which groups stand apart.
+
 - id: scatter_plot
   name: Scatter plot
   status: Beta

@@ -9,8 +9,8 @@ fishbone diagram, which was built here following the IHI QI Essentials Toolkit
 instructions for a cause and effect diagram, and the demand and capacity model,
 which was built here from the NHS Improvement and NHS England demand and
 capacity core model (version 4.2) and its user guidance, and the multiple
-regression tool, tree plot (treemap) and box and whisker plot, which were
-all built here):
+regression tool, tree plot (treemap), box and whisker plot and ANOVA, which
+were all built here):
 
 | Tool | Path |
 | --- | --- |
@@ -24,6 +24,7 @@ all built here):
 | SPC chart | `/spc_tool/` |
 | Histogram | `/histogram/` |
 | Box and whisker plot | `/box_plot/` |
+| ANOVA (one-way analysis of variance) | `/anova/` |
 | Scatter plot | `/scatter_plot/` |
 | Multiple regression | `/multiple_regression/` |
 | Demand and capacity model | `/demand_capacity/` |
