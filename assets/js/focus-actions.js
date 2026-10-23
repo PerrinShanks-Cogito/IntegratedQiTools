@@ -6,6 +6,7 @@
    A tool calls FocusActions.mount({...}) once its own script has set up:
 
      tool       id of the tool, e.g. "bar_chart" (written into saved files)
+     formerIds  optional earlier ids of the tool, so files saved under them still open
      toolName   name used in messages, e.g. "bar chart"
      fileName   () => base name for saved files, without extension
      fields     element (or selector) whose inputs are saved and reopened
@@ -284,7 +285,7 @@
         let doc;
         try { doc = JSON.parse(r.result); } catch (e) { return say("That file isn't a FOCUS project file."); }
         if (!doc || !doc.focus || !doc.fields) return say("That file isn't a FOCUS project file.");
-        if (doc.focus.tool !== o.tool) {
+        if (doc.focus.tool !== o.tool && !(o.formerIds || []).includes(doc.focus.tool)) {
           const other = String(doc.focus.tool || "another tool").replace(/_/g, " ");
           return say("That file was saved from the " + other + " tool. Open it there instead.");
         }

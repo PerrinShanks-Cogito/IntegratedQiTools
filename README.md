@@ -30,7 +30,7 @@ built here from the NHS Improvement funnel plot tool (version 2.0)):
 | Funnel plot | `/funnel_plot/` |
 | Scatter plot | `/scatter_plot/` |
 | Multiple regression | `/multiple_regression/` |
-| Gauge R&R (measurement system analysis) | `/gage_rr/` |
+| Gauge R&R (measurement system analysis) | `/gauge_rr/` |
 | Attribute agreement analysis | `/attribute_agreement/` |
 | Design of experiments (2-level factorial) | `/design_of_experiments/` |
 | Power and sample size | `/power_sample_size/` |

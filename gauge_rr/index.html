@@ -1,7 +1,7 @@
 ---
-tool_id: gage_rr
+tool_id: gauge_rr
 title: "Gauge R&R"
-permalink: /gage_rr/
+permalink: /gauge_rr/
 ---
 <!DOCTYPE html>
 <!-- © Guy’s and St Thomas’ NHS Foundation Trust 2026. All rights reserved. -->
@@ -923,7 +923,7 @@ td.poor{color:var(--danger);font-weight:700}
 
   // ---- shared toolbar (Open, Save, Export) ----
   FocusActions.mount({
-    tool: 'gage_rr', toolName: 'Gauge R&R',
+    tool: 'gauge_rr', formerIds: ['gage_rr'], toolName: 'Gauge R&R',
     example: loadExample, hasData: () => !!els.data.value.trim(),
     fileName: () => fileName(),
     fields: 'section.panel[aria-labelledby="data-h"]',
