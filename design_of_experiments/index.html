@@ -1,0 +1,1173 @@
+---
+tool_id: design_of_experiments
+title: "Design of experiments"
+permalink: /design_of_experiments/
+---
+<!DOCTYPE html>
+<!-- © Guy’s and St Thomas’ NHS Foundation Trust 2026. All rights reserved. -->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Design of experiments</title>
+<meta name="description" content="Plan a two-level factorial experiment with two to four factors, enter the results and see which factors and interactions change the result. Nothing is uploaded.">
+<link rel="icon" type="image/png" sizes="64x64" href="data:image/png;base64,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">
+<link rel="apple-touch-icon" href="data:image/png;base64,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">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#005EB8; --navy:#003087; --bg:#F0F4F5; --surface:#FFFFFF; --text:#212B32;
+  --muted:#4C6272; --line:#D8DDE0; --yellow:#FFB81C; --green:#007F3B; --green-bg:#E3F2E9;
+  --blue-bg:#E6F0FA; --danger:#D5281B; --shadow:0 2px 0 #D8DDE0; --warn:#A65300;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --blue:#5AA2EA; --navy:#9CC3EF; --bg:#0E1A24; --surface:#162533; --text:#E8EEF2;
+    --muted:#A3B6C3; --line:#2A3E4F; --green:#4CC17E; --green-bg:#143326; --blue-bg:#15314B;
+    --danger:#FF7468; --shadow:0 2px 0 #0A131B; --warn:#F0A54A;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --blue:#5AA2EA; --navy:#9CC3EF; --bg:#0E1A24; --surface:#162533; --text:#E8EEF2;
+  --muted:#A3B6C3; --line:#2A3E4F; --green:#4CC17E; --green-bg:#143326; --blue-bg:#15314B;
+  --danger:#FF7468; --shadow:0 2px 0 #0A131B; --warn:#F0A54A;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Figtree,"Frutiger","Helvetica Neue",Arial,sans-serif;font-size:1rem;line-height:1.5}
+a{color:var(--blue)}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:2px;border-radius:2px}
+button,input,select,textarea{font:inherit;color:inherit}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+[hidden]{display:none !important}
+
+/* Page head */
+.page-head{padding:1rem 1.25rem}
+.page-head h1{margin:0;font-size:clamp(1.4rem,2.6vw,1.8rem);line-height:1.2;font-weight:800;letter-spacing:-.015em}
+.page-head .meta{color:var(--muted);margin:.15rem 0 0;max-width:70ch}
+
+/* Workspace */
+main{display:grid;grid-template-columns:minmax(300px,380px) minmax(0,1fr);gap:1.25rem;padding:0 1.25rem 1.25rem;align-items:start}
+@media (max-width:880px){main{grid-template-columns:1fr}}
+@media (max-width:420px){main{padding:0 1rem 1rem} .page-head,.notes{padding-left:1rem;padding-right:1rem}}
+.col{display:grid;gap:1.25rem;min-width:0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow);padding:1.1rem;min-width:0}
+.panel h2{font-size:1.05rem;font-weight:700;margin:0 0 .75rem}
+.block{margin-bottom:1.1rem}
+label{display:block;font-weight:600;margin:0 0 .35rem}
+.hint{color:var(--muted);font-size:.88rem;margin:0 0 .5rem}
+input[type=text],input[type=number]{width:100%;padding:.5rem .65rem;border:2px solid var(--muted);border-radius:4px;background:var(--surface)}
+input[type=text]:focus,input[type=number]:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px var(--yellow)}
+select{width:100%;padding:.5rem .65rem;border:2px solid var(--muted);border-radius:4px;background:var(--surface)}
+select:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px var(--yellow)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+@media (max-width:420px){.pair{grid-template-columns:1fr;gap:0}}
+.check{display:flex;gap:.6rem;align-items:flex-start;font-weight:400;margin-bottom:.5rem;cursor:pointer}
+.check input{width:20px;height:20px;margin:2px 0 0;flex:none;accent-color:var(--blue)}
+
+/* Factors */
+.factor{border:1px solid var(--line);border-radius:6px;padding:.7rem .75rem .1rem;margin-bottom:.7rem}
+.factor h3{font-size:.95rem;margin:0 0 .5rem;display:flex;gap:.5rem;align-items:baseline}
+.factor h3 .letter{display:inline-grid;place-items:center;width:1.6rem;height:1.6rem;border-radius:50%;background:var(--blue-bg);color:var(--navy);font-weight:800;font-size:.85rem;flex:none}
+.factor .block{margin-bottom:.6rem}
+.factor label{font-size:.9rem}
+.ferr{color:var(--danger);font-size:.88rem;font-weight:600;margin:-.2rem 0 .6rem}
+
+/* Model terms */
+.terms{border:1px solid var(--line);border-radius:6px;padding:.6rem .7rem .1rem}
+.terms .check{justify-content:space-between;align-items:center}
+.terms .check span.t{flex:1;display:flex;gap:.6rem;align-items:flex-start}
+.terms .pv{font-size:.82rem;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.terms .pv.sig{color:var(--green);font-weight:700}
+.terms .order{font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:.3rem 0 .35rem;font-weight:700}
+
+/* Buttons */
+.btns{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+button{display:inline-flex;align-items:center;gap:.4rem;border-radius:4px;padding:.5rem .95rem;font-weight:700;cursor:pointer;background:var(--surface);color:var(--blue);border:2px solid var(--blue);line-height:1.2;white-space:nowrap}
+button:hover{background:var(--blue-bg)}
+button.primary{background:var(--green);color:#fff;border-color:var(--green);box-shadow:0 3px 0 #00401E}
+button.primary:hover{filter:brightness(1.07);background:var(--green)}
+button.primary:active{transform:translateY(2px);box-shadow:0 1px 0 #00401E}
+button.small{padding:.35rem .7rem;font-size:.9rem}
+
+/* Runs worksheet */
+.runbar{display:flex;flex-wrap:wrap;gap:.5rem 1rem;align-items:end;margin:0 0 .75rem}
+.runbar .block{margin:0;min-width:200px}
+.runs{max-height:560px;overflow:auto;border:1px solid var(--line);border-radius:6px}
+.runs table{font-size:.92rem}
+.runs th{position:sticky;top:0;background:var(--surface);z-index:1}
+.runs td{padding:.3rem .55rem}
+.runs td.lvl-hi{font-weight:700}
+.runs input{padding:.3rem .5rem;min-width:7rem;max-width:10rem}
+.runs tr.rep-start td{border-top:2px solid var(--line)}
+.runs .missing{color:var(--muted);font-size:.85rem}
+#runNote{font-size:.88rem;color:var(--muted);margin:.5rem 0 0;min-height:1.3em}
+
+/* Result */
+.summary{font-size:clamp(1.3rem,2.6vw,1.85rem);line-height:1.25;font-weight:700;letter-spacing:-.01em;margin:0 0 .3rem;max-width:36ch}
+.summary strong{color:var(--blue);font-weight:800}
+.focuson{margin:0 0 1rem;color:var(--muted);max-width:70ch}
+.chartbar{display:flex;flex-wrap:wrap;gap:.5rem 1rem;align-items:end;margin:0 0 .6rem}
+.chartbar .block{margin:0;min-width:260px}
+.chartwrap{border:1px solid var(--line);border-radius:8px;overflow-x:auto;margin-bottom:.9rem;background:#fff}
+.chartwrap svg{width:100%;min-width:560px;height:auto;display:block}
+.empty{padding:3rem .5rem;text-align:center;color:var(--muted)}
+.empty p{margin:0 auto .9rem;max-width:60ch}
+.tablewrap{overflow-x:auto;margin-top:1.25rem}
+.tablewrap h3{font-size:1.05rem;font-weight:700;margin:0 0 .5rem}
+.tablewrap .hint{margin:.4rem 0 0}
+table{border-collapse:collapse;width:100%;font-size:.94rem}
+th,td{text-align:left;padding:.5rem .65rem;border-bottom:1px solid var(--line)}
+th{border-bottom:2px solid var(--text)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+td.yes{color:var(--green);font-weight:700}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.6rem;margin:0 0 1rem}
+.stat{border:1px solid var(--line);border-radius:6px;padding:.55rem .75rem}
+.stat b{display:block;font-size:1.3rem;font-weight:800;font-variant-numeric:tabular-nums}
+.stat span{color:var(--muted);font-size:.85rem}
+.legend-note{color:var(--muted);font-size:.88rem;margin:-.4rem 0 .9rem}
+.reading{margin-top:1.4rem;border-top:1px solid var(--line);padding-top:1.1rem}
+.reading h3{font-size:1.05rem;font-weight:700;margin:0 0 .5rem}
+.reading p{max-width:75ch;margin:0 0 .75rem}
+.equation{font:14px/1.5 Consolas,"Courier New",monospace;background:var(--bg);border-radius:6px;padding:.6rem .8rem;max-width:80ch;overflow-wrap:anywhere}
+.whatif{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:.6rem .9rem;margin:.4rem 0 .8rem;max-width:75ch}
+.whatif label{font-size:.9rem}
+.predout{font-size:1.05rem;max-width:75ch;margin:0 0 .5rem}
+.predout strong{color:var(--blue);font-size:1.3rem}
+.warnbox{background:#FFF4DB;color:#6B4A00;border-left:5px solid var(--yellow);border-radius:0 4px 4px 0;padding:.6rem .8rem;margin:0 0 1rem;max-width:75ch}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .warnbox{background:#3A2E10;color:#FFD27A}}
+:root[data-theme="dark"] .warnbox{background:#3A2E10;color:#FFD27A}
+
+/* Notes */
+.notes{padding:0 1.25rem 2rem;color:var(--muted);font-size:.92rem}
+.notes p{max-width:80ch;margin:0 0 .75rem}
+/* Centre the page in the same 1340px column as the FOCUS header */
+.page-head,main,.notes{box-sizing:border-box;max-width:1340px;margin-left:auto;margin-right:auto}
+.notice{background:var(--blue-bg);color:var(--text);border-left:5px solid var(--blue);border-radius:0 4px 4px 0;padding:.7rem .9rem;max-width:80ch}
+@media (prefers-reduced-motion: no-preference){button{transition:background .15s,filter .15s}}
+</style>
+{% include focus-head.html %}
+</head>
+<body>
+
+{% include focus-header.html %}
+
+<div class="page-head fa-host">
+  <div class="fa-head-text">
+    <h1>Design and analyse an experiment</h1>
+    <p class="meta">Plan a two-level factorial experiment with two, three or four factors, record the result of each run, and see which factors, and which combinations of them, really change the result. Everything runs in your browser, so your data is never uploaded.</p>
+  </div>
+  <div data-focus-actions></div>
+</div>
+
+<main>
+  <section class="panel" aria-labelledby="design-h">
+    <h2 id="design-h">Your experiment</h2>
+
+    <div class="pair">
+      <div class="block">
+        <label for="nFactors">Factors</label>
+        <select id="nFactors">
+          <option value="2">2 factors</option>
+          <option value="3">3 factors</option>
+          <option value="4">4 factors</option>
+        </select>
+      </div>
+      <div class="block">
+        <label for="reps">Replicates</label>
+        <select id="reps" aria-describedby="repsHint">
+          <option value="1">1 (no repeats)</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+        </select>
+      </div>
+    </div>
+    <p class="hint" id="repsHint" style="margin-top:-.6rem">Each replicate runs every combination of settings once more. Repeats let the tool tell real effects from run-to-run noise.</p>
+
+    <p class="hint">For each factor, give the two settings you will compare. Choose <b>Numeric</b> for a quantity, such as the number of nurses, and <b>Text</b> for a choice, such as old or new letter.</p>
+    <div id="factors"></div>
+
+    <div class="block">
+      <label for="respName">Result you are measuring (response)</label>
+      <input type="text" id="respName" placeholder="e.g. Minutes from arrival to triage">
+    </div>
+    <div class="block">
+      <label for="goal">Which results are better?</label>
+      <select id="goal">
+        <option value="min">Lower is better</option>
+        <option value="max">Higher is better</option>
+        <option value="none">Neither, just show the effects</option>
+      </select>
+    </div>
+
+    <h2>Model</h2>
+    <p class="hint" id="termsHint">Untick terms to take them out of the model. Taking out a factor also takes out the interactions that include it, and putting an interaction back puts its factors back, so the model always stays valid.</p>
+    <div class="terms" id="terms" role="group" aria-labelledby="termsHint"></div>
+    <div class="btns" style="margin:.7rem 0 1.5rem">
+      <button type="button" class="small" id="reduceBtn">Reduce the model for me</button>
+      <button type="button" class="small" id="allBtn">Include every term</button>
+    </div>
+
+    <h2>Settings</h2>
+    <div class="block">
+      <label for="alpha">Significance level</label>
+      <select id="alpha">
+        <option value="0.05">5% (95% confidence, the usual choice)</option>
+        <option value="0.01">1% (99% confidence, stricter)</option>
+        <option value="0.1">10% (90% confidence, looser)</option>
+      </select>
+    </div>
+    <div class="block">
+      <label for="title">Chart title</label>
+      <input type="text" id="title" placeholder="e.g. What speeds up triage in ED">
+    </div>
+    <div class="btns">
+      <button type="button" id="clearBtn">Start again</button>
+    </div>
+  </section>
+
+  <div class="col">
+    <section class="panel" aria-labelledby="runs-h">
+      <h2 id="runs-h">Runs and results</h2>
+      <p class="hint">Carry out the runs in run order, which is shuffled so that anything else changing over time doesn’t get mistaken for an effect. Type or paste each result into the last column; pasting a column from Excel fills the rows below too.</p>
+      <div class="runbar">
+        <div class="block">
+          <label for="view">List the runs in</label>
+          <select id="view">
+            <option value="run">Run order (the order to carry them out)</option>
+            <option value="std">Standard order (as in textbooks)</option>
+          </select>
+        </div>
+        <button type="button" id="shuffleBtn">Shuffle the run order</button>
+      </div>
+      <div class="runs" id="runs"></div>
+      <p id="runNote" aria-live="polite"></p>
+    </section>
+
+    <section class="panel" aria-labelledby="result-h">
+      <h2 id="result-h" class="sr">Result</h2>
+      <div id="result"></div>
+    </section>
+  </div>
+</main>
+
+<section class="notes" aria-label="About designed experiments">
+  <p><b>What it does:</b> a two-level factorial experiment changes several factors at once, trying every combination of a low and a high setting for each one, so 3 factors give 2 × 2 × 2 = 8 combinations. Testing them together uses fewer runs than changing one thing at a time, and it shows <i>interactions</i>: when the effect of one factor depends on the setting of another. The tool fits a model to the results and tests each factor (main effect) and each interaction.</p>
+  <p><b>Reading the results:</b> the <i>effect</i> is how much the result changes, on average, when a factor moves from its low to its high setting. The <i>coded coefficient</i> is half the effect, measured from the overall average, with every factor coded −1 for low and +1 for high. The <i>uncoded coefficients</i> give the prediction equation in the real units of numeric factors; text factors stay coded −1 and +1. A term is a clear effect when its p-value is below the significance level. With one replicate there is nothing left over to measure noise, so take out the terms least likely to matter (usually the highest-order interactions) to get p-values.</p>
+  <p><b>Things to check:</b> run the experiment in the shuffled run order, keep everything else as steady as you can, and record anything unusual. Choose settings far enough apart to make a difference you could see, but still safe and practical. A factorial experiment tests the two settings you chose; the prediction between them assumes a straight line, and beyond them it is a guess. Confirm what you find with a run or a PDSA cycle at the best settings, and track the result over time with a run chart or SPC chart.</p>
+  <div class="notice">Want to build your skills? <a href="https://coh.gstt.nhs.uk/course/view.php?id=3199" target="_blank" rel="noopener">Book QI training with the CITI Academy</a>.</div>
+</section>
+
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const els = {
+    nFactors: $('nFactors'), reps: $('reps'), factors: $('factors'), respName: $('respName'), goal: $('goal'),
+    terms: $('terms'), alpha: $('alpha'), title: $('title'), view: $('view'), runs: $('runs'), runNote: $('runNote'), result: $('result')
+  };
+  const COLORS = { ink: '#212B32', muted: '#4C6272', grid: '#E8EDEE', axis: '#AEB7BD', sig: '#005EB8', insig: '#AEB7BD', ref: '#ED8B00', lo: '#005EB8', hi: '#ED8B00', mean: '#768692' };
+  const FONT = 'Figtree, Frutiger, Helvetica Neue, Arial, sans-serif';
+  const nf = new Intl.NumberFormat('en-GB', { maximumFractionDigits: 2 });
+  const nf4 = new Intl.NumberFormat('en-GB', { maximumSignificantDigits: 4 });
+  const LETTERS = 'ABCD';
+  const CHARTS = { pareto: 'Which terms matter most (Pareto chart)', main: 'Main effects', inter: 'Interactions' };
+
+  // Everything the user sets up. Results are keyed by standard order, so they stay
+  // with their settings whatever order the runs are listed or carried out in.
+  let state = null;
+  let current = null;
+  let timer = null;
+
+  const blankFactor = i => ({ name: '', type: 'text', low: '', high: '' });
+  function fresh() {
+    return {
+      k: 2, reps: 2, factors: [0, 1, 2, 3].map(blankFactor), response: '', goal: 'min', alpha: '0.05', title: '',
+      view: 'run', runOrder: [], y: {}, terms: [], chartType: 'pareto', whatIf: {}
+    };
+  }
+
+  // Example: an ED team tests three changes to speed up triage (made-up data)
+  const EXAMPLE = {
+    k: 3, reps: 2, response: 'Minutes from arrival to triage', goal: 'min', alpha: '0.05', title: 'What speeds up triage in ED (example)',
+    factors: [
+      { name: 'Triage nurses on shift', type: 'numeric', low: '2', high: '3' },
+      { name: 'Streaming nurse at the front door', type: 'text', low: 'No', high: 'Yes' },
+      { name: 'Self check-in kiosk', type: 'text', low: 'Off', high: 'On' },
+      blankFactor(3)
+    ],
+    runOrder: [6, 11, 1, 14, 3, 16, 9, 4, 13, 7, 2, 10, 15, 5, 12, 8],
+    y: { 1: 39, 2: 26, 3: 28, 4: 21, 5: 36, 6: 25, 7: 27, 8: 23, 9: 37, 10: 24, 11: 26, 12: 23, 13: 38, 14: 26, 15: 25, 16: 21 }
+  };
+
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const trunc = (s, n) => s.length > n ? s.slice(0, Math.max(1, n - 1)) + '…' : s;
+  const slug = s => (s || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'designed-experiment';
+  const lower = s => /^[A-Z][a-z]/.test(s) && !/^[A-Z][a-z]*[A-Z]/.test(s) ? s.charAt(0).toLowerCase() + s.slice(1) : s;
+  const list = a => a.length > 1 ? a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1] : (a[0] || '');
+  const pf = p => p == null ? '–' : p < 0.001 ? '< 0.001' : p.toFixed(3);
+  const pIs = p => p < 0.001 ? 'p < 0.001' : 'p = ' + p.toFixed(3);
+  const num = v => { const s = String(v == null ? '' : v).trim().replace(/,/g, ''); return s === '' ? NaN : Number(s); };
+
+  // ---- the design ----
+  const runsN = () => (1 << state.k) * state.reps;
+  // Coded settings (−1 low, +1 high) of a run in standard order: factor A changes fastest.
+  const codedOf = std => { const i = (std - 1) % (1 << state.k); return LETTERS.slice(0, state.k).split('').map((_, j) => (i >> j) & 1 ? 1 : -1); };
+  function shuffled(n) {
+    const a = Array.from({ length: n }, (_, i) => i + 1);
+    for (let i = n - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+    return a;
+  }
+  // Every term: main effects, then two-, three- and four-factor interactions.
+  function allTerms(k) {
+    const out = [];
+    for (let size = 1; size <= k; size++) {
+      const rec = (start, pick) => {
+        if (pick.length === size) { out.push(pick.join('')); return; }
+        for (let j = start; j < k; j++) rec(j + 1, pick.concat(LETTERS[j]));
+      };
+      rec(0, []);
+    }
+    return out;
+  }
+  const idx = key => key.split('').map(c => LETTERS.indexOf(c));
+  const fName = j => (state.factors[j].name || '').trim() || 'Factor ' + LETTERS[j];
+  const termName = key => idx(key).map(fName).join(' × ');
+  const lvl = (j, x) => { const f = state.factors[j]; const t = String(x < 0 ? f.low : f.high).trim(); return t || (x < 0 ? 'Low' : 'High'); };
+  const respName = () => state.response.trim() || 'Result';
+
+  // Low and high settings must make sense before anything can be analysed.
+  function factorProblems() {
+    const out = [];
+    for (let j = 0; j < state.k; j++) {
+      const f = state.factors[j];
+      if (f.type === 'numeric') {
+        const a = num(f.low), b = num(f.high);
+        if (!isFinite(a) || !isFinite(b)) out.push({ j, msg: 'Enter a number for both settings, or choose Text.' });
+        else if (a === b) out.push({ j, msg: 'The low and high settings must be different.' });
+      } else if (String(f.low).trim() && String(f.low).trim().toLowerCase() === String(f.high).trim().toLowerCase()) {
+        out.push({ j, msg: 'Give the two settings different names.' });
+      }
+    }
+    return out;
+  }
+
+  // ---- distributions ----
+  function lgamma(z) {
+    const c = [76.18009172947146, -86.50532032941677, 24.01409824083091, -1.231739572450155, 0.1208650973866179e-2, -0.5395239384953e-5];
+    let x = z, y = z, t = x + 5.5; t -= (x + 0.5) * Math.log(t);
+    let s = 1.000000000190015; for (const k of c) s += k / ++y;
+    return -t + Math.log(2.5066282746310005 * s / x);
+  }
+  function betacf(a, b, x) {
+    const FPMIN = 1e-300;
+    let qab = a + b, qap = a + 1, qam = a - 1, c = 1, d = 1 - qab * x / qap;
+    if (Math.abs(d) < FPMIN) d = FPMIN; d = 1 / d; let h = d;
+    for (let m = 1; m <= 300; m++) {
+      const m2 = 2 * m;
+      let aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+      d = 1 + aa * d; if (Math.abs(d) < FPMIN) d = FPMIN; c = 1 + aa / c; if (Math.abs(c) < FPMIN) c = FPMIN; d = 1 / d; h *= d * c;
+      aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+      d = 1 + aa * d; if (Math.abs(d) < FPMIN) d = FPMIN; c = 1 + aa / c; if (Math.abs(c) < FPMIN) c = FPMIN; d = 1 / d;
+      const del = d * c; h *= del; if (Math.abs(del - 1) < 3e-14) break;
+    }
+    return h;
+  }
+  function ibeta(x, a, b) {
+    if (x <= 0) return 0; if (x >= 1) return 1;
+    const bt = Math.exp(lgamma(a + b) - lgamma(a) - lgamma(b) + a * Math.log(x) + b * Math.log(1 - x));
+    return x < (a + 1) / (a + b + 2) ? bt * betacf(a, b, x) / a : 1 - bt * betacf(b, a, 1 - x) / b;
+  }
+  const tP = (t, df) => ibeta(df / (df + t * t), df / 2, 0.5); // two-sided p for t
+  function tCrit(df, alpha) { // two-sided critical value
+    let lo = 0, hi = 1e4;
+    for (let i = 0; i < 100; i++) { const mid = (lo + hi) / 2; if (tP(mid, df) > alpha) lo = mid; else hi = mid; }
+    return (lo + hi) / 2;
+  }
+
+  // ---- the model ----
+  // Inverse of a symmetric matrix by Gauss–Jordan elimination; null if singular.
+  function invert(A) {
+    const n = A.length, M = A.map((r, i) => r.concat(Array.from({ length: n }, (_, j) => i === j ? 1 : 0)));
+    const scale = Math.max(...A.map((r, i) => Math.abs(r[i]))) || 1;
+    for (let c = 0; c < n; c++) {
+      let piv = c;
+      for (let r = c + 1; r < n; r++) if (Math.abs(M[r][c]) > Math.abs(M[piv][c])) piv = r;
+      if (Math.abs(M[piv][c]) < 1e-9 * scale) return null;
+      [M[c], M[piv]] = [M[piv], M[c]];
+      const d = M[c][c];
+      for (let j = 0; j < 2 * n; j++) M[c][j] /= d;
+      for (let r = 0; r < n; r++) if (r !== c) {
+        const f = M[r][c]; if (!f) continue;
+        for (let j = 0; j < 2 * n; j++) M[r][j] -= f * M[c][j];
+      }
+    }
+    return M.map(r => r.slice(n));
+  }
+  const termVal = (key, x) => idx(key).reduce((p, j) => p * x[j], 1);
+
+  // Least squares fit of the response on the coded terms in the model.
+  function fit(obs, terms) {
+    const cols = ['', ...terms], p = cols.length, n = obs.length;
+    if (n < p) return { error: 'few', n, p };
+    const X = obs.map(o => cols.map(key => key ? termVal(key, o.x) : 1));
+    const XtX = cols.map((_, a) => cols.map((_, b) => X.reduce((s, r) => s + r[a] * r[b], 0)));
+    const inv = invert(XtX);
+    if (!inv) return { error: 'singular', n, p };
+    const Xty = cols.map((_, a) => X.reduce((s, r, i) => s + r[a] * obs[i].y, 0));
+    const coef = inv.map(r => r.reduce((s, v, j) => s + v * Xty[j], 0));
+    const mean = obs.reduce((s, o) => s + o.y, 0) / n;
+    const sse = obs.reduce((s, o, i) => s + (o.y - X[i].reduce((a, v, j) => a + v * coef[j], 0)) ** 2, 0);
+    const sst = obs.reduce((s, o) => s + (o.y - mean) ** 2, 0);
+    const df = n - p, mse = df > 0 ? sse / df : NaN;
+    const tiny = 1e-12 * (sst || 1);
+    const testable = df > 0 && sse > tiny;
+    const se = inv.map((r, i) => testable ? Math.sqrt(mse * r[i]) : NaN);
+    const pv = coef.map((c, i) => testable ? tP(Math.abs(c / se[i]), df) : null);
+    return {
+      cols, coef, se, pv, n, p, df, mse, testable, mean, sse, sst,
+      s: df > 0 ? Math.sqrt(mse) : NaN,
+      r2: sst > 0 ? 1 - sse / sst : NaN,
+      r2adj: sst > 0 && df > 0 ? Math.max(0, 1 - mse / (sst / (n - 1))) : NaN
+    };
+  }
+  const predict = (m, x) => m.cols.reduce((s, key, i) => s + m.coef[i] * (key ? termVal(key, x) : 1), 0);
+  // Uncoded coefficients, for the prediction equation in real units. A numeric factor's
+  // coded value is (x − centre) / half-range; text factors stay coded −1 and +1.
+  function uncoded(m) {
+    const cen = [], half = [];
+    for (let j = 0; j < state.k; j++) {
+      const f = state.factors[j];
+      if (f.type === 'numeric') { const a = num(f.low), b = num(f.high); cen[j] = (a + b) / 2; half[j] = (b - a) / 2; }
+      else { cen[j] = 0; half[j] = 1; }
+    }
+    const out = {};
+    m.cols.forEach(key => { out[key] = 0; });
+    m.cols.forEach((T, i) => {
+      const t = T ? idx(T) : [];
+      // expand the product of (x_j − centre_j) / half_j over the factors in T
+      for (let mask = 0; mask < (1 << t.length); mask++) {
+        let factor = m.coef[i], S = '';
+        t.forEach((j, b) => {
+          if (mask >> b & 1) { factor /= half[j]; S += LETTERS[j]; } else factor *= -cen[j] / half[j];
+        });
+        if (S in out) out[S] += factor;
+      }
+    });
+    return out;
+  }
+  // Every corner of the design (each combination of low and high).
+  const corners = k => Array.from({ length: 1 << k }, (_, i) => Array.from({ length: k }, (_, j) => (i >> j) & 1 ? 1 : -1));
+  // Fitted average at given settings of some factors, averaged over the others.
+  function fittedMean(m, fixed) {
+    const pts = corners(state.k).filter(x => Object.keys(fixed).every(j => x[j] === fixed[j]));
+    return pts.reduce((s, x) => s + predict(m, x), 0) / pts.length;
+  }
+
+  // Keep the model hierarchical: an interaction needs every term inside it.
+  const isSub = (a, b) => a !== b && a.split('').every(c => b.includes(c));
+  function include(key) { const all = allTerms(state.k); state.terms = all.filter(t => state.terms.includes(t) || t === key || isSub(t, key)); }
+  function exclude(key) { state.terms = state.terms.filter(t => t !== key && !isSub(key, t)); }
+
+  function observations() {
+    const obs = [];
+    for (let s = 1; s <= runsN(); s++) {
+      const v = num(state.y[s]);
+      if (isFinite(v)) obs.push({ std: s, x: codedOf(s), y: v });
+    }
+    return obs;
+  }
+
+  // Backward elimination: drop the least significant term that nothing else depends on,
+  // until every term left is clear. Without repeats, start with the highest-order interaction.
+  function reduce() {
+    const obs = observations(), alpha = +state.alpha;
+    let terms = allTerms(state.k).filter(t => state.terms.includes(t));
+    for (let guard = 0; guard < 20 && terms.length; guard++) {
+      const m = fit(obs, terms);
+      const removable = terms.filter(t => !terms.some(u => isSub(t, u)));
+      if (m.error || !m.testable) {
+        if (m.error === 'singular' && !obs.length) break;
+        const top = Math.max(...removable.map(t => t.length));
+        if (top < 2 && !m.error) break;
+        terms = terms.filter(t => t !== removable.filter(r => r.length === top).pop());
+        continue;
+      }
+      let worst = null, wp = -1;
+      removable.forEach(t => { const p = m.pv[m.cols.indexOf(t)]; if (p > wp) { wp = p; worst = t; } });
+      if (worst == null || wp < alpha) break;
+      terms = terms.filter(t => t !== worst);
+    }
+    state.terms = terms;
+  }
+
+  // ---- left panel ----
+  function renderFactors() {
+    const probs = factorProblems();
+    let h = '';
+    for (let j = 0; j < state.k; j++) {
+      const f = state.factors[j], L = LETTERS[j], pr = probs.find(p => p.j === j);
+      const num_ = f.type === 'numeric';
+      h += `<div class="factor"><h3><span class="letter" aria-hidden="true">${L}</span>Factor ${L}</h3>
+        <div class="block"><label for="f${j}name">Name</label><input type="text" id="f${j}name" data-f="${j}" data-k="name" value="${esc(f.name)}" placeholder="${['e.g. Nurses on shift', 'e.g. Reminder text', 'e.g. Letter design', 'e.g. Clinic time'][j]}"></div>
+        <div class="block"><label for="f${j}type">Type</label><select id="f${j}type" data-f="${j}" data-k="type"><option value="text"${num_ ? '' : ' selected'}>Text (a choice)</option><option value="numeric"${num_ ? ' selected' : ''}>Numeric (a quantity)</option></select></div>
+        <div class="pair">
+          <div class="block"><label for="f${j}low">Low setting</label><input type="${num_ ? 'number' : 'text'}" step="any" id="f${j}low" data-f="${j}" data-k="low" value="${esc(f.low)}" placeholder="${num_ ? 'e.g. 2' : 'e.g. No'}"></div>
+          <div class="block"><label for="f${j}high">High setting</label><input type="${num_ ? 'number' : 'text'}" step="any" id="f${j}high" data-f="${j}" data-k="high" value="${esc(f.high)}" placeholder="${num_ ? 'e.g. 3' : 'e.g. Yes'}"></div>
+        </div>
+        <p class="ferr" id="f${j}err"${pr ? '' : ' hidden'}>${pr ? esc(pr.msg) : ''}</p></div>`;
+    }
+    els.factors.innerHTML = h;
+  }
+  function showFactorProblems() {
+    const probs = factorProblems();
+    for (let j = 0; j < state.k; j++) {
+      const el = $('f' + j + 'err'), pr = probs.find(p => p.j === j);
+      if (!el) continue;
+      el.hidden = !pr; el.textContent = pr ? pr.msg : '';
+    }
+  }
+  function renderTerms() {
+    const focused = document.activeElement && document.activeElement.id;
+    const m = current && current.m, alpha = +state.alpha;
+    let h = '', last = 0;
+    allTerms(state.k).forEach(key => {
+      if (key.length !== last) {
+        last = key.length;
+        h += `<p class="order">${key.length === 1 ? 'Main effects' : key.length + '-factor interactions'}</p>`;
+      }
+      const on = state.terms.includes(key);
+      let pv = '';
+      if (on && m && m.testable) {
+        const p = m.pv[m.cols.indexOf(key)];
+        pv = `<span class="pv${p < alpha ? ' sig' : ''}">${p < alpha ? 'Clear, ' : ''}p ${p < 0.001 ? '< 0.001' : '= ' + p.toFixed(3)}</span>`;
+      }
+      h += `<label class="check"><span class="t"><input type="checkbox" id="term-${key}" data-term="${key}"${on ? ' checked' : ''}><span><b>${key}</b> ${esc(termName(key))}</span></span>${pv}</label>`;
+    });
+    els.terms.innerHTML = h;
+    if (focused && focused.startsWith('term-') && $(focused)) $(focused).focus();
+  }
+  function syncInputs() {
+    els.nFactors.value = String(state.k);
+    els.reps.value = String(state.reps);
+    els.respName.value = state.response;
+    els.goal.value = state.goal;
+    els.alpha.value = state.alpha;
+    els.title.value = state.title;
+    els.view.value = state.view;
+  }
+
+  // ---- runs worksheet ----
+  function renderRuns() {
+    const N = runsN(), k = state.k;
+    const runOf = {}; state.runOrder.forEach((s, i) => { runOf[s] = i + 1; });
+    const order = state.view === 'std' ? Array.from({ length: N }, (_, i) => i + 1) : state.runOrder.slice();
+    const per = 1 << k;
+    let h = '<table><caption class="sr">Runs in the experiment, with the settings for each and a box for its result</caption><thead><tr>';
+    h += '<th class="num">Run</th><th class="num">Std</th>';
+    for (let j = 0; j < k; j++) h += `<th>${LETTERS[j]}: ${esc(trunc(fName(j), 28))}</th>`;
+    h += `<th>${esc(trunc(respName(), 32))}</th></tr></thead><tbody>`;
+    order.forEach((s, i) => {
+      const x = codedOf(s);
+      const start = state.view === 'std' && i > 0 && i % per === 0;
+      h += `<tr${start ? ' class="rep-start"' : ''}><td class="num">${runOf[s]}</td><td class="num">${s}</td>`;
+      x.forEach((v, j) => { h += `<td class="${v > 0 ? 'lvl-hi' : ''}">${esc(lvl(j, v))}</td>`; });
+      const val = state.y[s] == null ? '' : state.y[s];
+      h += `<td><input type="text" inputmode="decimal" id="y${s}" data-std="${s}" value="${esc(val)}" aria-label="Result for run ${runOf[s]}"></td></tr>`;
+    });
+    h += '</tbody></table>';
+    els.runs.innerHTML = h;
+    noteRuns();
+  }
+  function noteRuns() {
+    const N = runsN(), got = observations().length;
+    const bad = Object.keys(state.y).filter(s => +s <= N && String(state.y[s]).trim() !== '' && !isFinite(num(state.y[s]))).length;
+    let t = `${N} runs: ${1 << state.k} combinations of settings × ${state.reps} replicate${state.reps > 1 ? 's' : ''}. `;
+    t += got === N ? 'Every run has a result.' : `${got} of ${N} runs have a result so far.`;
+    if (bad) t += ` ${bad} result${bad > 1 ? 's aren’t numbers' : ' isn’t a number'} and ${bad > 1 ? 'are' : 'is'} left out.`;
+    els.runNote.textContent = t;
+  }
+
+  // ---- axis ----
+  function niceStep(range, target) {
+    const raw = range / target, mag = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / mag;
+    return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * mag;
+  }
+  function axis(lo, hi, target) {
+    if (lo === hi) { const d = Math.abs(lo) * 0.1 || 1; lo -= d; hi += d; }
+    const step = niceStep(hi - lo, target || 6);
+    const a = Math.floor(lo / step) * step, b = Math.ceil(hi / step) * step;
+    const ticks = [];
+    for (let t = a; t <= b + step / 2; t += step) ticks.push(+t.toPrecision(12));
+    return { min: a, max: b, ticks };
+  }
+  const charW = size => size * 0.56;
+  const f1 = v => Math.round(v * 10) / 10;
+  function svgOpen(W, H, o) {
+    const s = [`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.aria)}" font-family="${FONT}">`, `<rect width="${W}" height="${H}" fill="#ffffff"/>`];
+    if (o.title) s.push(`<text x="16" y="30" font-size="20" font-weight="700" fill="${COLORS.ink}">${esc(trunc(o.title, 80))}</text>`);
+    return s;
+  }
+  function legend(s, items, right, y) {
+    const keyW = t => 28 + charW(12) * t.length + 18;
+    let lx = right - items.reduce((a, [, t]) => a + keyW(t), 0);
+    items.forEach(([draw, t]) => {
+      s.push(draw(lx + 10, y));
+      s.push(`<text x="${lx + 24}" y="${y + 4}" font-size="12" fill="${COLORS.muted}">${esc(t)}</text>`);
+      lx += keyW(t);
+    });
+  }
+
+  // ---- Pareto chart of the coded coefficients ----
+  function paretoSVG(o) {
+    const { m, rows, alpha } = current;
+    const terms = rows.filter(r => r.key).slice().sort((a, b) => Math.abs(b.coef) - Math.abs(a.coef));
+    const W = 960, MR = 64, M = 16;
+    const labels = terms.map(r => `${r.key}  ${trunc(termName(r.key), 52)}`);
+    const ML = Math.min(440, Math.max(110, 24 + charW(13) * Math.max(...labels.map(l => l.length))));
+    const MT = (o.title ? 44 : 8) + 34, barH = 30, gap = 10;
+    const plotH = terms.length * (barH + gap) + gap, H = MT + plotH + 52;
+    // with a balanced design every term has the same standard error, so one line marks significance
+    const ses = terms.map(r => r.se).filter(isFinite);
+    const sameSE = m.testable && ses.length && Math.max(...ses) - Math.min(...ses) < 1e-9 * Math.max(...ses);
+    const crit = sameSE ? tCrit(m.df, alpha) * ses[0] : null;
+    const ax = axis(0, Math.max(crit || 0, ...terms.map(r => Math.abs(r.coef))) || 1);
+    const x = v => ML + v / ax.max * (W - ML - MR);
+    const s = svgOpen(W, H, o);
+    const items = m.testable
+      ? [[(cx, cy) => `<rect x="${cx - 8}" y="${cy - 6}" width="16" height="12" fill="${COLORS.sig}"/>`, 'Clear effect'], [(cx, cy) => `<rect x="${cx - 8}" y="${cy - 6}" width="16" height="12" fill="${COLORS.insig}"/>`, 'Could be chance']]
+      : [[(cx, cy) => `<rect x="${cx - 8}" y="${cy - 6}" width="16" height="12" fill="${COLORS.insig}"/>`, 'Size of effect (no p-values without spare runs)']];
+    if (crit) items.push([(cx, cy) => `<line x1="${cx}" y1="${cy - 8}" x2="${cx}" y2="${cy + 8}" stroke="${COLORS.ref}" stroke-width="2" stroke-dasharray="4 3"/>`, 'Significance threshold']);
+    legend(s, items, W - MR, MT - 18);
+    ax.ticks.forEach(t => {
+      const xx = f1(x(t));
+      s.push(`<line x1="${xx}" y1="${MT}" x2="${xx}" y2="${MT + plotH}" stroke="${COLORS.grid}"/>`);
+      s.push(`<text x="${xx}" y="${MT + plotH + 18}" font-size="12" text-anchor="middle" fill="${COLORS.muted}">${esc(nf.format(t))}</text>`);
+    });
+    s.push(`<line x1="${ML}" y1="${MT}" x2="${ML}" y2="${MT + plotH}" stroke="${COLORS.axis}"/>`);
+    s.push(`<text x="${(ML + W - MR) / 2}" y="${MT + plotH + 42}" font-size="13" font-weight="600" text-anchor="middle" fill="${COLORS.ink}">Size of coded coefficient (half the effect), ignoring its sign</text>`);
+    terms.forEach((r, i) => {
+      const y = MT + gap + i * (barH + gap), v = Math.abs(r.coef);
+      const sig = m.testable && r.p < alpha;
+      const tip = `${termName(r.key)}: coded coefficient ${nf4.format(r.coef)}, effect ${nf4.format(2 * r.coef)}${m.testable ? ', ' + pIs(r.p) : ''}`;
+      s.push(`<g><title>${esc(tip)}</title><rect x="${ML}" y="${y}" width="${f1(Math.max(1, x(v) - ML))}" height="${barH}" fill="${sig ? COLORS.sig : COLORS.insig}"/>`);
+      s.push(`<text x="${f1(x(v) + 6)}" y="${y + barH / 2 + 4}" font-size="12" fill="${COLORS.ink}">${esc(nf4.format(v))}</text></g>`);
+      s.push(`<text x="${ML - 8}" y="${y + barH / 2 + 4}" font-size="13" text-anchor="end" fill="${COLORS.ink}"><tspan font-weight="700">${r.key}</tspan>  ${esc(trunc(termName(r.key), 52))}</text>`);
+    });
+    if (crit) {
+      const xx = f1(x(crit));
+      s.push(`<line x1="${xx}" y1="${MT}" x2="${xx}" y2="${MT + plotH}" stroke="${COLORS.ref}" stroke-width="2" stroke-dasharray="6 4"><title>Bars past this line are clear effects at the ${Math.round(alpha * 100)}% level: ${esc(nf4.format(crit))}</title></line>`);
+    }
+    s.push('</svg>');
+    return s.join('');
+  }
+
+  // ---- main effects plot ----
+  function mainSVG(o) {
+    const { m } = current, k = state.k;
+    const W = 960, MR = 20, ML = 82, gapX = 26;
+    const MT = (o.title ? 44 : 8) + 34, plotH = 300, H = MT + plotH + 70;
+    const pw = (W - ML - MR - gapX * (k - 1)) / k;
+    const means = [];
+    for (let j = 0; j < k; j++) means.push([-1, 1].map(v => fittedMean(m, { [j]: v })));
+    const ax = axis(Math.min(m.mean, ...means.flat()), Math.max(m.mean, ...means.flat()), 5);
+    const y = v => MT + plotH - (v - ax.min) / (ax.max - ax.min) * plotH;
+    const s = svgOpen(W, H, o);
+    legend(s, [
+      [(cx, cy) => `<line x1="${cx - 9}" y1="${cy}" x2="${cx + 9}" y2="${cy}" stroke="${COLORS.sig}" stroke-width="2.5"/><circle cx="${cx}" cy="${cy}" r="4.5" fill="${COLORS.sig}"/>`, 'Fitted average'],
+      [(cx, cy) => `<line x1="${cx - 9}" y1="${cy}" x2="${cx + 9}" y2="${cy}" stroke="${COLORS.mean}" stroke-width="1.5" stroke-dasharray="5 3"/>`, 'Overall average']
+    ], W - MR, MT - 18);
+    ax.ticks.forEach(t => s.push(`<text x="${ML - 8}" y="${f1(y(t)) + 4}" font-size="12" text-anchor="end" fill="${COLORS.muted}">${esc(nf.format(t))}</text>`));
+    s.push(`<text transform="translate(${24} ${MT + plotH / 2}) rotate(-90)" font-size="13" font-weight="600" text-anchor="middle" fill="${COLORS.ink}">${esc(trunc(respName(), 48))}</text>`);
+    for (let j = 0; j < k; j++) {
+      const x0 = ML + j * (pw + gapX), xa = x0 + pw * 0.22, xb = x0 + pw * 0.78;
+      const inModel = state.terms.includes(LETTERS[j]);
+      s.push(`<rect x="${f1(x0)}" y="${MT}" width="${f1(pw)}" height="${plotH}" fill="none" stroke="${COLORS.axis}"/>`);
+      ax.ticks.forEach(t => s.push(`<line x1="${f1(x0)}" y1="${f1(y(t))}" x2="${f1(x0 + pw)}" y2="${f1(y(t))}" stroke="${COLORS.grid}"/>`));
+      s.push(`<line x1="${f1(x0)}" y1="${f1(y(m.mean))}" x2="${f1(x0 + pw)}" y2="${f1(y(m.mean))}" stroke="${COLORS.mean}" stroke-width="1.5" stroke-dasharray="5 3"/>`);
+      const [a, b] = means[j];
+      s.push(`<g><title>${esc(`${fName(j)}: ${lvl(j, -1)} ${nf.format(a)}, ${lvl(j, 1)} ${nf.format(b)}${inModel ? '' : ' (not in the model)'}`)}</title>`);
+      s.push(`<line x1="${f1(xa)}" y1="${f1(y(a))}" x2="${f1(xb)}" y2="${f1(y(b))}" stroke="${inModel ? COLORS.sig : COLORS.insig}" stroke-width="2.5"/>`);
+      [[xa, a], [xb, b]].forEach(([xx, v]) => s.push(`<circle cx="${f1(xx)}" cy="${f1(y(v))}" r="6" fill="${inModel ? COLORS.sig : COLORS.insig}" stroke="#fff" stroke-width="1.5"/>`));
+      s.push('</g>');
+      const maxCh = Math.max(4, Math.floor(pw * 0.5 / charW(12)));
+      s.push(`<text x="${f1(xa)}" y="${MT + plotH + 18}" font-size="12" text-anchor="middle" fill="${COLORS.muted}">${esc(trunc(lvl(j, -1), maxCh))}</text>`);
+      s.push(`<text x="${f1(xb)}" y="${MT + plotH + 18}" font-size="12" text-anchor="middle" fill="${COLORS.muted}">${esc(trunc(lvl(j, 1), maxCh))}</text>`);
+      s.push(`<text x="${f1(x0 + pw / 2)}" y="${MT + plotH + 40}" font-size="13" font-weight="700" text-anchor="middle" fill="${COLORS.ink}">${LETTERS[j]}: ${esc(trunc(fName(j), Math.max(4, Math.floor(pw / charW(13)) - 3)))}</text>`);
+      if (!inModel) s.push(`<text x="${f1(x0 + pw / 2)}" y="${MT + plotH + 58}" font-size="12" text-anchor="middle" fill="${COLORS.muted}">Not in the model</text>`);
+    }
+    s.push('</svg>');
+    return s.join('');
+  }
+
+  // ---- interaction plots: one panel for each pair of factors ----
+  function interSVG(o) {
+    const { m } = current, k = state.k;
+    const pairs = [];
+    for (let i = 0; i < k; i++) for (let j = i + 1; j < k; j++) pairs.push([i, j]);
+    const cols = Math.min(3, pairs.length), rowsN = Math.ceil(pairs.length / cols);
+    const W = 960, M = 16, gapX = 70, gapY = 40;
+    const MT = (o.title ? 44 : 8) + 8, ML = 70, MR = 20;
+    const pw = (W - ML - MR - gapX * (cols - 1)) / cols, ph = 230, head = 58, foot = 46;
+    const H = MT + rowsN * (head + ph + foot) + (rowsN - 1) * gapY + M;
+    const vals = [];
+    const cell = pairs.map(([i, j]) => [-1, 1].map(vj => [-1, 1].map(vi => { const v = fittedMean(m, { [i]: vi, [j]: vj }); vals.push(v); return v; })));
+    const ax = axis(Math.min(...vals), Math.max(...vals), 4);
+    const s = svgOpen(W, H, o);
+    pairs.forEach(([i, j], n) => {
+      const c = n % cols, r = Math.floor(n / cols);
+      const x0 = ML + c * (pw + gapX), y0 = MT + r * (head + ph + foot + gapY) + head;
+      const y = v => y0 + ph - (v - ax.min) / (ax.max - ax.min) * ph;
+      const xa = x0 + pw * 0.2, xb = x0 + pw * 0.8;
+      const key = LETTERS[i] + LETTERS[j], inModel = state.terms.includes(key);
+      const maxCh = Math.floor(pw / charW(13));
+      s.push(`<text x="${f1(x0)}" y="${y0 - 38}" font-size="13" font-weight="700" fill="${COLORS.ink}">${key} interaction<title>${esc(`${fName(i)} × ${fName(j)}`)}</title></text>`);
+      const kw = Math.floor((pw / 2 - 28) / charW(12));
+      [[-1, COLORS.lo, ''], [1, COLORS.hi, '6 4']].forEach(([vj, col, dash], q) => {
+        const lx = x0 + q * pw / 2;
+        s.push(`<line x1="${f1(lx)}" y1="${y0 - 18}" x2="${f1(lx + 18)}" y2="${y0 - 18}" stroke="${col}" stroke-width="2.5"${dash ? ` stroke-dasharray="${dash}"` : ''}/>`);
+        s.push(`<text x="${f1(lx + 24)}" y="${y0 - 14}" font-size="12" fill="${COLORS.muted}">${esc(trunc(`${LETTERS[j]} ${lvl(j, vj)}`, kw))}</text>`);
+      });
+      s.push(`<rect x="${f1(x0)}" y="${f1(y0)}" width="${f1(pw)}" height="${ph}" fill="none" stroke="${COLORS.axis}"/>`);
+      ax.ticks.forEach(t => {
+        s.push(`<line x1="${f1(x0)}" y1="${f1(y(t))}" x2="${f1(x0 + pw)}" y2="${f1(y(t))}" stroke="${COLORS.grid}"/>`);
+        s.push(`<text x="${f1(x0 - 6)}" y="${f1(y(t)) + 4}" font-size="11" text-anchor="end" fill="${COLORS.muted}">${esc(nf.format(t))}</text>`);
+      });
+      [[-1, COLORS.lo, ''], [1, COLORS.hi, '6 4']].forEach(([vj, col, dash], q) => {
+        const [a, b] = cell[n][q];
+        s.push(`<g><title>${esc(`${fName(j)} ${lvl(j, vj)}: ${fName(i)} ${lvl(i, -1)} ${nf.format(a)}, ${lvl(i, 1)} ${nf.format(b)}`)}</title>`);
+        s.push(`<line x1="${f1(xa)}" y1="${f1(y(a))}" x2="${f1(xb)}" y2="${f1(y(b))}" stroke="${col}" stroke-width="2.5"${dash ? ` stroke-dasharray="${dash}"` : ''}/>`);
+        [[xa, a], [xb, b]].forEach(([xx, v]) => s.push(q ? `<rect x="${f1(xx - 5)}" y="${f1(y(v) - 5)}" width="10" height="10" fill="${col}"/>` : `<circle cx="${f1(xx)}" cy="${f1(y(v))}" r="5.5" fill="${col}"/>`));
+        s.push('</g>');
+      });
+      const lc = Math.max(4, Math.floor(pw * 0.45 / charW(12)));
+      s.push(`<text x="${f1(xa)}" y="${f1(y0 + ph + 17)}" font-size="12" text-anchor="middle" fill="${COLORS.muted}">${esc(trunc(lvl(i, -1), lc))}</text>`);
+      s.push(`<text x="${f1(xb)}" y="${f1(y0 + ph + 17)}" font-size="12" text-anchor="middle" fill="${COLORS.muted}">${esc(trunc(lvl(i, 1), lc))}</text>`);
+      s.push(`<text x="${f1(x0 + pw / 2)}" y="${f1(y0 + ph + 36)}" font-size="12" font-weight="600" text-anchor="middle" fill="${COLORS.ink}">${esc(trunc(`${LETTERS[i]}: ${fName(i)}`, maxCh))}${inModel ? '' : ` <tspan font-weight="400" fill="${COLORS.muted}">(not in model)</tspan>`}</text>`);
+    });
+    s.push('</svg>');
+    return s.join('');
+  }
+
+  // ---- plain-language reading ----
+  function readingParts() {
+    const { m, rows, alpha, unc, best } = current;
+    const paras = [];
+    const resp = esc(lower(respName()));
+    const v = x => nf.format(x);
+    const terms = rows.filter(r => r.key);
+    const coefOf = key => { const r = rows.find(q => q.key === key); return r ? r.coef : 0; };
+    const sig = r => m.testable && r.p < alpha;
+
+    if (!terms.length) {
+      paras.push(`The model has no terms, so it just predicts the overall average, ${v(m.mean)}. Tick some terms on the left to see their effects.`);
+      return paras;
+    }
+    if (!m.testable) {
+      paras.push(m.df === 0
+        ? `<b>There are no spare runs to measure noise</b>, so the tool can’t tell which effects are real. The model has ${m.p} terms (including the overall average) and there are ${m.n} results. Take out the terms least likely to matter, usually the highest-order interactions, or use <b>Reduce the model for me</b>. Adding a replicate also helps.`
+        : 'Every result is exactly what the model predicts, so there is no noise left to test the effects against. Check the results have been entered correctly.');
+    }
+    const mains = terms.filter(r => r.key.length === 1);
+    const inters = terms.filter(r => r.key.length > 1);
+    mains.slice().sort((a, b) => Math.abs(b.coef) - Math.abs(a.coef)).forEach(r => {
+      const j = idx(r.key)[0], eff = 2 * r.coef;
+      const dir = eff > 0 ? 'raises' : 'lowers';
+      const clear = m.testable ? (sig(r) ? ` This is a clear effect (${pIs(r.p)}).` : ` This could be chance (${pIs(r.p)}).`) : '';
+      paras.push(`Moving <b>${esc(fName(j))}</b> from ${esc(lvl(j, -1))} to ${esc(lvl(j, 1))} ${Math.abs(eff) < 1e-12 ? 'makes no difference to' : `${dir}`} ${resp}${Math.abs(eff) < 1e-12 ? '' : ` by ${v(Math.abs(eff))} on average`}.${clear}`);
+    });
+    inters.filter(r => !m.testable || sig(r)).forEach(r => {
+      const ix = idx(r.key);
+      if (ix.length === 2) {
+        const [i, j] = ix, a = coefOf(LETTERS[i]), ab = r.coef;
+        const by = e => Math.abs(e) < 1e-12 ? 'makes no difference to ' + resp : `${e > 0 ? 'raises' : 'lowers'} ${resp} by ${v(Math.abs(e))}`;
+        paras.push(`<b>The effect of ${esc(fName(i))} depends on ${esc(fName(j))}</b>${m.testable ? ` (${pIs(r.p)})` : ''}. With ${esc(fName(j))} at ${esc(lvl(j, -1))}, moving ${esc(fName(i))} from ${esc(lvl(i, -1))} to ${esc(lvl(i, 1))} ${by(2 * (a - ab))}; with ${esc(fName(j))} at ${esc(lvl(j, 1))}, it ${by(2 * (a + ab))}. The interactions chart shows this as lines that aren’t parallel.`);
+      } else {
+        paras.push(`<b>${esc(termName(r.key))}</b> interact${m.testable ? ` (${pIs(r.p)})` : ''}: how two of them work together depends on the setting of the other${ix.length > 3 ? 's' : ''}. Look at the interactions chart and the predictions below to understand it before acting on the separate effects.`);
+      }
+    });
+    if (m.testable) {
+      const noisy = inters.filter(r => !sig(r));
+      if (noisy.length) paras.push(`${noisy.length === 1 ? 'The interaction' : 'The interactions'} ${list(noisy.map(r => esc(termName(r.key))))} could be chance. You could take ${noisy.length === 1 ? 'it' : 'them'} out of the model to simplify it.`);
+    }
+
+    if (best) {
+      const inModel = j => state.terms.some(t => t.includes(LETTERS[j]));
+      const set = best.x.map((x, j) => inModel(j) ? `${esc(fName(j))} at <b>${esc(lvl(j, x))}</b>` : null).filter(Boolean);
+      const free = best.x.map((x, j) => inModel(j) ? null : esc(fName(j))).filter(Boolean);
+      paras.push(`The model predicts the ${state.goal === 'min' ? 'lowest' : 'highest'} ${resp}, <b>${v(best.y)}</b>, with ${list(set)}.${free.length ? ` ${list(free)} ${free.length > 1 ? 'aren’t' : 'isn’t'} in the model, so ${free.length > 1 ? 'their settings make' : 'its setting makes'} no difference here: choose whichever is easier or cheaper.` : ''} Confirm it with a few runs at these settings before making the change.`);
+    }
+
+    if (isFinite(m.r2)) paras.push(`The model explains ${Math.round(m.r2 * 100)}% of the variation in the results${isFinite(m.r2adj) ? ` (${Math.round(m.r2adj * 100)}% once adjusted for the number of terms)` : ''}.${isFinite(m.s) ? ` A typical result is about ${v(m.s)} away from what the model predicts.` : ''}`);
+    const missing = runsN() - m.n;
+    if (missing > 0) paras.push(`${missing} run${missing > 1 ? 's have' : ' has'} no result yet, so the analysis uses the other ${m.n}. Fill in the rest for the full picture.`);
+    if (unc && state.factors.slice(0, state.k).some(f => f.type === 'numeric')) paras.push('Predictions between the low and high settings of a numeric factor assume a straight line. A factorial experiment can’t check that, so test any in-between setting before relying on it.');
+    return paras;
+  }
+  function equationText(plain) {
+    const { unc } = current;
+    const nm = key => key.split('').map(c => fName(LETTERS.indexOf(c))).join(' × ');
+    let t = `${respName()} = ${nf4.format(unc[''])}`;
+    allTerms(state.k).filter(key => state.terms.includes(key)).forEach(key => {
+      const c = unc[key];
+      t += ` ${c < 0 ? '−' : '+'} ${nf4.format(Math.abs(c))} × ${nm(key)}`;
+    });
+    return plain ? t : esc(t);
+  }
+  function summaryText() {
+    const strip = s => s.replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+    const lines = [state.title.trim() || 'Designed experiment', ''];
+    readingParts().forEach(p => lines.push(strip(p), ''));
+    lines.push('Prediction equation: ' + equationText(true));
+    return lines.join('\n').trim();
+  }
+
+  // ---- tables ----
+  const r6 = x => isFinite(x) ? +x.toPrecision(8) : '';
+  const pcsv = p => p == null ? '' : p < 0.0001 ? '<0.0001' : Math.round(p * 1e4) / 1e4;
+  function tableRows() {
+    const { m, rows, unc, alpha } = current;
+    const runOf = {}; state.runOrder.forEach((s, i) => { runOf[s] = i + 1; });
+    const out = [['Run order', 'Standard order', ...Array.from({ length: state.k }, (_, j) => fName(j)), respName()]];
+    state.runOrder.forEach(s => out.push([runOf[s], s, ...codedOf(s).map((x, j) => lvl(j, x)), state.y[s] == null ? '' : state.y[s]]));
+    out.push([], ['Term', 'Effect (low to high)', 'Coded coefficient', 'Uncoded coefficient', 'Standard error', 'p-value', 'Clear effect']);
+    rows.forEach(r => out.push([r.key ? `${r.key}: ${termName(r.key)}` : 'Constant', r.key ? r6(2 * r.coef) : '', r6(r.coef), r6(unc[r.key]), r6(r.se), pcsv(r.p), r.key && m.testable ? (r.p < alpha ? 'Yes' : 'No') : '']));
+    out.push([], ['Model summary', ''], ['s', r6(m.s)], ['R-squared', r6(m.r2)], ['Adjusted R-squared', r6(m.r2adj)], ['Residual degrees of freedom', m.df], ['Runs analysed', m.n]);
+    out.push([], ['Prediction equation', equationText(true)]);
+    return out;
+  }
+  function tableHTML() {
+    const { m, rows, unc, alpha } = current;
+    let h = '<div class="tablewrap"><h3>Model coefficients</h3><table><caption class="sr">Effect, coefficients and p-value of each term in the model</caption><thead><tr>';
+    h += '<th>Term</th>' + ['Effect (low to high)', 'Coded coefficient', 'Uncoded coefficient', 'p-value'].map(t => `<th class="num">${t}</th>`).join('') + '<th>Clear effect?</th></tr></thead><tbody>';
+    rows.forEach(r => {
+      const yes = r.key && m.testable && r.p < alpha;
+      h += `<tr><td>${r.key ? `<b>${r.key}</b> ${esc(termName(r.key))}` : 'Constant (overall average)'}</td><td class="num">${r.key ? nf4.format(2 * r.coef) : ''}</td><td class="num">${nf4.format(r.coef)}</td><td class="num">${nf4.format(unc[r.key])}</td><td class="num">${r.key ? pf(r.p) : ''}</td><td class="${yes ? 'yes' : ''}">${r.key ? (m.testable ? (yes ? 'Yes' : 'No') : '–') : ''}</td></tr>`;
+    });
+    h += '</tbody></table>';
+    h += `<p class="hint">Coded coefficients use −1 for each factor’s low setting and +1 for its high setting, so they can be compared with each other. ${state.factors.slice(0, state.k).some(f => f.type === 'numeric') ? 'Uncoded coefficients use the real values of numeric factors; text factors stay coded.' : 'With no numeric factors, the uncoded coefficients are the same as the coded ones.'}</p></div>`;
+    h += `<div class="tablewrap"><h3>Prediction equation</h3><p class="equation">${equationText()}</p>`;
+    const text = state.factors.slice(0, state.k).map((f, j) => f.type === 'text' ? `${esc(fName(j))} is −1 for ${esc(lvl(j, -1))} and +1 for ${esc(lvl(j, 1))}` : null).filter(Boolean);
+    h += `<p class="hint">${text.length ? `In the equation, ${list(text)}.` : 'Put the real values of each factor into the equation.'}</p></div>`;
+    return h;
+  }
+
+  // ---- predict at chosen settings ----
+  function whatIfHTML() {
+    let h = '<div class="reading"><h3>Predict a result</h3><p class="hint">Choose a setting for each factor to see what the model predicts.</p><div class="whatif">';
+    for (let j = 0; j < state.k; j++) {
+      const f = state.factors[j], id = 'wi' + j;
+      if (f.type === 'numeric') {
+        if (!isFinite(num(state.whatIf[j]))) state.whatIf[j] = f.low;
+        h += `<div><label for="${id}">${esc(fName(j))}</label><input type="number" step="any" id="${id}" data-wi="${j}" value="${esc(state.whatIf[j])}"></div>`;
+      } else {
+        if (state.whatIf[j] !== -1 && state.whatIf[j] !== 1) state.whatIf[j] = -1;
+        h += `<div><label for="${id}">${esc(fName(j))}</label><select id="${id}" data-wi="${j}"><option value="-1"${state.whatIf[j] === -1 ? ' selected' : ''}>${esc(lvl(j, -1))}</option><option value="1"${state.whatIf[j] === 1 ? ' selected' : ''}>${esc(lvl(j, 1))}</option></select></div>`;
+      }
+    }
+    return h + '</div><p class="predout" id="predOut" aria-live="polite"></p></div>';
+  }
+  function updatePrediction() {
+    const out = $('predOut'); if (!out || !current) return;
+    const x = [], outside = [];
+    for (let j = 0; j < state.k; j++) {
+      const f = state.factors[j];
+      if (f.type === 'numeric') {
+        const a = num(f.low), b = num(f.high), v = num(state.whatIf[j]);
+        if (!isFinite(v)) { out.textContent = 'Enter a value for every numeric factor.'; return; }
+        x.push((v - (a + b) / 2) / ((b - a) / 2));
+        if (v < Math.min(a, b) || v > Math.max(a, b)) outside.push(fName(j));
+      } else x.push(+state.whatIf[j]);
+    }
+    out.innerHTML = `Predicted ${esc(lower(respName()))}: <strong>${esc(nf.format(predict(current.m, x)))}</strong>` +
+      (outside.length ? `<br><span class="hint">${esc(list(outside))} ${outside.length > 1 ? 'are' : 'is'} outside the range you tested, so this is a guess.</span>` : '');
+  }
+
+  // ---- render ----
+  function update() {
+    current = null;
+    const probs = factorProblems();
+    const obs = observations();
+    if (probs.length) { renderTerms(); return renderEmpty(`Check the settings for ${list(probs.map(p => 'factor ' + LETTERS[p.j]))} on the left.`); }
+    if (!obs.length) { renderTerms(); return renderEmpty('Enter the result of each run in the table above to analyse your experiment.'); }
+    const terms = allTerms(state.k).filter(t => state.terms.includes(t));
+    const m = fit(obs, terms);
+    if (m.error === 'few') { renderTerms(); return renderEmpty(`There ${m.n === 1 ? 'is 1 result' : `are ${m.n} results`} so far, but the model has ${m.p} terms, counting the overall average. Enter more results, or take terms out of the model.`); }
+    if (m.error === 'singular') { renderTerms(); return renderEmpty('Some terms can’t be worked out because the runs that separate them have no result. Fill in the missing runs, or take those terms out of the model.'); }
+
+    const alpha = +state.alpha;
+    const rows = m.cols.map((key, i) => ({ key, coef: m.coef[i], se: m.se[i], p: m.pv[i] }));
+    current = { m, rows, alpha };
+    current.unc = uncoded(m);
+    current.best = null;
+    if (state.goal !== 'none' && terms.length) {
+      corners(state.k).forEach(x => {
+        const yv = predict(m, x);
+        if (!current.best || (state.goal === 'min' ? yv < current.best.y - 1e-9 : yv > current.best.y + 1e-9)) current.best = { x, y: yv };
+      });
+    }
+    renderTerms();
+
+    const title = state.title.trim();
+    if (!CHARTS[state.chartType]) state.chartType = 'pareto';
+    const sigTerms = rows.filter(r => r.key && m.testable && r.p < alpha).sort((a, b) => Math.abs(b.coef) - Math.abs(a.coef));
+    const o = { title };
+    o.aria = (title ? title + '. ' : '') + `${CHARTS[state.chartType]} for a ${state.k}-factor experiment on ${respName()}. ` +
+      (m.testable ? (sigTerms.length ? `Clear effects: ${sigTerms.map(r => termName(r.key)).join('; ')}.` : 'No clear effects.') : 'No p-values: no spare runs to measure noise.');
+    const svg = !terms.length ? null : state.chartType === 'main' ? mainSVG(o) : state.chartType === 'inter' ? interSVG(o) : paretoSVG(o);
+
+    let headline;
+    if (!terms.length) headline = 'The model has no terms';
+    else if (!m.testable) headline = `Biggest effect: <strong>${esc(termName(rows.filter(r => r.key).sort((a, b) => Math.abs(b.coef) - Math.abs(a.coef))[0].key))}</strong>`;
+    else if (sigTerms.length) {
+      const names = sigTerms.slice(0, 3).map(r => `<strong>${esc(termName(r.key))}</strong>`);
+      headline = `${list(names)}${sigTerms.length > 3 ? ` and ${sigTerms.length - 3} more` : ''} make${sigTerms.length === 1 ? 's' : ''} a clear difference`;
+    } else headline = 'No factor makes a clear difference';
+    const sub = `${state.k}-factor, two-level experiment: ${m.n} of ${runsN()} runs analysed, ${terms.length} term${terms.length === 1 ? '' : 's'} in the model, at the ${Math.round(alpha * 100)}% significance level.`;
+    const legendNote = {
+      pareto: 'Each bar is the size of a term’s coded coefficient: half the change in the result when the factor goes from low to high. Longer bars matter more.',
+      main: 'Each panel shows the fitted average result at a factor’s low and high setting. The steeper the line, the bigger the effect.',
+      inter: 'Each panel shows how the effect of one factor changes with the setting of another. Lines that aren’t parallel mean the two interact.'
+    }[state.chartType];
+
+    els.result.innerHTML = `
+      <p class="summary">${headline}</p>
+      <p class="focuson">${esc(sub)}</p>
+      <div class="stats">
+        <div class="stat"><b>${isFinite(m.r2) ? Math.round(m.r2 * 100) + '%' : '–'}</b><span>R², variation explained</span></div>
+        <div class="stat"><b>${isFinite(m.r2adj) ? Math.round(m.r2adj * 100) + '%' : '–'}</b><span>Adjusted R²</span></div>
+        <div class="stat"><b>${isFinite(m.s) ? nf4.format(m.s) : '–'}</b><span>s, typical noise</span></div>
+        <div class="stat"><b>${m.df}</b><span>Spare runs (degrees of freedom)</span></div>
+      </div>
+      ${svg ? `<div class="chartbar"><div class="block"><label for="chartType">Chart</label><select id="chartType">${Object.keys(CHARTS).map(c => `<option value="${c}"${c === state.chartType ? ' selected' : ''}>${CHARTS[c]}</option>`).join('')}</select></div></div>
+      <div class="chartwrap" id="chart">${svg}</div>
+      <p class="legend-note">${legendNote} Hover over the chart to see the figures.</p>` : ''}
+      <div class="reading"><h3>What the experiment shows</h3>${readingParts().map(x => `<p>${x}</p>`).join('')}</div>
+      ${tableHTML()}
+      ${whatIfHTML()}`;
+    updatePrediction();
+  }
+  function renderEmpty(msg) {
+    current = null;
+    els.result.innerHTML = `<div class="empty"><p>${esc(msg)}</p><button type="button" class="primary" data-act="example">Try the example</button></div>`;
+  }
+  function schedule() { clearTimeout(timer); timer = setTimeout(update, 180); }
+  function renderAll() { syncInputs(); renderFactors(); renderRuns(); update(); }
+
+  // A new design: new run order and every term in the model.
+  function redesign() {
+    state.runOrder = shuffled(runsN());
+    state.terms = allTerms(state.k);
+    state.whatIf = {};
+  }
+  const hasResults = () => Object.keys(state.y).some(s => String(state.y[s]).trim() !== '');
+
+  // ---- exports ----
+  function svgEl() { return document.querySelector('#chart svg'); }
+  function fileName() { return slug(state.title.trim() || state.response.trim()); }
+  let dlPromise = null;
+  function getDownloads() {
+    if (!window.claude || typeof window.claude.use !== 'function') return Promise.resolve(undefined);
+    if (!dlPromise) dlPromise = window.claude.use('downloads').catch(() => null);
+    return dlPromise;
+  }
+  async function downloadBlob(blob, name) {
+    const d = await getDownloads();
+    if (d) { const r = await d.save({ filename: name, data: blob }); return r && r.status !== 'declined'; }
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+    return true;
+  }
+  function status(msg) { FocusActions.say(msg); }
+  function toPNG(cb) {
+    const svg = svgEl(); if (!svg) return;
+    const vb = svg.viewBox.baseVal, scale = 2;
+    const str = new XMLSerializer().serializeToString(svg);
+    const img = new Image();
+    img.onload = () => {
+      const c = document.createElement('canvas');
+      c.width = vb.width * scale; c.height = vb.height * scale;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, c.width, c.height);
+      ctx.drawImage(img, 0, 0, c.width, c.height);
+      c.toBlob(cb, 'image/png');
+    };
+    img.onerror = () => status('Could not create the image.');
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(str);
+  }
+  const csvCell = v => v === undefined ? '' : /[",\n]/.test(String(v)) ? '"' + String(v).replace(/"/g, '""') + '"' : String(v);
+  async function copyText(t) {
+    try { await navigator.clipboard.writeText(t); return true; }
+    catch (e) {
+      const ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select();
+      const ok = document.execCommand('copy'); ta.remove(); return ok;
+    }
+  }
+  const saved = (ok, msg) => status(ok ? msg : 'Download cancelled.');
+  const failed = () => status('The file couldn’t be saved here. Try Copy instead.');
+  function act(a) {
+    if (a === 'example') return loadExample();
+    if (!current) return;
+    const needChart = ['png', 'svg', 'copyimg'].includes(a);
+    if (needChart && !svgEl()) return status('Put some terms in the model to draw a chart.');
+    if (a === 'png') toPNG(b => downloadBlob(b, fileName() + '.png').then(ok => saved(ok, 'PNG downloaded.'), failed));
+    if (a === 'svg') downloadBlob(new Blob([new XMLSerializer().serializeToString(svgEl())], { type: 'image/svg+xml' }), fileName() + '.svg').then(ok => saved(ok, 'SVG downloaded.'), failed);
+    if (a === 'copyimg') {
+      if (!(navigator.clipboard && window.ClipboardItem)) return status('Your browser can’t copy images — use Download PNG.');
+      toPNG(async b => {
+        try { await navigator.clipboard.write([new ClipboardItem({ 'image/png': b })]); status('Chart copied — paste it into PowerPoint or Word.'); }
+        catch (e) { status('Copy was blocked — use Download PNG.'); }
+      });
+    }
+    if (a === 'csv') downloadBlob(new Blob([tableRows().map(r => r.map(csvCell).join(',')).join('\r\n')], { type: 'text/csv' }), fileName() + '.csv').then(ok => saved(ok, 'Tables downloaded.'), failed);
+    if (a === 'copytable') copyText(tableRows().map(r => r.join('\t')).join('\n')).then(ok => status(ok ? 'Tables copied — paste them into Excel.' : 'Copy was blocked.'));
+    if (a === 'copysummary') copyText(summaryText()).then(ok => status(ok ? 'Summary copied.' : 'Copy was blocked.'));
+  }
+  function loadExample() {
+    state = Object.assign(fresh(), JSON.parse(JSON.stringify(EXAMPLE)));
+    state.terms = allTerms(state.k);
+    renderAll();
+  }
+  function restore(x) {
+    const s = fresh();
+    if (x && typeof x === 'object') {
+      s.k = [2, 3, 4].includes(+x.k) ? +x.k : 2;
+      s.reps = [1, 2, 3, 4].includes(+x.reps) ? +x.reps : 2;
+      if (Array.isArray(x.factors)) x.factors.slice(0, 4).forEach((f, j) => {
+        if (f && typeof f === 'object') s.factors[j] = { name: String(f.name || ''), type: f.type === 'numeric' ? 'numeric' : 'text', low: String(f.low == null ? '' : f.low), high: String(f.high == null ? '' : f.high) };
+      });
+      ['response', 'title'].forEach(key => { if (typeof x[key] === 'string') s[key] = x[key]; });
+      if (['min', 'max', 'none'].includes(x.goal)) s.goal = x.goal;
+      if (['0.05', '0.01', '0.1'].includes(String(x.alpha))) s.alpha = String(x.alpha);
+      if (['run', 'std'].includes(x.view)) s.view = x.view;
+      if (CHARTS[x.chartType]) s.chartType = x.chartType;
+      const N = (1 << s.k) * s.reps;
+      const ro = Array.isArray(x.runOrder) ? x.runOrder.map(Number) : [];
+      s.runOrder = ro.length === N && new Set(ro).size === N && ro.every(v => v >= 1 && v <= N) ? ro : shuffled(N);
+      if (x.y && typeof x.y === 'object') Object.keys(x.y).forEach(k => { if (+k >= 1 && +k <= N) s.y[k] = String(x.y[k]); });
+      const all = allTerms(s.k);
+      s.terms = Array.isArray(x.terms) ? all.filter(t => x.terms.includes(t)) : all;
+      if (x.whatIf && typeof x.whatIf === 'object') s.whatIf = Object.assign({}, x.whatIf);
+    } else {
+      s.runOrder = shuffled((1 << s.k) * s.reps);
+      s.terms = allTerms(s.k);
+    }
+    state = s;
+    // a hand-edited file could break the hierarchy; put back what each term needs
+    state.terms.slice().forEach(include);
+  }
+
+  // ---- events ----
+  els.nFactors.addEventListener('change', () => {
+    const k = +els.nFactors.value;
+    if (k === state.k) return;
+    if (hasResults() && !confirm('Changing the number of factors makes a new design and clears the results you’ve entered. Carry on?')) { els.nFactors.value = String(state.k); return; }
+    state.k = k; state.y = {};
+    redesign(); renderFactors(); renderRuns(); update();
+  });
+  els.reps.addEventListener('change', () => {
+    const reps = +els.reps.value, N = (1 << state.k) * reps;
+    if (reps === state.reps) return;
+    const lost = Object.keys(state.y).filter(s => +s > N && String(state.y[s]).trim() !== '').length;
+    if (lost && !confirm(`Fewer replicates means ${lost} result${lost > 1 ? 's' : ''} will be removed. Carry on?`)) { els.reps.value = String(state.reps); return; }
+    Object.keys(state.y).forEach(s => { if (+s > N) delete state.y[s]; });
+    state.reps = reps;
+    state.runOrder = shuffled(N);
+    renderRuns(); update();
+  });
+  els.factors.addEventListener('input', e => {
+    const j = e.target.dataset.f, key = e.target.dataset.k;
+    if (j == null || key === 'type') return;
+    state.factors[+j][key] = e.target.value;
+    showFactorProblems(); renderRuns(); schedule();
+  });
+  els.factors.addEventListener('change', e => {
+    const j = e.target.dataset.f, key = e.target.dataset.k;
+    if (j == null || key !== 'type') return;
+    const f = state.factors[+j];
+    f.type = e.target.value;
+    // a text label can't be a number setting, so start numeric settings afresh
+    if (f.type === 'numeric') { if (!isFinite(num(f.low))) f.low = ''; if (!isFinite(num(f.high))) f.high = ''; }
+    delete state.whatIf[+j];
+    renderFactors(); $('f' + j + 'type').focus(); renderRuns(); update();
+  });
+  els.respName.addEventListener('input', () => { state.response = els.respName.value; renderRuns(); schedule(); });
+  els.goal.addEventListener('change', () => { state.goal = els.goal.value; update(); });
+  els.alpha.addEventListener('change', () => { state.alpha = els.alpha.value; update(); });
+  els.title.addEventListener('input', () => { state.title = els.title.value; schedule(); });
+  els.view.addEventListener('change', () => { state.view = els.view.value; renderRuns(); });
+  els.terms.addEventListener('change', e => {
+    const key = e.target.dataset.term; if (!key) return;
+    if (e.target.checked) include(key); else exclude(key);
+    update();
+  });
+  $('reduceBtn').addEventListener('click', () => {
+    if (!observations().length) return status('Enter some results first.');
+    reduce(); update(); status('Model reduced to the terms that make a clear difference.');
+  });
+  $('allBtn').addEventListener('click', () => { state.terms = allTerms(state.k); update(); });
+  $('shuffleBtn').addEventListener('click', () => {
+    if (hasResults() && !confirm('Shuffle the order of the runs? Results you’ve entered stay with their settings.')) return;
+    state.runOrder = shuffled(runsN()); renderRuns(); status('Run order shuffled.');
+  });
+  $('clearBtn').addEventListener('click', () => {
+    if (hasResults() && !confirm('Clear your factors and results and start again?')) return;
+    restore(null); renderAll();
+  });
+  els.runs.addEventListener('input', e => {
+    const s = e.target.dataset.std; if (!s) return;
+    state.y[s] = e.target.value; noteRuns(); schedule();
+  });
+  // Pasting a column of results fills this run and the ones listed below it.
+  els.runs.addEventListener('paste', e => {
+    const s = e.target.dataset.std; if (!s) return;
+    const text = (e.clipboardData || window.clipboardData).getData('text');
+    const vals = text.split(/\r?\n/).map(l => l.split('\t').pop().trim());
+    while (vals.length && vals[vals.length - 1] === '') vals.pop();
+    if (vals.length < 2) return;
+    e.preventDefault();
+    const inputs = [...els.runs.querySelectorAll('input[data-std]')];
+    const start = inputs.indexOf(e.target);
+    vals.forEach((v, i) => { const inp = inputs[start + i]; if (inp) { inp.value = v; state.y[inp.dataset.std] = v; } });
+    const extra = Math.max(0, vals.length - (inputs.length - start));
+    noteRuns(); update();
+    if (extra) status(`${extra} pasted value${extra > 1 ? 's' : ''} didn’t fit and ${extra > 1 ? 'were' : 'was'} left out.`);
+  });
+  els.result.addEventListener('click', e => { const b = e.target.closest('button[data-act]'); if (b) act(b.dataset.act); });
+  els.result.addEventListener('change', e => {
+    if (e.target.id === 'chartType') { state.chartType = e.target.value; update(); $('chartType').focus(); return; }
+    const j = e.target.dataset && e.target.dataset.wi;
+    if (j != null) { state.whatIf[j] = state.factors[+j].type === 'numeric' ? e.target.value : +e.target.value; updatePrediction(); }
+  });
+  els.result.addEventListener('input', e => {
+    const j = e.target.dataset && e.target.dataset.wi;
+    if (j != null && state.factors[+j].type === 'numeric') { state.whatIf[j] = e.target.value; updatePrediction(); }
+  });
+
+  restore(null);
+  renderAll(); // start empty, ready for the user's experiment
+
+  // ---- shared toolbar (Open, Save, Export) ----
+  FocusActions.mount({
+    tool: 'design_of_experiments', toolName: 'designed experiment',
+    example: loadExample, hasData: () => hasResults() || state.factors.some(f => f.name.trim()),
+    fileName: () => fileName(),
+    getExtra: () => JSON.parse(JSON.stringify(state)),
+    setExtra: x => restore(x),
+    afterOpen: () => renderAll(),
+    ready: () => !!current,
+    exports: ['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) }))
+  });
+})();
+</script>
+{% include focus-footer.html %}
+</body>
+</html>
