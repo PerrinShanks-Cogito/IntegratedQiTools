@@ -1,5 +1,9 @@
 {
   "trailingSlash": "auto",
+  "routes": [
+    { "route": "/gage_rr", "redirect": "/gauge_rr/", "statusCode": 301 },
+    { "route": "/gage_rr/*", "redirect": "/gauge_rr/", "statusCode": 301 }
+  ],
   "responseOverrides": {
     "404": {
       "rewrite": "/404.html",
