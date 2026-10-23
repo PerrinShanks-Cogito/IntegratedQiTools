@@ -131,6 +131,10 @@ button.primary:active{transform:translateY(2px);box-shadow:0 1px 0 #00401E}
 .stats div{border:1px solid var(--line);border-radius:6px;padding:.45rem .65rem}
 .stats dt{font-size:.82rem;color:var(--muted);margin:0}
 .stats dd{margin:0;font-weight:700;font-size:1.05rem;font-variant-numeric:tabular-nums}
+.adtest{border:1px solid var(--line);border-left:5px solid var(--blue);border-radius:0 6px 6px 0;padding:.6rem .85rem;margin:.75rem 0 0;max-width:80ch}
+.adtest h3{font-size:1rem;margin:0 0 .25rem}
+.adtest p{margin:0}
+.adtest .adnums{font-variant-numeric:tabular-nums;color:var(--muted);font-size:.9rem;margin-top:.2rem}
 .tablewrap{overflow-x:auto;margin-top:1.25rem}
 table{border-collapse:collapse;width:100%;font-size:.94rem}
 th,td{text-align:left;padding:.5rem .65rem;border-bottom:1px solid var(--line)}
@@ -243,6 +247,7 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 
 <section class="notes" aria-label="About histograms">
   <p><b>How to read it:</b> each bar covers a range of values, and its height shows how many of your measurements fall in that range. Look at where the tallest bars sit (the typical value), how wide the bars spread (the variation), and whether one side has a long tail. Two separate peaks can mean two different processes are mixed together, such as weekdays and weekends.</p>
+  <p><b>Normality test:</b> the Anderson–Darling test checks whether your data could reasonably come from a normal (bell-shaped) distribution. A p-value below 0.05 suggests they do not. Small samples rarely fail the test, and very large samples fail it for tiny departures, so always look at the chart as well.</p>
   <p>A histogram shows the overall shape but not change over time. To see whether a process is changing, plot the same data in time order on a run chart or SPC chart.</p>
   <div class="notice">Want to build your skills? <a href="https://coh.gstt.nhs.uk/course/view.php?id=3199" target="_blank" rel="noopener">Book QI training with the CITI Academy</a>.</div>
 </section>
@@ -338,6 +343,45 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
       skew = g1 * Math.sqrt(n * (n - 1)) / (n - 2);
     }
     return { sorted: s, n, mean, sd, skew, min: s[0], max: s[n - 1], median: quantile(s, 0.5), q1: quantile(s, 0.25), q3: quantile(s, 0.75) };
+  }
+
+  // Complementary error function (Numerical Recipes erfcc, relative error < 1.2e-7, accurate in the tails)
+  function erfc(x) {
+    const z = Math.abs(x), t = 1 / (1 + 0.5 * z);
+    const r = t * Math.exp(-z * z - 1.26551223 + t * (1.00002368 + t * (0.37409196 + t * (0.09678418 + t * (-0.18628806 +
+      t * (0.27886807 + t * (-1.13520398 + t * (1.48851587 + t * (-0.82215223 + t * 0.17087277)))))))));
+    return x >= 0 ? r : 2 - r;
+  }
+  function normCdf(z) { return 0.5 * erfc(-z / Math.SQRT2); }
+
+  // Anderson–Darling test for normality, mean and SD estimated from the data.
+  // A*² uses the small-sample adjustment; p-value from D'Agostino & Stephens (1986), as used by Minitab.
+  function andersonDarling(st) {
+    const { sorted: s, n, mean, sd } = st;
+    if (n < 8 || !(sd > 0)) return null;
+    let sum = 0;
+    for (let i = 0; i < n; i++) {
+      const lo = Math.max(normCdf((s[i] - mean) / sd), 1e-300);
+      const hi = Math.max(normCdf(-(s[n - 1 - i] - mean) / sd), 1e-300);
+      sum += (2 * i + 1) * (Math.log(lo) + Math.log(hi));
+    }
+    const a2 = -n - sum / n;
+    const a = a2 * (1 + 0.75 / n + 2.25 / (n * n));
+    let p;
+    if (a < 0.2) p = 1 - Math.exp(-13.436 + 101.14 * a - 223.73 * a * a);
+    else if (a < 0.34) p = 1 - Math.exp(-8.318 + 42.796 * a - 59.938 * a * a);
+    else if (a < 0.6) p = Math.exp(0.9177 - 4.279 * a - 1.38 * a * a);
+    else if (a < 13) p = Math.exp(1.2937 - 5.709 * a + 0.0186 * a * a);
+    else p = 0;
+    return { a2, a, p: Math.min(1, Math.max(0, p)) };
+  }
+
+  function adText(ad, n) {
+    if (!ad) return n < 8 ? 'Needs at least 8 values to test whether the data are normally distributed.' : 'All values are the same, so normality cannot be tested.';
+    const verdict = ad.p < 0.05
+      ? 'The data are unlikely to come from a normal distribution (p < 0.05). Be careful using methods that assume normality, and use the median rather than the mean as the typical value.'
+      : 'There is no strong evidence that the data are not normally distributed (p ≥ 0.05).';
+    return verdict + (n > 300 && ad.p < 0.05 ? ' With this many values, even small departures from normality show up as significant — check the shape of the chart too.' : '');
   }
 
   function niceStep(x) {
@@ -612,12 +656,19 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
     const rangeTxt = (b, i) => `${fmt(b.lo)} to ${B.exact && i === B.bins.length - 1 ? '' : 'under '}${fmt(b.hi)}`;
     const stats = [['Values', nf.format(st.n)], ['Mean', f(st.mean)], ['Median', f(st.median)], ['Standard deviation', f(st.sd)],
       ['Lowest', f(st.min)], ['Highest', f(st.max)], ['Lower quartile', f(st.q1)], ['Upper quartile', f(st.q3)]];
+    const ad = andersonDarling(st);
+    const pTxt = ad ? (ad.p < 0.005 ? '< 0.005' : ad.p.toFixed(3)) : '';
 
     els.result.innerHTML = `
       <p class="summary"><strong>${nf.format(st.n)}</strong> values, typically around <strong>${f(st.median)}</strong>, ranging from ${f(st.min)} to ${f(st.max)}.</p>
       <p class="focuson">${esc([shape, outTxt].filter(Boolean).join(' '))}</p>
       <div class="chartwrap" id="chart">${svg}</div>
       <dl class="stats">${stats.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
+      <section class="adtest" aria-labelledby="ad-h">
+        <h3 id="ad-h">Normality test (Anderson–Darling)</h3>
+        <p>${esc(adText(ad, st.n))}</p>
+        ${ad ? `<p class="adnums">A² = ${ad.a2.toFixed(3)} (adjusted ${ad.a.toFixed(3)}), p-value ${pTxt}</p>` : ''}
+      </section>
       <div class="tablewrap">
         <table>
           <thead><tr><th>${esc(xLabel)}</th><th class="num">Count</th><th class="num">% of values</th><th class="num">Cumulative %</th><th><span class="sr">Distribution</span></th></tr></thead>
