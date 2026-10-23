@@ -54,6 +54,12 @@
   group: Explore your data
   description: Plot pairs of values to see whether two measures are related, and how strongly.
 
+- id: multiple_regression
+  name: Multiple regression
+  status: Beta
+  group: Explore your data
+  description: See how several factors together relate to one result, such as staffing and demand against waiting times, and which of them matter most.
+
 - id: demand_capacity
   name: Demand and capacity model
   status: Beta
