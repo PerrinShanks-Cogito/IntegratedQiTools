@@ -90,6 +90,12 @@
   group: Explore your data
   description: See how several factors together relate to one result, such as staffing and demand against waiting times, and which of them matter most.
 
+- id: attribute_agreement
+  name: Attribute agreement analysis
+  status: Beta
+  group: Explore your data
+  description: Check whether people rating the same cases, such as pressure ulcer categories or triage levels, agree with themselves, with each other and with an expert standard.
+
 - id: design_of_experiments
   name: Design of experiments
   status: Beta
