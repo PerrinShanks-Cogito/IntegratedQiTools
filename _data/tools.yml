@@ -120,6 +120,12 @@
   group: Test changes
   description: Plan an experiment that tests two to four changes at once, such as staffing, streaming and self check-in, and see which of them, alone or together, really change the result.
 
+- id: hypothesis_test_selector
+  name: Hypothesis test selector
+  status: Beta
+  group: Test changes
+  description: Answer a few questions about your data, such as whether your result is a count or a measurement and how many groups you are comparing, and find the hypothesis test to use.
+
 - id: power_sample_size
   name: Power and sample size
   status: Beta

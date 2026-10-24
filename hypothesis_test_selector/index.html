@@ -1,0 +1,621 @@
+---
+tool_id: hypothesis_test_selector
+title: "Hypothesis test selector"
+permalink: /hypothesis_test_selector/
+---
+<!DOCTYPE html>
+<!-- © Guy’s and St Thomas’ NHS Foundation Trust 2026. All rights reserved. -->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hypothesis test selector</title>
+<meta name="description" content="Answer a few questions about your data and follow the hypothesis test selection road map to the test to use, such as a t test, ANOVA, chi-squared or Mann-Whitney. Nothing is uploaded.">
+<link rel="icon" type="image/png" sizes="64x64" href="data:image/png;base64,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">
+<link rel="apple-touch-icon" href="data:image/png;base64,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">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#005EB8; --navy:#003087; --bg:#F0F4F5; --surface:#FFFFFF; --text:#212B32;
+  --muted:#4C6272; --line:#D8DDE0; --yellow:#FFB81C; --green:#007F3B; --green-bg:#E3F2E9;
+  --blue-bg:#E6F0FA; --danger:#D5281B; --shadow:0 2px 0 #D8DDE0; --warn:#A65300;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --blue:#5AA2EA; --navy:#9CC3EF; --bg:#0E1A24; --surface:#162533; --text:#E8EEF2;
+    --muted:#A3B6C3; --line:#2A3E4F; --green:#4CC17E; --green-bg:#143326; --blue-bg:#15314B;
+    --danger:#FF7468; --shadow:0 2px 0 #0A131B; --warn:#F0A54A;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --blue:#5AA2EA; --navy:#9CC3EF; --bg:#0E1A24; --surface:#162533; --text:#E8EEF2;
+  --muted:#A3B6C3; --line:#2A3E4F; --green:#4CC17E; --green-bg:#143326; --blue-bg:#15314B;
+  --danger:#FF7468; --shadow:0 2px 0 #0A131B; --warn:#F0A54A;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Figtree,"Frutiger","Helvetica Neue",Arial,sans-serif;font-size:1rem;line-height:1.5}
+a{color:var(--blue)}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:2px;border-radius:2px}
+button,input,select,textarea{font:inherit;color:inherit}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+[hidden]{display:none !important}
+/* Page head */
+.page-head{padding:1rem 1.25rem}
+.page-head h1{margin:0;font-size:clamp(1.4rem,2.6vw,1.8rem);line-height:1.2;font-weight:800;letter-spacing:-.015em}
+.page-head .meta{color:var(--muted);margin:.15rem 0 0;max-width:70ch}
+
+/* Workspace */
+main{display:grid;grid-template-columns:minmax(300px,420px) minmax(0,1fr);gap:1.25rem;padding:0 1.25rem 1.25rem;align-items:start}
+@media (max-width:880px){main{grid-template-columns:1fr}}
+@media (max-width:420px){main{padding:0 1rem 1rem} .page-head,.notes,.roadmap{padding-left:1rem;padding-right:1rem}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow);padding:1.1rem;min-width:0}
+.panel h2{font-size:1.05rem;font-weight:700;margin:0 0 .75rem}
+.block{margin-bottom:1.1rem}
+label{display:block;font-weight:600;margin:0 0 .35rem}
+.hint{color:var(--muted);font-size:.88rem;margin:0 0 .5rem}
+input[type=text]{width:100%;padding:.5rem .65rem;border:2px solid var(--muted);border-radius:4px;background:var(--surface)}
+input[type=text]:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px var(--yellow)}
+
+/* Buttons */
+.btns{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+button{display:inline-flex;align-items:center;gap:.4rem;border-radius:4px;padding:.5rem .95rem;font-weight:700;cursor:pointer;background:var(--surface);color:var(--blue);border:2px solid var(--blue);line-height:1.2;white-space:nowrap}
+button:hover{background:var(--blue-bg)}
+button:disabled{opacity:.45;cursor:not-allowed;background:var(--surface)}
+button.primary{background:var(--green);color:#fff;border-color:var(--green);box-shadow:0 3px 0 #00401E}
+button.primary:hover{filter:brightness(1.07);background:var(--green)}
+button.primary:active{transform:translateY(2px);box-shadow:0 1px 0 #00401E}
+button.link{border:0;padding:.1rem .25rem;background:none;font-weight:600;text-decoration:underline;color:var(--blue)}
+button.link:hover{background:none;color:var(--navy)}
+
+/* Question */
+.step{color:var(--muted);font-size:.85rem;font-weight:600;margin:0 0 .2rem;text-transform:uppercase;letter-spacing:.04em}
+.question{font-size:1.25rem;font-weight:800;line-height:1.25;margin:0 0 .35rem}
+.choices{border:0;margin:0 0 1rem;padding:0;min-width:0}
+.choices legend{padding:0}
+.option{display:block;width:100%;text-align:left;white-space:normal;border:2px solid var(--line);border-radius:6px;padding:.7rem .85rem;margin:0 0 .55rem;color:var(--text);background:var(--surface);font-weight:400}
+.option:hover{border-color:var(--blue);background:var(--blue-bg)}
+.option b{display:block;font-weight:700;color:var(--blue)}
+.option small{display:block;color:var(--muted);font-size:.86rem;margin-top:.1rem}
+
+/* Route so far */
+.route{list-style:none;margin:0 0 1rem;padding:0;border-top:1px solid var(--line)}
+.route li{display:flex;gap:.5rem;justify-content:space-between;align-items:baseline;padding:.45rem 0;border-bottom:1px solid var(--line);font-size:.93rem}
+.route li span{min-width:0}
+.route li .a{font-weight:700}
+.route li .q{color:var(--muted);display:block;font-size:.84rem}
+
+/* Result */
+.summary{font-size:clamp(1.3rem,2.6vw,1.85rem);line-height:1.25;font-weight:700;letter-spacing:-.01em;margin:0 0 .3rem;max-width:36ch}
+.summary strong{color:var(--blue);font-weight:800}
+.focuson{margin:0 0 1rem;color:var(--muted);max-width:70ch}
+.chartwrap{border:1px solid var(--line);border-radius:8px;overflow-x:auto;margin-bottom:.9rem;background:#fff}
+.chartwrap svg{width:100%;min-width:420px;max-width:760px;height:auto;display:block;margin:0 auto}
+.empty{padding:2.5rem .5rem;text-align:center;color:var(--muted)}
+.empty p{margin:0 auto .9rem;max-width:60ch}
+.reading{margin-top:1.2rem;border-top:1px solid var(--line);padding-top:1rem}
+.reading h3{font-size:1.05rem;font-weight:700;margin:0 0 .5rem}
+.reading p,.reading ul{max-width:75ch;margin:0 0 .75rem}
+.reading ul{padding-left:1.2rem}
+.reading li{margin-bottom:.3rem}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.6rem;margin:0 0 1rem}
+.fact{border:1px solid var(--line);border-radius:6px;padding:.6rem .8rem}
+.fact span{display:block;color:var(--muted);font-size:.82rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.fact p{margin:.15rem 0 0}
+.tools{display:flex;flex-wrap:wrap;gap:.5rem;margin:.25rem 0 0}
+.tools a{display:inline-block;border:2px solid var(--blue);border-radius:4px;padding:.4rem .8rem;font-weight:700;text-decoration:none}
+.tools a:hover{background:var(--blue-bg)}
+.warnbox{background:#FFF4DB;color:#6B4A00;border-left:5px solid var(--yellow);border-radius:0 4px 4px 0;padding:.6rem .8rem;margin:0 0 1rem;max-width:75ch}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .warnbox{background:#3A2E10;color:#FFD27A}}
+:root[data-theme="dark"] .warnbox{background:#3A2E10;color:#FFD27A}
+
+/* Full road map */
+.roadmap{padding:0 1.25rem 1.25rem}
+.roadmap .panel > p{margin:0 0 .9rem;max-width:80ch;color:var(--muted)}
+.tree,.tree ul{list-style:none;margin:0;padding:0}
+.tree ul{margin-left:.55rem;padding-left:1rem;border-left:2px solid var(--line)}
+.tree li{margin:.3rem 0}
+.tree .tq{font-weight:700}
+.tree .ta{color:var(--muted);font-weight:600}
+.tree .ta::after{content:" \2192 "}
+.tree .on > .ta,.tree .on > .tq{color:var(--blue)}
+.tree ul.on{border-left-color:var(--blue)}
+.tree .leaf{font:inherit;font-weight:700;border:2px solid var(--line);border-radius:4px;padding:.15rem .55rem;color:var(--text);background:var(--surface);white-space:normal;text-align:left}
+.tree .leaf:hover{border-color:var(--blue);background:var(--blue-bg)}
+.tree .leaf.here{border-color:var(--blue);background:var(--blue);color:#fff}
+.tree .then{color:var(--muted);font-size:.9rem}
+
+/* Notes */
+.notes{padding:0 1.25rem 2rem;color:var(--muted);font-size:.92rem}
+.notes p{max-width:80ch;margin:0 0 .75rem}
+/* Centre the page in the same 1340px column as the FOCUS header */
+.page-head,main,.roadmap,.notes{box-sizing:border-box;max-width:1340px;margin-left:auto;margin-right:auto}
+.notice{background:var(--blue-bg);color:var(--text);border-left:5px solid var(--blue);border-radius:0 4px 4px 0;padding:.7rem .9rem;max-width:80ch}
+@media (prefers-reduced-motion: no-preference){button,.option{transition:background .15s,border-color .15s,filter .15s}}
+</style>
+{% include focus-head.html %}
+</head>
+<body>
+
+{% include focus-header.html %}
+
+<div class="page-head fa-host">
+  <div class="fa-head-text">
+    <h1>Hypothesis test selector</h1>
+    <p class="meta">Answer a few questions about your data, such as whether your result is a count or a measurement and how many groups you are comparing, and follow the road map to the hypothesis test to use. Everything runs in your browser, so nothing is uploaded.</p>
+  </div>
+  <div data-focus-actions></div>
+</div>
+
+<main>
+  <section class="panel" aria-labelledby="data-h">
+    <h2 id="data-h" class="sr">Your data</h2>
+    <div id="ask" aria-live="polite"></div>
+
+    <h2 id="route-h">Your answers</h2>
+    <ol class="route" id="route" aria-labelledby="route-h"></ol>
+    <div class="btns" style="margin-bottom:1.5rem">
+      <button type="button" id="backBtn">Back</button>
+      <button type="button" id="clearBtn">Start over</button>
+    </div>
+
+    <h2>Chart settings</h2>
+    <div class="block">
+      <label for="title">Title</label>
+      <input type="text" id="title" placeholder="e.g. Length of stay on two wards: which test?">
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="result-h">
+    <h2 id="result-h" class="sr">Result</h2>
+    <div id="result"></div>
+  </section>
+</main>
+
+<section class="roadmap" aria-labelledby="map-h">
+  <div class="panel">
+    <h2 id="map-h">The whole road map</h2>
+    <p>Every question and every test on the road map. Your route is shown in blue. Choose a test to jump straight to it and see the route that leads there.</p>
+    <ul class="tree" id="tree"></ul>
+  </div>
+</section>
+
+<section class="notes" aria-label="About choosing a hypothesis test">
+  <p><b>What it does:</b> a hypothesis test tells you whether a difference or relationship in your data is likely to be real or could easily have happened by chance. Which test to use depends on your data. Think of your result, the output or <i>Y</i>, as depending on one or more inputs, the <i>X</i>s: Y = f(X). This tool asks what type of data each is, how many inputs (factors) and groups (levels) you have, and whether your data is normally distributed, then points you to a test.</p>
+  <p><b>Types of data:</b> <i>attribute</i> (or discrete) data is counts or categories, such as admitted or not, or which ward a patient was on. <i>Continuous</i> (or variable) data is a measurement on a scale, such as length of stay, waiting time or blood pressure. A <i>factor</i> is an input that can influence the output, such as ward or day of the week, and its <i>levels</i> are the different values it takes, such as Ward A and Ward B. For example, new contacts made by three teams is attribute in and attribute out; sales made by three teams is attribute in and continuous out; sales against length of service is continuous in and out; and new contacts against length of service is continuous in and attribute out.</p>
+  <p><b>Deciding before you look:</b> write down your null hypothesis (usually that there is no difference or no relationship) and what you will do if it is or isn't rejected before you collect the data. Then if the p-value is below your significance level, usually 0.05, reject the null hypothesis: if p is low, the null must go.</p>
+  <p><b>Errors and power:</b> a <i>type I</i> (alpha) error is a false positive, rejecting the null hypothesis when it is true, such as concluding a change worked when it didn't. A <i>type II</i> (beta) error is a false negative, keeping the null hypothesis when it is false, such as missing a change that really did work. Type II errors are more likely with small samples. <i>Power</i> is the chance of correctly rejecting the null hypothesis; use the <a href="{{ '/power_sample_size/' | relative_url }}">power and sample size</a> tool to plan how much data you need.</p>
+  <p><b>Checking the assumptions:</b> most of these tests work best when the data is normally distributed. The Anderson-Darling test checks this: its null hypothesis is that the data is normal, so a p-value above 0.05 means you can treat it as normal. The <a href="{{ '/histogram/' | relative_url }}">histogram</a> tool runs it for you. Many tests also assume the groups have similar spread: Levene's test is robust when data isn't normal, Bartlett's test is more sensitive to departures from normality, and the F test compares the variances of two groups. Tests also assume the observations are independent of each other; a <a href="{{ '/chi_squared/' | relative_url }}">chi-squared test</a> checks whether two attributes are independent, and a correlation coefficient (Pearson's, or Spearman's for data that isn't normal) whether two measurements are related.</p>
+  <p><b>A guide, not a rule:</b> the road map covers the most common tests. Your data may need something it doesn't show, such as more than two factors, repeated measurements over time or very small counts. If in doubt, talk to an analyst or statistician before you draw conclusions.</p>
+  <div class="notice">Want to build your skills? <a href="https://coh.gstt.nhs.uk/course/view.php?id=3199" target="_blank" rel="noopener">Book QI training with the CITI Academy</a>.</div>
+</section>
+
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const els = { ask: $('ask'), route: $('route'), result: $('result'), tree: $('tree'), title: $('title'), back: $('backBtn') };
+  const COLORS = { ink: '#212B32', muted: '#4C6272', line: '#AEB7BD', q: '#E6F0FA', qStroke: '#005EB8', test: '#007F3B', start: '#F0F4F5' };
+  const FONT = 'Figtree, Frutiger, Helvetica Neue, Arial, sans-serif';
+  const BASE = {{ site.baseurl | jsonify }};
+  const toolUrl = id => BASE + '/' + id + '/';
+
+  // ---- the road map ----
+  // A question has options, each leading to the next node. A test is where a route ends;
+  // the Box-Cox transform leads on (`then`) to the normal-data questions.
+  const NODES = {
+    output: { q: 'What type of data is your output (Y)?', hint: 'The result you are measuring, the thing you want to understand or improve.', options: [
+      { a: 'Attribute', sub: 'Counts or categories, such as admitted or not, harm or no harm, on time or late', next: 'attrInput' },
+      { a: 'Continuous', sub: 'A measurement on a scale, such as length of stay, waiting time or blood pressure', next: 'contInput' }] },
+
+    attrInput: { q: 'What type of data is your input (X)?', hint: 'The thing you think influences the output.', options: [
+      { a: 'Attribute', sub: 'Categories, such as ward, team or before and after a change', next: 'attrFactors' },
+      { a: 'Continuous', sub: 'A measurement, such as age, length of stay or staffing level', next: 'logistic' }] },
+    attrFactors: { q: 'How many factors?', hint: 'Use one factor to compare a proportion with a target or between groups. Use two factors to see whether two sets of categories are related, such as ward and whether patients were assessed on time, when the output has more than two categories or there are more than two groups.', options: [
+      { a: '1 factor', sub: 'One proportion, such as the percentage of patients seen within 4 hours', next: 'attrLevels' },
+      { a: '2 factors', sub: 'A table of counts, such as on time or late on each of several wards', next: 'chi' }] },
+    attrLevels: { q: 'How many levels?', hint: 'The number of groups you are comparing.', options: [
+      { a: '1 level', sub: 'One group compared with a target or standard', next: 'prop1' },
+      { a: '2 levels', sub: 'Two groups compared with each other, such as two wards or before and after', next: 'prop2' }] },
+
+    contInput: { q: 'What type of data is your input (X)?', hint: 'The thing you think influences the output.', options: [
+      { a: 'Attribute', sub: 'Categories or groups, such as ward, site, or before and after a change', next: 'normal' },
+      { a: 'Continuous', sub: 'A measurement, such as age, staffing level or number of referrals', next: 'contFactors' }] },
+    contFactors: { q: 'How many factors?', hint: 'The number of inputs you want to relate to the output.', options: [
+      { a: '1 factor', sub: 'One input, such as length of stay against age', next: 'slr' },
+      { a: 'More than 1 factor', sub: 'Several inputs together, such as waiting time against staffing and demand', next: 'mlr' }] },
+
+    normal: { q: 'Is your data normally distributed?', hint: 'Check with an Anderson-Darling test: a p-value above 0.05 means you can treat the data as normal.', link: { id: 'histogram', label: 'Check with the histogram tool' }, options: [
+      { a: 'Normal', sub: 'Roughly symmetrical and bell-shaped, Anderson-Darling p above 0.05', next: 'nFactors' },
+      { a: 'Not normal', sub: 'Skewed or lumpy, Anderson-Darling p of 0.05 or below', next: 'transform' }] },
+    nFactors: { q: 'How many factors?', hint: 'The number of inputs that split your data into groups.', options: [
+      { a: '1 factor', sub: 'One way of grouping, such as ward', next: 'nLevels' },
+      { a: '2 factors', sub: 'Two ways of grouping at once, such as ward and day of the week', next: 'anova2' }] },
+    nLevels: { q: 'How many levels?', hint: 'The number of groups you are comparing.', options: [
+      { a: '1 level', sub: 'One group compared with a target or standard', next: 't1' },
+      { a: '2 levels', sub: 'Two groups, such as two wards or before and after', next: 'n2Compare' },
+      { a: 'More than 2 levels', sub: 'Three or more groups, such as several wards', next: 'n3Compare' }] },
+    n2Compare: { q: 'Do you want to compare the means or the variation?', hint: 'The average, or how spread out the values are.', options: [
+      { a: 'Means', sub: 'Is the average different?', next: 'dependent' },
+      { a: 'Variation', sub: 'Is the spread different?', next: 'var2' }] },
+    dependent: { q: 'Is the data dependent?', hint: 'Paired data comes from the same people or things measured twice.', options: [
+      { a: 'Independent', sub: 'Different people or things in each group, such as patients on two wards', next: 't2' },
+      { a: 'Paired', sub: 'The same people or things measured twice, such as before and after', next: 'tPaired' }] },
+    n3Compare: { q: 'Do you want to compare the means or the variation?', hint: 'The average, or how spread out the values are.', options: [
+      { a: 'Means', sub: 'Are any of the averages different?', next: 'anova1' },
+      { a: 'Variation', sub: 'Is the spread different in any group?', next: 'bartlett' }] },
+
+    transform: { q: 'Do you want to transform the data?', hint: 'Transforming skewed data, such as waiting times, can make it normal so you can use the tests for normal data.', options: [
+      { a: 'Yes', sub: 'Transform it and use the tests for normal data', next: 'boxcox' },
+      { a: 'No', sub: 'Use a test that doesn’t need normal data', next: 'npFactors' }] },
+    npFactors: { q: 'How many factors?', hint: 'The number of inputs that split your data into groups.', options: [
+      { a: '1 factor', sub: 'One group compared with a target, or two groups compared', next: 'npLevels' },
+      { a: '2 or more factors', sub: 'More groups, such as several wards', next: 'outliers' }] },
+    npLevels: { q: 'How many levels?', hint: 'The number of groups you are comparing.', options: [
+      { a: '1 level', sub: 'One group compared with a target or standard', next: 'sign' },
+      { a: '2 levels', sub: 'Two groups, such as two wards or before and after', next: 'np2Compare' }] },
+    np2Compare: { q: 'Do you want to compare the medians or the variation?', hint: 'For data that isn’t normal, the median is the better middle value.', options: [
+      { a: 'Medians', sub: 'Is the middle value different?', next: 'mann' },
+      { a: 'Variation', sub: 'Is the spread different?', next: 'levene' }] },
+    outliers: { q: 'Are there outliers in your data?', hint: 'Values far away from the rest. A box and whisker plot shows them.', link: { id: 'box_plot', label: 'Check with the box and whisker plot' }, options: [
+      { a: 'No outliers', sub: 'No values far from the rest', next: 'kruskal' },
+      { a: 'Outliers', sub: 'Some values far from the rest', next: 'mood' }] },
+
+    logistic: { test: 'Logistic regression', what: 'Relates a yes or no (or other category) outcome to one or more measured inputs, and gives the odds of the outcome as each input changes.',
+      example: 'Whether a patient is readmitted within 30 days, against their age and length of stay.',
+      h0: 'The input has no effect on the chance of the outcome.', reject: 'the chance of the outcome changes with the input.',
+      checks: ['Each observation is independent.', 'You have enough of each outcome; a rough rule is at least 10 of the rarer outcome for each input.'] },
+    chi: { test: 'Chi-squared test', what: 'Tests whether counts split differently between groups, that is whether two sets of categories are related.',
+      example: 'Whether the split of patients assessed on time and late differs between wards.',
+      h0: 'The two factors are independent: the split is the same in every group.', reject: 'the split differs between groups.',
+      checks: ['Use counts, not percentages.', 'Each patient or item is counted once.', 'Expected counts of at least 5 in each cell.'], tools: ['chi_squared'] },
+    prop1: { test: '1-proportion test', what: 'Compares one proportion with a target or standard.',
+      example: 'Whether the percentage of patients seen within 4 hours is different from the 95% standard.',
+      h0: 'The proportion equals the target.', reject: 'the proportion is different from the target.',
+      checks: ['Each observation is independent.', 'Enough data that you expect at least 5 of each outcome.'], tools: ['power_sample_size'] },
+    prop2: { test: '2-proportions test', what: 'Compares a proportion between two groups.',
+      example: 'Whether the percentage of falls that cause harm is different on two wards, or before and after a change.',
+      h0: 'The two proportions are equal.', reject: 'the proportions are different.',
+      checks: ['The two groups are independent.', 'Enough data that you expect at least 5 of each outcome in each group.'], tools: ['power_sample_size', 'chi_squared'] },
+    slr: { test: 'Simple linear regression', what: 'Fits a straight line relating one measured input to the output, and tells you how much of the variation in the output it explains (R²).',
+      example: 'Length of stay against age.',
+      h0: 'The slope is zero: the input has no straight-line relationship with the output.', reject: 'the output changes with the input.',
+      checks: ['The relationship looks like a straight line on a scatter plot.', 'The residuals (the gaps from the line) are roughly normal and similarly spread all along the line.', 'Each observation is independent.'], tools: ['scatter_plot'] },
+    mlr: { test: 'Multiple linear regression', what: 'Relates several inputs together to the output, and shows which of them matter once the others are taken into account.',
+      example: 'Waiting times against staffing and demand.',
+      h0: 'Each input’s coefficient is zero: it adds nothing once the others are included.', reject: 'that input is related to the output.',
+      checks: ['Each relationship is roughly a straight line.', 'The residuals are roughly normal and evenly spread.', 'The inputs are not too closely related to each other.'], tools: ['multiple_regression'] },
+    anova2: { test: 'Two-way ANOVA', what: 'Compares means across two factors at once, and whether the effect of one factor depends on the other (an interaction).',
+      example: 'Length of stay by ward and by day of admission.',
+      h0: 'Neither factor, nor their interaction, changes the mean.', reject: 'that factor (or the interaction) changes the mean.',
+      checks: ['The data in each group is roughly normal.', 'The groups have similar spread.', 'Each observation is independent.'] },
+    t1: { test: '1-sample t test', what: 'Compares the mean of one group with a target or standard.',
+      example: 'Whether the average time from arrival to triage is different from the 15-minute standard.',
+      h0: 'The mean equals the target.', reject: 'the mean is different from the target.',
+      checks: ['The data is roughly normal.', 'Each observation is independent.'], tools: ['power_sample_size'] },
+    var2: { test: 'Test for two variances (F test)', what: 'Compares how spread out the values are in two groups.',
+      example: 'Whether door-to-needle times vary more on one site than another.',
+      h0: 'The two variances are equal.', reject: 'one group is more spread out than the other.',
+      checks: ['The data in each group is normal; the F test is sensitive to this, so use Levene’s test if in doubt.', 'The two groups are independent.'] },
+    t2: { test: '2-sample t test', what: 'Compares the means of two independent groups.',
+      example: 'Whether the average length of stay is different on two wards.',
+      h0: 'The two means are equal.', reject: 'the means are different.',
+      checks: ['The data in each group is roughly normal.', 'The groups are independent.', 'Check whether the spread is similar; if not, use the version of the test that doesn’t assume equal variances (Welch’s).'], tools: ['power_sample_size', 'box_plot'] },
+    tPaired: { test: 'Paired t test', what: 'Compares two measurements on the same people or things by looking at the difference within each pair.',
+      example: 'Pain scores for the same patients before and after a new pain management plan.',
+      h0: 'The mean difference is zero.', reject: 'there is a real change between the two measurements.',
+      checks: ['The differences are roughly normal.', 'Each pair is independent of the others.'], tools: ['power_sample_size'] },
+    anova1: { test: 'One-way ANOVA', what: 'Compares the means of three or more groups.',
+      example: 'Whether the average length of stay differs across several wards.',
+      h0: 'All the group means are equal.', reject: 'at least one group mean is different; follow up to see which.',
+      checks: ['The data in each group is roughly normal.', 'The groups have similar spread (check with Bartlett’s or Levene’s test).', 'Each observation is independent.'], tools: ['anova', 'power_sample_size'] },
+    bartlett: { test: 'Bartlett’s test', what: 'Compares how spread out the values are in three or more groups.',
+      example: 'Whether blood test turnaround times vary more in some laboratories than others.',
+      h0: 'All the group variances are equal.', reject: 'at least one group is more or less spread out.',
+      checks: ['The data in each group is normal; Bartlett’s test is sensitive to this, so use Levene’s test if in doubt.', 'Each observation is independent.'] },
+    boxcox: { test: 'Box-Cox transformation', isTransform: true, what: 'Finds a power (such as the square root, the log or the reciprocal) that makes skewed data closer to normal. You then run the test on the transformed data.',
+      example: 'Taking the log of waiting times, which usually have a long tail of long waits.',
+      checks: ['The data must all be above zero.', 'Check the transformed data is normal with an Anderson-Darling test before you carry on.', 'Report results in the original units, for example by back-transforming means.'],
+      then: { a: 'Transformed data is normal', sub: 'Carry on with the tests for normal data', next: 'nFactors' }, tools: ['histogram'] },
+    sign: { test: '1-sample sign test', what: 'Compares the median of one group with a target, without assuming the data is normal.',
+      example: 'Whether the median wait for a clinic appointment is different from the 6-week standard.',
+      h0: 'The median equals the target.', reject: 'the median is different from the target.',
+      checks: ['Each observation is independent.', 'It has less power than a t test, so it needs more data to detect the same change.'] },
+    mann: { test: 'Mann-Whitney test', what: 'Compares the medians of two independent groups, without assuming the data is normal.',
+      example: 'Whether the median wait in the emergency department is different on two sites.',
+      h0: 'The two medians are equal.', reject: 'the medians are different.',
+      checks: ['The groups are independent.', 'The two groups have a similar shape of distribution.'], tools: ['box_plot'] },
+    levene: { test: 'Levene’s test', what: 'Compares how spread out the values are in two or more groups, and works well when the data isn’t normal.',
+      example: 'Whether discharge times vary more on one ward than another.',
+      h0: 'All the group variances are equal.', reject: 'at least one group is more or less spread out.',
+      checks: ['Each observation is independent.'], tools: ['box_plot'] },
+    kruskal: { test: 'Kruskal-Wallis test', what: 'Compares the medians of three or more groups, without assuming the data is normal.',
+      example: 'Whether the median length of stay differs across several wards.',
+      h0: 'All the group medians are equal.', reject: 'at least one group median is different.',
+      checks: ['The groups have a similar shape of distribution.', 'Each observation is independent.', 'It is affected by outliers; use Mood’s median test if there are any.'], tools: ['box_plot'] },
+    mood: { test: 'Mood’s median test', what: 'Compares the medians of two or more groups by counting values above and below the overall median, so outliers have little effect.',
+      example: 'Whether the median time to theatre differs across sites when a few patients waited much longer than the rest.',
+      h0: 'All the group medians are equal.', reject: 'at least one group median is different.',
+      checks: ['Each observation is independent.', 'It has less power than Kruskal-Wallis, so it needs more data.'], tools: ['box_plot'] }
+  };
+  const TOOL_NAMES = {
+    chi_squared: 'Chi-squared test', power_sample_size: 'Power and sample size', scatter_plot: 'Scatter plot',
+    multiple_regression: 'Multiple regression', anova: 'ANOVA', box_plot: 'Box and whisker plot', histogram: 'Histogram'
+  };
+  const ROOT = 'output';
+
+  // answers: the option chosen at each step, as an index, or 'then' to carry on after a transform
+  let answers = [];
+  let current = null;
+
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const slug = s => (s || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'hypothesis-test-selector';
+  const pick = (node, a) => a === 'then' ? node.then : node.options && node.options[a];
+  // What a step asked: its question, or for a transform the step itself
+  const askOf = node => node.q || node.test;
+  // Test names as they read mid-sentence, keeping capitals on people's names
+  const inline = t => /^(Mann|Mood|Levene|Kruskal|Bartlett|Box)/.test(t) ? t : t[0].toLowerCase() + t.slice(1);
+
+  // Follow the answers from the start: the steps taken and the node reached
+  function walk(list) {
+    const steps = [];
+    let id = ROOT;
+    for (const a of list) {
+      const node = NODES[id], opt = pick(node, a);
+      if (!opt) break;
+      steps.push({ id, node, a, opt });
+      id = opt.next;
+    }
+    return { steps, id, node: NODES[id] };
+  }
+
+  // The route to every test, for the road map
+  const ROUTES = {};
+  (function find(id, list) {
+    const node = NODES[id];
+    if (!ROUTES[id]) ROUTES[id] = list;
+    (node.options || []).forEach((o, i) => find(o.next, list.concat(i)));
+  })(ROOT, []);
+
+  // ---- drawing the route ----
+  function wrap(text, max) {
+    const words = String(text).split(/\s+/), lines = [];
+    let line = '';
+    words.forEach(w => { if (line && (line + ' ' + w).length > max) { lines.push(line); line = w; } else line = line ? line + ' ' + w : w; });
+    if (line) lines.push(line);
+    return lines;
+  }
+  function routeSVG(r) {
+    const W = 680, BW = 440, X0 = (W - BW) / 2, cx = W / 2, LH = 19, PAD = 12, GAP = 46;
+    const title = els.title.value.trim();
+    const boxes = [{ kind: 'start', lines: ['Start'] }];
+    r.steps.forEach(s => boxes.push({ kind: 'q', lines: wrap(askOf(s.node), 44), ans: s.opt.a }));
+    if (r.node.test) boxes.push({ kind: 'test', lines: wrap(r.node.test, 36) });
+    else boxes.push({ kind: 'q', lines: wrap(r.node.q, 44), open: true });
+    let y = title ? 62 : 24, s = '';
+    if (title) wrap(title, 60).slice(0, 2).forEach((l, i) => { s += `<text x="${cx}" y="${30 + i * 22}" text-anchor="middle" font-size="18" font-weight="700" fill="${COLORS.ink}">${esc(l)}</text>`; });
+    if (title && wrap(title, 60).length > 1) y += 22;
+    boxes.forEach((b, i) => {
+      const h = b.lines.length * LH + PAD * 2;
+      const fill = b.kind === 'test' ? COLORS.test : b.kind === 'start' ? COLORS.start : COLORS.q;
+      const stroke = b.kind === 'test' ? COLORS.test : b.kind === 'start' ? COLORS.line : COLORS.qStroke;
+      const ink = b.kind === 'test' ? '#ffffff' : COLORS.ink;
+      const bw = b.kind === 'start' ? 140 : BW, bx = cx - bw / 2;
+      s += `<rect x="${bx}" y="${y}" width="${bw}" height="${h}" rx="${b.kind === 'start' ? h / 2 : 8}" fill="${fill}" stroke="${stroke}" stroke-width="2"${b.open ? ' stroke-dasharray="6 4"' : ''}/>`;
+      b.lines.forEach((l, j) => { s += `<text x="${cx}" y="${y + PAD + 14 + j * LH}" text-anchor="middle" font-size="${b.kind === 'test' ? 17 : 15}" font-weight="${b.kind === 'q' ? 600 : 700}" fill="${ink}">${esc(l)}</text>`; });
+      y += h;
+      if (i < boxes.length - 1) {
+        const ans = b.ans, y2 = y + GAP;
+        s += `<line x1="${cx}" y1="${y}" x2="${cx}" y2="${y2 - 8}" stroke="${COLORS.muted}" stroke-width="2"/><path d="M${cx - 6} ${y2 - 10} L${cx} ${y2 - 1} L${cx + 6} ${y2 - 10} Z" fill="${COLORS.muted}"/>`;
+        if (ans) s += `<text x="${cx + 12}" y="${y + GAP / 2 + 5}" font-size="14" font-weight="700" fill="${COLORS.qStroke}">${esc(ans)}</text>`;
+        y = y2;
+      }
+    });
+    const H = y + 24;
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" font-family="${FONT}" role="img" aria-labelledby="routeTitle"><title id="routeTitle">${esc(summaryText())}</title><rect width="${W}" height="${H}" fill="#ffffff"/>${s}</svg>`;
+  }
+
+  // ---- text ----
+  function summaryText() {
+    const r = walk(answers);
+    const route = r.steps.map(s => `${askOf(s.node)} ${s.opt.a}.`).join(' ');
+    const title = els.title.value.trim();
+    const head = title ? title + '\n' : '';
+    if (!r.node.test) return head + (route ? route + ' ' : '') + 'Next question: ' + r.node.q;
+    const n = r.node;
+    if (n.isTransform) return head + route + ` Transform the data with a ${n.test}, check it is now normal, then carry on with the tests for normal data. ${n.what}`;
+    return head + route + ` Suggested test: ${n.test}. ${n.what} Null hypothesis: ${n.h0} If the p-value is below 0.05, reject it: ${n.reject}`;
+  }
+  function tableRows() {
+    const r = walk(answers);
+    const rows = [['Step', 'Question', 'Answer']];
+    r.steps.forEach((s, i) => rows.push([i + 1, askOf(s.node), s.opt.a]));
+    if (r.node.test) rows.push(['Result', r.node.isTransform ? 'Transform' : 'Suggested test', r.node.test]);
+    else rows.push(['Next', r.node.q, '']);
+    return rows;
+  }
+
+  // ---- rendering ----
+  function toolLinks(ids) {
+    return (ids || []).map(id => `<a href="${esc(toolUrl(id))}">${esc(TOOL_NAMES[id])}</a>`).join('');
+  }
+  function renderAsk(r) {
+    const n = r.node, stepNo = r.steps.length + 1;
+    if (n.test) {
+      els.ask.innerHTML = `<p class="step">Your test</p><p class="question">${esc(n.test)}</p>` +
+        (n.then ? `<p class="hint">Once you have transformed the data and checked it is now normal, carry on.</p><div class="choices"><button type="button" class="option" data-then="1"><b>${esc(n.then.a)}</b><small>${esc(n.then.sub)}</small></button></div>`
+          : `<p class="hint">See the result for what the test does and what to check. Go back or change an answer to explore other routes.</p>`);
+      return;
+    }
+    els.ask.innerHTML = `<fieldset class="choices"><legend><span class="step">Question ${stepNo}</span><span class="question" style="display:block">${esc(n.q)}</span></legend>` +
+      `<p class="hint">${esc(n.hint)}${n.link ? ` <a href="${esc(toolUrl(n.link.id))}">${esc(n.link.label)}</a>.` : ''}</p>` +
+      n.options.map((o, i) => `<button type="button" class="option" data-opt="${i}"><b>${esc(o.a)}</b><small>${esc(o.sub)}</small></button>`).join('') + `</fieldset>`;
+  }
+  function renderRoute(r) {
+    els.route.innerHTML = r.steps.length
+      ? r.steps.map((s, i) => `<li><span><span class="q">${esc(askOf(s.node))}</span><span class="a">${esc(s.opt.a)}</span></span><button type="button" class="link" data-change="${i}" aria-label="Change your answer to: ${esc(askOf(s.node))}">Change</button></li>`).join('')
+      : `<li><span class="hint" style="margin:0">None yet. Start with the first question.</span></li>`;
+    els.back.disabled = !answers.length;
+  }
+  function renderResult(r) {
+    const n = r.node;
+    const chart = `<div class="chartwrap" id="chart">${routeSVG(r)}</div>`;
+    if (!n.test) {
+      current = r.steps.length ? r : null;
+      els.result.innerHTML = r.steps.length
+        ? `<p class="summary">Keep going: <strong>${esc(n.q.replace(/\?$/, ''))}?</strong></p><p class="focuson">Your route so far. Answer the next question to reach a test.</p>${chart}`
+        : `<div class="empty"><p>Answer the questions on the left to find the hypothesis test that suits your data, or try an example route.</p><button type="button" class="primary" data-act="example">Try the example</button></div>`;
+      return;
+    }
+    current = r;
+    const facts = n.isTransform ? '' : `<div class="facts"><div class="fact"><span>Null hypothesis</span><p>${esc(n.h0)}</p></div><div class="fact"><span>If p is below 0.05</span><p>Reject the null hypothesis: ${esc(n.reject)}</p></div></div>`;
+    els.result.innerHTML = `
+      <p class="summary">${n.isTransform ? 'Transform your data with a' : 'Use a'} <strong>${esc(inline(n.test))}</strong></p>
+      <p class="focuson">${esc(n.what)}</p>
+      ${n.isTransform ? `<div class="warnbox">After transforming, check the data is now normal, then carry on with the tests for normal data using the button on the left. If it still isn’t normal, go back and choose not to transform.</div>` : ''}
+      ${facts}
+      ${chart}
+      <div class="reading"><h3>For example</h3><p>${esc(n.example)}</p>
+      <h3>Before you trust the result</h3><ul>${n.checks.map(c => `<li>${esc(c)}</li>`).join('')}</ul>
+      ${n.tools ? `<h3>Tools that can help</h3><div class="tools">${toolLinks(n.tools)}</div>` : ''}</div>`;
+  }
+  function renderTree(r) {
+    const onIds = new Set(r.steps.map(s => s.id));
+    const onPairs = new Set(r.steps.map(s => s.id + ':' + s.a));
+    const here = r.node.test ? r.id : null;
+    function node(id) {
+      const n = NODES[id];
+      if (n.test) {
+        return `<button type="button" class="leaf${id === here ? ' here' : ''}" data-leaf="${id}"${id === here ? ' aria-current="true"' : ''}>${esc(n.test)}</button>` +
+          (n.then ? ` <span class="then">then carry on as normal data, from “${esc(NODES[n.then.next].q)}”</span>` : '');
+      }
+      const on = onIds.has(id) || id === r.id;
+      return `<span class="tq">${esc(n.q)}</span><ul${on ? ' class="on"' : ''}>` + n.options.map((o, i) =>
+        `<li${onPairs.has(id + ':' + i) ? ' class="on"' : ''}><span class="ta">${esc(o.a)}</span>${node(o.next)}</li>`).join('') + `</ul>`;
+    }
+    els.tree.innerHTML = `<li class="on">${node(ROOT)}</li>`;
+  }
+  function update() {
+    const r = walk(answers);
+    answers = r.steps.map(s => s.a);
+    renderAsk(r); renderRoute(r); renderResult(r); renderTree(r);
+  }
+  function choose(a) { answers.push(a); update(); focusAsk(); }
+  function focusAsk() {
+    const b = els.ask.querySelector('button.option') || els.ask.querySelector('.question');
+    if (!b) return;
+    if (!b.matches('button')) b.setAttribute('tabindex', '-1');
+    b.focus();
+  }
+
+  // ---- exports ----
+  function svgEl() { return document.querySelector('#chart svg'); }
+  function fileName() { return slug(els.title.value.trim() || (current && current.node.test) || ''); }
+  let dlPromise = null;
+  function getDownloads() {
+    if (!window.claude || typeof window.claude.use !== 'function') return Promise.resolve(undefined);
+    if (!dlPromise) dlPromise = window.claude.use('downloads').catch(() => null);
+    return dlPromise;
+  }
+  async function downloadBlob(blob, name) {
+    const d = await getDownloads();
+    if (d) { const r = await d.save({ filename: name, data: blob }); return r && r.status !== 'declined'; }
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+    return true;
+  }
+  function status(msg) { FocusActions.say(msg); }
+  function toPNG(cb) {
+    const svg = svgEl(); if (!svg) return;
+    const vb = svg.viewBox.baseVal, scale = 2;
+    const str = new XMLSerializer().serializeToString(svg);
+    const img = new Image();
+    img.onload = () => {
+      const c = document.createElement('canvas');
+      c.width = vb.width * scale; c.height = vb.height * scale;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, c.width, c.height);
+      ctx.drawImage(img, 0, 0, c.width, c.height);
+      c.toBlob(cb, 'image/png');
+    };
+    img.onerror = () => status('Could not create the image.');
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(str);
+  }
+  const csvCell = v => v === undefined ? '' : /[",\n]/.test(String(v)) ? '"' + String(v).replace(/"/g, '""') + '"' : String(v);
+  async function copyText(t) {
+    try { await navigator.clipboard.writeText(t); return true; }
+    catch (e) {
+      const ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select();
+      const ok = document.execCommand('copy'); ta.remove(); return ok;
+    }
+  }
+  const saved = (ok, msg) => status(ok ? msg : 'Download cancelled.');
+  const failed = () => status('The file couldn’t be saved here. Try Copy instead.');
+  function act(a) {
+    if (a === 'example') return loadExample();
+    if (!current) return;
+    if (a === 'png') toPNG(b => downloadBlob(b, fileName() + '.png').then(ok => saved(ok, 'PNG downloaded.'), failed));
+    if (a === 'svg') downloadBlob(new Blob([new XMLSerializer().serializeToString(svgEl())], { type: 'image/svg+xml' }), fileName() + '.svg').then(ok => saved(ok, 'SVG downloaded.'), failed);
+    if (a === 'copyimg') {
+      if (!(navigator.clipboard && window.ClipboardItem)) return status('Your browser can’t copy images — use Download PNG.');
+      toPNG(async b => {
+        try { await navigator.clipboard.write([new ClipboardItem({ 'image/png': b })]); status('Chart copied — paste it into PowerPoint or Word.'); }
+        catch (e) { status('Copy was blocked — use Download PNG.'); }
+      });
+    }
+    if (a === 'csv') downloadBlob(new Blob([tableRows().map(r => r.map(csvCell).join(',')).join('\r\n')], { type: 'text/csv' }), fileName() + '.csv').then(ok => saved(ok, 'Table downloaded.'), failed);
+    if (a === 'copytable') copyText(tableRows().map(r => r.join('\t')).join('\n')).then(ok => status(ok ? 'Table copied — paste it into Excel.' : 'Copy was blocked.'));
+    if (a === 'copysummary') copyText(summaryText()).then(ok => status(ok ? 'Summary copied.' : 'Copy was blocked.'));
+  }
+  // Example: comparing length of stay on two wards
+  function loadExample() {
+    answers = ROUTES.t2.slice();
+    els.title.value = 'Length of stay on two wards: which test? (example)';
+    update();
+  }
+
+  // ---- events ----
+  els.ask.addEventListener('click', e => {
+    const b = e.target.closest('button.option'); if (!b) return;
+    choose(b.dataset.then ? 'then' : +b.dataset.opt);
+  });
+  els.route.addEventListener('click', e => {
+    const b = e.target.closest('button[data-change]'); if (!b) return;
+    answers = answers.slice(0, +b.dataset.change); update(); focusAsk();
+  });
+  els.tree.addEventListener('click', e => {
+    const b = e.target.closest('button[data-leaf]'); if (!b) return;
+    answers = ROUTES[b.dataset.leaf].slice(); update();
+    els.result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+  els.back.addEventListener('click', () => { answers.pop(); update(); focusAsk(); });
+  $('clearBtn').addEventListener('click', () => { answers = []; els.title.value = ''; update(); focusAsk(); });
+  els.title.addEventListener('input', () => { const r = walk(answers); renderResult(r); });
+  els.result.addEventListener('click', e => { const b = e.target.closest('button[data-act]'); if (b) act(b.dataset.act); });
+
+  update();
+
+  // ---- shared toolbar (Open, Save, Export) ----
+  FocusActions.mount({
+    tool: 'hypothesis_test_selector', toolName: 'hypothesis test selector',
+    example: loadExample, hasData: () => answers.length > 0 || !!els.title.value.trim(),
+    fileName: () => fileName(),
+    fields: 'section.panel[aria-labelledby="data-h"]',
+    getExtra: () => ({ answers }),
+    setExtra: x => { answers = x && Array.isArray(x.answers) ? x.answers.filter(a => a === 'then' || Number.isInteger(a)) : []; },
+    afterOpen: () => update(),
+    ready: () => !!current,
+    exports: ['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) }))
+  });
+})();
+</script>
+{% include focus-footer.html %}
+</body>
+</html>
