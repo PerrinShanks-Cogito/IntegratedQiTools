@@ -132,6 +132,9 @@ button.link:hover{background:none;color:var(--navy)}
 .tree .then{color:var(--muted);font-size:.9rem}
 
 /* Notes */
+.knowbox{border-bottom:1px solid var(--line);padding-bottom:1.1rem}
+.knowbox select{width:100%;padding:.5rem .65rem;border:2px solid var(--muted);border-radius:4px;background:var(--surface)}
+.knowbox select:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px var(--yellow)}
 .notes{padding:0 1.25rem 2rem;color:var(--muted);font-size:.92rem}
 .notes p{max-width:80ch;margin:0 0 .75rem}
 /* Centre the page in the same 1340px column as the FOCUS header */
@@ -178,6 +181,11 @@ button.link:hover{background:none;color:var(--navy)}
 <main>
   <section class="panel" aria-labelledby="data-h">
     <h2 id="data-h" class="sr">Your data</h2>
+    <div class="block knowbox">
+      <label for="pickTest">Already know which test you want?</label>
+      <p class="hint">Choose it to skip the questions and run it on your data straight away.</p>
+      <select id="pickTest"><option value="">Choose a test</option></select>
+    </div>
     <div id="ask" aria-live="polite"></div>
 
     <h2 id="route-h">Your answers</h2>
@@ -221,7 +229,7 @@ button.link:hover{background:none;color:var(--navy)}
 <script>
 (function () {
   const $ = id => document.getElementById(id);
-  const els = { ask: $('ask'), route: $('route'), result: $('result'), tree: $('tree'), title: $('title'), back: $('backBtn') };
+  const els = { pick: $('pickTest'), ask: $('ask'), route: $('route'), result: $('result'), tree: $('tree'), title: $('title'), back: $('backBtn') };
   const COLORS = { ink: '#212B32', muted: '#4C6272', line: '#AEB7BD', q: '#E6F0FA', qStroke: '#005EB8', test: '#007F3B', start: '#F0F4F5' };
   const FONT = 'Figtree, Frutiger, Helvetica Neue, Arial, sans-serif';
   const BASE = {{ site.baseurl | jsonify }};
@@ -1116,6 +1124,7 @@ button.link:hover{background:none;color:var(--navy)}
   }
   function update() {
     const r = walk(answers);
+    els.pick.value = r.node.test ? r.id : '';
     answers = r.steps.map(s => s.a);
     renderAsk(r); renderRoute(r); renderResult(r); renderTree(r);
   }
@@ -1210,6 +1219,22 @@ button.link:hover{background:none;color:var(--navy)}
   els.route.addEventListener('click', e => {
     const b = e.target.closest('button[data-change]'); if (!b) return;
     answers = answers.slice(0, +b.dataset.change); update(); focusAsk();
+  });
+  // Jump straight to a test chosen from the list, with the route that leads there
+  const PICK = [
+    ['Proportions and counts', ['prop1', 'prop2', 'chi']],
+    ['Means (normal data)', ['t1', 't2', 'tPaired', 'anova1', 'anova2']],
+    ['Medians (data that isn’t normal)', ['sign', 'mann', 'kruskal', 'mood']],
+    ['Spread (variation)', ['var2', 'bartlett', 'levene']],
+    ['Relationships', ['slr', 'mlr', 'logistic']],
+    ['Making data normal', ['boxcox']]
+  ];
+  els.pick.insertAdjacentHTML('beforeend', PICK.map(([label, ids]) => `<optgroup label="${esc(label)}">${ids.map(id => `<option value="${id}">${esc(NODES[id].test)}</option>`).join('')}</optgroup>`).join(''));
+  els.pick.addEventListener('change', () => {
+    const id = els.pick.value; if (!ROUTES[id]) return;
+    answers = ROUTES[id].slice(); update();
+    const box = els.result.querySelector('.runbox');
+    if (box) { box.scrollIntoView({ behavior: 'smooth', block: 'start' }); const f = box.querySelector('textarea, input'); if (f) f.focus({ preventScroll: true }); }
   });
   els.tree.addEventListener('click', e => {
     const b = e.target.closest('button[data-leaf]'); if (!b) return;
