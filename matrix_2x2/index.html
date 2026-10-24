@@ -864,10 +864,13 @@ select:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px var(--ye
 
   // ---- data collection sheet ----
   // The parse step finds the two score columns by their headings, and ignores Notes.
-  // Items already in the box are carried over, so a list can be shared for scoring.
+  // Items already in the box are carried over, so a list can be shared for scoring, but only
+  // when they were scored for the selected matrix type. Items whose headings belong to another
+  // type, such as ideas left in the box after switching to stakeholders, give a blank sheet.
   function dataSheet() {
     const p = preset(), hi = radio('scale') === '5' ? 5 : 10, One = cap(p.item[0]);
-    const d = parse(els.data.value, els.hasHeader.checked, p);
+    const s = split(els.data.value), headed = els.hasHeader.checked;
+    const d = s && (!headed || columns(s.recs[0], p)) ? parse(els.data.value, headed, p) : null;
     const have = d ? d.items.map(i => [i.name, i.x, i.y]).concat(d.unscored.map(n => [n, '', ''])) : [];
     const blank = Math.max(20, have.length + 10);
     const head = [One, `${p.x.name} (1 = ${p.x.guide[0]}, ${hi} = ${p.x.guide[1]})`, `${p.y.name} (1 = ${p.y.guide[0]}, ${hi} = ${p.y.guide[1]})`, 'Notes'].map(v => ({ v, s: 'head' }));
