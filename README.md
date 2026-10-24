@@ -10,7 +10,7 @@ instructions for a cause and effect diagram, and the demand and capacity model,
 which was built here from the NHS Improvement and NHS England demand and
 capacity core model (version 4.2) and its user guidance, and the multiple
 regression tool, tree plot (treemap), box and whisker plot, ANOVA,
-chi-squared test and Weibull reliability analysis, which were all built here, and the design of experiments, attribute agreement analysis and Gauge R&R tools, which were built here from the DOE, Attribute Agreement Analysis and Gauge R&R sheets of the AAS Data Analysis Toolkit, and the power and sample size tool, which was built here from the Power and Sample Size section of the AAS Advanced Analysis Toolkit, and the funnel plot, which was
+chi-squared test and Weibull reliability analysis, which were all built here, and the design of experiments, attribute agreement analysis and Gauge R&R tools, which were built here from the DOE, Attribute Agreement Analysis and Gauge R&R sheets of the AAS Data Analysis Toolkit, and the power and sample size tool, which was built here from the Power and Sample Size section of the AAS Advanced Analysis Toolkit, and the hypothesis test selector, which was built here from the [hypothesis test selection road map](https://perrinshanks.com/hypothesis-test-selection-road-map/), and the funnel plot, which was
 built here from the NHS Improvement funnel plot tool (version 2.0), and the T
 chart for rare events, which was built here from NHS England's T chart rare
 events SPC tool (version 2.0)):
@@ -37,6 +37,7 @@ events SPC tool (version 2.0)):
 | Gauge R&R (measurement system analysis) | `/gauge_rr/` |
 | Attribute agreement analysis | `/attribute_agreement/` |
 | Design of experiments (2-level factorial) | `/design_of_experiments/` |
+| Hypothesis test selector | `/hypothesis_test_selector/` |
 | Power and sample size | `/power_sample_size/` |
 | Demand and capacity model | `/demand_capacity/` |
 
