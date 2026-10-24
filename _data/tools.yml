@@ -142,7 +142,7 @@
   name: Hypothesis test selector
   status: Beta
   group: Test changes
-  description: Answer a few questions about your data, such as whether your result is a count or a measurement and how many groups you are comparing, and find the hypothesis test to use.
+  description: Answer a few questions about your data, such as whether your result is a count or a measurement and how many groups you are comparing, find the hypothesis test to use, then paste your data to run it.
 
 - id: power_sample_size
   name: Power and sample size
