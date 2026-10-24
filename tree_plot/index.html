@@ -163,7 +163,7 @@ tr.group td{font-weight:700;background:var(--bg)}
 <div class="page-head fa-host">
   <div class="fa-head-text">
     <h1>Build a tree plot</h1>
-    <p class="meta">Paste your data and see how a total breaks down into groups and the items within them, each drawn as a box sized by its share. Everything runs in your browser, so your data is never uploaded.</p>
+    <p class="meta">Paste your data and see how a total breaks down into groups and the items within them, each drawn as a box sized by its share. Use <b>Data sheet</b> to download a spreadsheet to collect your data in. Everything runs in your browser, so your data is never uploaded.</p>
   </div>
   <div data-focus-actions></div>
 </div>
@@ -671,6 +671,29 @@ tr.group td{font-weight:700;background:var(--bg)}
     update();
   }
 
+  // ---- blank data collection sheet ----
+  // One column per level, broadest first, then the values, as the parse step reads them.
+  function dataSheet() {
+    const val = els.valLabel.value.trim() || 'Count';
+    const head = ['Group', 'Subgroup', 'Item', val].map(v => ({ v, s: 'head' }));
+    const rows = [head];
+    for (let i = 0; i < 40; i++) rows.push(Array(4).fill({ v: '', s: 'input' }));
+    const notes = [
+      'Collecting your data',
+      '1. Rename the headings to suit your data, such as Directorate, Ward and Incident type. Keep the columns in order, from the broadest group to the item.',
+      '2. Fill in one row for each item within its group and subgroup, writing each name the same way every time so rows from the same group are put together.',
+      '3. Write the count or value for each row in the last column. If you leave it blank on every row, each row counts as one, so you can list one row per event instead.',
+      '4. You can use fewer levels: delete the Subgroup column, or both Subgroup and Item, if you don’t need them. Add more rows if you need them.',
+      '',
+      'Building the tree plot',
+      'Select the whole table on the Data sheet, including the headings, copy it and paste it into the Tree plot tool. Check that “First row is column headings” is ticked.'
+    ];
+    return [
+      { name: 'Data', cols: [28, 28, 32, 14], rows, freeze: 1 },
+      { name: 'Instructions', cols: [100], rows: notes.map((v, i) => [{ v, s: i === 0 || v === 'Building the tree plot' ? 'title' : 'wrap' }]) }
+    ];
+  }
+
   // ---- events ----
   els.data.addEventListener('input', schedule);
   els.hasHeader.addEventListener('change', () => { headerTouched = true; update(); });
@@ -682,7 +705,7 @@ tr.group td{font-weight:700;background:var(--bg)}
 
   update(); // start empty, ready for the user's data
 
-  // ---- shared toolbar (Open, Save, Export) ----
+  // ---- shared toolbar (Data sheet, Example, Open, Save, Export) ----
   FocusActions.mount({
     tool: 'tree_plot', toolName: 'tree plot',
     example: loadExample, hasData: () => !!els.data.value.trim(),
@@ -690,7 +713,8 @@ tr.group td{font-weight:700;background:var(--bg)}
     fields: 'section.panel[aria-labelledby="data-h"]',
     afterOpen: () => { headerTouched = true; update(); },
     ready: () => !!current,
-    exports: ['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) }))
+    exports: ['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) })),
+    template: { fileName: 'tree-plot-data-sheet.xlsx', sheets: dataSheet }
   });
 })();
 </script>
