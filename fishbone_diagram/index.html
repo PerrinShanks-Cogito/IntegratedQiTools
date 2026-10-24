@@ -634,6 +634,9 @@ function layout(st,opts){
   opts=opts||{};
   const S=G.slope;
   const geoms=st.categories.map((c,i)=>catGeom(c,sideOf(i)));
+  // Give every category box the size of the largest one, so they line up.
+  const lbW=geoms.reduce((a,g)=>Math.max(a,g.label.w),0), lbMaxH=geoms.reduce((a,g)=>Math.max(a,g.label.h),0);
+  geoms.forEach(g=>{g.label.w=lbW;g.label.h=lbMaxH;});
   const top=geoms.filter(g=>g.side==="top"), bot=geoms.filter(g=>g.side==="bottom");
   const Lt=top.reduce((a,g)=>Math.max(a,g.need),G.minL);
   const Lb=bot.reduce((a,g)=>Math.max(a,g.need),G.minL);
@@ -694,7 +697,8 @@ function layout(st,opts){
     s.push('<g class="box" data-id="cat:'+g.c.id+'">');
     s.push('<rect x="'+r1(bx)+'" y="'+r1(by)+'" width="'+r1(lb.w)+'" height="'+r1(lb.h)+'" rx="4" fill="'+(lb.empty?"#FFFFFF":COL.cat)+'" stroke="'+(sel?COL.sel:COL.cat)+'" stroke-width="'+(sel?3.5:2)+'"'+(lb.empty?' stroke-dasharray="5 4"':'')+'/>');
     s.push('<text text-anchor="middle" font-size="15" font-weight="700" fill="'+(lb.empty?COL.ph:"#FFFFFF")+'"'+(lb.empty?' font-style="italic"':'')+'>');
-    lb.lines.forEach((ln,k)=>s.push('<tspan x="'+r1(jx+lb.cx)+'" y="'+r1(by+8+k*19+15)+'">'+esc(ln)+'</tspan>'));
+    const ty=by+(lb.h-lb.lines.length*19)/2;
+    lb.lines.forEach((ln,k)=>s.push('<tspan x="'+r1(jx+lb.cx)+'" y="'+r1(ty+k*19+15)+'">'+esc(ln)+'</tspan>'));
     s.push('</text></g>');
   });
   // effect at the head
