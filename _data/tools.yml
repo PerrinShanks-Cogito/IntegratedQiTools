@@ -34,7 +34,7 @@
   name: Tree plot
   status: Beta
   group: Prioritise
-  description: See how a total breaks down into groups and the items within them, such as incidents by directorate, ward and type, with each box sized by its share.
+  description: See how a total breaks down into groups and the items within them, such as incidents by directorate, ward and type, with each box sized by its share and a data sheet to collect your data in.
 
 - id: bar_chart
   name: Bar chart
@@ -118,19 +118,19 @@
   name: Qualitative survey analysis
   status: Alpha
   group: Explore your data
-  description: Make sense of free-text survey comments. Check how rich they are, explore them with a word cloud, code each response with your own codes and sentiment, and write up findings with quotes, judged by their impact rather than how many said it.
+  description: Make sense of free-text survey comments. Check how rich they are, explore them with a word cloud, code each response with your own codes and sentiment, and write up findings with quotes, judged by their impact rather than how many said it, with a data sheet to code responses in.
 
 - id: gauge_rr
   name: Gauge R&R
   status: Beta
   group: Test changes
-  description: Check whether a measurement can be trusted, such as blood pressure readings or wound sizes, by seeing how much of its variation comes from the person and the equipment rather than from real differences.
+  description: Check whether a measurement can be trusted, such as blood pressure readings or wound sizes, by seeing how much of its variation comes from the person and the equipment rather than from real differences, with a data sheet to record the study in.
 
 - id: attribute_agreement
   name: Attribute agreement analysis
   status: Beta
   group: Test changes
-  description: Check whether people rating the same cases, such as pressure ulcer categories or triage levels, agree with themselves, with each other and with an expert standard.
+  description: Check whether people rating the same cases, such as pressure ulcer categories or triage levels, agree with themselves, each other and an expert standard, with a data sheet to record the study in.
 
 - id: design_of_experiments
   name: Design of experiments
