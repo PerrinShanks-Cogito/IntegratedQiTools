@@ -48,6 +48,12 @@
   group: Measure over time
   description: Build statistical process control charts with control limits to tell common cause from special cause variation.
 
+- id: p_chart
+  name: P chart
+  status: Beta
+  group: Measure over time
+  description: Chart a proportion over time, such as patients seen within four hours out of all who attended, with limits that allow for how many patients there were in each week or month.
+
 - id: t_chart
   name: T chart (rare events)
   status: Beta
