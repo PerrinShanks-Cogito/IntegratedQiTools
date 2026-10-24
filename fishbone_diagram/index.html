@@ -186,7 +186,20 @@ dialog::backdrop{background:rgba(0,20,40,.5)}
         <h2>Categories and causes</h2>
         <button class="btn small" id="addCat" type="button">Add category</button>
       </div>
-      <p class="hint" style="margin-top:0">Use five or six categories. Categories alternate above and below the spine, from left to right.</p>
+      <div class="block">
+        <label class="f" for="catSet">Category set</label>
+        <select class="field" id="catSet" aria-describedby="catSetHint">
+          <option value="classic">Classic: People, Materials, Environment, Methods, Equipment</option>
+          <option value="seips">SEIPS</option>
+          <option value="6ms">6Ms</option>
+          <option value="4ps">4Ps</option>
+          <option value="functions">Functions</option>
+          <option value="process">Process steps</option>
+          <option value="custom">Custom: name your own</option>
+        </select>
+        <p class="hint" id="catSetHint">Choosing a set renames your categories in order and keeps their causes.</p>
+      </div>
+      <p class="hint" style="margin-top:0">Most sets use five or six categories. Categories alternate above and below the spine, from left to right.</p>
       <div id="cats"></div>
       <datalist id="catSuggest"></datalist>
       <p class="hint">Press Enter in a box to add the next cause at the same level. Shift+Enter starts a new line.</p>
@@ -203,7 +216,7 @@ dialog::backdrop{background:rgba(0,20,40,.5)}
       <ol>
         <li><b>Write the effect</b> you want to influence. The tool puts it in a box on the right-hand side.</li>
         <li><b>The spine</b> is drawn for you: a horizontal line running left from the effect.</li>
-        <li><b>Choose five or six categories</b> of causes. The classic categories are Materials, Methods, Equipment, Environment and People, so a new diagram starts with these. Rename, add or remove them to suit your problem.</li>
+        <li><b>Choose five or six categories</b> of causes. The classic categories are Materials, Methods, Equipment, Environment and People, so a new diagram starts with these. Use <b>Category set</b> to switch to SEIPS, 6Ms, 4Ps, Functions or Process steps, or choose Custom to name your own. Rename, add or remove them to suit your problem.</li>
         <li><b>Each category becomes a bone</b>: a diagonal line above or below the spine, with the category name in a box at its end.</li>
         <li><b>List the causes</b> in each category that contribute to the effect. Each cause is drawn as a branch bone. Use <b>Ask “Why?”</b> to add sub-causes branching off a cause.</li>
       </ol>
@@ -257,6 +270,21 @@ const nid=()=>"n"+Date.now().toString(36)+(seq++).toString(36);
 
 // The classic categories. Even positions go above the spine, odd ones below.
 const STANDARD=["People","Materials","Environment","Methods","Equipment"];
+// Other common category sets, offered in the Category set menu.
+const SETS={
+  classic:{label:"Classic",names:STANDARD},
+  seips:{label:"SEIPS",names:["Tools & Technology","Tasks","Organisation","Person","External Environment","Internal Environment"]},
+  "6ms":{label:"6Ms",names:["Machine","Method","Material","Measurement","Mother Nature","Manpower"]},
+  "4ps":{label:"4Ps",names:["Policy/Procedure","Process","People","Place"]},
+  functions:{label:"Functions",names:["Imaging","Finance","Transport","Testing"]},
+  process:{label:"Process steps",names:["Registration","Triage","Dr assessment","Consult","Lab testing","Admission"]}
+};
+const ALL_NAMES=[...new Set(Object.values(SETS).flatMap(x=>x.names))];
+// The set whose names match the current categories exactly, if any.
+function currentSet(){
+  const cur=state.categories.map(c=>c.name.trim().toLowerCase()).join("|");
+  return Object.keys(SETS).find(k=>SETS[k].names.map(n=>n.toLowerCase()).join("|")===cur)||null;
+}
 
 function N(text,kids){return {id:nid(),text:text||"",children:kids||[]};}
 function Cat(name,causes){return {id:nid(),name:name||"",causes:causes||[]};}
@@ -378,7 +406,8 @@ function renderTree(){
   state.categories.forEach((c,i)=>box.appendChild(catEditor(c,i)));
   box.querySelectorAll("textarea").forEach(autosize);
   const used=new Set(state.categories.map(c=>c.name.trim().toLowerCase()));
-  $("#catSuggest").innerHTML=STANDARD.filter(n=>!used.has(n.toLowerCase())).map(n=>'<option value="'+n+'">').join("");
+  $("#catSuggest").innerHTML=ALL_NAMES.filter(n=>!used.has(n.toLowerCase())).map(n=>'<option value="'+esc(n)+'">').join("");
+  $("#catSet").value=currentSet()||"custom";
 }
 function renderAll(){
   $("#title").value=state.title;
@@ -403,6 +432,26 @@ $("#effectText").addEventListener("focus",()=>setSel("effect"));
 
 $("#addCat").addEventListener("click",()=>{
   const c=Cat(""); state.categories.push(c); renderTree(); changed(); focusCat(c.id);
+});
+
+// Apply a category set: rename categories in order, keeping their causes.
+$("#catSet").addEventListener("change",e=>{
+  const key=e.target.value, cs=state.categories;
+  if(key==="custom"){
+    if(!cs.length) cs.push(Cat(""));
+    cs.forEach(c=>c.name="");
+    renderTree(); changed(); focusCat(cs[0].id);
+    return;
+  }
+  const names=SETS[key].names, extra=cs.slice(names.length);
+  const lost=extra.reduce((a,c)=>a+c.causes.reduce((b,x)=>b+countAll(x),0),0);
+  if(lost>0&&!confirm("The "+SETS[key].label+" set has "+names.length+" categories. Remove the last "+extra.length+" categor"+(extra.length>1?"ies":"y")+" and their "+lost+" cause"+(lost>1?"s":"")+"?")){
+    e.target.value=currentSet()||"custom"; return;
+  }
+  cs.splice(names.length);
+  names.forEach((n,i)=>{if(cs[i]) cs[i].name=n; else cs.push(Cat(n));});
+  if(selected&&selected.startsWith("cat:")&&!cs.some(c=>"cat:"+c.id===selected)) selected=null;
+  renderTree(); changed();
 });
 
 const cats=$("#cats");
@@ -701,7 +750,9 @@ function renderChecks(){
   const add=(st,t,p)=>out.push({st:st,t:t,p:p});
   if(!state.effect.trim()) add("warn","Write the effect","Describe the problem or outcome you want to influence. It goes in the box at the head of the fish.");
   else add("pass","Effect","The effect sits in the box at the head of the fish.");
-  if(k>=5&&k<=6) add("pass","Five or six categories",k+" categories of causes.");
+  const set=currentSet();
+  if(set&&set!=="classic") add("pass","Category set","Using the "+SETS[set].label+" categories.");
+  else if(k>=5&&k<=6) add("pass","Five or six categories",k+" categories of causes.");
   else if(k<5) add("warn","Five or six categories","You have "+k+". Aim for five or six. The classic set is Materials, Methods, Equipment, Environment and People.");
   else add("warn","Five or six categories","You have "+k+". Try merging related categories so there are five or six.");
   const unnamed=cs.filter(c=>!c.name.trim()).length;
