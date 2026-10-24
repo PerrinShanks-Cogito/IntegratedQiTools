@@ -24,6 +24,12 @@
   group: Prioritise
   description: Rank causes or categories by how often they occur so you can focus on the vital few that make the biggest difference.
 
+- id: prioritisation_matrix
+  name: Prioritisation matrix
+  status: Beta
+  group: Prioritise
+  description: Score your change ideas for ease and impact and plot them on a 2x2 matrix to find the quick wins to test first, with a data sheet for your team to score ideas in.
+
 - id: tree_plot
   name: Tree plot
   status: Beta
