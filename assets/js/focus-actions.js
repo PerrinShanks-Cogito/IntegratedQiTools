@@ -21,7 +21,8 @@
      ready      () => true when there is something to export
      exports    [{ type, run, hint? }] where type is one of FORMATS below
      template   optional { fileName, title?, sheets } for a "Data sheet" button
-                that downloads a blank .xlsx to collect the data in; see xlsx()
+                that downloads a blank .xlsx to collect the data in; see xlsx().
+                fileName and sheets can each be a function, called on each click
 */
 (function () {
   "use strict";
@@ -248,8 +249,9 @@
       tplBtn.title = o.template.title || "Download a blank spreadsheet to collect your data in";
       tplBtn.addEventListener("click", () => {
         const sheets = typeof o.template.sheets === "function" ? o.template.sheets() : o.template.sheets;
-        download(o.template.fileName, xlsx(sheets));
-        say("Downloaded " + o.template.fileName + ". Fill it in, then copy and paste it here.");
+        const name = typeof o.template.fileName === "function" ? o.template.fileName() : o.template.fileName;
+        download(name, xlsx(sheets));
+        say("Downloaded " + name + ". Fill it in, then copy and paste it here.");
       });
     }
 
