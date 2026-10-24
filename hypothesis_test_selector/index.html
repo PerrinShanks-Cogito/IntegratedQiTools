@@ -281,8 +281,12 @@ button.link:hover{background:none;color:var(--navy)}
       { a: 'Variation', sub: 'Is the spread different in any group?', next: 'bartlett' }] },
 
     transform: { q: 'Do you want to transform the data?', hint: 'Transforming skewed data, such as waiting times, can make it normal so you can use the tests for normal data.', options: [
-      { a: 'Yes', sub: 'Transform it and use the tests for normal data', next: 'boxcox' },
+      { a: 'Yes', sub: 'Transform it and use the tests for normal data', next: 'transformType' },
       { a: 'No', sub: 'Use a test that doesn’t need normal data', next: 'npFactors' }] },
+    transformType: { q: 'Which transformation?', hint: 'Box-Cox finds the best power for your data. A log suits a long tail of high values, such as waiting times or costs; a square root suits counts and milder skew.', options: [
+      { a: 'Box-Cox', sub: 'Let the tool find the power that makes your data closest to normal', next: 'boxcox' },
+      { a: 'Log', sub: 'Natural log (ln) or log base 10, for a long tail of high values', next: 'logT' },
+      { a: 'Square root', sub: 'For counts, or data that is only a little skewed', next: 'sqrtT' }] },
     npFactors: { q: 'How many factors?', hint: 'The number of inputs that split your data into groups.', options: [
       { a: '1 factor', sub: 'One group compared with a target, or two groups compared', next: 'npLevels' },
       { a: '2 or more factors', sub: 'More groups, such as several wards', next: 'outliers' }] },
@@ -351,6 +355,14 @@ button.link:hover{background:none;color:var(--navy)}
     boxcox: { test: 'Box-Cox transformation', isTransform: true, what: 'Finds a power (such as the square root, the log or the reciprocal) that makes skewed data closer to normal. You then run the test on the transformed data.',
       example: 'Taking the log of waiting times, which usually have a long tail of long waits.',
       checks: ['The data must all be above zero.', 'Check the transformed data is normal with an Anderson-Darling test before you carry on.', 'Report results in the original units, for example by back-transforming means.'],
+      then: { a: 'Transformed data is normal', sub: 'Carry on with the tests for normal data', next: 'nFactors' }, tools: ['histogram'] },
+    logT: { test: 'Log transformation', isTransform: true, what: 'Takes the logarithm of each value, which pulls in a long tail of high values. The natural log (ln) and log base 10 change the shape in the same way, so either works. You then run the test on the transformed data.',
+      example: 'Taking the log of the cost of each admission, where a few very expensive admissions make a long tail.',
+      checks: ['The data must all be above zero; add the same constant to every value first if some are zero.', 'Check the transformed data is normal with an Anderson-Darling test before you carry on.', 'Report results in the original units: a mean of logs back-transforms to a geometric mean, not the ordinary mean.'],
+      then: { a: 'Transformed data is normal', sub: 'Carry on with the tests for normal data', next: 'nFactors' }, tools: ['histogram'] },
+    sqrtT: { test: 'Square root transformation', isTransform: true, what: 'Takes the square root of each value, which reduces skew more gently than a log. It often suits counts, such as the number of falls or complaints each week. You then run the test on the transformed data.',
+      example: 'Taking the square root of the number of incidents reported each week.',
+      checks: ['The data must not be below zero.', 'Check the transformed data is normal with an Anderson-Darling test before you carry on.', 'Report results in the original units, for example by squaring a mean back.'],
       then: { a: 'Transformed data is normal', sub: 'Carry on with the tests for normal data', next: 'nFactors' }, tools: ['histogram'] },
     sign: { test: '1-sample sign test', what: 'Compares the median of one group with a target, without assuming the data is normal.',
       example: 'Whether the median wait for a clinic appointment is different from the 6-week standard.',
@@ -664,6 +676,23 @@ button.link:hover{background:none;color:var(--navy)}
     two: 'Either one column of values for each group, with the group names in the first row; or two columns, a group name and a value, with one row for each measurement. You need exactly 2 groups.',
     many: 'Either one column of values for each group, with the group names in the first row; or two columns, a group name and a value, with one row for each measurement.'
   };
+  // The pasted values for a transformation, with an optional constant added to each
+  function shifted(d) {
+    const c = oneCol(d.data);
+    if (c.values.length < 3) return fail('Paste at least 3 values.');
+    if (Math.min(...c.values) === Math.max(...c.values)) return fail('All the values are the same.');
+    const raw = String(d.shift || '').trim(), k = raw ? num(raw) : 0;
+    if (!isFinite(k)) return fail('The constant to add must be a number.');
+    return { v: c.values.map(x => x + k), label: k ? (k > 0 ? ' + ' : ' − ') + fmt(Math.abs(k)) : '', notes: k ? [`Added ${fmt(k)} to every value before transforming. Remember to take it off again when you back-transform.`] : [] };
+  }
+  // Check whether a transformation has made the data normal, and offer the transformed values
+  function transformed(v, tf, stats, notes) {
+    const tv = v.map(tf), before = andersonDarling(v), after = andersonDarling(tv), ok = after && after.p > 0.05;
+    return { sig: ok, verdict: ok ? `The transformed data looks normal (Anderson-Darling ${pText(after.p)}). Copy the transformed values and carry on with the tests for normal data, using the button on the left.`
+      : `The transformed data still doesn’t look normal (Anderson-Darling ${after ? pText(after.p) : 'not available'}). Try another transformation, or go back and choose not to transform and use a test that doesn’t need normal data.`,
+      stats: [['Values', v.length]].concat(stats, [['Anderson-Darling p before', before ? fp(before.p) : '–'], ['Anderson-Darling p after', after ? fp(after.p) : '–']]),
+      notes, copy: tv.map(x => +x.toPrecision(6)).join('\n'), copyLabel: 'Copy transformed values' };
+  }
   const RUN = {
     t1: { layout: LAYOUT.one, target: 'Target mean', example: () => ({ data: 'Minutes to triage\n' + norm(11, 30, 17, 5).join('\n'), target: '15' }),
       run(d, n) {
@@ -793,14 +822,25 @@ button.link:hover{background:none;color:var(--navy)}
         for (let lam = -5; lam <= 5.0001; lam += 0.01) { const L = ll(lam); if (L > bestLL) { bestLL = L; best = lam; } }
         const lam = Math.max(-2, Math.min(2, Math.round(best * 2) / 2));
         const tf = x => lam === 0 ? Math.log(x) : x ** lam;
-        const tv = v.map(tf), before = andersonDarling(v), after = andersonDarling(tv);
         const NAMES = { '-2': '1 ÷ Y²', '-1': '1 ÷ Y (the reciprocal)', '-0.5': '1 ÷ √Y', 0: 'the natural log, ln(Y)', 0.5: '√Y (the square root)', 1: 'Y (no change)', 1.5: 'Y^1.5', 2: 'Y² (the square)' };
-        const ok = after && after.p > 0.05;
-        return { sig: ok, verdict: ok ? `The transformed data looks normal (Anderson-Darling ${pText(after.p)}). Copy the transformed values and carry on with the tests for normal data, using the button on the left.`
-          : `The transformed data still doesn’t look normal (Anderson-Darling ${after ? pText(after.p) : 'not available'}). Go back and choose not to transform, and use a test that doesn’t need normal data.`,
-          stats: [['Values', v.length], ['Best λ (lambda)', fmt(best, 2)], ['Rounded λ used', fmt(lam, 1)], ['Transformation', NAMES[lam]], ['Anderson-Darling p before', before ? fp(before.p) : '–'], ['Anderson-Darling p after', after ? fp(after.p) : '–']],
-          notes: lam < 0 ? ['With a negative λ the order of the values is reversed, so the highest original value becomes the lowest. Keep this in mind when you read the results.'] : [],
-          copy: tv.map(x => +x.toPrecision(6)).join('\n'), copyLabel: 'Copy transformed values' };
+        return transformed(v, tf, [['Best λ (lambda)', fmt(best, 2)], ['Rounded λ used', fmt(lam, 1)], ['Transformation', NAMES[lam]]],
+          lam < 0 ? ['With a negative λ the order of the values is reversed, so the highest original value becomes the lowest. Keep this in mind when you read the results.'] : []);
+      } },
+    logT: { layout: 'One column of values, all above zero. If your data is in groups, paste all the values together: the same transformation is then used for every group.', transform: true,
+      choice: { key: 'base', label: 'Logarithm', options: [['ln', 'Natural log, ln(Y)'], ['log10', 'Log base 10, log₁₀(Y)']] },
+      shift: true, example: () => ({ data: 'Cost of admission (£)\n' + logn(161, 40, 2400, 0.7).join('\n') }),
+      run(d) {
+        const c = shifted(d); if (c.error) return c;
+        if (c.v.some(x => !(x > 0))) return fail('Every value must be above zero to take a log. Add the same constant to every value first, using “Add to every value first”, or try a square root.');
+        const ten = d.base === 'log10';
+        return transformed(c.v, ten ? Math.log10 : Math.log, [['Transformation', ten ? 'log base 10, log₁₀(Y' + c.label + ')' : 'the natural log, ln(Y' + c.label + ')']], c.notes);
+      } },
+    sqrtT: { layout: 'One column of values, none below zero. If your data is in groups, paste all the values together: the same transformation is then used for every group.', transform: true,
+      shift: true, example: () => ({ data: 'Incidents reported each week\n' + draw(171, 40, (z, r) => { let k = 0, t = 0; const lam = 4 * Math.exp(0.6 * z()); while ((t -= Math.log(r() || 1e-9) / lam) < 1) k++; return k; }).join('\n') }),
+      run(d) {
+        const c = shifted(d); if (c.error) return c;
+        if (c.v.some(x => x < 0)) return fail('No value can be below zero to take a square root. Add the same constant to every value first, using “Add to every value first”.');
+        return transformed(c.v, Math.sqrt, [['Transformation', 'the square root, √(Y' + c.label + ')']], c.notes);
       } },
     mann: { layout: LAYOUT.two, example: () => ({ data: wide(['Site A', 'Site B'], [logn(91, 24, 180, 0.5), logn(92, 26, 235, 0.5)]) }),
       run(d, n) {
@@ -945,7 +985,7 @@ button.link:hover{background:none;color:var(--navy)}
     const field = (k, label) => `<div><label for="run-${k}">${esc(label)}</label><input type="text" inputmode="decimal" id="run-${k}" data-run="${k}" value="${esc(d[k] || '')}"></div>`;
     let body = spec.fields ? `<div class="runfields">${spec.fields.map(([k, l]) => field(k, l)).join('')}</div>`
       : `<label for="run-data">Paste from Excel or a CSV</label><p class="hint">${esc(spec.layout)}</p><textarea id="run-data" data-run="data" spellcheck="false">${esc(d.data || '')}</textarea>`;
-    body += `<div class="runset">${spec.target ? field('target', spec.target) : ''}` +
+    body += `<div class="runset">${spec.target ? field('target', spec.target) : ''}${spec.shift ? field('shift', 'Add to every value first (optional)') : ''}` +
       (spec.choice ? `<div><label for="run-${spec.choice.key}">${esc(spec.choice.label)}</label><select id="run-${spec.choice.key}" data-run="${spec.choice.key}">${spec.choice.options.map(([v, l]) => `<option value="${v}"${(d[spec.choice.key] || spec.choice.options[0][0]) === v ? ' selected' : ''}>${esc(l)}</option>`).join('')}</select></div>` : '') +
       (spec.transform ? '' : `<div><label for="run-alpha">Significance level</label><select id="run-alpha">${[[0.05, '5% (the usual choice)'], [0.01, '1% (stricter)'], [0.1, '10% (looser)']].map(([v, l]) => `<option value="${v}"${v === alpha ? ' selected' : ''}>${l}</option>`).join('')}</select></div>`) +
       `<div class="btns"><button type="button" data-act="runexample">Use example data</button><button type="button" data-act="runclear">Clear</button></div></div>`;
@@ -1227,7 +1267,7 @@ button.link:hover{background:none;color:var(--navy)}
     ['Medians (data that isn’t normal)', ['sign', 'mann', 'kruskal', 'mood']],
     ['Spread (variation)', ['var2', 'bartlett', 'levene']],
     ['Relationships', ['slr', 'mlr', 'logistic']],
-    ['Making data normal', ['boxcox']]
+    ['Making data normal', ['boxcox', 'logT', 'sqrtT']]
   ];
   els.pick.insertAdjacentHTML('beforeend', PICK.map(([label, ids]) => `<optgroup label="${esc(label)}">${ids.map(id => `<option value="${id}">${esc(NODES[id].test)}</option>`).join('')}</optgroup>`).join(''));
   els.pick.addEventListener('change', () => {
@@ -1268,6 +1308,13 @@ button.link:hover{background:none;color:var(--navy)}
     getExtra: () => ({ answers, runs, alpha }),
     setExtra: x => {
       answers = x && Array.isArray(x.answers) ? x.answers.filter(a => a === 'then' || Number.isInteger(a)) : [];
+      // Files saved before "Which transformation?" was added went from "Yes" straight to Box-Cox
+      for (let i = 0, id = ROOT; i < answers.length && NODES[id]; i++) {
+        if (id === 'transformType' && !Number.isInteger(answers[i])) answers.splice(i, 0, 0);
+        const opt = pick(NODES[id], answers[i]); if (!opt) break;
+        id = opt.next;
+        if (id === 'transformType' && i === answers.length - 1) answers.push(0);
+      }
       runs = {};
       if (x && x.runs && typeof x.runs === 'object') Object.keys(x.runs).forEach(id => {
         if (!RUN[id] || !x.runs[id] || typeof x.runs[id] !== 'object') return;
