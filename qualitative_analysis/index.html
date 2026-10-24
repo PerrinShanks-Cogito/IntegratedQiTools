@@ -1,0 +1,1769 @@
+---
+tool_id: qualitative_analysis
+title: "Qualitative survey analysis"
+permalink: /qualitative_analysis/
+---
+<!DOCTYPE html>
+<!-- © Guy’s and St Thomas’ NHS Foundation Trust 2026. All rights reserved. -->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Qualitative survey analysis</title>
+<meta name="description" content="Analyse free-text survey comments: get to know your data, explore it with a word cloud, code responses and write up findings with quotes. Nothing is uploaded.">
+<link rel="icon" type="image/png" sizes="64x64" href="data:image/png;base64,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">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAA9lUlEQVR42u2dd3xVRdrHvzNz7k0lIQECoQpIEUSkKQgCiqCri72sBXtdd627666v7rprWXtZe6+rrl0RCwKCBUUEpPfeSSjpyT1nZt4/zrmXRCEF6TnP5xODcHNzz8xvnvk9XVhrLaGEsp+IDJcglBDQoYQSAjqUUEJAhxJKCOhQQkCHEkoI6FBCCQEdSighoEMJJQR0KCGgQwklBHQooYSADiWUENChhBICOpQQ0KGEEgI6lFBCQIcSSgjoUEIJAR1KCOhQQgkBHUooIaBDCSUEdCihhIAOZf8WJ1yC/UvsNv8gQADWIoTYr59fhK3A9jHAWgtCYIwhvnMCEAKkrN2FG//Z+MbL4A38byIEdCi7GMCANhYBKFUzaD2tcV2NMcbfZCGIRBwijqrxZ7U22ADkQoh9DuAhoPdSMcZird0mgLcUlrBi9UYWLl/H4hUbWL5mE+s3FJC3uZj8ggLcckO56+G5PqClguRolOQkRVZGGtkN02neJIMWudkceEAzOrXNpVVuNo2zG2wT4AhQUoaADqVumtgEPODnIF60bB2TZyzju6kLmDprOQtXrGdLsYdGoo0FY/E5hPG/CDiIqMSlA6qCkAGnFiAlUkBEWhokO7RtnU3vbu3oc3AbDu/Rgc7tmyGlqnrIsMi9WHOHgN4LgKy1walEB8orYnw/dRGffjmdcT/MZ87CtcSMg+dpwANjERKUT35BBLi1BmtFVZuQqjzbYhFCIhIvshhrMNqCcEBKlFJEpeHA1o0Z1LsDw4f1pO+h7clokLqV1ngaqSRyLwN2COg9qZFNJUphLd9OWcjbn0zi0/GzWLGhmPKYBuOBtTiOr1VNANqdvW1SCBAWKSQEh8ziAzzqKHIaJnHcoK6ce2JfBvXtjBAqQUmEFHsNsENA725ubC22EpDzNhby5sjvee3DSUyfv5oKV4CuQDkSIQUmAP6eEClBxAHuWZARog50aZ/D2b89jPNP7U+znKwEHUGwx4EdAnp3aWTAaJMA8pLl63nq9S959YPv2bClAmNiSOHTAWt94O9NIoVASv8ZDA5SOjRu4HDOib254pyj6Xxgy4TGllKyp3AdAno3iDYm4SVYsmIdj748jhff/paCcg1eDCeq9qgm3hHNLRF4nkWoCOlJMOKUI7j+kqEc2CbX59ha4ygVAnp/oxfxYEVBYTEPPv8Zj7w4loJyCzqGiiissXudNq41eARIITHagIzSIMny+xGD+csVJ5CV2SBBRaQUIaD3damsoV59/xv+9chHLFlbhPFiqIhEax34HvYPUVL6BqIToXWTNP557XAuOH1wsBYGR8kQ0Pu6Vl6wdDU33vk/Pv92IW7MxXEsnjHsipwwP6oXHJEgjB3fWIHAxv/PWozd6mnZ2Z9BCoHWloiTxLAj2vHQrWfToW3zIGopdrm2DgG9U7myDXzD8NRrY7j5wffZXOjhKI22Fmt819hOAY4USGsxgNHWz+sQgV9aKjCGhGVmbJwfgNYgzFYuHDiojbU7zR0ohEAJ8Iwiq0GEu/98CpefPeQX9kQI6H2AYuRt3MJVt7zCh+Pn4sViqIivsXYGgIW1aOMDD6GQUqIUKGFIT1bkNM70Q9sZKaRnpBNVEutHUygtL6ewqJhNBRVs3FTEpoISymMWz8ogzK7BapSSgXb3f9evoiFKoj2DE0ni9GHdeOKf55LVMGOXUpAQ0L9SKgdIJv44jwtvepGFK7bgSA9jxa8y+Pw9D/i2iKCkIuIY2jTLpMfBrejeqQ3du7SibascmjXOoGFGGrXxl1XEYhQUlrFi9UYWLFvLzLkr+X7GUuYsXsOmQhdtBFa7SGGRUqKtCTS32KHDqAR41qHzAVn894FL6NntQDxtUHLnh9BDQP8aMAPW+H7XF94azzX/eouS8gocJfB2ULvFtbHxDBaJciI0TFUM6N2WoQMOYXDfTnRql4vjbD+V3Xf/2a3ppQnMVM9hN28pZsrMpXzx7Ww+mzCDBSu2UOFarHFRymfhQQJfncWREk9DgxTFs3eN4Kzh/dFaI6XaqT7rENC/wviLR8Vuuf8t7nt+Ap5XjpAWrUWdlZkIAhfaNaCipDhw5GHtOe/Evgw7shtNmzT8GWhNoP1FlXzm+HtVd6MQGInWBqC3tkouSfz9p8xcyrufTebdz6ewbG0JnuchhRfkY1c2O2snUoLVgkjU4a7rh3PjZSck8rtFCOg9D2ZrDFfc8gIvvD8NaWJ41u6QUaWkz7OljNA4I4nzTu3LRacfycEdW1YBojY2yFPeNZG4eDbdzzP+ysrK+WjMNJ5+YzzfTltGzDUoobGSANh1pCCAUMlcN6Iv9958XmLNdgb9CAG9g2B2Yy6/u/ZJPhg3DyVcXF33u9g3mjRCJdE0M8JV5w7isrOPJjfIj4gbm1Lu/qw2P/xufgHusd/M5J5nPmH8D0txPYNSJsherQuMLBGpMMLhklP78PRdFydujl/7mCGg62gAigDMp/zhMUaNn09E6jqDWQqLQKIRpCcp/jBiMNdffBw5jX1asbdlsFnru9sqeya++Go6tz70AT/OXYd2K1AR5RcD1BZ4WByl8LTiolN68vy9l++UqGII6LoagAJO/f1jfDB2Dkp4dTb+lJJo1xCNJnPC4I7cecNpHNTBpxZ7a45xZansR7ZW89RrY7ntkZFsKHRxhIeuo7aOKInB4dpz+vPA388Lkpt23PsRArqOrrlLbnqWl96fiiM9YnXRzMLiCIlnHJo1SuKhm8/idycekdDIezJD7dcCe/mqDfz1nrd454u5aK8coergDRGWiFBY4XDrlUP5+3Wn/io/dQjoWkh8gf/18Dv866lxSOrGmYUUSAtIh+EDO/Of286hVfMc38sAe7VGrumga2MT4Hvmv2O58Z53KS51UcoHfV00tZBRnvvXWYw4feAOgzoEdE2aKMhhfumd8Vz5j7cxXgy3DhulpF90kpySxC1XHcvNV59U5X33lxvMWj8IM232Es69/lnmLt2EI3WtKZkQoJBEIorPX7iGIw/vskOgDgFdi2t16swlDDznXirKNUYYakublQTtCbIyknn1gYs54eieO9VFtbfeZJs2F3Lhn57n46/nB3ZG3AqpwViWAqsFuTlpTPngHzTLyari76+VwR3CdjvuOeMvZGFRKb+77mlKyw1W2FqCWeAoifYkB7RsyPjX/8QJR/cMilzZb7sXOcqvQs/OyuCj567lstMOw+Lg1NJzYYxFObAmr4xzb3wqofnronJDQG/XCDQIIbjq1udZtLIApQy6livrKIHnWrp1ymHCGzdxyEEH+NrLUft9Ky4V1EEiJE//+2KuHdEfhMKp5XN72uBIzZeTV3LXox/4edZ1oHghoLdDNRxH8ep7E3jr87koPLxaZswpJfE8QY8uzRn76p9p3bzJbk1w3xtEinhxr+GBW0Zw3XkDsDJaa1BrC8q43P7UZ0z6aUGg+WsH6pBDb4tqSMHa9Rs55ITb2FwYw+DV6tpTErRRdGqdzfg3/kKznOxdnv+7V990bE3euu5fr/LY698hbKxWhqKSYLTikE45TP7gHyjlIGTNOR+hht4G3QD4w22vkV9QgZCmVmAWAqyVNGucyshnr/HBrOsvmH1LgkRjyYf/PoIzhh6EZxxqUzurjcBRhpkLN3L3kyP9DMRaHIQQ0FW0s+9KGzV2Kh9NmI8jNF4t/M1+wo0iGpW8+9iVdGjXfL9yy/1a+oHwK2Feuv9yDju4GdpzakHBLK6xCFzueWY0Cxev9ZO4aqAe4YpX0cwC13X5yz1vo10PU0vO52ePSR6/9UyO6NUZz9MhmH8GamstSUlJvPvEH2jaOAVrahlQkoKScsNf73kzNArrpJ2tz50fffkL5i0vQEpTqytOSYG2ES46pTcXnzUk4c0I5WdAC6rCW+Y25qW7zycaTaoV+HzaZhj17UK+nDi7Rq9HCOhAO0shKCgs4b5nPwdTUSt/s5JgjKTrgY145O8jMMb8QusY61d6//xrf1izupaXKSXxtOG4wT256ty+aOHgqFpoaWGJxVxuuv9tfwoB20+ACgFNvCha8J+XR7Nhi+tXVtRms6wkOerwwt0XkpycFGgi8Yvr1pHyF1/7vMEndiy9VUmJMYZ7/nQWh3ZoitY1tzbQBqS0TJuXx4djpvrafjtKod677WzQUragqISOx/yV/E3lUAtAKyUwJsINFxzB/f834he+5njIdnLeekavW4NxPf/3CUvTpFSu6HLwPr1u+YXFeEbTuEF6nVt+xV2jE3+cz5AL/oPrllOTm19KsEZxWNdcvv/gn9tNIaj3Q4O08dsPvPzu12wsNCglaqQEfs4BHNA8jdtvONOnGj/TMvF2Mt9tWMc/Vi1BbylCSoWRggOM2WcB7ZcAWo6//xmWFZbx9U2X0im3aZ387VIKPK05oncnRpzUi+fenoyj3GqDV8aAEpapCzYwftJsBh/edZv98+o15bA2qJpwPZ7873isdmsV3haAjES584ZTSElJwtjtW+wpjoNTWk6KdonEKnDKKmiYkrrPcWVP6yAdwF+BEtelxGxNHLLBa2ob0VNSYq3ljhtOo3GmwmhTc1qABNc1PPz85wGdkyGHrqqdffB+OmE6i1ZtqRV3loEh2KNDNmef1M9PqJHVV1l71uIacI3GQ9epVGmPARnQQcmZFAJHqcSUraKycl9rxmJsLCkNyrMUjlIJLa2NqXYthRAYCzmNM7nx4mEgk6tdx7jHQ+Ix5rsFLF62DrkNv3S9phzx5Xvp7W8wViJFLYIoCJyow23XnQpIrDW1Hqe27xjJvuZVgcZcuC6PsXMX8vX8xcxds4H1BSXkl5Tjao/fPvQiTdLT6NC0Cb3aNmfYwZ3o275NAtieMds1gqX0/dN/vPBYHn99PKvWxRCy+nZkUkpKY4JX3vuGf95wOtbYKmq53gLaBBOmVq7JZ8zEOWBcdA2ZAlKCNpLeHXM4/qieu71V7O65tbZy4c9nzefRLybyzeLlFLsGHasAK3xCKwEh2VhYwsbiMuat38THc5fw4JhJHNg4g4v69+aiI/uQFnh/ttV3SQCesaSmJnH1eUdx80OfIHHxqrkkDRarY7z58WRuveZkHMdJzEOq15TDBNf+B6OnUOSqWhk0AolyJNdffGziUOwv6aA2oEdKSmatWsNxDzzDaU/9j1Ez5lJUWIyOxYgkJ5GaGqVxRgpRx6+BbJKZRoPkKEkpKVijKSwsYOqSVVz/7hf0+ecjvDVpWgK82/Jbx7X0xWcMJDtD+b0kq1lTv7ZTsGRtId9Mnp84hPVeQ8dD0+9+/iNWe776RW9fOwdtYts1S+PU4/oEm78faefgcD49diI3fziWTcWlRKxBRKJkpimGdGrH8d270L11M1plZzL430+xtKicj64dQeP0dGau3sDY2fP4bOYCVpVUECspYV5ZKRe99gmfzVzAo+eeRFpK8i9uNX9dDU0aZXLGcb158n/f+6Vbujr+7d+U7372I4P7da2i+esloOP9NZavymPK7JUIq4MyoWoOgBAgHc4afjiRiLPfpIXaSmD+038/4LHvZmHLisBI0hukc/nAXlw66DAOzGlc5eeSlIMU0LZJY5pmNuDAZk04pVdXCkvL+GDKHO76eAwLNxdiSot58buZzFmzjo+uuYichhmBm1NWQai1lkvOGMgL732P65oa6aLVFXwybgYP3uIRiTiJPa2XlCPu3Rg/aS5lrkLVIvzqaUM0ojn/5H4JK31/AHPcXXb9a+/z8Nc/IWOlaBVlcOe2TLjpUu4+4/gEmBesy+O176bw5zc/YsWWAmJl5dzw5kgeHfMN3y1YRkxrMlJTOP/IXkz6xzVcN7gPIimZqNRMWrqWEx55mU0lJUgpq9CP+E3X65B2dOvYBKNltbefMSCFYdWmEqbPWxGAvB5r6PhSffHVTLTnBYC2NbjqHHp1akHnA1slcj/2eTsiSJe99+OxPPHdDKLGowLJZQN68Ni5JyeCFuPmLOSRL75lzNwllDlRn6KVlSGA16fM5Y2ZS3Hccg7ObcwFA3pw6YDDyExN4YFzTqZX21Zc+frHiFKXH5ev4fRHX2XsTZcTtNBLKAa/HYLg7N/2Y8qcjxB4NRjoCtcTjP12Nr27tUtkS9Y7DR2fn+15mu9/WgbG+K6f6hYPgVSSU3/Ts4qG3x+8Gd/OX8wdo79DlpdTYeGq/j156vzTcJRiU3ExFzz9Jsf951VGzl9Og4jk7IMP4PHThtKqUSYyorjjhP7ccMTBdGqSwYx1m7nuf+M45v5n+XbBEgDO6deLly44ESfFIVnAhKVr+fu7n/5CS8f1w/CjDiXFsTU3iRdgtWbsxHlVtLxTHwEthGDe4tWszitA1KItgbGWiLIM6X9wlcXfp9cAcD2Pa14fSVlJKdpahnVoyWMXnArAvDXrOfvJ//JTXiE5EYdbTjyK847oRVaaH+V8Zvy3rC4UXHJkP5plZ3K31nwxaz73fjKe8UvXccLDr/DEuSdwTv8+nNq7ByvzC/jzh18SKa/gsW9+4pTe3el5QMuEzzt+43Vol8tB7ZoyZe7aIIW3OtpomD53BUUlZTRIS/ENzvrnf/a/T5u9HNfIGtMXhRAYI2mTm0HXoL3tvk43rPUDFC9+/QMz8wqQ1qN5wwxeuPwcANYXFjL8kRf5ac0WBrXJ4dtbruKPQ48kKy0V1/OIaY+Y9WeE55WUEPM8lJT8pnsXxt50JX87pi8lnuay/37Mhz9OB+Da4wZzbIeWuI6isLCYW9/+ZOuHCdbZb/MgOKZ/V4RUyGrg6Te2sWwpcZk9f1Wl27T+qWgAfpy9DG0FtsZgiu/d6NejPY7jYMy+73uW0p8Z/vDnX2PKSrBJqfxp2BE0b5gBwCXPvcniDYX87tD2jP/b7zmwaZPEz0Ych6hySNKWZBmlcXIyUcdJrImUkrvOPJ5//HYQFa7LZS+9x5L1eQA8+LsTSVMOwmgmrFjD5CUrqqaCBu8xoE8HHEdSU3MaKRSuVUybuyJBo+od5Yj7n2fNXeXz5xoyH0VQydKvR/sE/ZD78HzBOHceM2s+iwvKMNbQNi3KFUf73psXv/6ez+evJLNJA2ynHP7840Rinh++joekLZYNzRugGqdx86wpZKWm+ikByUlc2LotB2Vlc8uJxzB/zQZemzqXv7w5kneuvZgOzZtySo/OvDJ5JqVlHi9+NYk+7VpXOgz+90O7tCbVMRS6vubebihcgNWGWQtWJYx9p34pZ5u42pat3gRW19ihyliLkoaeBx+wX9CNuLz/4xxc7YKKcmrPg0mJJlHuetw9ajxeLMZjp57Ch7GN3L96JZSU+uU5NhhLJ4CcZASWl/JWgVXgeSRnN2RAViMOysoG4OFzTmTs/KV8vGAZ3y9exuHt2nD54MN4+6f5lJeWMnr2YmKuRzTiVPE+tcxtxAHNGzF98Qak2H7nJGMNGM3s+asTyqpeUY74uqzL20zepqIgHFvdlebPAExPgnatm+4Xz6/8lEK+nb8IG/NISoowvFdXLPDl7AUsKYpxaMtmnNu3J28NHMqI7CYILCmxMiIVZUQ9l6QNhai5ecjZG4iu3EK0rJxka3FKS0kKXH0VnkejjHQuPaInMRxe+XoyQggOa38ArTOT/X0oKWP26rUJxSGESEzY7dwhF4Ssnt5ZAVazYu1GPE/Xw8BKcNTXbiggZmSN6aIWQEhat8imUVZ6lWtxX7ydPG3wtGH5xi2sKSkHa2moBJ1yc7DGMHrmIrQQnN77YKwxaK15vt8gzmzRmjIZxUqJWZBPbPJK9IINmEX5eFNXoaevRld4eEHHJG0M2oKrNSf3PpiotYyZs5CymIvjKA5t1QLrOJQb+GnlOjxtcLUOZrz469v5wOY+oG1NCsqyYWMReZuK6p9RGMfu2rwCtK052qekBCFp2TwbEMF4331ThBBElMRRkuLyMso1YDWdchvTJKMBUkpmrF5NBBjesytCSpRSRBzFm4OO4cwD2mLzSxCL8xEOOB1zkN2aQ2Yyen0RLN6IVBKDn+CUGnGIKEXPtq1omRphZWE5haWlCOCw9q1AKYynWbVpM46SJDlOoCz8TWrfOqfK/2/X06HAQ7F+Y0H980PHlyYvvzDwWdYmQKJo2Sy7yoHYt9yUvp939orVPDFhEtIYFudvpNytQAjF4rwCrnn1fWKe5qfla7Ce5t8jx9AwNcXPiY44/PnYQfyv/1Ec8s1sZlmD074pum22nwOSlYL8cQVmQyGmpAIhJQ9+PIYFG7egglUvdl1c1+P3r7xD84YNmbZyPWgPqw3/mzSTvMJiyrVh0IGtOXfAYQC0adEIJzFlq7pEJT9Db+PmwvoH6Lhs3lJMrQYJWhAKchtnVzkQ+xSgjUEqxZzV63lp7mrKi4owrgueh1CCVZsLeXTSbP/hyioAy5szl+IkJWENRFKiXN3/MJ7dvJ6lGwt9LZyVivE0wvUQ6RFEahSKYphyF6zl8S++ZZlMQVrjV64UlSGsx3tzVyIjGzAlxcHMcZi9Lp/5JRV4Mkr+loIEoBs1TEdK609KENV5oXxauHlLST0EdKBiNxUWVypsrR6mAsjMSNqH3ZS+nuzfqS3P+mYwM1eu5f7RE/E8l+4tc/jr8CF4nsfN73zO+jKX2387gJZZDakwlkYRh/+uXc4Da5dSLlystoh1hagOTbApUcS6YkyRi0xSqLQkEIKnLzmDNcVlPriE4JZ3PmFlYRm3HNuXg3Kb8fFPc3lt0gwslmEHteXiI/tQoS2dcrISlQANM9NxhKCcmlx3FqstGzcX118NXVLu1en1WRl7b1Fr5fTP7R1IgObZWZzTz59/OLXFah6e8CPajZGWFOV3h/s5Km9+N53Pl65nYOf29G3vuylfXrqI+36ciVdejmyZhVlXjFi2BVUcgySF3VCCjcWQBzTFJkcQ2nDMIV2qfIa/vvsZaZEI1wwdSFZaKos35GOVQkjJ0V3ac1bfHpVuFJ8iJUcdIqp2BrgVgtIKXf+MwrhUxNxaJmRYhIDoXtraK17WJIQ/6rg6ibdmWFJUwMU/fIPrxohIh5/yt/Dw1B8BOLRtC7SUvP2DH66+Z9oUrpo2Ca+0zPdcNExBds1FR0AXeZj8GK7VqHaNsO0agauD4ldLaczF1Zov5y5gbZlL20bppAflWN8uXAauh6MkBzTKwjOGCs8LGqX7nzcacYhGJBhbIzm0WMorYvVXQxu9f7TiimtlV2siSm13Hom2FkdKVhYXMnzCaOaUFKBSHLyKcvSWEv4xfQbZjTO58LCe3PX593wyfR5ZnZpz16I5xErLMEJggYg2uM0b0L1tLje16ojVlnc2ruaD8gKiFRX+54lXiUtJRCne/P4nPCEZfmhXIkpRWFbG9BXrQHukCEH31i1wgkm5shK1EFIiHVELw8UClljMq78aWkpZewvP7p3ponEw3zxlEseN+5xiN5bonP9zL4cSgpXFRRz/5WjmbthIJOJAZrJf+QGULlzHFT9OYkLZJk7s0Ir5azbyzzHfUOFWYALIKMCV0LNhYz4ffjJn9+3FOf17896JJ3FmTi4VFtBuwk6JOooFa9fz5o+zSfVczu3n05qv5i0hr8JDOIrWmSl0ys2p8jzxT6+1wfMMSFELK0eQnBytv4COJkdq6bMQGCuoqHB/5vjbszQjDtq7ZkzloSXzGbdmJcPHj6bYdauAWgcae1VpMceP/4zZ+RtREfCMB03SkEpghMDkFRPL28INs6axoWkKWI1YmI/aEsNGFArQQtAjuymjjhpG0+QUbv3fSC598W3Wby7g9YFDOLPNAbgpaYnIq6c9rnjxPQo1XHJEdzo19yOtz42fRKyiHJGUxCm9u/rRQWN+QStMPE+9jnGsegnozNSk2nNoBJtLKn5mYu05mkEA0junT+bOJfPRZWVEgfFr13Hy+M8oilUghcA1GiUEq0uKOWHcaGbnbfTHMhvhdz/MSIX0KMqCrYghVxdSXFbKd6YQ2aYRbkkFevZaokUVGEfSPasRIwcPoVlaGsZaXp00jZemziO/pBQpJa/1P5oTMrMwQWjvgufeYvzCZXTJSuP2M44H4Ot5Cxm7ZCXKeDSMRrmg/+FVtHNlnVFWXkFFrPbUMDXZqYeADhYuIz3Z55o1RkoE1ho2bizaKzhznDf/e8ZU/rVgAW5BIZ6FGBAxhrHr1nHKhC8ojMWISMWq0mKOG/cJM/I3+FU61vfpCg2p6am07t4WjYeMKMzKLchNZchoBNo3QjVLRW6pQExfx0E6lW+Gn0yL9AZbXZmpKYjyMlTAeyOO4oOBx5ArIpzx2Cu8PmkWuVlZvH7VOWSmpKCN5ro3P6a8tBwvksSph3SgfdPG6F+0IPb3pLikHM+KalvnJrSygOyGafVXQzdp3JBttz75JT2zWDZsLNyj+rnypNY7pk/h9oVzsaUleIHNJKzAEwGo16/nlNGfMG1jHsd+/iGzNm3GkQptDRJQVpDcMIMHuh7Kt+ecRacDWvoxDivQ89YjyjUmIhBdmuG1TKciZlj11Rz+/MJ7TF6yAmtNoj2YRdAwNRkhBMvyN/HAp+MZft/zvDNjEe2bNOC93/+O7q39oojr/vsh01bnIS3kpKdy22nH/lI7bw0VkLepCFcbZC0mIQghyGyQWv+8HPGly8lO95sF1lC3Zq0BK1i2Jj8wJvcc5ZBScvv0Kdy5YC6mrAQv2HwpBEJYPxkIkK7LuE0bOGbCF2wqKkJagYdBIFAIohnp3N+lO5d16grAR78/j353PkFhSRmi2MXOWIvq3gIvLUL3fl04VTXk/lETeGryHF6aMpt2GWn0bdeStZsLwWpufPNj1hYU88Oy1ZQ5STja49xeB3HPmb+hRVZDn+t/8AXPfTeDJGMwKcncddLRtMhq+Mt2BpWslNUbNmOtrLFY1liLQtM4SB6rX4AOtEFuThZKWlyvJs0YpCeuzE+0bq3cdmp3GIDxsWh3TJ/KnQvmostK0fH7xVhMRIF0kG45FomVII2hoKDQHzMn/GtYAdGMdO7rcjBXdurqzxG0lo5Nm/D8iFM475WPqCgtxm4uw/60kt5HHcr4k08hDcnvDuvBS9/8wLuTZ7KooJg50xZCqR8mf33aApQjaRiRnNSlDVcdNYABndsmFMLN737Kg2Mmo3QFZU6Uy3sdxCWD+wVUY/vad+nyDRgLiu1Hc/3yOEsETdPGmfUR0ASAbkhKRFBRboNypOpyFC1r8wtZu34LrZo3wgaG4u66UYSU3PnTj9y1ZAGmrAQdlP87gBd1GNywET2bNOHRpYuxZeVoAUYIf8wcILEoBEmZmdzdsStXdepWpTDVM4aT+xzC/QVFXPvOaCwuZkspW75dyIQ2czm+R1c6NmvCXaefwC0nDmXe2g3MW5vHX974mPwKl1uOP5Ij2h9Al5ZNaZaZkfjss1at5fo3PmLcwtUkaY8KJ8JZ3Tvw5IVnJEZ3bEsxxP9qzqI12HgPvRpOfUZqlMbZ9RDQCQ6d3YBGmSlsLqqgunQOv6GjoMI4LFy2xgd0Laj3TtHMAejunjmN2xfOQ5du1cwO4ElB/0ZN+eDoYWRGk0h2Ity7cC6qIoYO/MsCvwVDUkYG93Y+mKs6H4yxVTWjE9T0XXlMfyKO4k8fjGPLFo8lGzZx+nNvM6TdRK45bhADOhxAajRKzzYt6dmmJfePGkt+vuaPQ/qTmbY1NWDGyjU8P/4HXv1+BpvLyogKjRtN4vyeXXn24tOQQSnXtkL11m5tEzZnwVowGltNQrQArJC0zs2mQVpy/aQcfnMVRcd2uSxaVYgQlurTEwXaWKbMXsHRR3RLNDTZxVagD+YZP3L7kkWY0hJ04JSJIHAF9GuSy0eDh5IZTcIzhjt7Ho4xlgcWL0CVV2DxjbdoWhr/7tjVB7PZdutfJf1hPpcM7suBzRpz5csfMD9/C15JOR/PXMy4ZWtpkxbl6IM7c/gBLWnbNJvC8hja8/hi1jwiToRpK1czfs5iflqVR2HMw/FiICCtQTq3/GYwNxw3MAHa7eWdWHybYH3eFhat2AAYjN3+WgvpH9kObXMTwZh6p6H9ZoFwcMcWfPLNYoSNVY8tIbDa8N3URYGLSOxCHG/1Zvx7xlT+uWA+pqQID4G1vvZxhaVfTnM+HjyU7ORkdNAx1FrLv3v3RUrLA0sWI4qKIT2New/qxtVdDgnG1m3//naUP3ZtUOcD+f7W3/PvkeN4YeJPbCorp7SgiLlFgrn5k3lKTSMl6lBWUoKxcP4LH6ClwNUeNhZDGIt1FMnpafymQxvuOP1YurXIrRHMgB9IUYIZ81ZSEvPn2FQXpRX4Xfy7dmyeuFHrH+UIFrR3t7Y4zldYXQPIjAXjMWn6UkrLY6QmR9lVOjoO5rtnTuWORfMwpcV4QlTRzH1zchk5+Biyk5MTYe34wQO4s2c/LJJXNufx19w2XN2lW7VNx6toaiXR1pKZmsrdZ/2Wywb35aVvJvP2pBksLyolZgxauxRvKQElENKhrKwUlEI4UZJSUmnoKIZ1O5BLBx3OwE5BpbwxiJrqAyGRYPXV5Hl4BlSt1kvQ46A2CWVT7wAd97x1P6gVjtBUaFOt28JYi3Ik+VsqmDpzCQP6dK5xDMWv0cx3z5jGbfNnY8pK8WylPIpAM48cPJRGAZgr3xaikmf9rp6Hc8qmPPpkN/HnyNShS2o8UGKtpX3Txtx+2m+49cRj+GHZKn5YtILpK9ewfOMmpi7fQHFFKT1a59I2pzFdWjbjsLYt6HdgWxo3SPvZjVi73x/v5jp24hys9rBO9R4OrS1pUU33Lq0SblWn/iloHwTtD2hKm9yGzF+WH8yQrv5qc43g4/HTGdCns++fZueklNpKfmY/AjgHXVaW8GbE8yj65jRj5OBjaBSnGds4hJX/pk92k20GLmq7RvE0UGst0UiEAR3aMqBD28Rrev3jQeZtsLxzzfm0y2myTUUghKi17z7eL2TZqjxmLFjrt2gzohrFZNFC0b51Y1rmNtr69/UR0P64XcURPQ4E4dToWDZYrBdj5JifIJictdM4fbDx982Yxj8XzUOXliS8FD6YLf2aNGPU4GE0Sk6pQjNqet9ff5sJn58H7+fp+LhoS2FJOSSlUu56WGup8LzEoKC4h6YuRyn+cUeNnUpZzG+nW/3QIQlCMbBPR8Df03rbHzruFhvctxPSUYgaNt+vojAsWrmZ76cuwgal+jtDlBA8PXsG/7dkPraoEJfKmhn6NmnOx0cNS3Dm2hqlO9N4FXF+qmSgcQXdWjWlS1Y6KU7EryiXEiVlQrvXeR0C/+mbo37ABL05ajoBSgmOOaJr1Zuu3oE5yFgTQnDqcX1olOq7rGpsaaAUMc/y4ntf+6/diZmkA5u3pIsTxTWWCJIIIgBzLqN2AMy7Q9679hIm/+MPtG3aOEGZdlTiymHW/FVMnrUKKbxqh59KIfC0ISMZjujVMcGf6xWgrQVP+yVCTlBSNXn6UpyI8q+vGsQzFrTHB2Ons6Ww1B92sxM+l7aWg7KyGXXUMLo1aYrWBhfo26jZXgvmXUUFX373K1xP1ng4hBQgHAb16kCTRhmJOsR9DtA2cAFpHXwZExguNQDZ0whBwH0t7302mWPOuYfjL3+ctfnFWGyNKYrWWhxHkL/F5eX3JlRqW/XrKYe2lhZp6Xx61DAOzG5I96wsRh09dK8G884aER9/voKiUl557zus8WqsEBLW4jgRTj2h9y/sBWdfALHWBin8a01s5/TqoH+DDDictVtHLjiOoqIixlujJvHka18yZe56Yl4MJepWEWEA67k8+dqXXHXuUCLOzklWUkHVRvO0dMYMOR5HCLJTUrfrzdibvEW/GtDG4ijJC2+NI79Yo5SpdoBTPHKblQbHHnlIFbqxVwPaWIvRBsdROEFObHFpGavXbWZdXiEWSE2O0KxJQ1rnZifa5MbBrZREKUlhUQn/G/U9j748lrlLt+C5LsqxKGmpa62sv/iweFUxr7z3FZeedfQ2B6jvEKgDb0KrIIneBkDf32mgFILikjIeeGEMVnuYGh7ZERIPyXEDu5DTODOx13stoI21WOPPQZGOoqS0nPc/n8r7n01i0syVbCosRVvlj9D1PCLK0r5lE47scyBnn9SP/r07oZRk4+ZCXnznG554dQzL15ditIejQDp1B3LVG8NiPJf7nv2M8089cqemlIpKbrz9G8pxY9BXBs++MY61GyuCSb013ZIGx3G4+IyBVbwbex2gKwMZJcjfVMhLb0/gmTe+Yen6In9cgdEIYZBSITAYLLGYZMaidcxYvJ7n3v2Bow9vy0HtW/D6yB/YUBDDuDGUIxAyMOx+9SaAUrBwVRFPvDqG6y7+zU7T0jvb3bY3iwlyUDZuKeb+58eCdmvUzkqCMZIubTMY3LfLNoefOnv+lPrVFFIKUIKVazfy0tsTePKN8azf7GJcF8fxQWQFGCvQ1iR0mlSBdhTguuV8+s0CPp24GLSLUhKh2Gk+48qbIUyMu5/+nHNPPoLGWRn1whOxU9cw4M63PfQO6zaVISRB0Ka6G0wgVJQ/nD8UpRSeNgk6uscBHQdyPH6/ePk6nnhtHC+9O5HNxR5WuziO8JvDV/Ogxtp4Pywf4NI3ILUUOx3IlS18qSTrN5Xyp7te5+X7r0JrjVQqRGot995Rkh9+WsAzb3+PsB41TnETAm0ELZoozj7xiMRccvYk5bBB2U88pAowc94yHn5xDG+NmkyxK8CL4UQUGrFDFMEYn2ft8k3RBiUFb4yawVknTOP4o3psU2OE8ktDkMCVevU/XsP1LFLYGgNVSoAWDtdfPJQG6SnbpXnO7gSykjJhuX8zeT6PvTqWkWOnUxYDa12UozDKj9ztE5sDaO1y5a2vMeOTDmQ2SKsT9bDW7j9I/Vnm3/bE05qIo/jbPf9j6vwNSKFrNASFAGMluY2TuPycIYF23vZt6Ozq0xi3ZONA/uLr6Tz28hhGf7eY8phGWI1SAmP9BPN9jQcqJVm5vpjL/vYCbz9+DVrr7frKt27Q1tl89YpqaEPEUYyeMJ0HXx6PNB5eLc60EhIrHP5y6TDSU1OCzDyx+wBtLWitAx+ywlrNR2Om8cgLY/j2p+XEPA+JRimF1naneB/26CZJw/tj5/HAsx9z42W/xfU0YnvUw1q0EBS4fh84ux9gOu5ulFKSphSO+GXdYPzwr1idxwV/ewnt6YAY1tBEJuji36ldJleNGBYU2FZTebOzqYWOB0Mchet6vPXx9zz88himz9+A63oopYOghoC9VCNLIRDSL5GvDS3wjEWJCm5+aBSd27fghKN7UO56OJGqy2vww7aLCgvp/M5rQci+UhJ75Sx9W/WfEve4/dmft4Uuqnmfn/8etvMatvN6u61/83t+JGc04Lmeh3NU8xZUzhj3fet+e6+z/vg46/KKfa+VrnltJQIZiXDfX04nGnGC9gfsWkBX9iE7jqK4pIyX3v2Wp18fy7xlBXiei1IWpeJBDbGXAtn3dbquAev4cwxrQQssAo3AuDFG/Oklxr+WzSFd2mxz6qwVggqtWac99qfoiYPElEnKjf6lizOgV+de/wTfz16HI6mVneRIiWcUJw1uzwlDeiWKAKr/HDsJyCjBhvwCXnz7a559cwLL1xcHYWaBVIa9mR4LIVACPM8CEXKyI/zuhMN46f2JFJfGsFL4tYU13E5CwuaiEk6+4lG+eO1G2rfJJbatbjYi8KnuR/xYCEFUVn2mymC+9Kbn+HDcfCJW+z32avF+FmiU4fDkvy4Mlk3U4mDtoB+xcjBk+aoNvPDWNzzz1lds2FKBcWM4jkQqMEZj99KtU1IgLHgabCRCu5ZpXHzaAC753SCa5WTRrnUjbrx3FNLE8GqRLGoMSGlYunYLv7n4ESb+9yayMtOQQqLYjS2X9sRaEu/UbBMHPJ4o9vu/v8RLH0xD4uFZW7vZYwIQirv/dCq5TbPRtazjdOoO5K3FjAuXruXx18bw8jvfUVCmg2CIxCpRKUF779tEKf3Trj2IRqN0bp3JVecO5qIzBtIgPcXnxZ7m2ouPZ9T4GXwxcQnKqZ0XxhiB48DClZs4dsR9HHvzscioAJOKsx+7qK02JDfIwDM2KCL2J6Jf9rfnePH9qQhbgVdLCzgiBa5VnD6kC5eeffQvEpCq1ey2FlaPTrRu8j/Q9LnLefjF0bz9yRRKYoCOoSKq1kbUnrwWJaCNRDmKQzo05oaLh3Labw4nJZj/obVJpCMKIVi9Lp+ew28nf0sJiCA8K2pzaCwmZmnYtinX/nkYR/XpwpbCMiKO3A81tW8xOsqhW0YmuelpVFTEuOgvz/K/T2cihYfWtfPoSAnWKNrkNmDKh7eR1TA90YDmVwO6MgcC+OqHOTz+8jhGTphJWUzsM0D2H9Rf9mg0St9D23Dt+UM48ZgeOI5TCciyCtbiRsioMVM55Y/PgPHwjK11pYqjFHiaFo0zePGeCzlqUPd64W9etXYjv7v2CSb+tBolvFq7ZYUQKCQqYvnylRvp16tzrQzBWgG68ht9PmE6j702ljETF1HuegjjIR21zwRChPC5crOcBjx3x/n85qitY8Q87fvDt3f+4+Hsf/3nHf715JdIE8M1ltoWFUoJxiqi0Qj/d8VR/P2PpwNQ4en9Jkwev9UcKRn9zQwu/utLrF5fjCN9N25tfe0RpbDC4Ym/n8JlZw/doVSCbQI63gNt+pzl3PLg+3z2zTw8bZH400e13rcCIY7y3T8XndSDF+67wp/fAVVoVHXei7hv/dzrnuCNT2bgCC8Add2ojpURfjugI4/961xaNc9J0Jd9NUuvcgDNaM0dj3/EPc9+QWlpDBURdVJ4ESXwrMP15x3BA7eev8MpuXJbmyel5Pm3xjHgjLv4eMIcrNVI6WFgnwNzfOWVgkGH+VdYwmipBZCEEKigqPbFey9lYK/WuFrhBOX8tfv1vqEkbYyPvprH4afdwZsjJyKl39JWa7NPzRH3C46NX6fpKKbPWcqQEfdx2+OfUVERQyhbJzA7UqBtlDOHHcwDt54fJH7t2O1VRUPHT8Wdj77PHU+NIxYrRSqBp/fd0LTfckCQle6wYOw9NMrO2KEKk/ittaWgkIFn383MBfk4jkZ7otqWr1WRIFAOaA8ikSgnH92ZO248jY7tWmylP1LttTZj5dwcgIKiEh56/hPuffYLymLgSFPnNIaI8D0axw/swIdPX+cXb2ynd3SdAB3nzE+9Nppr7/wQjItrbdD2at8VRwo8Ilx3bj8e+vv5dXIBbQ/Uq9bmM/TCB5m3JA9HGTxd88zwX1AQAdooMlIE1104lKtHDCGnScMEJxWB9t47gLyVdsVdmq9+MJF/PzGSxauLsDqGUKLGBP1t7o2RDOzZltEv30hScvRXF0oIa62Ng/mnOUvpe/o9aM9DY9nXsxtFEJHLbpDCrM9uJ6dxpl+Y+SsaLcbXatWaPIae/wDzlm3CccwO3WJKCbRnESpK08wof7zwaC49azA5jTK3AinoObG757tYC8b6cYd4nwzXdXn9o4k8/OIXzFqyCa+iAuWIwCYRdQQzaOMwpF973n/yGtLTkmtst1urPTcJx6qh76n/5IeZa5FKY/b96cFElcIIh2dvP5MLTx9cZxdQdVa9UpLV6zZy0pWPM2XWaqLSI2Z35ND5YNWeRToRcjKjjDj5CC48rT9dOrascjskGiAKudNpiQ2qfvwDVLUT0toNm3nz4x948e0JzF22GS/ml8Vpu2M53REp8Yhw8tGdefORK4lGo0GX0l//UML1tHWU5KPRkzn1mhcQ1t2n0zkJvBdKgBHJXHteXx645bydWshaWVMXFRVz+tVP8MX3S3Gkh7uDrsxEPom2SBkl6mgG9TmQEaf0Z9iAg2kSDMXZCnCLMX4rYH/EtqgSM6gJuDb4s7UWgUX9bG2Kikv5dvJC3hw1iZHjZlBQatBuoJHtjt3eQgiUBVSUi0/txZN3XIiUaruTBXZoHbU2VkrBCRfdw6cTl/oVBPvwcHelJNr1iEbTuOqcvjx863nbDJrsTFB72uPqW1/mhfd/xHiuH1HcQb7ma2zQngERwVGSzFTJ4MM7ccyArhzZpyOd2jVP8NnqvCpVqFeNLkrL0hX5fDtlAV9+O4cvvp/L2vyyoAVaDMdRflfUHXwuJX1jOCU1hdv+cCx/uWJ44rPuzEIHYa216zZspuOQmykqrUAquVNase5uT4aUAu1qUEnkNIhyz19P5cIzBiVmouwq+6qyEfPQs6P420MfUhEzKEf8asWglAySpzQQQTqSqDK0aZZF9y4t6NOtHZ3b59KudQ5NshvQMCPNH0xfA10qKiljQ34hK9dsZtbC5cyYt4ops5azcHkeFZ70DxMeSgkQ4ldHgh0p8LQkp2Eyz9x1HicNO8zv6h/ke+xULFhr7afjf+LEq57F6lilFgH7CJAFCcMqLQnOP6Uvf73ieFq1aBKMQhC7vNSpctuxL7+bySU3vcLSdYU4QmPsr+/VLITwM80CI9FaAdJJaHMlNKnJDo0yU2nUMJUGDRqQnhZNHDStNRWeZfOmArYUVbC5oITC0hjaKv/9tD92A4yfXCb8zMFfm87gf2awKAb0aMPz91zEgQfkJiKLu2JfhLXWPvLCZ1x/70iUrdgn+LPPNwWeZxBOlEbpknOGH87V5w+lY7vcKobb7pR4qDZ/4xb++M/XefeLmbhurNaZenW9keL5KcYYrAGEjNcssbVhCUEpvAn+zQOs7xaUfla29Qdq19gksc72gAcpKRH+cvEwbrlmOI7j7PLKeAcgb2MBlr0cyNbXRkL4XMw4itymaVxy+pH8/ryjyc3JShhLCHY7mCGYJGUMjRs15I3//J5X3v2Kv9z3Lus3VSQaQ+4M0Ph+4arvI5TvCxfCQ8STkxOqEpAWi5foymMSAN55+y6wSKXQrsZGkunVrQkP/O1MBh3eNUHPdnX+iuNrFr1XY1lKgcTieQIVidC2ZRp/GDGEC04bQKOsBgmNHNc6e9QolTJhkJ1/2kCOPqILtz3yAW+M+onSshhKGb8/3k5mdnF6sJUlmO0af7sESFL6rY6NoGFGKn+9/FhuuPQ4IpFIwijfHYEiByC9QVpwoMUue+AdtYz9+RkC6UQ5pGM2f7zgGM48oQ8ZwaSlOJDVXpS5Fj9Unja0zG3Mc3dfyohT5nDrA2/z3cz16JjfAXVXAHtPeJWsMXhGkhRVnH1CD265+iTat2m21RO0G/fGAWjXqqnvB9xLcjaUBGtAa0E0KZk+3XK4+uzBnDm8L9FodK8F8rYoiAlGYAw6vAtfvfV33v7kB+5+8hNmLcoj5nko6VdE630gp7yyG1BKgXEtGknUUfx20EH86fLf0K9nx8T+SCl2SiCrzkbh3IWr6XnyHVTEYntUPyslMdpgkSRFJP0ObcM1Fx7LKcN6VTK8qs9f3lulciTM9Tze/+xHHn7hM6bM84GN8fwDgNkrtbbvLbJB6ZoFFSEtCsOPOYQ/nHcU/XsfFDynH+zZU3kofujbQtfj/sa8pRuRcndXaFuUdDDaw4oISQ4M6deRP112HEf161rFg6B2QXBktz5pMD1ra8TSMvqrGTzzxng+/Wo25Z7CaA+BRjkSa4KRcnbPgVhJCdb67YyFg3IkTbOTOePYHlx+zhC6dGiZOLAWu9s18i8+czz0fffjH3Lzfz5HEdstrru4b9VzPZBRUqOSU489lD+eP4TDDj0w8bp4bsH+1DYrnvhTefMXLV3LO59O4d3RPzJzwTpinsAaDQSVLcL/GWvFLqMmCXdg/PB5FoRCOQ4pEZcje3fi3BP7ccKQQ2mYkZY4pMbueSAnnkEbf959/uZCug77PzYWlGPFrmskKIPryPM0wkkiLdkw4sTDufKcoznkoAP2ykXalRo7XrdZOZdh+tzlfDB6Cp+On86MBauJmYjvpjMGrK+9BTbhQ7bW4HsrRWIG4/YA6++BTZBhETg+tA4CNkIilMRRkqz0CP17tue4Qd049siDadNy68RYHST4y71sj6qkjz7/v/Fc+c+3EbqiTiVGtdbI8eQblUTjBg7nn34El501iI5tcxP8y8J+D+RtcuxKM2Uqy7KVG5g4ZSFfT17EtDlLmLckj1LXJmIl1prAVxd8F/HeGMGNJuK+POEPuE9UNwjAH+2hpEChaZSVTLdOrTi8e1v69+zAYd3b0zAzrcrn0dogldxrbRhhfUk00zv3uid449NZRKT2jZWdAmSB51lkJErzRklcfHp/rjpvKM2aZCYWCVE/gbw9rW2N3WYC0vq8AhYvX8+cxWuYt2gtS1fnsWbDZvI2lVBYXEZJWTmISOI9rLVEIg7WahwBaWkpZDVIoXlOJq2bN6ZNy8Z0bt+Mg9o1o22rHNLTUrbJ+3eXH3mnADrO66w1uK7HaVc/xidfLcKRLp7R/lVUZ1+s32jP06BUhAOapvOHC4dw4WkDaJiZXsW1I8JRDtsFtw0MLkH10U9Pa0pKyykpraCotAKtTRAStyQlRYlGFKnJEdJSk0lLTa7ecA0m6+5NVTN1BnT82pNCEIvFuOSvL/DmJ9Px3Aocx/en1sxCBFIGrh0tcCIRurbN4o/nD+PM3/amQXrVYEg4k6TuAN+qxX0tJKXYIR4bv5VtQEHifHhf35FftDGonA757JvjuOXBj8grKMd6GuXYSsksJqAUMmG6+66dCNFohD4HN+X35xzF6Sf0JRqJ+FrEC3zIIY53ieckkY8TBz5baXR8GKkIsvb211txm3054lUN8VZYT78xnjdGfs+KtSW4xvpY9v/jL5dUOAqiQnNU/y5ccdaRDD/mZ8EQGQI5lD0E6MoWbZy3lZVV8P20hXw3bQkzF6xkbV4BAkFqcoQ2LbLp1a0dA/t0pkPbZiGQQ9k7AR2nIIke0LWUnzd3DCWUvQbQlWmIsb7VLMTWpKCEcUHQbzkEcSj7AqBDCWVfkDCSEUoI6FBCCQEdSighoEMJJQR0KCGgQwklBHQooYSADiWUENChhBICOpQQ0KGEEgI6lFBCQIcSSgjoUEIJAR1KCOhQQgkBHUooIaBDCSUEdCihhIAOJQR0KKGEgA4llBDQoYQSAjqUUEJAhxICOpRQ9h35f1Ip9UM9tBtrAAAAAElFTkSuQmCC">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#005EB8; --navy:#003087; --bg:#F0F4F5; --surface:#FFFFFF; --text:#212B32;
+  --muted:#4C6272; --line:#D8DDE0; --yellow:#FFB81C; --green:#007F3B; --green-bg:#E3F2E9;
+  --blue-bg:#E6F0FA; --danger:#D5281B; --shadow:0 2px 0 #D8DDE0;
+  --warn:#A65300; --warn-bg:#FFF4DB; --mark:#FFE08A;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --blue:#5AA2EA; --navy:#9CC3EF; --bg:#0E1A24; --surface:#162533; --text:#E8EEF2;
+    --muted:#A3B6C3; --line:#2A3E4F; --green:#4CC17E; --green-bg:#143326; --blue-bg:#15314B;
+    --danger:#FF7468; --shadow:0 2px 0 #0A131B; --warn:#F0A54A; --warn-bg:#3A2E10; --mark:#6B5410;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --blue:#5AA2EA; --navy:#9CC3EF; --bg:#0E1A24; --surface:#162533; --text:#E8EEF2;
+  --muted:#A3B6C3; --line:#2A3E4F; --green:#4CC17E; --green-bg:#143326; --blue-bg:#15314B;
+  --danger:#FF7468; --shadow:0 2px 0 #0A131B; --warn:#F0A54A; --warn-bg:#3A2E10; --mark:#6B5410;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Figtree,"Frutiger","Helvetica Neue",Arial,sans-serif;font-size:1rem;line-height:1.5}
+a{color:var(--blue)}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:2px;border-radius:2px}
+button,input,select,textarea{font:inherit;color:inherit}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* Page head */
+.page-head{padding:1rem 1.25rem}
+.page-head h1{margin:0;font-size:clamp(1.4rem,2.6vw,1.8rem);line-height:1.2;font-weight:800;letter-spacing:-.015em}
+.page-head .meta{color:var(--muted);margin:.15rem 0 0;max-width:70ch}
+
+/* Workspace */
+main{display:grid;grid-template-columns:minmax(300px,360px) minmax(0,1fr);gap:1.25rem;padding:0 1.25rem 1.25rem;align-items:start}
+@media (max-width:880px){main{grid-template-columns:1fr}}
+@media (max-width:420px){main{padding:0 1rem 1rem} .page-head,.notes{padding-left:1rem;padding-right:1rem}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow);padding:1.1rem;min-width:0}
+.panel h2{font-size:1.05rem;font-weight:700;margin:0 0 .75rem}
+.block{margin-bottom:1.1rem}
+label{display:block;font-weight:600;margin:0 0 .35rem}
+.hint{color:var(--muted);font-size:.88rem;margin:0 0 .5rem}
+textarea,input[type=text],input[type=number],input[type=search],select{width:100%;padding:.5rem .65rem;border:2px solid var(--muted);border-radius:4px;background:var(--surface)}
+#data{min-height:240px;resize:vertical;font:14px/1.45 Consolas,"Courier New",monospace}
+textarea:focus,input[type=text]:focus,input[type=number]:focus,input[type=search]:focus,select:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px var(--yellow)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+@media (max-width:420px){.pair{grid-template-columns:1fr;gap:0}}
+.check{display:flex;gap:.6rem;align-items:flex-start;font-weight:400;margin-bottom:.6rem;cursor:pointer}
+.check input{width:20px;height:20px;margin:2px 0 0;flex:none;accent-color:var(--blue)}
+#detected,#sampleNote{font-size:.88rem;color:var(--muted);margin:.4rem 0 0;min-height:1.3em}
+.subbox{border:1px solid var(--line);border-radius:8px;padding:.9rem .9rem .3rem;margin:0 0 1.1rem;background:var(--bg)}
+.subbox[hidden]{display:none}
+.subbox p{margin:0 0 .6rem}
+
+/* Buttons */
+.btns{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+button{display:inline-flex;align-items:center;gap:.4rem;border-radius:4px;padding:.5rem .95rem;font-weight:700;cursor:pointer;background:var(--surface);color:var(--blue);border:2px solid var(--blue);line-height:1.2;white-space:nowrap}
+button:hover{background:var(--blue-bg)}
+button.primary{background:var(--green);color:#fff;border-color:var(--green);box-shadow:0 3px 0 #00401E}
+button.primary:hover{filter:brightness(1.07);background:var(--green)}
+button.primary:active{transform:translateY(2px);box-shadow:0 1px 0 #00401E}
+button.small{padding:.3rem .65rem;font-size:.9rem}
+button.linkbtn{border:0;padding:0;background:none;color:var(--blue);text-decoration:underline;text-underline-offset:3px;font-weight:600}
+button:disabled{opacity:.5;cursor:default}
+
+/* Options */
+fieldset.opts{border:0;margin:0 0 1.1rem;padding:0}
+fieldset.opts legend{font-weight:600;margin:0 0 .35rem;padding:0}
+.seg{display:flex;flex-wrap:wrap;border:2px solid var(--blue);border-radius:4px;overflow:hidden;width:fit-content;max-width:100%}
+.seg label{margin:0;font-weight:600;position:relative}
+.seg input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.seg span{display:block;padding:.4rem .8rem;color:var(--blue);border-left:2px solid var(--blue);cursor:pointer}
+.seg label:first-child span{border-left:0}
+.seg input:checked+span{background:var(--blue);color:#fff}
+.seg input:focus-visible+span{outline:3px solid var(--yellow);outline-offset:-3px}
+:root[data-theme="dark"] .seg input:checked+span{color:#0E1A24}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .seg input:checked+span{color:#0E1A24}}
+.optnote{font-size:.85rem;color:var(--muted);margin:.35rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.25rem 1.5rem;align-items:flex-end;margin-bottom:.4rem}
+.controls>*{margin-bottom:.75rem}
+.controls .narrow{width:8rem}
+.controls .wide{flex:1 1 14rem}
+
+/* Steps */
+.tabs{display:flex;flex-wrap:wrap;gap:.25rem;border-bottom:2px solid var(--line);margin:0 0 1.1rem}
+.tabs button{border:0;border-bottom:4px solid transparent;border-radius:4px 4px 0 0;background:none;color:var(--muted);padding:.55rem .8rem;margin-bottom:-2px}
+.tabs button:hover{background:var(--blue-bg);color:var(--text)}
+.tabs button[aria-selected="true"]{color:var(--text);border-bottom-color:var(--blue)}
+.tabs b{display:inline-grid;place-items:center;width:1.5rem;height:1.5rem;border-radius:50%;background:var(--line);color:var(--text);font-size:.8rem}
+.tabs button[aria-selected="true"] b{background:var(--blue);color:#fff}
+:root[data-theme="dark"] .tabs button[aria-selected="true"] b{color:#0E1A24}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .tabs button[aria-selected="true"] b{color:#0E1A24}}
+
+/* Result */
+.summary{font-size:clamp(1.3rem,2.6vw,1.85rem);line-height:1.25;font-weight:700;letter-spacing:-.01em;margin:0 0 .3rem;max-width:34ch}
+.summary strong{color:var(--blue);font-weight:800}
+.focuson{margin:0 0 1rem;color:var(--muted);max-width:70ch}
+.chartwrap{border:1px solid var(--line);border-radius:8px;overflow-x:auto;margin-bottom:.9rem;background:#fff}
+.chartwrap svg{width:100%;min-width:560px;height:auto;display:block}
+.empty{padding:3rem .5rem;text-align:center;color:var(--muted)}
+.empty p{margin:0 0 .9rem}
+.reading{margin-top:1.4rem;border-top:1px solid var(--line);padding-top:1.1rem}
+.reading h3,.panel h3{font-size:1.05rem;font-weight:700;margin:0 0 .5rem}
+.reading p,.reading ul{max-width:75ch;margin:0 0 .75rem}
+.reading ul{padding-left:1.2rem}
+.reading li{margin-bottom:.35rem}
+.caution{background:var(--blue-bg);border-left:5px solid var(--blue);border-radius:0 4px 4px 0;padding:.7rem .9rem;max-width:75ch;margin:0 0 .9rem}
+.caution.warn{background:var(--warn-bg);border-left-color:var(--warn)}
+.caution p{margin:0 0 .4rem}
+.caution p:last-child{margin:0}
+.caution ul{margin:0 0 .4rem;padding-left:1.2rem}
+.tablewrap{overflow-x:auto;margin-top:.6rem}
+table{border-collapse:collapse;width:100%;font-size:.94rem}
+th,td{text-align:left;padding:.5rem .65rem;border-bottom:1px solid var(--line);vertical-align:top}
+th{border-bottom:2px solid var(--text)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+details.values{margin-top:1.25rem}
+details.values summary{cursor:pointer;font-weight:700;color:var(--blue)}
+.sw{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:.5rem;vertical-align:-1px;background:var(--c)}
+.muted{color:var(--muted);font-weight:400;font-size:.9rem}
+mark{background:var(--mark);color:inherit;border-radius:2px;padding:0 1px}
+
+/* Know your data */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.75rem;margin:0 0 1rem}
+.tile{border:1px solid var(--line);border-radius:8px;padding:.6rem .8rem}
+.tile b{display:block;font-size:1.6rem;line-height:1.2;font-weight:800;font-variant-numeric:tabular-nums}
+.tile span{color:var(--muted);font-size:.88rem}
+.share{display:flex;height:1.6rem;border-radius:4px;overflow:hidden;margin:0 0 .35rem;max-width:75ch;font-size:.82rem;font-weight:700}
+.share span{display:flex;align-items:center;padding:0 .5rem;white-space:nowrap;overflow:hidden}
+.share .thin{background:#9DB4CA;color:#212B32}
+.share .thick{background:#003087;color:#fff}
+.ladder{list-style:none;display:flex;flex-wrap:wrap;gap:.35rem;padding:0;margin:.4rem 0 .6rem}
+.ladder li{padding:.3rem .65rem;border-radius:99px;border:2px solid var(--line);color:var(--muted);font-size:.9rem;font-weight:600}
+.ladder li.fit{border-color:var(--green);background:var(--green-bg);color:var(--green)}
+.ladder li+li::before{content:"→";margin-right:.35rem;color:var(--muted)}
+.eg{border-left:4px solid var(--line);padding:.2rem .8rem;margin:0 0 .75rem;max-width:75ch}
+.eg small{display:block;color:var(--muted);font-weight:600}
+
+/* Word cloud */
+.wd{cursor:pointer}
+.wd:hover text,.wd:focus-visible text{text-decoration:underline}
+.wd:focus{outline:none}
+.wd:focus-visible text{stroke:#FFB81C;stroke-width:4px;paint-order:stroke}
+.wordpanel{border:1px solid var(--line);border-radius:8px;padding:.9rem 1rem;margin:0 0 1rem}
+.wordpanel .whead{display:flex;flex-wrap:wrap;gap:.5rem 1rem;align-items:center;justify-content:space-between;margin-bottom:.5rem}
+.wordpanel h3{margin:0}
+.quotes{list-style:none;margin:0;padding:0;max-width:80ch}
+.quotes li{border-left:4px solid var(--line);padding:.35rem .75rem;margin:0 0 .5rem}
+.quotes li small{display:block;color:var(--muted)}
+.quotes li.s-pos{border-left-color:#007F3B}
+.quotes li.s-neg{border-left-color:#D5281B}
+.quotes li.s-mix{border-left-color:#ED8B00}
+.quotes li.s-neu{border-left-color:#768692}
+.quotes label{font-weight:400;display:flex;gap:.6rem;align-items:flex-start;margin:0;cursor:pointer}
+.quotes label input{width:18px;height:18px;margin:3px 0 0;flex:none;accent-color:var(--blue)}
+
+/* Coding */
+.codes{list-style:none;margin:0 0 .75rem;padding:0}
+.codes li{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:.5rem .6rem;align-items:start;padding:.6rem 0;border-bottom:1px solid var(--line)}
+.codes .cdot{width:14px;height:14px;border-radius:50%;background:var(--c);margin-top:.75rem}
+.codes .cfields{display:grid;grid-template-columns:minmax(8rem,1fr) minmax(10rem,2fr);gap:.4rem}
+.codes .cfields .ckw{grid-column:1 / -1}
+.codes input{padding:.35rem .5rem;font-size:.92rem}
+.codes .cname{font-weight:700}
+.codes .ccount{color:var(--muted);font-size:.85rem;white-space:nowrap;margin-top:.5rem;font-variant-numeric:tabular-nums}
+.codes .other .cname{border-color:transparent;background:transparent;padding-left:0}
+@media (max-width:620px){
+  .codes .cfields{grid-template-columns:1fr}
+  .codes li{grid-template-columns:auto minmax(0,1fr) auto}
+  .codes .ccount{grid-column:2;grid-row:2;margin-top:0}
+  .codes li>:last-child{grid-column:3;grid-row:1}
+}
+button.icon{padding:.2rem .5rem;font-size:1.1rem;line-height:1;border-color:var(--line);color:var(--muted)}
+.addcode{display:flex;gap:.5rem;margin:0 0 1rem;max-width:36rem}
+.addcode input{flex:1}
+.progress{display:flex;align-items:center;gap:.75rem;margin:0 0 .75rem;font-weight:600}
+.progress .bar{flex:1;max-width:20rem;height:.6rem;border-radius:99px;background:var(--line);overflow:hidden}
+.progress .bar span{display:block;height:100%;background:var(--green)}
+.resp{border:1px solid var(--line);border-left:5px solid var(--line);border-radius:8px;padding:.75rem .9rem;margin:0 0 .75rem}
+.resp.done{border-left-color:var(--green)}
+.rhead{display:flex;flex-wrap:wrap;gap:.35rem .5rem;align-items:center;font-size:.88rem;margin-bottom:.35rem}
+.tag{font-size:.78rem;font-weight:700;padding:.1rem .5rem;border-radius:99px;background:var(--bg);color:var(--muted);border:1px solid var(--line)}
+.tag.warn{background:var(--warn-bg);color:var(--warn);border-color:transparent}
+.rtext{margin:0 0 .6rem;max-width:80ch;white-space:pre-wrap}
+.chips,.sents,.flags{display:flex;flex-wrap:wrap;gap:.35rem}
+.chips{margin-bottom:.5rem}
+.chip,.sbtn,.fbtn{padding:.25rem .6rem;font-size:.88rem;font-weight:600;border-radius:99px;border:2px solid var(--c,var(--muted));color:var(--text);background:transparent;white-space:normal;text-align:left}
+.chip::before{content:"";width:.6rem;height:.6rem;border-radius:50%;background:var(--c);flex:none}
+.chip[aria-pressed="true"],.sbtn[aria-pressed="true"],.fbtn[aria-pressed="true"]{background:var(--c,var(--muted));color:#fff}
+.chip[aria-pressed="true"]::before{background:#fff}
+.chip.sugg{border-style:dashed}
+.sbtn.s-pos{--c:#007F3B}.sbtn.s-neg{--c:#D5281B}.sbtn.s-mix{--c:#B35C00}.sbtn.s-neu{--c:#5C6F7E}
+.fbtn{--c:#330072}
+.rrow{display:flex;flex-wrap:wrap;gap:.35rem 1rem;align-items:center;margin-bottom:.5rem}
+.rrow .lbl{font-size:.85rem;color:var(--muted);font-weight:600}
+.shint{font-size:.85rem;color:var(--muted)}
+.resp textarea.note{min-height:2.4rem;font-size:.92rem;padding:.35rem .5rem;resize:vertical}
+.pager{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;justify-content:space-between;margin-top:.5rem}
+
+/* Findings */
+.finding{border:1px solid var(--line);border-top:5px solid var(--c);border-radius:8px;padding:.9rem 1rem;margin:0 0 1rem}
+.finding h3{display:flex;flex-wrap:wrap;align-items:baseline;gap:.25rem .6rem}
+.finding .qadvice{color:var(--muted);margin:-.25rem 0 .6rem}
+.finding textarea{min-height:5rem;margin-bottom:.6rem}
+.imp{display:flex;flex-wrap:wrap;gap:.35rem;align-items:center;margin:0 0 .6rem}
+.imp .sbtn{--c:#005EB8}
+details.read{margin-top:.4rem}
+details.read summary{cursor:pointer;font-weight:600;color:var(--blue);margin-bottom:.4rem}
+#method{min-height:9rem}
+
+/* Notes */
+.notes{padding:0 1.25rem 2rem;color:var(--muted);font-size:.92rem}
+.notes p{max-width:80ch;margin:0 0 .75rem}
+.page-head,main,.notes{box-sizing:border-box;max-width:1340px;margin-left:auto;margin-right:auto}
+.notice{background:var(--blue-bg);color:var(--text);border-left:5px solid var(--blue);border-radius:0 4px 4px 0;padding:.7rem .9rem;max-width:80ch}
+@media (prefers-reduced-motion: no-preference){button{transition:background .15s,filter .15s}}
+</style>
+{% include focus-head.html %}
+</head>
+<body>
+
+{% include focus-header.html %}
+
+<div class="page-head fa-host">
+  <div class="fa-head-text">
+    <h1>Analyse survey comments</h1>
+    <p class="meta">Get to know your free-text comments, explore them with a word cloud, code each response and write up what you found, with quotes. Use <b>Data sheet</b> to download a coding spreadsheet. Everything runs in your browser, so your data is never uploaded.</p>
+  </div>
+  <div data-focus-actions></div>
+</div>
+
+<main>
+  <section class="panel" aria-labelledby="data-h">
+    <h2 id="data-h">Your comments</h2>
+
+    <div class="block">
+      <label for="question">Survey question</label>
+      <input type="text" id="question" placeholder="e.g. Please can you tell us why you gave your answer?">
+    </div>
+
+    <div class="block">
+      <label for="data">Paste from Excel or a CSV</label>
+      <p class="hint">One response per row. Add columns for a unique ID and a group, such as service or ward, if you have them.</p>
+      <textarea id="data" spellcheck="false" placeholder="ID&#9;Service&#9;Comment&#10;1&#9;Outpatients&#9;Staff were kind and explained everything&#10;2&#9;Inpatient wards&#9;Food was cold by the time it reached me"></textarea>
+      <p id="detected" aria-live="polite"></p>
+    </div>
+
+    <label class="check"><input type="checkbox" id="hasHeader"> First row is column headings</label>
+
+    <div class="subbox" id="colsBox" hidden>
+      <div class="block">
+        <label for="textCol">Comments column</label>
+        <select id="textCol"></select>
+      </div>
+      <div class="pair">
+        <div class="block">
+          <label for="idCol">ID column</label>
+          <select id="idCol"></select>
+        </div>
+        <div class="block">
+          <label for="groupCol">Group column</label>
+          <select id="groupCol"></select>
+        </div>
+      </div>
+    </div>
+
+    <div class="subbox" id="importBox" hidden>
+      <p id="importNote"></p>
+      <div class="btns" style="margin-bottom:.6rem"><button type="button" class="small" id="importBtn">Bring in the coding</button></div>
+    </div>
+
+    <div class="btns" style="margin-bottom:1.5rem">
+      <button type="button" id="clearBtn">Clear</button>
+    </div>
+
+    <h2>How much to analyse</h2>
+    <fieldset class="opts">
+      <legend class="sr">Sample</legend>
+      <label class="check"><input type="radio" name="sample" value="all" checked> <span><b>All responses</b><br><span class="hint">Read and code every comment.</span></span></label>
+      <label class="check"><input type="radio" name="sample" value="random"> <span><b>Random sample</b><br><span class="hint">Pick comments at random.</span></span></label>
+      <label class="check"><input type="radio" name="sample" value="representative"> <span><b>Representative sample</b><br><span class="hint">In proportion to each group, so the sample reflects who gave feedback.</span></span></label>
+      <label class="check"><input type="radio" name="sample" value="purposive"> <span><b>Purposive sample</b><br><span class="hint">Representative, plus every comment from groups you choose, such as those with few responses, so minority voices are heard.</span></span></label>
+    </fieldset>
+    <div class="subbox" id="sampleBox" hidden>
+      <div class="block">
+        <label for="sampleN">Sample size</label>
+        <input type="number" id="sampleN" min="1" step="1" inputmode="numeric" placeholder="e.g. 100">
+      </div>
+      <div class="block" id="boostWrap" hidden>
+        <p style="font-weight:600;margin:0 0 .35rem">Include every comment from</p>
+        <div id="boostBox"></div>
+      </div>
+      <div class="btns" style="margin-bottom:.8rem"><button type="button" class="small" id="drawBtn">Draw sample</button></div>
+    </div>
+    <p id="sampleNote" aria-live="polite"></p>
+    <p class="hint">You can also keep coding until nothing new is emerging. Step 4 shows when new codes stop appearing.</p>
+  </section>
+
+  <section class="panel" aria-labelledby="result-h">
+    <h2 id="result-h" class="sr">Analysis</h2>
+    <div id="empty" class="empty">
+      <p>Paste your survey comments on the left to start.</p>
+      <button type="button" class="primary" data-act="example">Try the example</button>
+    </div>
+
+    <div id="work" hidden>
+      <div class="tabs" role="tablist" aria-label="Steps">
+        <button type="button" role="tab" id="tab-overview" aria-controls="p-overview" aria-selected="true"><b>1</b> Know your data</button>
+        <button type="button" role="tab" id="tab-cloud" aria-controls="p-cloud" aria-selected="false" tabindex="-1"><b>2</b> Word cloud</button>
+        <button type="button" role="tab" id="tab-code" aria-controls="p-code" aria-selected="false" tabindex="-1"><b>3</b> Code responses</button>
+        <button type="button" role="tab" id="tab-findings" aria-controls="p-findings" aria-selected="false" tabindex="-1"><b>4</b> Findings</button>
+      </div>
+
+      <div role="tabpanel" id="p-overview" aria-labelledby="tab-overview">
+        <div id="ovOut"></div>
+        <div class="controls">
+          <div class="narrow">
+            <label for="thickAt">Thick from</label>
+            <input type="number" id="thickAt" min="2" step="1" value="30" inputmode="numeric">
+          </div>
+          <p class="hint">words. Comments shorter than this count as thin.</p>
+        </div>
+      </div>
+
+      <div role="tabpanel" id="p-cloud" aria-labelledby="tab-cloud" hidden>
+        <div class="caution">
+          <p><b>Use word clouds to discover, not to report.</b> A word cloud helps you get familiar with the comments before you analyse them. It can’t tell you what people meant, so don’t use it to present findings. Equal-sized words show the breadth of what people said rather than counting it.</p>
+        </div>
+        <div class="controls">
+          <fieldset class="opts">
+            <legend>Word size</legend>
+            <div class="seg">
+              <label><input type="radio" name="wcSize" value="equal" checked><span>Equal</span></label>
+              <label><input type="radio" name="wcSize" value="freq"><span>By how often</span></label>
+            </div>
+          </fieldset>
+          <fieldset class="opts">
+            <legend>Show</legend>
+            <div class="seg">
+              <label><input type="radio" name="wcUnit" value="words" checked><span>Words</span></label>
+              <label><input type="radio" name="wcUnit" value="phrases"><span>Two-word phrases</span></label>
+            </div>
+          </fieldset>
+          <div class="wide">
+            <label for="wcFilter">Comments to include</label>
+            <select id="wcFilter"></select>
+          </div>
+        </div>
+        <div class="controls">
+          <div class="narrow">
+            <label for="wcMax">Most words</label>
+            <input type="number" id="wcMax" min="5" max="200" step="1" value="60" inputmode="numeric">
+          </div>
+          <div class="narrow">
+            <label for="wcMin">Seen in at least</label>
+            <input type="number" id="wcMin" min="1" step="1" value="1" inputmode="numeric">
+          </div>
+          <div class="wide">
+            <label for="wcExclude">Leave out these words</label>
+            <input type="text" id="wcExclude" placeholder="e.g. hospital, nhs (comma separated)">
+          </div>
+        </div>
+        <label class="check"><input type="checkbox" id="wcStop" checked> Leave out common words, such as “the”, “and” and “was”</label>
+        <label class="check"><input type="checkbox" id="wcPlural" checked> Group plurals with the single word, such as “nurse” and “nurses”</label>
+        <div id="cloudOut"></div>
+        <div id="wordOut" aria-live="polite"></div>
+      </div>
+
+      <div role="tabpanel" id="p-code" aria-labelledby="tab-code" hidden>
+        <fieldset class="opts">
+          <legend>Your approach</legend>
+          <div class="seg">
+            <label><input type="radio" name="approach" value="deductive"><span>Set codes</span></label>
+            <label><input type="radio" name="approach" value="inductive"><span>Build as you go</span></label>
+            <label><input type="radio" name="approach" value="combined" checked><span>Both</span></label>
+          </div>
+          <p class="optnote" id="approachNote"></p>
+        </fieldset>
+        <h3>Your codes</h3>
+        <div id="codesOut"></div>
+        <div class="addcode">
+          <input type="text" id="newCode" aria-label="New code name" placeholder="New code, e.g. Car parking">
+          <button type="button" class="small" id="addCode">Add code</button>
+        </div>
+        <div class="controls">
+          <div class="wide">
+            <label for="codeView">Show</label>
+            <select id="codeView"></select>
+          </div>
+          <div class="wide">
+            <label for="codeSearch">Search the comments</label>
+            <input type="search" id="codeSearch" placeholder="e.g. parking">
+          </div>
+        </div>
+        <div class="progress" id="progress"></div>
+        <div id="listOut"></div>
+      </div>
+
+      <div role="tabpanel" id="p-findings" aria-labelledby="tab-findings" hidden>
+        <div class="caution">
+          <p><b>Report what you found and why it matters, not how many people said it.</b> A topic raised by a few people can matter a lot: cold food is likely to affect everyone on the ward, not just the two who mentioned it, and experiences of small groups, such as people with a learning disability, will never show up in large numbers. Judge each finding by its impact.</p>
+        </div>
+        <div id="findOut"></div>
+        <h3>Method and limitations</h3>
+        <p class="hint">Be clear about how you analysed the comments and what that means for your findings. Leave this blank to use the suggested wording shown.</p>
+        <div class="block">
+          <label for="method" class="sr">Method and limitations</label>
+          <textarea id="method"></textarea>
+        </div>
+        <div class="btns" style="margin-bottom:1rem"><button type="button" class="small" id="methodBtn">Start from the suggested wording</button></div>
+        <label class="check"><input type="checkbox" id="redact" checked> Hide likely personal details, such as names, emails and phone numbers, in quotes and exports</label>
+      </div>
+    </div>
+  </section>
+</main>
+
+<section class="notes" aria-label="About qualitative analysis">
+  <p><b>Qualitative data</b> is words and images. It helps you understand why and how, where numbers tell you how many, how much or how often. Best practice is to read all of it, then choose a method that fits. Sentiment and content analysis sort comments by the words people used, into categories or topics. They suit short, focused (“thin”) comments and can be done by non-experts, but they can oversimplify. Thematic analysis looks at tone, inference and context to find themes. It suits long, detailed (“thick”) comments and is best done by, or with, an experienced qualitative analyst.</p>
+  <p><b>Using the results:</b> word clouds are for getting to know your data, not for reporting. Don’t make decisions from counts of coded comments: a finding’s significance comes from its impact, not how often it was mentioned. Present findings in words, with a short description and quotes that show where each finding came from, and say what method, sample and limitations your analysis had. Check comments for personal details and safeguarding concerns before you analyse or share them, and follow your organisation’s information governance and research ethics rules.</p>
+  <p>Based on the Making Data Count session on qualitative data (step 9).</p>
+  <div class="notice">Want to build your skills? <a href="https://coh.gstt.nhs.uk/course/view.php?id=3199" target="_blank" rel="noopener">Book QI training with the CITI Academy</a>.</div>
+</section>
+
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const els = {
+    question: $('question'), data: $('data'), hasHeader: $('hasHeader'), detected: $('detected'),
+    colsBox: $('colsBox'), textCol: $('textCol'), idCol: $('idCol'), groupCol: $('groupCol'),
+    importBox: $('importBox'), importNote: $('importNote'),
+    sampleN: $('sampleN'), sampleBox: $('sampleBox'), boostWrap: $('boostWrap'), boostBox: $('boostBox'), sampleNote: $('sampleNote'),
+    empty: $('empty'), work: $('work'), thickAt: $('thickAt'), ovOut: $('ovOut'),
+    wcFilter: $('wcFilter'), wcMax: $('wcMax'), wcMin: $('wcMin'), wcExclude: $('wcExclude'), wcStop: $('wcStop'), wcPlural: $('wcPlural'),
+    cloudOut: $('cloudOut'), wordOut: $('wordOut'),
+    approachNote: $('approachNote'), codesOut: $('codesOut'), newCode: $('newCode'), codeView: $('codeView'), codeSearch: $('codeSearch'),
+    progress: $('progress'), listOut: $('listOut'), findOut: $('findOut'), method: $('method'), redact: $('redact')
+  };
+  const radio = n => (document.querySelector(`input[name=${n}]:checked`) || {}).value;
+  const FONT = 'Figtree, Frutiger, Helvetica Neue, Arial, sans-serif';
+  const INK = '#212B32', MUTED = '#4C6272';
+  // Strong colours that read on white, for codes and words.
+  const PALETTE = ['#005EB8', '#007F3B', '#AE2573', '#330072', '#8A1538', '#00667A', '#7A4600', '#003087', '#425563', '#5C2D91'];
+  const OTHER = { id: 'other', name: 'Other', desc: 'Anything that doesn’t fit your codes yet. Look back at these regularly: they show what your codes are missing.', keywords: '', color: '#5C6F7E' };
+  const SENT = { pos: 'Positive', neg: 'Negative', mix: 'Mixed', neu: 'Neutral' };
+  const FLAGS = { quote: 'Potential quote', pii: 'Personal details', safe: 'Safeguarding' };
+  const IMPACT = { high: 'High impact', some: 'Some impact', low: 'Low impact' };
+  const STEPS = ['Reading the comments', 'Sentiment', 'Content analysis', 'Thematic analysis', 'Other methods'];
+  const APPROACH = {
+    deductive: 'Code against a set list of codes to answer a specific question, such as what people said about X, Y and Z. Use Other for anything that doesn’t fit, so you can show what the list misses.',
+    inductive: 'Let the comments lead: add a code whenever a new topic comes up as you read. Your codes grow as you go, so look back over early responses once they settle.',
+    combined: 'Start with the codes you need, such as those for routine reporting, and add new ones as they come up. Use Other for anything that doesn’t fit yet.'
+  };
+  const PAGE = 20;
+  const nf = new Intl.NumberFormat('en-GB', { maximumFractionDigits: 1 });
+
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const escRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const trunc = (s, n) => s.length > n ? s.slice(0, n - 1) + '…' : s;
+  const slug = s => (s || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) || 'qualitative-analysis';
+  const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+  const count = (n, item) => n + ' ' + (n === 1 ? item[0] : item[1]);
+  const joinList = a => a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1];
+  const RESP = ['response', 'responses'];
+  const int = el => { const v = Math.round(Number(String(el.value).trim())); return isFinite(v) && String(el.value).trim() !== '' ? v : NaN; };
+  const median = a => { if (!a.length) return 0; const s = [...a].sort((x, y) => x - y), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
+  const uniq = a => [...new Set(a)];
+  const hash = s => { let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return Math.abs(h); };
+  function hl(text, re) {
+    if (!re) return esc(text);
+    let out = '', last = 0;
+    for (const m of text.matchAll(re)) {
+      if (!m[0]) continue;
+      out += esc(text.slice(last, m.index)) + '<mark>' + esc(m[0]) + '</mark>';
+      last = m.index + m[0].length;
+    }
+    return out + esc(text.slice(last));
+  }
+
+  // ---- checks before sharing ----
+  const PII = [
+    { label: 'email address', re: /[\w.+-]+@[\w-]+(?:\.[\w-]+)+/g, sub: '[email]' },
+    { label: 'name', re: /\b(?:Dr|Doctor|Mr|Mrs|Ms|Miss|Nurse|Sister|Prof|Professor)\.?\s+[A-Z][a-z'-]+(?:\s+[A-Z][a-z'-]+)?/g, sub: '[name]' },
+    { label: 'phone or NHS number', re: /(?:\+44\s?|\b0)(?:\d[\s-]?){9,10}\b|\b\d{3}[\s-]?\d{3}[\s-]?\d{4}\b/g, sub: '[number]' },
+    { label: 'postcode', re: /\b[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}\b/gi, sub: '[postcode]' },
+    { label: 'date', re: /\b\d{1,2}[/.-]\d{1,2}[/.-]\d{2,4}\b/g, sub: '[date]' }
+  ];
+  const SAFE = /\b(abus\w*|assault\w*|neglect\w*|self[- ]?harm\w*|suicid\w*|kill (?:my|him|her|them)sel\w*|overdos\w*|hit me|hurt me|threaten\w*|unsafe|scared of|afraid of|domestic violence|harass\w*|exploit\w*|groom\w*|restrain\w*)\b/i;
+  const piiFound = t => PII.filter(p => t.search(p.re) >= 0).map(p => p.label);
+  const redact = t => PII.reduce((s, p) => s.replace(p.re, p.sub), t);
+  const shown = t => els.redact.checked ? redact(t) : t;
+
+  // ---- words ----
+  const STOP = new Set(('a about above after again against all am an and any are aren\'t as at be because been before being below between both but by can can\'t cannot could couldn\'t did didn\'t do does doesn\'t doing don\'t down during each few for from further had hadn\'t has hasn\'t have haven\'t having he he\'d he\'ll he\'s her here here\'s hers herself him himself his how how\'s i i\'d i\'ll i\'m i\'ve if in into is isn\'t it it\'s its itself let\'s me more most mustn\'t my myself no nor not of off on once only or other ought our ours ourselves out over own same shan\'t she she\'d she\'ll she\'s should shouldn\'t so some such than that that\'s the their theirs them themselves then there there\'s these they they\'d they\'ll they\'re they\'ve this those through to too under until up very was wasn\'t we we\'d we\'ll we\'re we\'ve were weren\'t what what\'s when when\'s where where\'s which while who who\'s whom why why\'s with won\'t would wouldn\'t you you\'d you\'ll you\'re you\'ve your yours yourself yourselves ' +
+    'also just get got getting really much many one ones even still quite lot lots will us im ive dont didnt wasnt couldnt wouldnt cant isnt thats theyre youre etc way thing things however although though made make could would may might must shall every another able take took taken back know knew go went going come came say said see saw seen put').split(' '));
+  const tokens = t => (t.toLowerCase().replace(/[’‘`]/g, "'").match(/[a-z][a-z'-]*[a-z]|[a-z]/g) || []).map(w => w.replace(/'s$/, ''));
+  const POS = new Set('good great excellent brilliant amazing fantastic wonderful lovely kind kindness caring helpful friendly supportive supported respectful respect professional clean quick efficient prompt thank thanks thankful grateful happy pleased satisfied reassuring reassured compassionate polite courteous comfortable clear best perfect superb impressed attentive informative nice smooth easy outstanding marvellous listened empathic empathetic dignity calm welcoming proud heard'.split(' '));
+  const NEG = new Set('bad poor terrible awful horrible rude slow late delay delays delayed dirty cold unhelpful ignored dismissive disappointed disappointing frustrating frustrated worried anxious scared upset angry joke worst unacceptable cancelled lost confusing confused unclear shortage shortages abandoned nuisance complaint complain difficult lonely painful uncomfortable neglect neglected unsafe unprofessional uncaring disgusting appalling chaotic chaos rushed unfriendly frightening frightened limited'.split(' '));
+  const NEGATE = /^(not|never|no|nothing|isn't|wasn't|weren't|didn't|don't|doesn't|couldn't|wouldn't|hardly|without)$/;
+  // A suggestion from the words used, for the analyst to accept or ignore.
+  function sentHint(text) {
+    const t = tokens(text);
+    let p = 0, n = 0;
+    t.forEach((w, i) => {
+      const flip = [t[i - 1], t[i - 2], t[i - 3]].some(x => x && NEGATE.test(x));
+      if (POS.has(w)) flip ? n++ : p++;
+      else if (NEG.has(w)) flip ? p++ : n++;
+    });
+    return p && n ? 'mix' : p ? 'pos' : n ? 'neg' : '';
+  }
+
+  // ---- state ----
+  const blankState = () => ({ codes: [], cid: 0, coding: {}, seq: 0, findings: {}, sample: null, boost: [] });
+  let state = blankState();
+  let data = null;      // the pasted table and the role of each column
+  let rows = [];        // responses with a comment
+  let tab = 'overview', page = 0, timer = null, chosenWord = null, cloud = null, headerTouched = false, colSig = '';
+
+  const allCodes = () => state.codes.concat(OTHER);
+  const codeById = id => allCodes().find(c => c.id === id);
+  const codeByName = name => allCodes().find(c => c.name.toLowerCase() === String(name).trim().toLowerCase());
+  function addCode(name, desc, keywords) {
+    const usedColours = state.codes.map(c => c.color);
+    const color = PALETTE.find(c => !usedColours.includes(c)) || PALETTE[state.codes.length % PALETTE.length];
+    const c = { id: 'c' + (++state.cid), name: name.trim(), desc: desc || '', keywords: keywords || '', color };
+    state.codes.push(c);
+    return c;
+  }
+  const entry = key => state.coding[key] || (state.coding[key] = { codes: [], sent: '', note: '' });
+  // Record the order responses were first coded in (for saturation), and drop empty entries.
+  function touched(key) {
+    const c = state.coding[key];
+    if (!c) return;
+    if (c.codes.length && !c.order) c.order = ++state.seq;
+    if (!c.codes.length && !c.sent && !c.note && !c.quote && !c.pii && !c.safe) delete state.coding[key];
+  }
+  const thickAt = () => { const v = int(els.thickAt); return v > 1 ? v : 30; };
+  const groupName = () => data && data.r.group >= 0 ? data.cols.names[data.r.group] : '';
+  function activeRows() {
+    if (radio('sample') === 'all' || !state.sample) return rows;
+    const keep = new Set(state.sample.keys);
+    return rows.filter(r => keep.has(r.key));
+  }
+  function usage(list) {
+    const u = {}; allCodes().forEach(c => { u[c.id] = 0; });
+    list.forEach(r => { const c = state.coding[r.key]; if (c) c.codes.forEach(id => { if (id in u) u[id]++; }); });
+    return u;
+  }
+  const isCoded = r => { const c = state.coding[r.key]; return !!(c && c.codes.length); };
+  function kwRe(code) {
+    const kws = code.keywords.split(/[,;]+/).map(s => s.trim()).filter(Boolean);
+    return kws.length ? new RegExp('\\b(' + kws.map(k => escRe(k).replace(/\s+/g, '\\s+')).join('|') + ')', 'i') : null;
+  }
+
+  // ---- parsing ----
+  // Quote-aware split, so a comment with line breaks, which Excel copies inside quotes, stays in one cell.
+  function parseDelimited(text, d) {
+    const recs = []; let rec = [], cell = '', q = false;
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      if (q) {
+        if (c === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else q = false; }
+        else cell += c;
+      } else if (c === '"' && cell.trim() === '') { q = true; cell = ''; }
+      else if (c === d) { rec.push(cell); cell = ''; }
+      else if (c === '\n' || c === '\r') { if (c === '\r' && text[i + 1] === '\n') i++; rec.push(cell); recs.push(rec); rec = []; cell = ''; }
+      else cell += c;
+    }
+    if (q) return null;
+    rec.push(cell); recs.push(rec);
+    return recs.map(r => r.map(x => x.trim())).filter(r => r.some(x => x !== ''));
+  }
+  function split(text) {
+    if (!text.trim()) return null;
+    const lines = text.split(/\r?\n/).filter(l => l.trim());
+    if (text.includes('\t')) return parseDelimited(text, '\t') || lines.map(l => l.split('\t').map(x => x.trim()));
+    // A CSV only when the rows line up; otherwise each line is one comment, commas and all.
+    const csv = parseDelimited(text, ',');
+    if (csv && csv.length > 1 && csv[0].length > 1 && csv[0].every(v => v.length <= 40)) {
+      const n = csv[0].length;
+      if (csv.filter(r => r.length === n).length / csv.length >= 0.9) return csv;
+    }
+    return lines.map(l => [l.trim()]);
+  }
+  const HEAD_WORDS = /comment|response|feedback|answer|text|why|reason|tell us|question|\bid\b|ref|service|ward|site|team|group|date|code|age|gender/i;
+  function headerGuess(recs) {
+    if (recs.length < 2) return false;
+    const h = recs[0];
+    if (h.some(v => v.length > 60)) return false;
+    if (h.length > 1) return h.every(v => v !== '' && !/^\d+$/.test(v)) && (h.some(v => HEAD_WORDS.test(v)) || h.join('').length < 40);
+    return h[0].length <= 40 && HEAD_WORDS.test(h[0]) && !/[.!?]$/.test(h[0]);
+  }
+  const bare = h => (h || '').replace(/\s*\(.*\)\s*$/, '').trim();
+  const MARK = /^(1|x|y|yes|true|✓|✔|\*)$/i;
+  const TEXT_HEAD = /comment|response|feedback|answer|text|verbatim/i;
+  const ID_HEAD = /^(id|ref|reference|respondent( id)?|response (id|no\.?|number)|unique (id|ref|reference)|no\.?|number|#)$/i;
+  const GROUP_HEAD = /group|service|ward|site|team|department|location|age|gender|ethnic|area|directorate|specialty|speciality|clinic|unit|source|month|quarter/i;
+  const SPECIAL = [
+    ['sentiment', /^sentiment$/i], ['pos', /^positive$/i], ['neg', /^negative$/i], ['mix', /^mixed$/i], ['neu', /^neutral$/i],
+    ['quote', /^(potential )?quotes?$/i], ['pii', /^(personal (details|data|info\w*|identifiable info\w*)|pii)$/i],
+    ['safe', /^safeguarding( concerns?)?$/i], ['note', /^(analytical )?notes?$/i], ['other', /^other$/i]
+  ];
+  function table(recs, hasHeader) {
+    const width = Math.max(...recs.map(r => r.length));
+    const head = hasHeader ? recs[0] : null;
+    const body = (hasHeader ? recs.slice(1) : recs).map(r => { const x = r.slice(); while (x.length < width) x.push(''); return x; });
+    const names = [];
+    for (let i = 0; i < width; i++) names.push((head && head[i]) || (width === 1 ? 'Comments' : `Column ${i + 1}`));
+    return { names, body, width };
+  }
+  function roles(cols, hasHeader) {
+    const { names, body, width } = cols;
+    const vals = i => body.map(r => r[i]).filter(v => v !== '');
+    const avgLen = i => { const v = vals(i); return v.length ? v.reduce((a, s) => a + s.length, 0) / v.length : 0; };
+    const special = {}, marks = [], free = [];
+    for (let i = 0; i < width; i++) {
+      const nm = bare(names[i]);
+      const sp = hasHeader ? SPECIAL.find(s => s[1].test(nm)) : null;
+      if (sp && !(sp[0] in special)) { special[sp[0]] = i; continue; }
+      if (hasHeader && width > 2 && vals(i).every(v => MARK.test(v)) && !TEXT_HEAD.test(nm) && !ID_HEAD.test(nm) && !GROUP_HEAD.test(nm)) { marks.push(i); continue; }
+      free.push(i);
+    }
+    const pick = (sel, auto) => sel === 'none' ? -1 : sel !== '' && +sel < width ? +sel : auto;
+    // The comments are in the column with the longest entries.
+    const autoText = free.length ? free.reduce((b, i) => avgLen(i) > avgLen(b) ? i : b, free[0]) : 0;
+    const text = pick(els.textCol.value, autoText);
+    const rest = free.filter(i => i !== text);
+    const autoId = rest.find(i => hasHeader && ID_HEAD.test(bare(names[i]))) ??
+      rest.find(i => { const v = vals(i); return v.length === body.length && v.length > 1 && new Set(v).size === v.length && v.every(x => /^[A-Za-z]{0,4}[-_ ]?\d+$/.test(x)); }) ?? -1;
+    const id = pick(els.idCol.value, autoId);
+    const rest2 = rest.filter(i => i !== id);
+    const lowCard = i => { const v = vals(i), k = new Set(v).size; return v.length >= 4 && k >= 2 && k <= Math.min(15, v.length / 2) && avgLen(i) <= 40; };
+    const autoGroup = rest2.find(i => hasHeader && GROUP_HEAD.test(bare(names[i]))) ?? rest2.find(lowCard) ?? -1;
+    const group = pick(els.groupCol.value, autoGroup);
+    return { text, id, group, special, marks, auto: { text: autoText, id: autoId, group: autoGroup } };
+  }
+  const NO_COMMENT = /^(n\/?a|none|no|nothing|nil|-+|\.+|no comments?|nothing to add|nothing else|not applicable)[.!]?$/i;
+  function buildRows(cols, r) {
+    const out = [], seen = new Map();
+    let none = 0;
+    cols.body.forEach((rec, i) => {
+      const text = (rec[r.text] || '').replace(/[ \t]+/g, ' ').trim();
+      if (!text) return;
+      if (NO_COMMENT.test(text)) { none++; return; }
+      const id = r.id >= 0 && rec[r.id] ? rec[r.id] : String(i + 1);
+      let key = (r.id >= 0 ? 'id:' : 'row:') + id;
+      const k = seen.get(key) || 0; seen.set(key, k + 1);
+      if (k) key += '#' + (k + 1);
+      out.push({
+        key, id, text, raw: rec, group: r.group >= 0 ? (rec[r.group] || '(no group)') : '',
+        wc: text.split(/\s+/).length, pii: piiFound(text), safe: SAFE.test(text), hint: sentHint(text)
+      });
+    });
+    return { list: out, none, dupes: [...seen.values()].some(v => v > 1) };
+  }
+  function fillSelects(cols) {
+    const sig = cols.names.join('\u0001');
+    els.colsBox.hidden = cols.width < 2;
+    if (sig === colSig) return;
+    colSig = sig;
+    const opts = (sel, extra) => {
+      sel.innerHTML = `<option value="">Detect</option>${extra ? '<option value="none">None</option>' : ''}` +
+        cols.names.map((n, i) => `<option value="${i}">${esc(trunc(n, 40))}</option>`).join('');
+      sel.value = '';
+    };
+    opts(els.textCol, false); opts(els.idCol, true); opts(els.groupCol, true);
+  }
+  // A pasted coding sheet: columns of marks for codes, sentiment and flags.
+  function importable() {
+    if (!data || !data.hasHeader) return null;
+    const { r, cols } = data;
+    const keys = Object.keys(r.special);
+    const has = i => cols.body.some(rec => (rec[i] || '').trim() !== '');
+    const codeCols = r.marks.filter(i => has(i) || !/^code \d+$/i.test(bare(cols.names[i])));
+    if (!codeCols.length && !keys.length) return null;
+    const marked = codeCols.concat(keys.map(k => r.special[k])).some(has);
+    return { codeCols, names: codeCols.map(i => bare(cols.names[i])), marked };
+  }
+
+  // ---- update ----
+  function update() {
+    const recs = split(els.data.value);
+    if (!recs) {
+      data = null; rows = []; colSig = '';
+      els.detected.textContent = ''; els.colsBox.hidden = true; els.importBox.hidden = true;
+      return render();
+    }
+    if (!headerTouched) els.hasHeader.checked = headerGuess(recs);
+    const hasHeader = els.hasHeader.checked && recs.length > 1;
+    const cols = table(recs, hasHeader);
+    fillSelects(cols);
+    const r = roles(cols, hasHeader);
+    data = { cols, r, hasHeader };
+    const b = buildRows(cols, r);
+    rows = b.list;
+
+    const N = cols.names, bits = [];
+    if (rows.length) bits.push(`Reading ${count(rows.length, ['comment', 'comments'])}${cols.width > 1 ? ` from ${N[r.text]}` : ''}.`);
+    if (b.none) bits.push(`${count(b.none, RESP)} such as “none” or “n/a” left out.`);
+    if (cols.width > 1) {
+      bits.push(r.id >= 0 ? `IDs from ${N[r.id]}${b.dupes ? ' (some repeat, so check them)' : ''}.` : 'Numbered by row, as there is no ID column.');
+      if (r.group >= 0) bits.push(`Groups from ${N[r.group]}.`);
+    }
+    els.detected.textContent = bits.join(' ');
+
+    const imp = importable();
+    els.importBox.hidden = !imp;
+    if (imp) els.importNote.textContent = imp.marked
+      ? `This looks like a coding sheet${imp.names.length ? `, with codes for ${trunc(joinList(imp.names), 140)}` : ''}. Bring its coding into the tool to carry on here.`
+      : `This looks like a blank coding sheet${imp.names.length ? `, with codes for ${trunc(joinList(imp.names), 140)}` : ''}. Bring in its codes to start coding here.`;
+    render();
+  }
+  function schedule(fn) { clearTimeout(timer); timer = setTimeout(fn || update, 180); }
+
+  function doImport() {
+    const imp = importable(); if (!imp) return;
+    const { cols, r } = data, sp = r.special;
+    const idFor = {};
+    imp.codeCols.forEach((i, k) => { const name = imp.names[k]; if (name) idFor[i] = (codeByName(name) || addCode(name)).id; });
+    let n = 0;
+    rows.forEach(row => {
+      const rec = row.raw, has = i => i !== undefined && (rec[i] || '').trim() !== '';
+      const codes = Object.keys(idFor).filter(i => has(+i)).map(i => idFor[i]);
+      if (has(sp.other)) codes.push('other');
+      let sent = '';
+      if (has(sp.sentiment)) { const v = rec[sp.sentiment].toLowerCase(); sent = ['pos', 'neg', 'mix', 'neu'].find(k => v.startsWith(k)) || ''; }
+      else { const p = has(sp.pos), g = has(sp.neg); sent = (p && g) || has(sp.mix) ? 'mix' : p ? 'pos' : g ? 'neg' : has(sp.neu) ? 'neu' : ''; }
+      const note = has(sp.note) ? rec[sp.note] : '';
+      const fl = { quote: has(sp.quote), pii: has(sp.pii), safe: has(sp.safe) };
+      if (!codes.length && !sent && !note && !fl.quote && !fl.pii && !fl.safe) return;
+      const c = entry(row.key);
+      c.codes = uniq(c.codes.concat(codes));
+      if (sent) c.sent = sent;
+      if (note) c.note = note;
+      Object.keys(fl).forEach(k => { if (fl[k]) c[k] = true; });
+      touched(row.key); n++;
+    });
+    els.importBox.hidden = true;
+    FocusActions.say(n ? `Brought in the coding for ${count(n, RESP)}.` : 'Brought in the codes from your sheet.');
+    showTab('code');
+  }
+
+  // ---- sampling ----
+  function shuffle(a) {
+    a = a.slice();
+    for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+    return a;
+  }
+  function byGroup(list) {
+    const m = new Map();
+    list.forEach(r => { if (!m.has(r.group)) m.set(r.group, []); m.get(r.group).push(r); });
+    return m;
+  }
+  function drawSample() {
+    const mode = radio('sample'), N = int(els.sampleN);
+    if (mode === 'all') return;
+    if (!(N > 0)) { els.sampleN.focus(); return FocusActions.say('Enter a sample size first.'); }
+    const coded = rows.filter(isCoded).length;
+    if (state.sample && coded && !confirm('Draw a new sample? Responses you have coded stay coded, but some may drop out of the sample.')) return;
+    const n = Math.min(N, rows.length);
+    let pick;
+    if (mode === 'random' || data.r.group < 0) pick = shuffle(rows).slice(0, n);
+    else {
+      // In proportion to each group, sharing out the remainder by the largest fractions.
+      const groups = [...byGroup(rows)].map(([g, list]) => ({ g, list, exact: list.length * n / rows.length }));
+      groups.forEach(x => { x.k = Math.floor(x.exact); });
+      let left = n - groups.reduce((a, x) => a + x.k, 0);
+      [...groups].sort((a, b) => (b.exact - b.k) - (a.exact - a.k)).forEach(x => { if (left > 0) { x.k++; left--; } });
+      pick = groups.flatMap(x => shuffle(x.list).slice(0, x.k));
+      if (mode === 'purposive') rows.filter(r => state.boost.includes(r.group)).forEach(r => { if (!pick.includes(r)) pick.push(r); });
+    }
+    const keep = new Set(pick.map(r => r.key));
+    state.sample = { mode, n, keys: rows.filter(r => keep.has(r.key)).map(r => r.key) };
+    page = 0;
+    render();
+    FocusActions.say(`Drew a sample of ${count(state.sample.keys.length, RESP)}.`);
+  }
+  function renderSample() {
+    const mode = radio('sample'), hasG = !!(data && data.r.group >= 0);
+    els.sampleBox.hidden = mode === 'all' || !rows.length;
+    els.boostWrap.hidden = mode !== 'purposive' || !hasG;
+    if (mode === 'purposive' && hasG) {
+      const groups = [...byGroup(rows)].sort((a, b) => a[1].length - b[1].length);
+      const sig = groups.map(g => g[0] + g[1].length).join('|');
+      if (els.boostBox.dataset.sig !== sig) {
+        els.boostBox.dataset.sig = sig;
+        els.boostBox.innerHTML = groups.map(([g, list]) =>
+          `<label class="check"><input type="checkbox" data-g="${esc(g)}"${state.boost.includes(g) ? ' checked' : ''}> ${esc(g)} <span class="muted">(${list.length})</span></label>`).join('');
+      }
+    }
+    let note = '';
+    if (!rows.length) note = '';
+    else if (mode === 'all') note = `Analysing all ${count(rows.length, RESP)}.` + (rows.length > 300 ? ' That is a lot to code by hand, so think about a sample.' : '');
+    else {
+      if (mode !== 'random' && !hasG) note = 'Choose a group column above to sample in proportion to groups. Until then the sample is random. ';
+      note += state.sample ? `Analysing a sample of ${state.sample.keys.length} of ${count(rows.length, RESP)}.` : 'Press Draw sample to pick the comments to analyse. Until then, all are shown.';
+      if (state.sample && state.sample.mode !== mode) note += ' Press Draw sample again to use this kind of sample.';
+    }
+    els.sampleNote.textContent = note;
+  }
+
+  // ---- render ----
+  const TABS = ['overview', 'cloud', 'code', 'findings'];
+  function showTab(t, focus) {
+    tab = t;
+    TABS.forEach(k => {
+      const b = $('tab-' + k), on = k === t;
+      b.setAttribute('aria-selected', String(on)); b.tabIndex = on ? 0 : -1;
+      $('p-' + k).hidden = !on;
+    });
+    if (focus) $('tab-' + t).focus();
+    render();
+  }
+  function render() {
+    const has = rows.length > 0;
+    els.empty.hidden = has; els.work.hidden = !has;
+    renderSample();
+    if (!has) {
+      els.empty.querySelector('p').textContent = data ? 'No comments found yet. Check the comments column, or paste one comment per row.' : 'Paste your survey comments on the left to start.';
+      return;
+    }
+    fillFilters();
+    if (tab === 'overview') renderOverview();
+    else if (tab === 'cloud') renderCloud();
+    else if (tab === 'code') renderCode();
+    else renderFindings();
+  }
+  // Options that depend on the data and the codes, keeping what was chosen.
+  function setOptions(sel, opts) {
+    const keep = sel.value;
+    const html = opts.map(([v, t]) => `<option value="${esc(v)}">${esc(t)}</option>`).join('');
+    if (sel.dataset.html !== html) { sel.innerHTML = html; sel.dataset.html = html; }
+    sel.value = opts.some(o => o[0] === keep) ? keep : opts[0][0];
+  }
+  function fillFilters() {
+    const groups = groupName() ? uniq(rows.map(r => r.group)).map(g => ['group:' + g, `${groupName()}: ${g}`]) : [];
+    const codes = allCodes().map(c => ['code:' + c.id, 'Coded ' + c.name]);
+    const sents = Object.keys(SENT).map(k => ['sent:' + k, SENT[k]]);
+    const sampled = radio('sample') !== 'all' && state.sample;
+    setOptions(els.wcFilter, [['all', 'All comments'], ...(sampled ? [['sample', 'Comments in your sample']] : []), ...groups, ...sents, ...codes]);
+    setOptions(els.codeView, [['all', 'All responses'], ['uncoded', 'Not coded yet'], ['coded', 'Coded'], ...codes, ...sents,
+      ['flag:quote', 'Marked as potential quotes'], ['flag:pii', 'Marked as personal details'], ['flag:safe', 'Marked for safeguarding'],
+      ['hint:pii', 'Check: possible personal details'], ['hint:safe', 'Check: words linked to safeguarding'],
+      ['len:thin', 'Thin comments'], ['len:thick', 'Thick comments'], ...groups]);
+  }
+  function matches(r, v) {
+    const c = state.coding[r.key] || {}, codes = c.codes || [];
+    if (v === 'all') return true;
+    if (v === 'sample') return !state.sample || state.sample.keys.includes(r.key);
+    if (v === 'uncoded') return !codes.length;
+    if (v === 'coded') return codes.length > 0;
+    const k = v.slice(0, v.indexOf(':')), x = v.slice(v.indexOf(':') + 1);
+    if (k === 'code') return codes.includes(x);
+    if (k === 'sent') return c.sent === x;
+    if (k === 'flag') return !!c[x];
+    if (k === 'hint') return x === 'pii' ? r.pii.length > 0 : r.safe;
+    if (k === 'len') return x === 'thick' ? r.wc >= thickAt() : r.wc < thickAt();
+    if (k === 'group') return r.group === x;
+    return true;
+  }
+
+  // ---- step 1: know your data ----
+  function renderOverview() {
+    const act = activeRows(), T = thickAt();
+    const thin = act.filter(r => r.wc < T), thick = act.filter(r => r.wc >= T);
+    const pct = Math.round(100 * thick.length / act.length);
+    const med = median(act.map(r => r.wc));
+    const pii = act.filter(r => r.pii.length), safe = act.filter(r => r.safe);
+    const big = act.length > 300;
+    let fit, advice;
+    if (pct < 20) {
+      fit = [0, 1, 2];
+      advice = 'These comments are mostly thin: short and focused on one or two topics. Sentiment and content analysis suit them, and you don’t need to be a specialist to do it. Read them all first.';
+    } else if (pct <= 50) {
+      fit = [0, 2, 3];
+      advice = 'A mix of thin and thick comments. Content analysis will sort the short ones, but it can miss the context in the longer ones. For those, thematic analysis gives a fuller picture, so think about involving a qualitative analyst.';
+    } else {
+      fit = [0, 3];
+      advice = 'These comments are mostly thick: long, detailed and covering several topics. Thematic analysis makes the most of them. It needs specialist skill, so involve an experienced qualitative analyst if you can.';
+    }
+    const pick = list => { const s = [...list].sort((a, b) => a.wc - b.wc); return s[Math.floor(s.length / 2)]; };
+    const eg = (r, label) => r ? `<div class="eg"><small>${label} (${r.wc} words)</small>${esc(shown(trunc(r.text, 420)))}</div>` : '';
+    const sampled = act.length < rows.length;
+    els.ovOut.innerHTML = `
+      <p class="summary"><strong>${count(act.length, ['comment', 'comments'])}</strong> to analyse, ${pct >= 50 ? 'mostly <strong>thick</strong>' : pct >= 20 ? 'a <strong>mix</strong> of thin and thick' : 'mostly <strong>thin</strong>'}.</p>
+      <p class="focuson">${sampled ? `A sample of ${act.length} from ${rows.length} comments. ` : ''}Read every comment before you choose how to analyse them.</p>
+      <div class="tiles">
+        <div class="tile"><b>${act.length}</b><span>comments${sampled ? ' in your sample' : ''}</span></div>
+        <div class="tile"><b>${nf.format(med)}</b><span>words in a typical comment</span></div>
+        <div class="tile"><b>${thin.length}</b><span>thin (under ${T} words)</span></div>
+        <div class="tile"><b>${thick.length}</b><span>thick (${T} words or more)</span></div>
+      </div>
+      <div class="share" role="img" aria-label="${100 - pct}% thin, ${pct}% thick">
+        ${thin.length ? `<span class="thin" style="flex:${thin.length}">${100 - pct}% thin</span>` : ''}${thick.length ? `<span class="thick" style="flex:${thick.length}">${pct}% thick</span>` : ''}
+      </div>
+      <p class="hint">Thin comments are short, focus on one or two topics and lack detail or context. Thick comments are longer, cover several topics and give detail and context.</p>
+      ${eg(pick(thin), 'A typical thin comment')}${eg(pick(thick), 'A typical thick comment')}
+
+      <div class="reading">
+        <h3>Which method fits</h3>
+        <p>${esc(advice)}</p>
+        <ol class="ladder" aria-label="Methods, from simplest to most in-depth. Highlighted methods fit your data.">${STEPS.map((s, i) => `<li class="${fit.includes(i) ? 'fit' : ''}">${s}${fit.includes(i) ? '<span class="sr"> (fits)</span>' : ''}</li>`).join('')}</ol>
+        ${big ? `<p>With ${act.length} comments, think about analysing a sample (see How much to analyse, on the left), or coding until nothing new is emerging.</p>` : ''}
+        <details class="values">
+          <summary>Who should analyse it?</summary>
+          <div class="tablewrap"><table>
+            <thead><tr><th></th><th>Someone who isn’t an analyst</th><th>A qualitative analyst</th><th>Your comments</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">How it was collected</th><td>One standard question, such as in a survey</td><td>Different questions or methods, such as surveys, interviews and observations mixed</td><td>Check: did everyone answer the same question?</td></tr>
+              <tr><th scope="row">How much</th><td>A small amount</td><td>Large volumes that may need sampling</td><td>${act.length} comments</td></tr>
+              <tr><th scope="row">How rich</th><td>Thin (short comments)</td><td>Thick (long comments and passages of text)</td><td>${100 - pct}% thin, ${pct}% thick</td></tr>
+              <tr><th scope="row">How broad</th><td>A narrow focus</td><td>A wide range of topics</td><td>The word cloud gives a first idea</td></tr>
+              <tr><th scope="row">What you report</th><td>Describes what you see</td><td>Relationships, patterns and inferences backed by evidence</td><td>Depends on your aim</td></tr>
+            </tbody>
+          </table></div>
+        </details>
+      </div>
+
+      <div class="reading">
+        <h3>Check before you analyse or share</h3>
+        <div class="caution${pii.length || safe.length ? ' warn' : ''}">
+          <ul>
+            <li>${pii.length ? `${count(pii.length, ['comment seems', 'comments seem'])} to include personal details, such as a name, email or phone number. <button type="button" class="linkbtn" data-goto="hint:pii">Check them</button>` : 'No obvious personal details found, but read the comments to be sure.'}</li>
+            <li>${safe.length ? `${count(safe.length, ['comment uses', 'comments use'])} words linked to safeguarding concerns. <button type="button" class="linkbtn" data-goto="hint:safe">Check them</button>. Follow your safeguarding process for any concern straight away, rather than waiting for the analysis.` : 'No words linked to safeguarding found, but stay alert to concerns as you read.'}</li>
+            <li>Make sure your information governance and, for research, ethics approval cover using the comments this way.</li>
+            <li>Remove or hide personal details before you share comments or quotes. The checks here are a prompt, not a guarantee.</li>
+          </ul>
+        </div>
+      </div>`;
+  }
+
+  // ---- step 2: word cloud ----
+  let measureCtx = null;
+  function textW(t, size, weight) {
+    measureCtx = measureCtx || document.createElement('canvas').getContext('2d');
+    measureCtx.font = `${weight} ${size}px ${FONT}`;
+    return measureCtx.measureText(t).width;
+  }
+  function cloudOptions() {
+    const max = int(els.wcMax), min = int(els.wcMin);
+    return {
+      equal: radio('wcSize') !== 'freq', phrases: radio('wcUnit') === 'phrases', stop: els.wcStop.checked, plural: els.wcPlural.checked,
+      exclude: new Set(els.wcExclude.value.toLowerCase().split(/[,;\n]+/).map(s => s.trim()).filter(Boolean)),
+      max: Math.min(200, Math.max(5, max > 0 ? max : 60)), min: Math.max(1, min > 0 ? min : 1)
+    };
+  }
+  // Words (or phrases) and the responses that use them.
+  function cloudWords(list, o) {
+    const where = new Map();
+    const keep = t => t.length > 1 && !(o.stop && STOP.has(t)) && !o.exclude.has(t);
+    list.forEach(r => {
+      const t = tokens(r.text);
+      const items = o.phrases
+        ? t.slice(0, -1).map((a, i) => [a, t[i + 1]]).filter(([a, b]) => keep(a) && keep(b) && !STOP.has(a) && !STOP.has(b)).map(p => p.join(' '))
+        : t.filter(keep);
+      items.forEach(w => { if (!where.has(w)) where.set(w, new Set()); where.get(w).add(r.key); });
+    });
+    const forms = new Map([...where.keys()].map(w => [w, [w]]));
+    if (o.plural) {
+      [...where.keys()].forEach(w => {
+        const one = w.slice(0, -1);
+        if (w.length > 3 && w.endsWith('s') && !/(ss|us|is)$/.test(w) && where.has(one)) {
+          where.get(w).forEach(k => where.get(one).add(k));
+          forms.get(one).push(w);
+          where.delete(w);
+        }
+      });
+    }
+    return [...where].map(([w, keys]) => ({ w, keys, n: keys.size, forms: forms.get(w) }))
+      .filter(x => x.n >= o.min && !o.exclude.has(x.w))
+      .sort((a, b) => b.n - a.n || a.w.localeCompare(b.w))
+      .slice(0, o.max);
+  }
+  // Place each word on a spiral out from the middle, in the first spot where it fits.
+  function cloudSVG(words, o) {
+    const W = 960, H = 540, top = o.title ? 60 : 16, bottom = H - 16;
+    const cx = W / 2, cy = (top + bottom) / 2;
+    const maxN = words[0].n, minN = words[words.length - 1].n;
+    const size = w => o.equal ? 24 : Math.round(15 + 43 * Math.sqrt((w.n - minN) / Math.max(1, maxN - minN)));
+    // Equal sizes in a scrambled (but repeatable) order, so the middle doesn't hint at the most common.
+    const order = o.equal ? [...words].sort((a, b) => hash(a.w + 'q') - hash(b.w + 'q')) : words;
+    const placed = [], boxes = [];
+    let lastHit = null;
+    const hits = b => {
+      if (lastHit && overlap(lastHit, b)) return true;
+      for (const x of boxes) if (overlap(x, b)) { lastHit = x; return true; }
+      return false;
+    };
+    const overlap = (a, b) => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+    order.forEach(w => {
+      const s = size(w), weight = o.equal ? 700 : s >= 30 ? 800 : 600;
+      const bw = textW(w.w, s, weight) + 10, bh = s * 1.15 + 2;
+      if (bw > W - 20) return;
+      for (let a = 0, r = 0; r < W; a += Math.min(0.5, 9 / (r + 1))) {
+        r = 1.7 * a;
+        const b = { x: cx + r * Math.cos(a) * 1.7 - bw / 2, y: cy + r * Math.sin(a) - bh / 2, w: bw, h: bh };
+        if (b.x < 8 || b.x + bw > W - 8 || b.y < top || b.y + bh > bottom) continue;
+        if (hits(b)) continue;
+        boxes.push(b); placed.push({ w, s, weight, b });
+        return;
+      }
+    });
+    const out = [`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(o.aria)}" font-family="${FONT}">`, `<rect width="${W}" height="${H}" fill="#ffffff"/>`];
+    if (o.title) out.push(`<text x="24" y="38" font-size="22" font-weight="700" fill="${INK}">${esc(trunc(o.title, 80))}</text>`);
+    placed.forEach(p => {
+      const fill = PALETTE[hash(p.w.w) % PALETTE.length];
+      out.push(`<g class="wd" data-w="${esc(p.w.w)}" tabindex="0" role="button" aria-label="${esc(p.w.w)}, in ${count(p.w.n, RESP)}"><title>${esc(p.w.w)}: in ${count(p.w.n, RESP)}</title>` +
+        `<text x="${(p.b.x + p.b.w / 2).toFixed(1)}" y="${(p.b.y + p.s * 0.9 + 1).toFixed(1)}" font-size="${p.s}" font-weight="${p.weight}" text-anchor="middle" fill="${fill}">${esc(p.w.w)}</text></g>`);
+    });
+    out.push('</svg>');
+    return { svg: out.join(''), placed: placed.length };
+  }
+  function cloudList() {
+    const v = els.wcFilter.value || 'all';
+    return rows.filter(r => matches(r, v));
+  }
+  function buildCloud() {
+    const list = cloudList(), o = cloudOptions();
+    const words = cloudWords(list, o);
+    if (!words.length) return { list, words, o };
+    const title = els.question.value.trim();
+    const res = cloudSVG(words, { equal: o.equal, title, aria: `Word cloud${title ? ' for ' + title : ''}: ${words.slice(0, 12).map(w => w.w).join(', ')}${words.length > 12 ? ' and more' : ''}.` });
+    return { list, words, o, svg: res.svg, placed: res.placed };
+  }
+  function renderCloud() {
+    cloud = buildCloud();
+    const { words, list, o } = cloud;
+    if (!words.length) {
+      els.cloudOut.innerHTML = `<div class="empty"><p>No words to show. Try including more comments, or fewer words left out.</p></div>`;
+      els.wordOut.innerHTML = '';
+      return;
+    }
+    const left = words.length - cloud.placed;
+    els.cloudOut.innerHTML = `
+      <p class="focuson">${count(words.length, o.phrases ? ['phrase', 'phrases'] : ['word', 'words'])} from ${count(list.length, ['comment', 'comments'])}. Select a word to read the comments that use it.</p>
+      <div class="chartwrap" id="cloudChart">${cloud.svg}</div>
+      ${left > 0 ? `<p class="hint">${count(left, o.phrases ? ['phrase', 'phrases'] : ['word', 'words'])} didn’t fit. Show fewer words to see them all.</p>` : ''}
+      <details class="values">
+        <summary>All ${o.phrases ? 'phrases' : 'words'} as a list</summary>
+        <p class="hint">For getting to know your data only. Counting words doesn’t tell you what people meant.</p>
+        <div class="tablewrap"><table>
+          <thead><tr><th>${o.phrases ? 'Phrase' : 'Word'}</th><th class="num">Comments that use it</th><th></th></tr></thead>
+          <tbody>${words.map(w => `<tr><td>${esc(w.w)}${w.forms.length > 1 ? ` <span class="muted">(${esc(w.forms.slice(1).join(', '))})</span>` : ''}</td><td class="num">${w.n}</td><td><button type="button" class="linkbtn" data-word="${esc(w.w)}">Read them</button></td></tr>`).join('')}</tbody>
+        </table></div>
+      </details>`;
+    if (chosenWord && words.some(w => w.w === chosenWord)) showWord(chosenWord, false); else { chosenWord = null; els.wordOut.innerHTML = ''; }
+  }
+  function wordRe(w) {
+    const forms = w.forms.map(f => escRe(f).replace(/\s+/g, '[^a-z0-9]+'));
+    return new RegExp(`\\b(${forms.join('|')})(?:'s)?\\b`, 'gi');
+  }
+  function showWord(word, scroll) {
+    const w = cloud && cloud.words.find(x => x.w === word); if (!w) return;
+    chosenWord = word;
+    const list = cloud.list.filter(r => w.keys.has(r.key)), re = wordRe(w);
+    els.wordOut.innerHTML = `<div class="wordpanel" tabindex="-1">
+      <div class="whead"><h3>“${esc(word)}” in ${count(list.length, ['comment', 'comments'])}</h3><button type="button" class="small" data-codeword="${esc(word)}">Code these comments</button></div>
+      <ul class="quotes">${list.slice(0, 60).map(r => `<li class="${sentClass(r)}"><small>ID ${esc(r.id)}${r.group ? ' · ' + esc(r.group) : ''}</small>${hl(shown(r.text), re)}</li>`).join('')}</ul>
+      ${list.length > 60 ? `<p class="hint">Showing the first 60. Use Code these comments to read them all.</p>` : ''}
+    </div>`;
+    if (scroll !== false) { const p = els.wordOut.firstElementChild; p.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); p.focus({ preventScroll: true }); }
+  }
+  const sentClass = r => { const c = state.coding[r.key]; return c && c.sent ? 's-' + c.sent : ''; };
+
+  // ---- step 3: code responses ----
+  function renderCode() {
+    els.approachNote.textContent = APPROACH[radio('approach')] || '';
+    renderCodes();
+    renderList();
+  }
+  function renderCodes() {
+    const u = usage(activeRows());
+    const row = c => {
+      const other = c.id === 'other';
+      return `<li data-id="${c.id}" style="--c:${c.color}" class="${other ? 'other' : ''}">
+        <span class="cdot" aria-hidden="true"></span>
+        <div class="cfields">
+          ${other ? `<input class="cname" value="Other" readonly aria-label="Code name">` : `<input class="cname" value="${esc(c.name)}" aria-label="Code name">`}
+          ${other ? `<span class="hint" style="margin:.4rem 0 0">${esc(c.desc)}</span>` : `<input class="cdesc" value="${esc(c.desc)}" placeholder="What belongs here" aria-label="What belongs under ${esc(c.name)}">
+          <input class="ckw" value="${esc(c.keywords)}" placeholder="Suggest for comments that mention… (comma separated)" aria-label="Words that suggest ${esc(c.name)}">`}
+        </div>
+        <span class="ccount" data-count="${c.id}">${countText(u[c.id])}</span>
+        ${other ? '<span></span>' : `<button type="button" class="icon" data-del="${c.id}" aria-label="Delete ${esc(c.name)}" title="Delete code">×</button>`}
+      </li>`;
+    };
+    const big = Object.entries(u).filter(([id, n]) => id !== 'other' && n >= Math.max(5, activeRows().filter(isCoded).length * 0.4)).map(([id]) => codeById(id).name);
+    els.codesOut.innerHTML = `
+      ${state.codes.length ? '' : `<p class="hint">No codes yet. Add codes below as topics come up, or <button type="button" class="linkbtn" data-starter>start with codes for patient feedback</button>.</p>`}
+      <ul class="codes">${allCodes().map(row).join('')}</ul>
+      <p class="hint">Counts help you keep track of your coding: think about splitting a code used a lot, and merging or dropping one hardly used. Don’t report them as findings.${big.length ? ` <b>${esc(joinList(big))}</b> ${big.length === 1 ? 'is' : 'are'} used a lot, so may be worth splitting.` : ''}</p>`;
+  }
+  const countText = n => n ? `used ${n === 1 ? 'once' : n === 2 ? 'twice' : n + ' times'}` : 'not used yet';
+  function searchRe() {
+    const q = els.codeSearch.value.trim();
+    return q ? new RegExp(escRe(q), 'gi') : null;
+  }
+  function viewRows() {
+    const v = els.codeView.value || 'all', q = els.codeSearch.value.trim().toLowerCase();
+    return activeRows().filter(r => matches(r, v) && (!q || r.text.toLowerCase().includes(q) || String(r.id).toLowerCase() === q));
+  }
+  function renderProgress() {
+    const act = activeRows(), done = act.filter(isCoded).length, pct = act.length ? Math.round(100 * done / act.length) : 0;
+    els.progress.innerHTML = `<span>${done} of ${count(act.length, RESP)} coded</span><span class="bar" aria-hidden="true"><span style="width:${pct}%"></span></span>`;
+  }
+  function renderList() {
+    renderProgress();
+    const list = viewRows(), pages = Math.max(1, Math.ceil(list.length / PAGE));
+    page = Math.min(page, pages - 1);
+    const re = searchRe(), from = page * PAGE, shownRows = list.slice(from, from + PAGE);
+    els.listOut.innerHTML = list.length
+      ? shownRows.map(r => cardHTML(r, re)).join('') + (pages > 1 ? `
+        <div class="pager">
+          <button type="button" class="small" data-page="${page - 1}"${page ? '' : ' disabled'}>Previous</button>
+          <span>${from + 1} to ${from + shownRows.length} of ${list.length}</span>
+          <button type="button" class="small" data-page="${page + 1}"${page < pages - 1 ? '' : ' disabled'}>Next</button>
+        </div>` : '')
+      : `<div class="empty"><p>No comments match. Try showing all responses or clearing the search.</p></div>`;
+  }
+  function suggested(r) {
+    return state.codes.filter(c => { const re = kwRe(c); return re && re.test(r.text); }).map(c => c.id);
+  }
+  function cardHTML(r, re) {
+    const c = state.coding[r.key] || {}, codes = c.codes || [];
+    const sugg = suggested(r).filter(id => !codes.includes(id));
+    const T = thickAt();
+    const tags = [
+      r.group && `<span class="tag">${esc(r.group)}</span>`,
+      `<span class="tag">${r.wc} words · ${r.wc >= T ? 'thick' : 'thin'}</span>`,
+      r.pii.length && `<span class="tag warn">Check: possible ${esc(joinList(r.pii))}</span>`,
+      r.safe && `<span class="tag warn">Check: words linked to safeguarding</span>`
+    ].filter(Boolean).join('');
+    const chip = code => {
+      const on = codes.includes(code.id), sg = sugg.includes(code.id);
+      return `<button type="button" class="chip${sg ? ' sugg' : ''}" style="--c:${code.color}" data-code="${code.id}" aria-pressed="${on}"${sg ? ' title="Suggested by your keywords"' : ''}>${sg ? '<span aria-hidden="true">+</span>' : ''}${esc(code.name)}${sg ? '<span class="sr"> (suggested)</span>' : ''}</button>`;
+    };
+    const sents = Object.keys(SENT).map(k => `<button type="button" class="sbtn s-${k}" data-sent="${k}" aria-pressed="${c.sent === k}">${SENT[k]}</button>`).join('');
+    const hint = r.hint && !c.sent ? `<span class="shint">Words suggest ${SENT[r.hint].toLowerCase()}. <button type="button" class="linkbtn" data-accept="${r.hint}">Use this</button></span>` : '';
+    const flags = Object.keys(FLAGS).map(k => `<button type="button" class="fbtn" data-flag="${k}" aria-pressed="${!!c[k]}">${FLAGS[k]}</button>`).join('');
+    return `<article class="resp${codes.length ? ' done' : ''}" data-key="${esc(r.key)}" aria-label="Response ${esc(r.id)}">
+      <div class="rhead"><b>ID ${esc(r.id)}</b>${tags}</div>
+      <p class="rtext">${hl(r.text, re)}</p>
+      <div class="chips" role="group" aria-label="Codes">${allCodes().map(chip).join('')}</div>
+      <div class="rrow"><span class="lbl">Sentiment</span><div class="sents" role="group" aria-label="Sentiment">${sents}</div>${hint}</div>
+      <div class="rrow"><span class="lbl">Mark as</span><div class="flags" role="group" aria-label="Mark as">${flags}</div></div>
+      <textarea class="note" rows="1" placeholder="Analytical notes, such as patterns, links or what is implied" aria-label="Analytical notes for response ${esc(r.id)}">${esc(c.note || '')}</textarea>
+    </article>`;
+  }
+  function refreshCounts() {
+    const u = usage(activeRows());
+    els.codesOut.querySelectorAll('[data-count]').forEach(s => { s.textContent = countText(u[s.dataset.count]); });
+    renderProgress();
+  }
+  function deleteCode(id) {
+    const c = codeById(id); if (!c) return;
+    const used = Object.values(state.coding).filter(x => x.codes.includes(id)).length;
+    if (used && !confirm(`Delete “${c.name}”? It is used on ${count(used, RESP)}, which will lose this code.`)) return;
+    state.codes = state.codes.filter(x => x.id !== id);
+    Object.keys(state.coding).forEach(k => { const x = state.coding[k]; x.codes = x.codes.filter(i => i !== id); touched(k); });
+    delete state.findings[id];
+    fillFilters(); renderCode();
+  }
+  const STARTER = [
+    ['Staff attitude and behaviour', 'Kindness, respect, friendliness or rudeness', 'kind, caring, friendly, rude, respect, courteous, polite, lovely, supportive, compassion, helpful, dismissive'],
+    ['Communication and information', 'Being told what is happening, explanations, letters and phone calls', 'explain, informed, information, letter, phone, told, leaflet'],
+    ['Being listened to and involved', 'Feeling heard, involved in decisions and plans', 'listen, heard, involved, together, plan, choice'],
+    ['Waiting and access', 'Getting an appointment, waiting times and delays', 'wait, delay, late, appointment, months, weeks, hours'],
+    ['Staffing levels', 'Enough staff, staff being available', 'staffing, shortage, short staffed, busy, enough staff'],
+    ['Food and drink', 'Meals, drinks and choice', 'food, meal, menu, drink, vegetarian'],
+    ['Car parking and getting there', 'Parking, transport and finding the way', 'park, parking, transport, bus, signs'],
+    ['Environment and cleanliness', 'Cleanliness, noise, comfort and facilities', 'clean, dirty, noise, noisy, toilet, comfortable']
+  ];
+
+  // ---- step 4: findings ----
+  const impactRank = id => ({ high: 0, some: 1, low: 2 })[(state.findings[id] || {}).impact] ?? 3;
+  const finding = id => state.findings[id] || (state.findings[id] = { text: '', impact: '', skip: [] });
+  function wrapText(s, chars, maxLines) {
+    const words = s.split(/\s+/), lines = [];
+    let cur = '';
+    words.forEach(w => {
+      if (!cur) cur = w;
+      else if ((cur + ' ' + w).length <= chars) cur += ' ' + w;
+      else { lines.push(cur); cur = w; }
+    });
+    if (cur) lines.push(cur);
+    if (lines.length > maxLines) { lines.length = maxLines; lines[maxLines - 1] = trunc(lines[maxLines - 1] + '…', chars); }
+    return lines.map(l => trunc(l, chars + 1));
+  }
+  // Each column is a group of respondents with the codes found in its comments, without counts.
+  // A code found in more than one group is coloured; one found in a single group is plain.
+  function mapSVG(act) {
+    const byG = !!groupName();
+    const groups = byG ? uniq(act.map(r => r.group)) : ['All comments'];
+    const per = new Map(groups.map(g => [g, new Set()]));
+    act.forEach(r => { const c = state.coding[r.key]; if (c) c.codes.forEach(id => per.get(byG ? r.group : 'All comments').add(id)); });
+    const gs = groups.filter(g => per.get(g).size);
+    if (!gs.length) return null;
+    const order = allCodes().map(c => c.id);
+    const inGroups = id => gs.filter(g => per.get(g).has(id)).length;
+    const k = gs.length, M = 24, gap = 16;
+    const W = Math.max(960, M * 2 + k * 190 + (k - 1) * gap), colW = (W - M * 2 - (k - 1) * gap) / k;
+    const chars = Math.max(12, Math.floor((colW - 24) / 7.3));
+    const title = els.question.value.trim();
+    const top = title ? 92 : 46;
+    const cols = gs.map(g => {
+      const ids = [...per.get(g)].sort((a, b) => impactRank(a) - impactRank(b) || order.indexOf(a) - order.indexOf(b));
+      return { g, items: ids.map(id => { const c = codeById(id); const star = impactRank(id) === 0; return { c, star, shared: k > 1 && inGroups(id) > 1, lines: wrapText((star ? '★ ' : '') + c.name, chars, 3) }; }) };
+    });
+    const itemH = it => 14 + it.lines.length * 17, headH = 52;
+    const colH = c => headH + 10 + c.items.reduce((a, it) => a + itemH(it) + 8, 0);
+    const legendY = top + Math.max(...cols.map(colH)) + 16, H = legendY + 46;
+    const s = [`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc((title ? title + '. ' : '') + 'Themes by group: ' + cols.map(c => `${c.g}: ${c.items.map(i => i.c.name).join(', ')}`).join('; '))}" font-family="${FONT}">`, `<rect width="${W}" height="${H}" fill="#ffffff"/>`];
+    if (title) s.push(`<text x="${M}" y="38" font-size="22" font-weight="700" fill="${INK}">${esc(trunc(title, 80))}</text>`);
+    s.push(`<text x="${M}" y="${top - 16}" font-size="14" fill="${MUTED}">What people talked about${byG ? ', by ' + esc(groupName().toLowerCase()) : ''}</text>`);
+    cols.forEach((c, i) => {
+      const x = M + i * (colW + gap);
+      let y = top;
+      const hl_ = wrapText(c.g, Math.floor((colW - 20) / 8.2), 2);
+      s.push(`<rect x="${x}" y="${y}" width="${colW}" height="${headH}" rx="6" fill="#003087"/>`);
+      hl_.forEach((l, j) => s.push(`<text x="${x + colW / 2}" y="${y + (hl_.length === 1 ? 31 : 22 + j * 18)}" font-size="15" font-weight="700" text-anchor="middle" fill="#ffffff">${esc(l)}</text>`));
+      y += headH + 10;
+      c.items.forEach(it => {
+        const h = itemH(it);
+        s.push(`<g><title>${esc(it.c.name)}${it.star ? ' (high impact)' : ''}</title><rect x="${x}" y="${y}" width="${colW}" height="${h}" rx="5" fill="${it.shared ? it.c.color : '#ffffff'}" stroke="${it.shared ? it.c.color : INK}" stroke-width="1.5"/>`);
+        it.lines.forEach((l, j) => s.push(`<text x="${x + 12}" y="${y + 22 + j * 17}" font-size="13" font-weight="${it.shared ? 600 : 700}" fill="${it.shared ? '#ffffff' : INK}">${esc(l)}</text>`));
+        s.push('</g>');
+        y += h + 8;
+      });
+    });
+    const legend = [k > 1 ? 'Coloured: found in more than one group. White: found in one group only.' : '', cols.some(c => c.items.some(i => i.star)) ? '★ judged high impact.' : ''].filter(Boolean).join('  ');
+    if (legend) s.push(`<text x="${M}" y="${legendY + 20}" font-size="13" fill="${MUTED}">${esc(legend)}</text>`);
+    s.push('</svg>');
+    return s.join('');
+  }
+  // How many different codes had appeared after each response was coded, in coding order.
+  function saturation(act) {
+    const seq = act.map(r => state.coding[r.key]).filter(c => c && c.codes.length).sort((a, b) => (a.order || 0) - (b.order || 0));
+    const seen = new Set(), pts = [], fresh = [];
+    seq.forEach((c, i) => {
+      const nw = c.codes.filter(id => id !== 'other' && !seen.has(id) && codeById(id));
+      nw.forEach(id => seen.add(id));
+      pts.push(seen.size);
+      if (nw.length) fresh.push({ i, ids: nw });
+    });
+    const m = pts.length, last = fresh.length ? fresh[fresh.length - 1].i : -1, since = m - 1 - last;
+    const need = Math.max(5, Math.ceil(m * 0.2));
+    return { pts, fresh, m, since, need, near: m >= 10 && since >= need };
+  }
+  function satSVG(sat) {
+    const W = 960, H = 260, ML = 56, MR = 20, MT = 18, MB = 46, pw = W - ML - MR, ph = H - MT - MB;
+    const maxY = Math.max(1, ...sat.pts), m = sat.m;
+    const X = i => ML + (m > 1 ? i / (m - 1) : 0.5) * pw, Y = v => MT + ph - v / maxY * ph;
+    const s = [`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Codes found against responses coded. ${sat.pts[m - 1]} codes after ${m} responses." font-family="${FONT}">`, `<rect width="${W}" height="${H}" fill="#ffffff"/>`];
+    const step = maxY > 10 ? Math.ceil(maxY / 5) : 1;
+    for (let v = 0; v <= maxY; v += step) {
+      s.push(`<line x1="${ML}" y1="${Y(v)}" x2="${ML + pw}" y2="${Y(v)}" stroke="#D8DDE0"/>`);
+      s.push(`<text x="${ML - 8}" y="${Y(v) + 4}" font-size="12" text-anchor="end" fill="${MUTED}">${v}</text>`);
+    }
+    let d = `M${X(0)},${Y(sat.pts[0])}`;
+    sat.pts.forEach((v, i) => { if (i) d += `H${X(i).toFixed(1)}V${Y(v).toFixed(1)}`; });
+    s.push(`<path d="${d}" fill="none" stroke="#005EB8" stroke-width="3"/>`);
+    sat.fresh.forEach(f => s.push(`<circle cx="${X(f.i).toFixed(1)}" cy="${Y(sat.pts[f.i]).toFixed(1)}" r="5" fill="#005EB8" stroke="#fff" stroke-width="2"><title>New: ${esc(f.ids.map(id => codeById(id).name).join(', '))}</title></circle>`));
+    s.push(`<text x="${ML}" y="${H - 12}" font-size="13" fill="${MUTED}">First coded</text><text x="${ML + pw}" y="${H - 12}" font-size="13" text-anchor="end" fill="${MUTED}">${count(m, RESP)} coded</text>`);
+    s.push(`<text x="${ML + pw / 2}" y="${H - 12}" font-size="13" font-weight="700" text-anchor="middle" fill="${INK}">Responses, in the order you coded them</text>`);
+    s.push(`<text transform="translate(16 ${MT + ph / 2}) rotate(-90)" font-size="13" font-weight="700" text-anchor="middle" fill="${INK}">Codes found</text>`);
+    s.push('</svg>');
+    return s.join('');
+  }
+  function renderFindings() {
+    const act = activeRows(), u = usage(act);
+    els.method.placeholder = methodText();
+    const used = allCodes().filter(c => u[c.id]).sort((a, b) => impactRank(a.id) - impactRank(b.id) || allCodes().indexOf(a) - allCodes().indexOf(b));
+    const unused = state.codes.filter(c => !u[c.id]);
+    if (!used.length) {
+      els.findOut.innerHTML = `<div class="empty"><p>Code some responses in step 3 to build your findings.</p><button type="button" data-goto="uncoded">Start coding</button></div>`;
+      return;
+    }
+    const sat = saturation(act), map = mapSVG(act);
+    const satMsg = sat.m < 10 ? `Keep coding: after ${count(sat.m, RESP)} it is too early to tell whether new codes are still appearing.`
+      : sat.near ? `No new codes in the last ${sat.since} responses you coded, so you may be close to saturation, where nothing new is emerging.`
+      : `New codes were still appearing recently (the last one ${sat.since ? sat.since + ' responses ago' : 'in the latest response'}), so keep coding.`;
+    const card = c => {
+      const f = state.findings[c.id] || {}, skip = f.skip || [];
+      const coded = act.filter(r => (state.coding[r.key] || { codes: [] }).codes.includes(c.id));
+      const quotes = coded.filter(r => state.coding[r.key].quote);
+      const qli = r => `<li class="${sentClass(r)}"><label><input type="checkbox" data-quote="${esc(r.key)}"${skip.includes(r.key) ? '' : ' checked'}><span>“${esc(shown(r.text))}”<small>ID ${esc(r.id)}${r.group ? ' · ' + esc(r.group) : ''}</small></span></label></li>`;
+      return `<article class="finding" data-code="${c.id}" style="--c:${c.color}">
+        <h3>${esc(c.name)} <span class="muted">coded on ${count(coded.length, RESP)}</span></h3>
+        ${c.desc ? `<p class="qadvice">${esc(c.desc)}</p>` : ''}
+        <div class="imp" role="group" aria-label="Impact of ${esc(c.name)}"><span class="muted">Impact</span>${Object.keys(IMPACT).map(k => `<button type="button" class="sbtn" data-impact="${k}" aria-pressed="${f.impact === k}">${IMPACT[k]}</button>`).join('')}</div>
+        <label>What you found<textarea class="ftext" data-code="${c.id}" placeholder="${c.id === 'other' ? 'What didn’t fit your codes? Is something missing from them?' : 'Describe the finding: what people experienced, why, and the impact on them'}">${esc(f.text || '')}</textarea></label>
+        <p style="font-weight:600;margin:0 0 .35rem">Quotes to include</p>
+        ${quotes.length ? `<ul class="quotes">${quotes.map(qli).join('')}</ul>` : `<p class="hint">Mark comments as Potential quote while coding to pick quotes here.</p>`}
+        <details class="read"><summary>Read all ${count(coded.length, ['comment', 'comments'])} coded ${esc(c.name)}</summary>
+          <ul class="quotes">${coded.map(r => `<li class="${sentClass(r)}"><small>ID ${esc(r.id)}${r.group ? ' · ' + esc(r.group) : ''}${state.coding[r.key].note ? ' · Note: ' + esc(state.coding[r.key].note) : ''}</small>${esc(shown(r.text))}</li>`).join('')}</ul>
+        </details>
+      </article>`;
+    };
+    els.findOut.innerHTML = `
+      <h3>What people talked about</h3>
+      <p class="hint">Colour shows where the same theme came up in more than one group, without counting it. Set the impact of each finding below to mark the most important with a star.</p>
+      ${map ? `<div class="chartwrap" id="mapChart">${map}</div>` : ''}
+      <h3 style="margin-top:1.25rem">Is anything new still emerging?</h3>
+      <p class="focuson">${esc(satMsg)}</p>
+      ${sat.m >= 2 ? `<details class="values" style="margin-top:0"><summary>Show new codes as you coded</summary><div class="chartwrap" style="margin-top:.6rem">${satSVG(sat)}</div></details>` : ''}
+      <div class="reading">
+        <h3>Your findings</h3>
+        <p class="hint">Write each finding in words, with a short description and quotes that show where it came from. Use colour to tell sentiments apart: green for positive, red for negative.</p>
+        ${used.map(card).join('')}
+        ${unused.length ? `<p class="hint">Codes not used yet: ${esc(joinList(unused.map(c => c.name)))}. If they stay unused, think about dropping or merging them.</p>` : ''}
+      </div>`;
+  }
+  function methodText() {
+    const act = activeRows(), mode = radio('sample'), sampled = mode !== 'all' && state.sample;
+    const coded = act.filter(isCoded).length, T = thickAt();
+    const thinPct = act.length ? Math.round(100 * act.filter(r => r.wc < T).length / act.length) : 0;
+    const q = els.question.value.trim();
+    const g = groupName() ? groupName().toLowerCase() : 'group';
+    const lines = [];
+    const what = q ? `free-text answers to “${q}”` : 'free-text survey comments';
+    if (!sampled) lines.push(`We analysed ${what}: all ${act.length} responses with a comment.`);
+    else {
+      const how = { random: 'a random sample', representative: `a sample in proportion to each ${g}`, purposive: `a sample in proportion to each ${g}, with every comment from ${joinList(state.boost) || 'chosen groups'} added so their voices were heard` }[state.sample.mode] || 'a sample';
+      lines.push(`We analysed ${what}, using ${how}: ${act.length} of the ${rows.length} responses with a comment.`);
+    }
+    if (coded < act.length) lines.push(`So far ${coded} of these have been coded.`);
+    lines.push({
+      deductive: 'Each comment was read and coded against a set list of codes, with an Other code for anything that didn’t fit.',
+      inductive: 'Each comment was read and codes were developed from the comments as they were read.',
+      combined: 'Each comment was read and coded against a starting list of codes, with new codes added as they came up and an Other code for anything that didn’t fit.'
+    }[radio('approach')] || '');
+    if (Object.values(state.coding).some(c => c.sent)) lines.push('Sentiment (positive, negative, mixed or neutral) was recorded for each comment.');
+    lines.push('Findings are judged by their impact on people rather than how many people raised them, so counts are not reported.');
+    const lim = [`Many comments were brief (${thinPct}% had fewer than ${T} words), so they may lack context.`, 'People who chose to comment may not represent everyone who used the service.'];
+    const sat = saturation(act);
+    if (sat.m >= 10 && !sat.near) lim.push('New codes were still emerging when coding stopped, so some topics may be missing.');
+    if (sampled) lim.push('Comments outside the sample were not analysed.');
+    return lines.filter(Boolean).join(' ') + '\n\nLimitations: ' + lim.join(' ');
+  }
+
+  // ---- exports ----
+  let dlPromise = null;
+  function getDownloads() {
+    if (!window.claude || typeof window.claude.use !== 'function') return Promise.resolve(undefined);
+    if (!dlPromise) dlPromise = window.claude.use('downloads').catch(() => null);
+    return dlPromise;
+  }
+  async function downloadBlob(blob, name) {
+    const d = await getDownloads();
+    if (d) { const r = await d.save({ filename: name, data: blob }); return r && r.status !== 'declined'; }
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+    return true;
+  }
+  const status = msg => FocusActions.say(msg);
+  const fileName = () => slug(els.question.value);
+  function chartSvg(kind) {
+    if (kind === 'map') return mapSVG(activeRows());
+    const c = buildCloud();
+    return c.svg || null;
+  }
+  function toPNG(svg, cb) {
+    const w = +svg.match(/width="(\d+)"/)[1], h = +svg.match(/height="(\d+)"/)[1], sc = 2;
+    const img = new Image();
+    img.onload = () => {
+      const c = document.createElement('canvas');
+      c.width = w * sc; c.height = h * sc;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, c.width, c.height);
+      ctx.drawImage(img, 0, 0, c.width, c.height);
+      c.toBlob(cb, 'image/png');
+    };
+    img.onerror = () => status('Could not create the image.');
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+  }
+  function tableRows() {
+    const codes = allCodes(), g = groupName();
+    const head = ['ID', ...(g ? [g] : []), 'Response', ...codes.map(c => c.name), 'Sentiment', 'Potential quote', 'Personal details', 'Safeguarding', 'Analytical notes'];
+    return [head].concat(activeRows().map(r => {
+      const c = state.coding[r.key] || {}, cs = c.codes || [];
+      return [r.id, ...(g ? [r.group] : []), shown(r.text), ...codes.map(k => cs.includes(k.id) ? 1 : ''), c.sent ? SENT[c.sent] : '', c.quote ? 1 : '', c.pii ? 1 : '', c.safe ? 1 : '', c.note || ''];
+    }));
+  }
+  function summaryText() {
+    const act = activeRows(), u = usage(act), q = els.question.value.trim();
+    const lines = [];
+    if (q) lines.push(q, '');
+    lines.push('Method and limitations', els.method.value.trim() || methodText(), '', 'Findings', '');
+    const used = allCodes().filter(c => u[c.id]).sort((a, b) => impactRank(a.id) - impactRank(b.id) || allCodes().indexOf(a) - allCodes().indexOf(b));
+    if (!used.length) lines.push('No responses coded yet.');
+    used.forEach(c => {
+      const f = state.findings[c.id] || {}, skip = f.skip || [];
+      lines.push(c.name + (f.impact ? ` (${IMPACT[f.impact].toLowerCase()})` : ''));
+      lines.push(f.text ? f.text.trim() : (c.id === 'other' ? 'Comments that did not fit the codes. Review them for anything the codes miss.' : '[Write this finding]'));
+      act.filter(r => { const x = state.coding[r.key]; return x && x.quote && x.codes.includes(c.id) && !skip.includes(r.key); })
+        .forEach(r => lines.push(`  “${shown(r.text)}” (ID ${r.id}${r.group ? ', ' + r.group : ''})`));
+      lines.push('');
+    });
+    return lines.join('\n').trim();
+  }
+  const csvCell = v => /[",\n]/.test(String(v)) ? '"' + String(v).replace(/"/g, '""') + '"' : String(v);
+  async function copyText(t) {
+    try { await navigator.clipboard.writeText(t); return true; }
+    catch (e) {
+      const ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select();
+      const ok = document.execCommand('copy'); ta.remove(); return ok;
+    }
+  }
+  const saved = (ok, msg) => status(ok ? msg : 'Download cancelled.');
+  const failed = () => status('The file couldn’t be saved here. Try Copy instead.');
+  function act(a, kind) {
+    if (a === 'example') return loadExample();
+    if (!rows.length) return;
+    if (a === 'png' || a === 'svg' || a === 'copyimg') {
+      const svg = chartSvg(kind), what = kind === 'map' ? 'theme map' : 'word cloud';
+      if (!svg) return status(kind === 'map' ? 'Code some responses first to draw the theme map.' : 'There are no words to show in the word cloud.');
+      const name = fileName() + (kind === 'map' ? '-themes' : '-word-cloud');
+      if (a === 'png') toPNG(svg, b => downloadBlob(b, name + '.png').then(ok => saved(ok, cap(what) + ' downloaded.'), failed));
+      if (a === 'svg') downloadBlob(new Blob([svg], { type: 'image/svg+xml' }), name + '.svg').then(ok => saved(ok, cap(what) + ' downloaded.'), failed);
+      if (a === 'copyimg') {
+        if (!(navigator.clipboard && window.ClipboardItem)) return status('Your browser can’t copy images — use PNG instead.');
+        toPNG(svg, async b => {
+          try { await navigator.clipboard.write([new ClipboardItem({ 'image/png': b })]); status(cap(what) + ' copied — paste it into PowerPoint or Word.'); }
+          catch (e) { status('Copy was blocked — use PNG instead.'); }
+        });
+      }
+    }
+    if (a === 'csv') downloadBlob(new Blob([tableRows().map(r => r.map(csvCell).join(',')).join('\r\n')], { type: 'text/csv' }), fileName() + '-coded.csv').then(ok => saved(ok, 'Coded responses downloaded.'), failed);
+    if (a === 'copytable') copyText(tableRows().map(r => r.map(v => String(v).replace(/[\t\n]+/g, ' ')).join('\t')).join('\n')).then(ok => status(ok ? 'Table copied — paste it into Excel.' : 'Copy was blocked.'));
+    if (a === 'copysummary') copyText(summaryText()).then(ok => status(ok ? 'Findings copied.' : 'Copy was blocked.'));
+  }
+
+  // ---- coding sheet ----
+  // Codes, sentiment and flags as columns to mark, which the tool reads back when the sheet is pasted in.
+  function dataSheet() {
+    const g = groupName() || 'Group';
+    const codeNames = state.codes.length ? state.codes.map(c => c.name) : ['Code 1', 'Code 2', 'Code 3', 'Code 4', 'Code 5', 'Code 6'];
+    const head = ['ID', g, 'Response', ...codeNames, 'Other', 'Positive', 'Negative', 'Personal details', 'Safeguarding', 'Potential quote', 'Analytical notes'];
+    const ids = state.codes.length ? state.codes.map(c => c.id) : [];
+    const have = activeRows();
+    const next = Math.max(0, ...have.map(r => +r.id).filter(isFinite));
+    const sheet = [head.map(v => ({ v, s: 'head' }))];
+    const total = Math.max(30, have.length + 10);
+    for (let i = 0; i < total; i++) {
+      const r = have[i], c = r ? state.coding[r.key] || {} : {}, cs = c.codes || [];
+      const mark = on => ({ v: on ? 1 : '', s: 'input' });
+      sheet.push([
+        { v: r ? (isFinite(+r.id) ? +r.id : r.id) : next + i - have.length + 1, s: 'input' },
+        { v: r ? r.group : '', s: 'input' }, { v: r ? r.text : '', s: 'wrap' },
+        ...(ids.length ? ids.map(id => mark(cs.includes(id))) : codeNames.map(() => mark(false))),
+        mark(cs.includes('other')), mark(c.sent === 'pos' || c.sent === 'mix'), mark(c.sent === 'neg' || c.sent === 'mix'),
+        mark(c.pii), mark(c.safe), mark(c.quote), { v: c.note || '', s: 'input' }
+      ]);
+    }
+    const codesSheet = [['Code', 'What belongs here', 'Words that suggest it'].map(v => ({ v, s: 'head' }))]
+      .concat((state.codes.length ? state.codes : codeNames.map(n => ({ name: n, desc: '', keywords: '' }))).map(c => [{ v: c.name, s: 'input' }, { v: c.desc, s: 'input' }, { v: c.keywords, s: 'input' }]))
+      .concat([[{ v: 'Other', s: 'input' }, { v: OTHER.desc, s: 'wrap' }, '']]);
+    const notes = [
+      'About this sheet',
+      'A simple template for coding free-text comments: the comments on the left and a column for each code, so you can mark which codes apply to each response.',
+      '',
+      'Setting it up',
+      '1. Give every response a unique ID (the ID column), so you can trace any comment back and share it with others.',
+      `2. Put the comments in the Response column, and a ${g.toLowerCase()} for each in the ${g} column if you have one.`,
+      '3. Rename the code columns to your codes (Code 1, Code 2 and so on). Insert more columns before Other if you need them. Add or remove columns now, to save going back and re-reading the comments later.',
+      '4. List your codes on the Codes sheet with what belongs under each. This keeps coding consistent, especially with more than one coder. Expect these to change early on.',
+      '5. Colour code the columns, for example one colour for the comments (which should not be changed), one for each group of codes and one for your notes.',
+      '',
+      'Coding',
+      '6. Read each comment and put 1 in each code column that applies. Use Other for anything that doesn’t fit, and look back at these regularly: they show what your codes are missing.',
+      '7. Mark Positive and Negative for sentiment. Mark both for a mixed comment.',
+      '8. Mark Personal details and Safeguarding for comments that need action or redaction, and Potential quote for comments that show a finding well.',
+      '9. Use Analytical notes for patterns, connections and what is implied.',
+      '10. To keep track of which codes you use, add =COUNTA(D2:D500) under a code column. Split codes used a lot, and merge or drop ones hardly used. Don’t report these counts as findings.',
+      '',
+      'Bringing it back to the tool',
+      'Select the whole table on the Coding sheet, including the headings, copy it and paste it into the qualitative survey analysis tool. It reads your codes and marks so you can build your findings there.'
+    ];
+    const titles = new Set(['About this sheet', 'Setting it up', 'Coding', 'Bringing it back to the tool']);
+    return [
+      { name: 'Coding', cols: [10, 18, 70, ...codeNames.map(() => 14), 10, 10, 10, 14, 14, 14, 40], rows: sheet, freeze: 1 },
+      { name: 'Codes', cols: [30, 60, 50], rows: codesSheet, freeze: 1 },
+      { name: 'Instructions', cols: [110], rows: notes.map(v => [{ v, s: titles.has(v) ? 'title' : 'wrap' }]) }
+    ];
+  }
+
+  // ---- example ----
+  const EXAMPLE = [
+    [1, 'Outpatients', 'Consultant and staff had time for me to ask questions with well informed literature to take home as well'],
+    [2, 'Outpatients', 'Phone call was 15 minutes late but service was comprehensive and friendly'],
+    [3, 'Outpatients', 'No delay. The staff was very courteous and helpful. The vaccine and its possible side effects were fully explained. Very pleased with the service.'],
+    [4, 'Emergency department', 'First visit was brilliant but second visit was horrible and made a complaint'],
+    [5, 'Outpatients', 'Its been a joke past couple of years'],
+    [6, 'Emergency department', 'Just good service'],
+    [7, 'Inpatient wards', 'Nurses were very supportive, caring and sympathetic'],
+    [8, 'Inpatient wards', 'There were issues with staffing levels when I was on the ward. This affected care in terms of people being familiar with patients and their care plans (bank and agency staff often weren’t), and whether or not people were available for 1:1s.'],
+    [9, 'Inpatient wards', 'I would have liked to see the psychologist more while I was on the ward. I understand that work load is hard, and staff shortages are a major thing on the wards at the moment.'],
+    [10, 'Inpatient wards', 'I was left on the toilet once for a very long time. I was getting anxious, something must have happened.'],
+    [11, 'Outpatients', 'The car parking situation wasn’t very good'],
+    [12, 'Maternity', 'The midwives were amazing. They listened to me and we made a birth plan together. I felt heard and supported, and when things changed quickly they explained everything calmly so I never felt frightened. Before the birth the antenatal classes were handled really well too, and although I had a long wait for my first scan it was worth it.'],
+    [13, 'Inpatient wards', 'Food was cold by the time it got to me most days. A small thing, but when you are trying to get your strength back it matters.'],
+    [14, 'Emergency department', 'Waited 7 hours to be seen with a broken wrist. Staff were clearly doing their best but there were not enough of them.'],
+    [15, 'Outpatients', 'It took three months to get an appointment and when I finally saw someone I didn’t feel listened to. I kept saying the pain was getting worse and it was another two months before I was referred for a scan, by which time I couldn’t work.'],
+    [16, 'Maternity', 'Dr Patel was lovely and explained everything.'],
+    [17, 'Inpatient wards', 'Clean ward, kind staff, thank you all'],
+    [18, 'Emergency department', 'N/A'],
+    [19, 'Outpatients', 'Couldn’t get through on the phone to change my appointment. Rang 12 times.'],
+    [20, 'Maternity', 'Partners should be able to stay overnight. My husband had to leave at 8pm and I was on my own with a newborn after a long labour, which was frightening. I didn’t know how to feed her and was too scared to keep pressing the buzzer.'],
+    [21, 'Inpatient wards', 'Staff didn’t seem to know how to support my son, who has a learning disability. He needs things explained simply and with pictures, and nobody had been trained to do that, so he was frightened and wouldn’t let them take bloods.'],
+    [22, 'Emergency department', 'Triage nurse was rude and dismissive'],
+    [23, 'Outpatients', 'Very efficient, in and out in 20 minutes'],
+    [24, 'Inpatient wards', 'My husband went into hospital with dehydration and came out 14 days later unable to walk, because no one got him out of bed. He also developed an infected bed sore and was discharged bedbound, which he still is.'],
+    [25, 'Maternity', 'Some parts very good, other parts not so good'],
+    [26, 'Outpatients', 'Letters arrived after the appointment date.'],
+    [27, 'Emergency department', 'Kept informed about the wait the whole time, which made a big difference.'],
+    [28, 'Inpatient wards', 'Vegetarian options were very limited and I had the same meal for a week. A menu with a few more choices would help a lot of people.'],
+    [29, 'Maternity', 'Felt rushed at the 6 week check'],
+    [30, 'Outpatients', 'All was good'],
+    [31, 'Inpatient wards', 'I felt unsafe on the ward at night because another patient kept shouting and coming into my bay, and staff were too busy to help.'],
+    [32, 'Emergency department', 'Nothing'],
+    [33, 'Outpatients', 'I am so proud of the NHS after the care I received, it is there for the good of the people'],
+    [34, 'Maternity', 'It was very good, mostly down to how friendly the staff were'],
+    [35, 'Inpatient wards', 'Hard to find somewhere to park and the machines only take coins.'],
+    [36, 'Emergency department', 'The doctor took time to explain my scan results and what would happen next. Being listened to made all the difference after months of being told it was nothing.']
+  ];
+  const EX_CODES = [
+    ['Staff attitude', 'How staff behaved: kindness, respect, friendliness or rudeness', 'kind, caring, friendly, rude, respect, courteous, lovely, supportive, sympathetic, helpful, dismissive'],
+    ['Communication and information', 'Being told what is happening: explanations, letters, phone calls', 'explain, informed, information, letter, phone, literature'],
+    ['Being listened to and involved', 'Feeling heard and involved in decisions and plans', 'listen, heard, together, birth plan'],
+    ['Waiting and access', 'Getting an appointment, waiting times and delays', 'wait, delay, late, appointment, months, hours'],
+    ['Staffing levels', 'Enough staff, and staff being available', 'staffing, shortage, too busy, not enough of them'],
+    ['Food and drink', 'Meals, drinks and choice', 'food, meal, menu, vegetarian'],
+    ['Car parking', 'Parking and getting to the hospital', 'park'],
+    ['Basic care and safety', 'Help with basic needs, and feeling safe', 'toilet, bed sore, out of bed, unsafe'],
+    ['Staff training', 'Staff skills and training for particular needs', 'trained, training, learning disability']
+  ];
+  const EX_CODING = [
+    [1, ['Communication and information', 'Staff attitude'], 'pos'],
+    [2, ['Waiting and access', 'Staff attitude'], 'mix'],
+    [3, ['Staff attitude', 'Communication and information'], 'pos'],
+    [4, ['Other'], 'mix'],
+    [5, ['Other'], 'neg'],
+    [7, ['Staff attitude'], 'pos'],
+    [8, ['Staffing levels', 'Basic care and safety'], 'neg', 'quote'],
+    [9, ['Staffing levels'], 'neg'],
+    [10, ['Basic care and safety', 'Staffing levels'], 'neg', 'quote', 'Staff not mentioned, but their absence is implied.'],
+    [11, ['Car parking'], 'neg'],
+    [12, ['Being listened to and involved', 'Staff attitude', 'Communication and information'], 'pos', 'quote'],
+    [13, ['Food and drink'], 'neg', 'quote', 'Likely to affect everyone on the ward, not just this patient.'],
+    [14, ['Waiting and access', 'Staffing levels'], 'mix'],
+    [15, ['Waiting and access', 'Being listened to and involved'], 'neg', 'quote', 'Not being listened to led to a delayed referral.'],
+    [16, ['Staff attitude', 'Communication and information'], 'pos', 'pii'],
+    [20, ['Other'], 'neg', 'quote', 'Partners staying overnight: a possible new code.'],
+    [21, ['Staff training'], 'neg', 'quote'],
+    [24, ['Basic care and safety', 'Staffing levels'], 'neg', 'quote'],
+    [28, ['Food and drink'], 'neg', 'quote'],
+    [31, ['Basic care and safety', 'Staffing levels'], 'neg', 'safe'],
+    [36, ['Being listened to and involved', 'Communication and information'], 'pos', 'quote']
+  ];
+  const EX_FINDINGS = {
+    'Being listened to and involved': ['high', 'Being listened to shaped whether people felt their care was safe. Where people felt unheard, particularly when trying to get an appointment, they described delayed referrals and pain getting worse. Where staff listened and planned care with them, people felt supported and less afraid.'],
+    'Staffing levels': ['high', 'Staff shortages were linked to unmet basic needs: people left waiting for help, not helped out of bed, or feeling unsafe at night. Often staff were not mentioned at all; it was their absence in the situations described that linked these comments.'],
+    'Staff training': ['high', 'Few comments, but with serious impact for people with complex needs: staff did not know how to support a patient with a learning disability. Experiences of small groups like this will never show up in large numbers, but specific training could make a real difference to them.'],
+    'Food and drink': ['some', 'Not many comments, but practical suggestions: food arriving cold and little vegetarian choice. These are likely to affect everyone on the ward, not just those who mentioned them, and small changes could help recovery.']
+  };
+  function loadExample() {
+    state = blankState();
+    els.question.value = 'Please can you tell us why you gave your answer?';
+    els.data.value = ['ID\tService\tComment'].concat(EXAMPLE.map(r => r.join('\t'))).join('\n');
+    headerTouched = false; colSig = '';
+    document.querySelector('input[name=sample][value=all]').checked = true;
+    document.querySelector('input[name=approach][value=combined]').checked = true;
+    EX_CODES.forEach(c => addCode(...c));
+    update();
+    EX_CODING.forEach(([id, names, sent, flag, note]) => {
+      const key = 'id:' + id, c = entry(key);
+      c.codes = names.map(n => codeByName(n).id);
+      c.sent = sent;
+      if (flag) c[flag] = true;
+      if (note) c.note = note;
+      touched(key);
+    });
+    Object.keys(EX_FINDINGS).forEach(n => { const f = finding(codeByName(n).id); [f.impact, f.text] = EX_FINDINGS[n]; });
+    render();
+  }
+
+  // ---- events ----
+  els.data.addEventListener('input', () => schedule());
+  els.hasHeader.addEventListener('change', () => { headerTouched = true; colSig = ''; update(); });
+  [els.textCol, els.idCol, els.groupCol].forEach(s => s.addEventListener('change', update));
+  $('importBtn').addEventListener('click', doImport);
+  $('clearBtn').addEventListener('click', () => {
+    if (Object.keys(state.coding).length && !confirm('Clear your comments and all your coding?')) return;
+    els.data.value = ''; els.question.value = ''; state = blankState(); headerTouched = false; els.hasHeader.checked = false; chosenWord = null;
+    update(); els.data.focus();
+  });
+  els.question.addEventListener('input', () => schedule(render));
+  document.querySelectorAll('input[name=sample]').forEach(r => r.addEventListener('change', () => { page = 0; render(); }));
+  $('drawBtn').addEventListener('click', drawSample);
+  els.boostBox.addEventListener('change', e => {
+    const g = e.target.dataset.g; if (g === undefined) return;
+    state.boost = e.target.checked ? uniq(state.boost.concat(g)) : state.boost.filter(x => x !== g);
+  });
+  els.thickAt.addEventListener('input', () => schedule(render));
+
+  // steps
+  TABS.forEach(k => $('tab-' + k).addEventListener('click', () => showTab(k)));
+  document.querySelector('.tabs').addEventListener('keydown', e => {
+    const i = TABS.indexOf(tab);
+    const to = e.key === 'ArrowRight' ? (i + 1) % TABS.length : e.key === 'ArrowLeft' ? (i + TABS.length - 1) % TABS.length : e.key === 'Home' ? 0 : e.key === 'End' ? TABS.length - 1 : -1;
+    if (to < 0) return;
+    e.preventDefault(); showTab(TABS[to], true);
+  });
+  document.querySelector('section.panel[aria-labelledby="result-h"]').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    if (b.dataset.act) return act(b.dataset.act);
+    if (b.dataset.goto) { els.codeSearch.value = ''; page = 0; showTab('code'); els.codeView.value = b.dataset.goto; renderList(); els.codeView.focus(); }
+  });
+
+  // word cloud
+  ['wcMax', 'wcMin', 'wcExclude'].forEach(id => els[id].addEventListener('input', () => schedule(render)));
+  [els.wcStop, els.wcPlural, els.wcFilter].forEach(el => el.addEventListener('change', render));
+  document.querySelectorAll('input[name=wcSize], input[name=wcUnit]').forEach(r => r.addEventListener('change', () => { chosenWord = null; render(); }));
+  els.cloudOut.addEventListener('click', e => {
+    const g = e.target.closest('.wd, [data-word]'); if (g) showWord(g.dataset.w || g.dataset.word);
+  });
+  els.cloudOut.addEventListener('keydown', e => {
+    const g = e.target.closest('.wd'); if (g && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); showWord(g.dataset.w); }
+  });
+  els.wordOut.addEventListener('click', e => {
+    const b = e.target.closest('[data-codeword]'); if (!b) return;
+    els.codeSearch.value = b.dataset.codeword.split(' ')[0];
+    els.codeView.value = 'all'; page = 0; showTab('code');
+  });
+
+  // coding
+  document.querySelectorAll('input[name=approach]').forEach(r => r.addEventListener('change', () => { els.approachNote.textContent = APPROACH[radio('approach')]; }));
+  function newCode() {
+    const name = els.newCode.value.trim(); if (!name) return els.newCode.focus();
+    if (codeByName(name)) return status(`There is already a code called “${name}”.`);
+    addCode(name); els.newCode.value = '';
+    fillFilters(); renderCode(); els.newCode.focus();
+  }
+  $('addCode').addEventListener('click', newCode);
+  els.newCode.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); newCode(); } });
+  els.codesOut.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    if (b.dataset.del) deleteCode(b.dataset.del);
+    if (b.hasAttribute('data-starter')) { STARTER.forEach(c => { if (!codeByName(c[0])) addCode(...c); }); fillFilters(); renderCode(); }
+  });
+  els.codesOut.addEventListener('input', e => {
+    const li = e.target.closest('li[data-id]'); if (!li) return;
+    const c = state.codes.find(x => x.id === li.dataset.id); if (!c) return;
+    if (e.target.classList.contains('cname')) c.name = e.target.value;
+    if (e.target.classList.contains('cdesc')) c.desc = e.target.value;
+    if (e.target.classList.contains('ckw')) c.keywords = e.target.value;
+  });
+  // Redraw the comments once a code's name or words are finished, to keep focus while typing.
+  els.codesOut.addEventListener('change', e => {
+    const li = e.target.closest('li[data-id]'); if (!li) return;
+    const c = state.codes.find(x => x.id === li.dataset.id);
+    if (c && e.target.classList.contains('cname') && !c.name.trim()) { c.name = 'Untitled code'; e.target.value = c.name; }
+    fillFilters(); renderList();
+  });
+  els.codeView.addEventListener('change', () => { page = 0; renderList(); });
+  els.codeSearch.addEventListener('input', () => { page = 0; schedule(renderList); });
+  els.listOut.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    if (b.dataset.page !== undefined) { page = +b.dataset.page; renderList(); els.progress.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
+    const card = b.closest('.resp'); if (!card) return;
+    const key = card.dataset.key, c = entry(key);
+    let sel;
+    if (b.dataset.code) { const id = b.dataset.code; c.codes = c.codes.includes(id) ? c.codes.filter(x => x !== id) : c.codes.concat(id); sel = `[data-code="${id}"]`; }
+    else if (b.dataset.sent) { c.sent = c.sent === b.dataset.sent ? '' : b.dataset.sent; sel = `[data-sent="${b.dataset.sent}"]`; }
+    else if (b.dataset.accept) { c.sent = b.dataset.accept; sel = `[data-sent="${c.sent}"]`; }
+    else if (b.dataset.flag) { const f = b.dataset.flag; c[f] = !c[f]; sel = `[data-flag="${f}"]`; }
+    else return;
+    touched(key);
+    const r = rows.find(x => x.key === key);
+    card.outerHTML = cardHTML(r, searchRe());
+    const nc = els.listOut.querySelector(`.resp[data-key="${CSS.escape(key)}"]`);
+    if (nc) { const t = nc.querySelector(sel); if (t) t.focus(); }
+    refreshCounts();
+  });
+  els.listOut.addEventListener('input', e => {
+    if (!e.target.classList.contains('note')) return;
+    const key = e.target.closest('.resp').dataset.key;
+    entry(key).note = e.target.value; touched(key);
+  });
+
+  // findings
+  els.findOut.addEventListener('click', e => {
+    const b = e.target.closest('button[data-impact]'); if (!b) return;
+    const id = b.closest('.finding').dataset.code, f = finding(id), k = b.dataset.impact;
+    f.impact = f.impact === k ? '' : k;
+    b.parentNode.querySelectorAll('[data-impact]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.impact === f.impact)));
+    const m = $('mapChart'), svg = mapSVG(activeRows()); if (m && svg) m.innerHTML = svg;
+  });
+  els.findOut.addEventListener('input', e => {
+    if (e.target.classList.contains('ftext')) finding(e.target.dataset.code).text = e.target.value;
+  });
+  els.findOut.addEventListener('change', e => {
+    const key = e.target.dataset.quote; if (key === undefined) return;
+    const f = finding(e.target.closest('.finding').dataset.code);
+    f.skip = e.target.checked ? f.skip.filter(k => k !== key) : uniq(f.skip.concat(key));
+  });
+  $('methodBtn').addEventListener('click', () => {
+    if (els.method.value.trim() && !confirm('Replace what you have written with the suggested wording?')) return;
+    els.method.value = methodText(); els.method.focus();
+  });
+  els.redact.addEventListener('change', render);
+
+  els.approachNote.textContent = APPROACH[radio('approach')];
+  update(); // start empty, ready for the user's data
+  // Redraw the word cloud once the font has loaded, so words are measured in it.
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (tab === 'cloud' && rows.length) render(); });
+
+  // ---- shared toolbar (Data sheet, Example, Open, Save, Export) ----
+  FocusActions.mount({
+    tool: 'qualitative_analysis', toolName: 'qualitative survey analysis',
+    example: loadExample, hasData: () => !!els.data.value.trim(),
+    fileName: () => fileName(),
+    fields: 'main',
+    getExtra: () => state,
+    setExtra: x => { state = Object.assign(blankState(), x || {}); },
+    afterOpen: () => { headerTouched = true; update(); },
+    ready: () => rows.length > 0,
+    exports: [
+      { type: 'png', label: 'Word cloud (PNG)', run: () => act('png', 'cloud') },
+      { type: 'svg', label: 'Word cloud (SVG)', run: () => act('svg', 'cloud') },
+      { type: 'copyimg', label: 'Copy word cloud', run: () => act('copyimg', 'cloud') },
+      { type: 'png', label: 'Theme map (PNG)', hint: 'Themes by group, for reports', run: () => act('png', 'map') },
+      { type: 'svg', label: 'Theme map (SVG)', run: () => act('svg', 'map') },
+      { type: 'csv', label: 'Coded responses (.csv)', hint: 'A column for each code. Opens in Excel', run: () => act('csv') },
+      { type: 'copytable', label: 'Copy coded responses', run: () => act('copytable') },
+      { type: 'copysummary', label: 'Copy findings', hint: 'Method, findings and quotes, as text', run: () => act('copysummary') }
+    ],
+    template: {
+      fileName: () => fileName().replace(/^qualitative-analysis$/, 'qualitative') + '-coding-sheet.xlsx',
+      title: 'Download a spreadsheet to code comments in, with a column for each code',
+      sheets: dataSheet
+    }
+  });
+})();
+</script>
+{% include focus-footer.html %}
+</body>
+</html>

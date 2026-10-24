@@ -10,7 +10,7 @@ instructions for a cause and effect diagram, and the demand and capacity model,
 which was built here from the NHS Improvement and NHS England demand and
 capacity core model (version 4.2) and its user guidance, and the multiple
 regression tool, tree plot (treemap), box and whisker plot, ANOVA,
-chi-squared test and Weibull reliability analysis, which were all built here, and the design of experiments, attribute agreement analysis and Gauge R&R tools, which were built here from the DOE, Attribute Agreement Analysis and Gauge R&R sheets of the AAS Data Analysis Toolkit, and the power and sample size tool, which was built here from the Power and Sample Size section of the AAS Advanced Analysis Toolkit, and the 2x2 matrix (ease and impact, stakeholder analysis and other 2x2 grids), which was built here, and the hypothesis test selector, which was built here from the [hypothesis test selection road map](https://perrinshanks.com/hypothesis-test-selection-road-map/), and the funnel plot, which was
+chi-squared test and Weibull reliability analysis, which were all built here, and the design of experiments, attribute agreement analysis and Gauge R&R tools, which were built here from the DOE, Attribute Agreement Analysis and Gauge R&R sheets of the AAS Data Analysis Toolkit, and the power and sample size tool, which was built here from the Power and Sample Size section of the AAS Advanced Analysis Toolkit, and the 2x2 matrix (ease and impact, stakeholder analysis and other 2x2 grids), which was built here, and the hypothesis test selector, which was built here from the [hypothesis test selection road map](https://perrinshanks.com/hypothesis-test-selection-road-map/), and the qualitative survey analysis tool, which was built here from the Making Data Count step 9 session on qualitative data, and the funnel plot, which was
 built here from the NHS Improvement funnel plot tool (version 2.0), and the T
 chart for rare events, which was built here from NHS England's T chart rare
 events SPC tool (version 2.0), and the P chart, which was built here from NHS
@@ -21,6 +21,7 @@ Improvement's SPC P chart tool (version 3.0)):
 | Process map | `/process_map/` |
 | Driver diagram | `/driver_diagram/` |
 | Fishbone (cause and effect) diagram | `/fishbone_diagram/` |
+| Qualitative survey analysis (word cloud, coding and findings) | `/qualitative_analysis/` |
 | Pareto chart | `/pareto_chart/` |
 | 2x2 matrix (ease and impact, stakeholders and more) | `/matrix_2x2/` |
 | Tree plot (treemap) | `/tree_plot/` |

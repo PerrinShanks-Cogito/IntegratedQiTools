@@ -18,6 +18,12 @@
   group: Understand the system
   description: Map the causes behind a problem as a cause and effect (Ishikawa) diagram, grouped into categories such as People, Methods and Equipment.
 
+- id: qualitative_analysis
+  name: Qualitative survey analysis
+  status: Alpha
+  group: Understand feedback
+  description: Make sense of free-text survey comments. Check how rich they are, explore them with a word cloud, code each response with your own codes and sentiment, and write up findings with quotes, judged by their impact rather than how many said it.
+
 - id: pareto_chart
   name: Pareto chart
   status: Beta
