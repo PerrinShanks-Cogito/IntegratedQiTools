@@ -1,0 +1,25 @@
+{
+ "focus": {
+  "tool": "pareto_chart",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "fields": {
+  "data": "Theme\tNegative comments\nVisiting and loneliness\t74\nWaiting to go home\t66\nCommunication and plans\t41\nNoise at night\t23\nPain and basic care\t12\nBeing involved\t10\nEnvironment and food\t6",
+  "hasHeader": true,
+  "title": "Negative comments by theme, medical wards, last 6 months (example)",
+  "yLabel": "Negative comments",
+  "cutoff": "80",
+  "groupAfter": "0",
+  "aligned": true,
+  "showLabels": true
+ },
+ "extra": null,
+ "sample": {
+  "caseTitle": "Learning from patient feedback",
+  "caseUrl": "/case_studies/patient-feedback/",
+  "step": 3,
+  "stepTitle": "Rank the negative themes",
+  "look": "Visiting and waiting to go home make up over half of negative comments."
+ }
+}

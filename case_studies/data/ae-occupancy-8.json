@@ -1,0 +1,108 @@
+{
+ "focus": {
+  "tool": "driver_diagram",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "title": "Restoring flow (example)",
+ "goal": {
+  "text": "Bring general and acute occupancy below 92% and four-hour performance back to 78% by June 2027",
+  "measure": "Monthly occupancy (XmR) and four-hour performance (P′ chart)"
+ },
+ "drivers": [
+  {
+   "kind": "driver",
+   "text": "Fewer patients waiting in hospital for care elsewhere",
+   "measure": "Patients in hospital 21+ days",
+   "children": [
+    {
+     "kind": "driver",
+     "text": "Faster assessment for going home",
+     "measure": "",
+     "children": [
+      {
+       "kind": "project",
+       "text": "Invest in occupational therapy services",
+       "measure": "",
+       "children": []
+      }
+     ]
+    },
+    {
+     "kind": "driver",
+     "text": "Joint decisions with system partners",
+     "measure": "",
+     "children": [
+      {
+       "kind": "project",
+       "text": "Convene a whole-system meeting",
+       "measure": "",
+       "children": []
+      },
+      {
+       "kind": "project",
+       "text": "Escalate through the twice-weekly DARM",
+       "measure": "",
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "driver",
+   "text": "New options for leaving hospital",
+   "measure": "Pathway 1 and 3 delays",
+   "children": [
+    {
+     "kind": "driver",
+     "text": "Alternatives to residential care",
+     "measure": "",
+     "children": [
+      {
+       "kind": "project",
+       "text": "Explore an intergenerational home",
+       "measure": "",
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "driver",
+   "text": "Patients on the right ward",
+   "measure": "Medical outliers",
+   "children": [
+    {
+     "kind": "driver",
+     "text": "Daily outlier review",
+     "measure": "",
+     "children": [
+      {
+       "kind": "project",
+       "text": "Virtual board round for outlying patients",
+       "measure": "",
+       "children": []
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "balancing": [
+  {
+   "text": "Readmissions within 30 days"
+  },
+  {
+   "text": "Elective cancellations"
+  }
+ ],
+ "sample": {
+  "caseTitle": "A&E performance and bed occupancy: what’s really going on?",
+  "caseUrl": "/case_studies/ae-occupancy/",
+  "step": 8,
+  "stepTitle": "Agree the actions",
+  "look": "The same choices the St Elsewhere team made: invest in OT services, convene a whole-system meeting and explore an intergenerational home."
+ }
+}

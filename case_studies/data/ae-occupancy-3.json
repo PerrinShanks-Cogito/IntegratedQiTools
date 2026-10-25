@@ -1,0 +1,45 @@
+{
+ "focus": {
+  "tool": "spc_tool",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "fields": {
+  "team": "St Elsewhere NHS Trust (example)",
+  "per": "1000",
+  "perUnit": "",
+  "yLabel": "",
+  "target": "",
+  "floor": false,
+  "radio:base": "all",
+  "baseN": "20",
+  "screen": false,
+  "radio:ctype": "p",
+  "showMR": true,
+  "radio:unit": "pct",
+  "yMin": "",
+  "yMax": "",
+  "dateFmt": "dmy",
+  "showNotes": true,
+  "shiftLen": "7",
+  "trendLen": "7",
+  "twoThree": true,
+  "useTrend": true,
+  "radio:spctype": "xmr",
+  "data": "Month\tAdmissions\tNote\nOct 2024\t2961\t\nNov 2024\t2966\t\nDec 2024\t2955\t\nJan 2025\t3069\t\nFeb 2025\t2964\t\nMar 2025\t3221\t\nApr 2025\t2982\t\nMay 2025\t3243\t\nJun 2025\t3051\t\nJul 2025\t3203\t\nAug 2025\t2977\t\nSep 2025\t3186\t\nOct 2025\t3049\t\nNov 2025\t3215\t\nDec 2025\t3006\t\nJan 2026\t2985\t\nFeb 2026\t3207\t\nMar 2026\t3172\t\nApr 2026\t2957\t\nMay 2026\t3001\t\nJun 2026\t3227\t\nJul 2026\t3199\t\nAug 2026\t2966\t\nSep 2026\t3097\t",
+  "title": "Emergency admissions via A&E (example)",
+  "radio:dir": "none"
+ },
+ "extra": {
+  "type": "xmr",
+  "breaks": [],
+  "useBaseN": false
+ },
+ "sample": {
+  "caseTitle": "A&E performance and bed occupancy: what’s really going on?",
+  "caseUrl": "/case_studies/ae-occupancy/",
+  "step": 3,
+  "stepTitle": "Rule out demand: admissions from A&E",
+  "look": "Common cause variation only: admissions are stable, so the hospital isn’t taking in more patients. Patients must be staying longer."
+ }
+}

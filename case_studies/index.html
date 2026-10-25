@@ -1,0 +1,36 @@
+---
+layout: default
+title: Case studies
+permalink: /case_studies/
+---
+<div class="wrap cs">
+  <section class="hero">
+    <h1>Case studies</h1>
+    <p>Worked examples that link several FOCUS tools together for a deeper analysis. Each step opens a tool with sample data already filled in, so you can follow the reasoning one click at a time.</p>
+  </section>
+
+  {%- for g in site.data.case_studies.groups %}
+  <section class="group" aria-labelledby="csg-{{ g.id }}">
+    <h2 id="csg-{{ g.id }}">{{ g.name }}</h2>
+    <ul class="grid cs-grid">
+      {%- for id in g.cases %}
+      {%- assign c = site.data.case_studies.cases | where: "id", id | first %}
+      <li>
+        <article class="card cs-card">
+          <div class="card-head">
+            <h3><a href="{{ '/case_studies/' | append: c.id | append: '/' | relative_url }}">{{ c.title }}</a></h3>
+          </div>
+          <p>{{ c.summary }}</p>
+          <ol class="cs-mini" aria-label="Tools used, in order">
+            {%- for s in c.steps %}<li>{{ s.tool_name | split: ' (' | first }}</li>{% endfor %}
+          </ol>
+          <span class="go" aria-hidden="true">{{ c.steps.size }} steps &rarr;</span>
+        </article>
+      </li>
+      {%- endfor %}
+    </ul>
+  </section>
+  {%- endfor %}
+
+  <div class="notice">All figures in the case studies are made up for learning and are not real GSTT data. The Health Care Data Guide case studies are inspired by Provost and Murray’s book; the scenarios and data are our own. To talk a case study through for your own service, <a href="{{ site.links.qi_coach }}" target="_blank" rel="noopener">ask the QI Coach chatbot<span class="fh-sr"> (opens in a new tab)</span></a> or book a QI Clinic.</div>
+</div>

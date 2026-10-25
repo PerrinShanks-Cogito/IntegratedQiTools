@@ -1,0 +1,254 @@
+{
+ "focus": {
+  "tool": "qualitative_analysis",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "fields": {
+  "question": "What gets in the way of setting and keeping to an EDD on this ward?",
+  "data": "ID\tGroup\tComment\n1\tNursing\tThe consultant isn’t always at board round, so nobody feels able to set the EDD.\n2\tMedical\tWe set EDDs at the post-take round but they aren’t carried across to Epic.\n3\tTherapy\tWe’re not asked about mobility until day three, so the EDD is a guess.\n4\tNursing\tBoard round starts late most days and we rush through the last patients.\n5\tPharmacy\tIf we knew tomorrow’s discharges at board round, we could prepare medicines in the afternoon.\n6\tMedical\tNobody plays the challenger role, so plans drift.\n7\tNursing\tEpic isn’t updated live; someone types it up afterwards, if at all.\n8\tSocial work\tWe hear about complex patients too late to arrange packages.\n9\tTherapy\tWhen the full MDT is there the board round is excellent and really quick.\n10\tNursing\tWeekend discharges fall apart because plans aren’t made on Friday.\n11\tMedical\tThe board round framework helps when we use it.\n12\tNursing\tWe need a screen big enough for everyone to see the Epic discharge planning view.\n13\tTherapy\tFit to Sit is never discussed at our board round.\n14\tMedical\tLocum consultants don’t know the board round routine.\n15\tNursing\tFamilies aren’t told the expected discharge date, so they aren’t ready.\n16\tPharmacy\tTTOs arrive after 2pm and then everything queues.\n17\tSocial work\tLong-stay patients are discussed every day but actions don’t have owners.\n18\tNursing\tGood teamwork on our ward; we just need the basics in place.",
+  "hasHeader": true,
+  "textCol": "",
+  "idCol": "",
+  "groupCol": "",
+  "radio:sample": "all",
+  "sampleN": "",
+  "thickAt": "30",
+  "radio:wcSize": "freq",
+  "radio:wcUnit": "words",
+  "wcFilter": "all",
+  "wcMax": "60",
+  "wcMin": "1",
+  "wcExclude": "",
+  "wcStop": true,
+  "wcPlural": true,
+  "radio:approach": "combined",
+  "newCode": "",
+  "codeView": "all",
+  "codeSearch": "",
+  "method": "",
+  "redact": true
+ },
+ "extra": {
+  "codes": [
+   {
+    "id": "c1",
+    "name": "Senior presence",
+    "desc": "Consultant or senior decision-maker at board round",
+    "keywords": "consultant, locum, senior",
+    "color": "#005EB8"
+   },
+   {
+    "id": "c2",
+    "name": "Challenger role",
+    "desc": "Constructive challenge of plans and EDDs",
+    "keywords": "challenger, challenge, drift",
+    "color": "#007F3B"
+   },
+   {
+    "id": "c3",
+    "name": "Epic live updates",
+    "desc": "Recording EDDs and actions live in Epic",
+    "keywords": "Epic, typed, screen",
+    "color": "#AE2573"
+   },
+   {
+    "id": "c4",
+    "name": "Board round timing",
+    "desc": "Start time and pace",
+    "keywords": "late, rush, starts",
+    "color": "#330072"
+   },
+   {
+    "id": "c5",
+    "name": "Early MDT input",
+    "desc": "Therapy, pharmacy and social work involved early",
+    "keywords": "day three, too late, prepare, packages",
+    "color": "#8A1538"
+   },
+   {
+    "id": "c6",
+    "name": "Weekend planning",
+    "desc": "Friday planning for weekend discharges",
+    "keywords": "weekend, Friday",
+    "color": "#00667A"
+   },
+   {
+    "id": "c7",
+    "name": "Actions and owners",
+    "desc": "Clear actions with owners and dates",
+    "keywords": "owners, actions",
+    "color": "#7A4600"
+   },
+   {
+    "id": "c8",
+    "name": "What works",
+    "desc": "Things that help",
+    "keywords": "excellent, helps, good teamwork",
+    "color": "#003087"
+   }
+  ],
+  "cid": 8,
+  "coding": {
+   "id:1": {
+    "codes": [
+     "c1"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 1,
+    "quote": true
+   },
+   "id:2": {
+    "codes": [
+     "c3"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 2
+   },
+   "id:3": {
+    "codes": [
+     "c5"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 3
+   },
+   "id:4": {
+    "codes": [
+     "c4"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 4
+   },
+   "id:5": {
+    "codes": [
+     "c5"
+    ],
+    "sent": "mix",
+    "note": "",
+    "order": 5,
+    "quote": true
+   },
+   "id:6": {
+    "codes": [
+     "c2"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 6,
+    "quote": true
+   },
+   "id:7": {
+    "codes": [
+     "c3"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 7
+   },
+   "id:8": {
+    "codes": [
+     "c5"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 8
+   },
+   "id:9": {
+    "codes": [
+     "c8"
+    ],
+    "sent": "pos",
+    "note": "",
+    "order": 9
+   },
+   "id:10": {
+    "codes": [
+     "c6"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 10
+   },
+   "id:11": {
+    "codes": [
+     "c8"
+    ],
+    "sent": "pos",
+    "note": "",
+    "order": 11
+   },
+   "id:12": {
+    "codes": [
+     "c3"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 12
+   },
+   "id:13": {
+    "codes": [
+     "c5"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 13
+   },
+   "id:14": {
+    "codes": [
+     "c1"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 14
+   },
+   "id:15": {
+    "codes": [
+     "c5"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 15
+   },
+   "id:16": {
+    "codes": [
+     "c5"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 16
+   },
+   "id:17": {
+    "codes": [
+     "c7"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 17,
+    "quote": true
+   },
+   "id:18": {
+    "codes": [
+     "c8"
+    ],
+    "sent": "pos",
+    "note": "",
+    "order": 18
+   }
+  },
+  "seq": 18,
+  "findings": {},
+  "sample": null,
+  "boost": []
+ },
+ "sample": {
+  "caseTitle": "The Flow Improvement Cycle, triangulated",
+  "caseUrl": "/case_studies/flow-cycle-triangulated/",
+  "step": 3,
+  "stepTitle": "Source 3, MDT feedback: what gets in the way?",
+  "look": "Three themes stand out: the EDD isn’t updated live in Epic, there’s no challenger, and therapy, pharmacy and social work aren’t involved early. All three are Flow Manual standards."
+ }
+}

@@ -1,0 +1,45 @@
+{
+ "focus": {
+  "tool": "spc_tool",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "fields": {
+  "team": "Medicine Clinical Group (example)",
+  "per": "1000",
+  "perUnit": "",
+  "yLabel": "",
+  "target": "80",
+  "floor": false,
+  "radio:base": "all",
+  "baseN": "20",
+  "screen": false,
+  "radio:ctype": "p",
+  "showMR": true,
+  "radio:unit": "pct",
+  "yMin": "",
+  "yMax": "",
+  "dateFmt": "dmy",
+  "showNotes": true,
+  "shiftLen": "7",
+  "trendLen": "7",
+  "twoThree": true,
+  "useTrend": true,
+  "radio:spctype": "p",
+  "data": "Month\tStandards met\tStandards audited\tNote\nOct 2024\t86\t155\t\nNov 2024\t82\t142\t\nDec 2024\t77\t146\t\nJan 2025\t79\t150\t\nFeb 2025\t98\t147\t\nMar 2025\t92\t153\t\nApr 2025\t90\t150\t\nMay 2025\t95\t163\t\nJun 2025\t93\t168\t\nJul 2025\t86\t145\t\nAug 2025\t77\t148\t\nSep 2025\t98\t168\t\nOct 2025\t82\t157\t\nNov 2025\t108\t149\tFlow champions trained; challenger role started\nDec 2025\t110\t166\t\nJan 2026\t114\t161\t\nFeb 2026\t118\t164\t\nMar 2026\t103\t147\t\nApr 2026\t103\t144\t\nMay 2026\t112\t151\t\nJun 2026\t101\t143\t\nJul 2026\t123\t162\t\nAug 2026\t116\t170\t\nSep 2026\t107\t155\t",
+  "title": "Medicine: board round audit standards met (example)",
+  "radio:dir": "up"
+ },
+ "extra": {
+  "type": "p",
+  "breaks": [],
+  "useBaseN": false
+ },
+ "sample": {
+  "caseTitle": "Can we trust our Flow Manual audit, and where should we focus?",
+  "caseUrl": "/case_studies/flow-audit/",
+  "step": 5,
+  "stepTitle": "Track standards met over time",
+  "look": "A run of months below the mean before the change, then 11 months in a row above it from the month the challenger role started, with a point above the upper limit. It’s special cause improvement, not noise. Report it upward, then recalculate the limits from November 2025 to show the new level."
+ }
+}

@@ -1,0 +1,45 @@
+{
+ "focus": {
+  "tool": "spc_tool",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "fields": {
+  "team": "Medicine division (example)",
+  "per": "1000",
+  "perUnit": "",
+  "yLabel": "£000s",
+  "target": "",
+  "floor": false,
+  "radio:base": "first",
+  "baseN": "15",
+  "screen": false,
+  "radio:ctype": "p",
+  "showMR": true,
+  "radio:unit": "pct",
+  "yMin": "",
+  "yMax": "",
+  "dateFmt": "dmy",
+  "showNotes": true,
+  "shiftLen": "7",
+  "trendLen": "7",
+  "twoThree": true,
+  "useTrend": true,
+  "radio:spctype": "xmr",
+  "data": "Month\tAgency spend (£000s)\tNote\nOct 2024\t294\t\nNov 2024\t304\t\nDec 2024\t306\t\nJan 2025\t315\t\nFeb 2025\t319\t\nMar 2025\t326\t\nApr 2025\t288\t\nMay 2025\t324\t\nJun 2025\t322\t\nJul 2025\t326\t\nAug 2025\t332\t\nSep 2025\t320\t\nOct 2025\t300\t\nNov 2025\t286\t\nDec 2025\t302\t\nJan 2026\t393\tTwo senior nurses left; vacancies rise\nFeb 2026\t434\t\nMar 2026\t441\t\nApr 2026\t447\t\nMay 2026\t450\t\nJun 2026\t434\t\nJul 2026\t466\t\nAug 2026\t441\t\nSep 2026\t451\t",
+  "title": "Medicine nursing agency spend, £000s (example)",
+  "radio:dir": "down"
+ },
+ "extra": {
+  "type": "xmr",
+  "breaks": [],
+  "useBaseN": true
+ },
+ "sample": {
+  "caseTitle": "Quality, workforce and finance in the medicine division",
+  "caseUrl": "/case_studies/medicine-triangulation/",
+  "step": 2,
+  "stepTitle": "Drill into one division: Medicine agency spend",
+  "look": "Special cause concern: from month 16 every point is above the upper limit. Other divisions’ agency spend fell by about the same amount, which is why the Trust total looked flat."
+ }
+}

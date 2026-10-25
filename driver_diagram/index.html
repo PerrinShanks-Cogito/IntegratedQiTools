@@ -794,6 +794,7 @@ function hasContent(){return !!(state.goal.text.trim()||state.drivers.length||st
 /* Shared toolbar (Open, Save, Export) */
 FocusActions.mount({
   tool:"driver_diagram", toolName:"driver diagram", fileName:()=>slug(), say:m=>toast(m),
+  hasData:()=>hasContent(), load:doc=>{state=normalise(doc);selected=null;autoFit=true;persist();renderAll();},
   example:()=>loadExampleProject(),
   save:()=>saveFile(slug()+".json",JSON.stringify(state,null,2),"application/json"),
   open:()=>$("#fileIn").click(),

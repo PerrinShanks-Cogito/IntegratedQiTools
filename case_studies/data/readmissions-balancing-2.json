@@ -1,0 +1,25 @@
+{
+ "focus": {
+  "tool": "pareto_chart",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "fields": {
+  "data": "Reason\tPatients\nMedicines problem after discharge\t96\nSame condition worsened\t81\nFall at home\t44\nCare package not started\t38\nNew infection\t27\nFollow-up not arranged\t22\nEquipment not delivered\t13\nOther\t18",
+  "hasHeader": true,
+  "title": "Reasons for 30-day readmission, case note review of 339 patients (example)",
+  "yLabel": "Patients",
+  "cutoff": "80",
+  "groupAfter": "0",
+  "aligned": true,
+  "showLabels": true
+ },
+ "extra": null,
+ "sample": {
+  "caseTitle": "Discharge sooner, but at what cost? Readmissions as a balancing measure",
+  "caseUrl": "/case_studies/readmissions-balancing/",
+  "step": 2,
+  "stepTitle": "Rank the reasons for readmission",
+  "look": "Medicines problems and the same condition getting worse account for half of readmissions. Both can be addressed before the patient leaves."
+ }
+}

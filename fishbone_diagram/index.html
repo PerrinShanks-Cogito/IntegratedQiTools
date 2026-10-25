@@ -882,6 +882,7 @@ async function copyTable(){
 /* Shared toolbar (Example, Open, Save, Export) */
 FocusActions.mount({
   tool:TOOL, toolName:"cause and effect diagram", fileName:()=>slug(), say:m=>toast(m),
+  hasData:()=>hasContent(), load:doc=>{state=normalise(doc);selected=null;autoFit=true;persist();renderAll();},
   example:()=>loadExampleProject(),
   save:()=>saveFile(slug()+".json",projectJson(),"application/json"),
   open:()=>$("#fileIn").click(),

@@ -1,0 +1,977 @@
+{
+ "cases": [
+  {
+   "id": "late-discharges",
+   "number": 1,
+   "source": "flow",
+   "title": "Why do our discharges happen late in the day?",
+   "question": "Ward 7 discharges most patients in the late afternoon, so beds aren’t free when ED and theatres need them. Where does the time go, and what will change it?",
+   "summary": "Map the discharge day, find the causes, rank the delays, set a baseline, plan changes and check they worked.",
+   "tools": [
+    "process_map",
+    "fishbone_diagram",
+    "pareto_chart",
+    "spc_tool",
+    "driver_diagram"
+   ],
+   "source_detail": "GSTT Flow Manual: Principle 2 (time of discharge matters), Chapter 3 (proactive discharge planning) and the A3 template in Chapter 7.",
+   "pairs": [
+    {
+     "id": "readmissions-balancing",
+     "why": "Add a balancing measure so that discharging earlier doesn’t send patients back",
+     "title": "Discharge sooner, but at what cost? Readmissions as a balancing measure"
+    }
+   ],
+   "pitfalls": [
+    "Measure the percentage of discharges before midday, not the count, because the number of discharges changes from week to week.",
+    "Don’t recalculate SPC limits until a shift has lasted at least seven points and you know what changed.",
+    "Keep Epic delay reasons up to date. The Pareto chart is only as good as what’s recorded in Delays and Milestones."
+   ],
+   "steps": [
+    {
+     "n": 1,
+     "tool": "process_map",
+     "tool_name": "Process map",
+     "open_name": "process map",
+     "title": "Map the discharge day as it really happens",
+     "why": "Draw the steps from the board round to the patient leaving, with who does what and how long each wait takes. A shared picture stops the team arguing about whose step is slow.",
+     "look": "The long waits after the decision to discharge: for the ward round, the pharmacy queue and transport. Very little of the six or more hours adds value for the patient.",
+     "next": "Why are discharge medicines written so late?",
+     "phase": "Observe",
+     "sample": "/case_studies/data/late-discharges-1.json",
+     "phase_name": "Observe the current state"
+    },
+    {
+     "n": 2,
+     "tool": "fishbone_diagram",
+     "tool_name": "Fishbone diagram",
+     "open_name": "fishbone diagram",
+     "title": "Find the causes behind the late discharges",
+     "why": "Bring the MDT together and ask “why?” until you reach causes you can act on, as the Flow Manual A3 template suggests (five whys).",
+     "look": "Causes cluster under Methods: discharge isn’t planned the day before, so everything happens in sequence on the day.",
+     "next": "Which of these causes delays the most patients?",
+     "phase": "Observe",
+     "sample": "/case_studies/data/late-discharges-2.json",
+     "phase_name": "Observe the current state"
+    },
+    {
+     "n": 3,
+     "tool": "pareto_chart",
+     "tool_name": "Pareto chart",
+     "open_name": "Pareto chart",
+     "title": "Rank the delay reasons recorded in Epic",
+     "why": "Count the delay reasons from Epic Delays and Milestones and put them in order. The Pareto chart shows the vital few that make up most of the delay.",
+     "look": "Medicines and transport together make up over half of all delays. Fix these first.",
+     "next": "How late are we now? We need a baseline before changing anything.",
+     "phase": "Observe",
+     "sample": "/case_studies/data/late-discharges-3.json",
+     "phase_name": "Observe the current state"
+    },
+    {
+     "n": 4,
+     "tool": "spc_tool",
+     "tool_name": "SPC chart (P chart)",
+     "open_name": "SPC chart",
+     "title": "Set a baseline: discharges before midday",
+     "why": "Plot the weekly percentage of discharges before 12pm on a P chart. The limits show how much it varies by chance, so later changes can be judged fairly.",
+     "look": "Common cause variation around 16%, with no signals. The process is stable, but it will never reach 33% without a change to the system.",
+     "next": "What changes could move this measure?",
+     "phase": "Observe",
+     "sample": "/case_studies/data/late-discharges-4.json",
+     "phase_name": "Observe the current state"
+    },
+    {
+     "n": 5,
+     "tool": "driver_diagram",
+     "tool_name": "Driver diagram",
+     "open_name": "driver diagram",
+     "title": "Plan the changes",
+     "why": "Link the aim to the drivers you found, and to change ideas you can test one at a time with PDSA cycles. Add balancing measures so you notice harm elsewhere.",
+     "look": "Each change idea traces back to a cause from the fishbone and a delay from the Pareto chart. Readmissions is the balancing measure.",
+     "next": "Did the changes work?",
+     "phase": "Create",
+     "sample": "/case_studies/data/late-discharges-5.json",
+     "phase_name": "Create the plan"
+    },
+    {
+     "n": 6,
+     "tool": "spc_tool",
+     "tool_name": "SPC chart (P chart)",
+     "open_name": "SPC chart",
+     "title": "Check the changes worked",
+     "why": "Add the weeks after the changes to the same P chart, with a note for each PDSA cycle. Leave the limits calculated from all points until the signal is clear.",
+     "look": "Special cause improvement: a run of weeks below the mean before the changes, then runs of nine and ten weeks above it afterwards. Once it has held, open the table of values, choose Recalculate from here on week 27 and see the new level: close to, but not yet reliably at, the 33% target.",
+     "next": "Are we sending people home too early? Check readmissions (case study 12).",
+     "phase": "Sustain",
+     "sample": "/case_studies/data/late-discharges-6.json",
+     "phase_name": "Sustain the benefit"
+    }
+   ],
+   "source_name": "GSTT Flow Manual",
+   "source_short": "Flow Manual",
+   "tool_names": [
+    "Process map",
+    "Fishbone diagram",
+    "Pareto chart",
+    "SPC chart",
+    "Driver diagram"
+   ]
+  },
+  {
+   "id": "flow-audit",
+   "number": 2,
+   "source": "flow",
+   "title": "Can we trust our Flow Manual audit, and where should we focus?",
+   "question": "Clinical Groups complete the monthly Flow Manual audit, but different auditors may judge the same board round differently. Before acting on the results, are they reliable, and what do they tell us?",
+   "summary": "Check auditors agree, compare chapters across Clinical Groups, test whether differences are real, pick priorities and track progress.",
+   "tools": [
+    "attribute_agreement",
+    "bar_chart",
+    "chi_squared",
+    "matrix_2x2",
+    "spc_tool"
+   ],
+   "source_detail": "GSTT Flow Manual: Chapter 7 (Flow Improvement Cycle and the Flow Manual audit tool) and the board round example scenarios.",
+   "pairs": [
+    {
+     "id": "flow-cycle-triangulated",
+     "why": "Put the audit alongside performance data and MDT feedback",
+     "title": "The Flow Improvement Cycle, triangulated"
+    }
+   ],
+   "pitfalls": [
+    "Check that auditors agree before comparing wards. Otherwise you may be comparing auditors, not wards.",
+    "A chi-squared test needs enough audits in each cell (an expected count of about 5 or more).",
+    "Audit percentages from small wards jump around. Use a P chart, not month-on-month red, amber and green ratings."
+   ],
+   "steps": [
+    {
+     "n": 1,
+     "tool": "attribute_agreement",
+     "tool_name": "Attribute agreement analysis",
+     "open_name": "attribute agreement tool",
+     "title": "Check the auditors agree",
+     "why": "Three auditors each rate 20 written board round scenarios twice, such as the Ward A, B and C examples in the Flow Manual. Compare them with each other, with themselves and with the flow lead’s rating.",
+     "look": "Auditors A and B agree well with the standard. Auditor C is less consistent, even with themselves, so retrain them on the Challenger and attendance standards before trusting their wards’ results.",
+     "next": "Now we trust the ratings, where are standards embedded and where not?",
+     "phase": "Find",
+     "sample": "/case_studies/data/flow-audit-1.json",
+     "phase_name": "Find the opportunity"
+    },
+    {
+     "n": 2,
+     "tool": "bar_chart",
+     "tool_name": "Bar chart",
+     "open_name": "bar chart",
+     "title": "Compare chapters across Clinical Groups",
+     "why": "Show the share of ward audits rated Embedded for each chapter, side by side for each Clinical Group, the same roll-up the Overall Maturity tab gives.",
+     "look": "Board rounds and Independence and deconditioning are the weakest chapters everywhere, and Medicine is lowest on most chapters.",
+     "next": "Is Medicine really different, or is that chance?",
+     "phase": "Find",
+     "sample": "/case_studies/data/flow-audit-2.json",
+     "phase_name": "Find the opportunity"
+    },
+    {
+     "n": 3,
+     "tool": "chi_squared",
+     "tool_name": "Chi-squared test",
+     "open_name": "chi-squared test",
+     "title": "Test whether Clinical Groups really differ",
+     "why": "Count ward audits for the Board rounds chapter, Embedded against Not yet embedded, for each Clinical Group, and test whether the split depends on the group.",
+     "look": "A small p-value: the split really does differ between groups, and Medicine has far more Not yet embedded audits than expected. Focus support there.",
+     "next": "What should Medicine work on first?",
+     "phase": "Find",
+     "sample": "/case_studies/data/flow-audit-3.json",
+     "phase_name": "Find the opportunity"
+    },
+    {
+     "n": 4,
+     "tool": "matrix_2x2",
+     "tool_name": "2x2 matrix",
+     "open_name": "2x2 matrix",
+     "title": "Choose the priorities",
+     "why": "Score each improvement idea from the audit comments on ease and impact with the flow champions. The matrix sorts quick wins from major projects.",
+     "look": "Quick wins: the challenger role, live EDD updates, a fixed 9am start and Discharge Unit referrals. Consultant of the Week is high impact but hard, so plan it as a bigger project.",
+     "next": "Are the changes lifting audit results over time?",
+     "phase": "Create",
+     "sample": "/case_studies/data/flow-audit-4.json",
+     "phase_name": "Create the plan"
+    },
+    {
+     "n": 5,
+     "tool": "spc_tool",
+     "tool_name": "SPC chart (P chart)",
+     "open_name": "SPC chart",
+     "title": "Track standards met over time",
+     "why": "Plot the share of audit standards met each month on a P chart to report to the PRM. This replaces month-on-month red, amber and green ratings.",
+     "look": "A run of months below the mean before the change, then 11 months in a row above it from the month the challenger role started, with a point above the upper limit. It’s special cause improvement, not noise. Report it upward, then recalculate the limits from November 2025 to show the new level.",
+     "next": "Does better board round practice change flow? See case study 7.",
+     "phase": "Sustain",
+     "sample": "/case_studies/data/flow-audit-5.json",
+     "phase_name": "Sustain the benefit"
+    }
+   ],
+   "source_name": "GSTT Flow Manual",
+   "source_short": "Flow Manual",
+   "tool_names": [
+    "Attribute agreement analysis",
+    "Bar chart",
+    "Chi-squared test",
+    "2x2 matrix",
+    "SPC chart"
+   ]
+  },
+  {
+   "id": "medicine-triangulation",
+   "number": 5,
+   "source": "mdc",
+   "title": "Quality, workforce and finance in the medicine division",
+   "question": "The Director of Nursing is worried about falls. The Director of Workforce isn’t worried about sickness, and the Director of Finance says agency spend is stable. Each is looking at Trust totals on their own. What do the measures say when they’re put together?",
+   "summary": "Start with Trust totals, drill into divisions, look for relationships between measures, add staff voices, then agree the causes and actions.",
+   "tools": [
+    "spc_tool",
+    "box_plot",
+    "scatter_plot",
+    "multiple_regression",
+    "qualitative_analysis",
+    "fishbone_diagram",
+    "driver_diagram"
+   ],
+   "source_detail": "NHS England Making Data Count, Step 7: Triangulating data. Based on the St Elsewhere board story (quality, workforce and finance).",
+   "pairs": [
+    {
+     "id": "drill-down",
+     "why": "Drill down further into the falls and pressure damage data",
+     "title": "Drilling into aggregate data"
+    },
+    {
+     "id": "ae-occupancy",
+     "why": "The second St Elsewhere conversation: flow and performance",
+     "title": "A&E performance and bed occupancy: what’s really going on?"
+    }
+   ],
+   "pitfalls": [
+    "Aggregate data can hide significant variation. Always look by division or ward before concluding all is well.",
+    "Scatter plots and regression show association, not cause. Use them to start a conversation, then test changes.",
+    "With few wards, regression can be unstable. Look at the size of each effect and its range, not only the p-value.",
+    "Involve your analyst from the start: they know the data and its limits."
+   ],
+   "steps": [
+    {
+     "n": 1,
+     "tool": "spc_tool",
+     "tool_name": "SPC chart (XmR)",
+     "open_name": "SPC chart",
+     "title": "Start with the Trust total: agency spend",
+     "why": "Plot the Trust’s monthly nursing agency spend on an XmR chart, the view the Director of Finance sees.",
+     "look": "Common cause variation only: spend looks stable, so at Trust level there seems to be nothing to worry about.",
+     "next": "Is every division stable, or are changes cancelling each other out?",
+     "phase": "Find",
+     "sample": "/case_studies/data/medicine-triangulation-1.json",
+     "phase_name": "Find the opportunity"
+    },
+    {
+     "n": 2,
+     "tool": "spc_tool",
+     "tool_name": "SPC chart (XmR)",
+     "open_name": "SPC chart",
+     "title": "Drill into one division: Medicine agency spend",
+     "why": "Plot the same measure for Medicine on its own, with limits fixed on the 15 months before anything changed.",
+     "look": "Special cause concern: from month 16 every point is above the upper limit. Other divisions’ agency spend fell by about the same amount, which is why the Trust total looked flat.",
+     "next": "Are quality measures also worse in Medicine?",
+     "phase": "Find",
+     "sample": "/case_studies/data/medicine-triangulation-2.json",
+     "phase_name": "Find the opportunity"
+    },
+    {
+     "n": 3,
+     "tool": "box_plot",
+     "tool_name": "Box and whisker plot",
+     "open_name": "box and whisker plot",
+     "title": "Compare falls across divisions",
+     "why": "Show each ward’s monthly falls rate in a box for each division, so you see the middle, the spread and any outliers.",
+     "look": "Medicine’s whole box sits higher than every other division. This isn’t one bad ward; the whole division is affected.",
+     "next": "What else is different about Medicine’s wards?",
+     "phase": "Observe",
+     "sample": "/case_studies/data/medicine-triangulation-3.json",
+     "phase_name": "Observe the current state"
+    },
+    {
+     "n": 4,
+     "tool": "scatter_plot",
+     "tool_name": "Scatter plot",
+     "open_name": "scatter plot",
+     "title": "Look for a relationship: training and falls",
+     "why": "Plot each ward’s mandatory training compliance against its falls rate, coloured by division. This is the Director of Nursing’s hunch, put to the data.",
+     "look": "Wards with lower training compliance tend to have more falls, and Medicine’s wards sit in the bottom-right corner.",
+     "next": "Training, sickness and agency use all move together in Medicine. Which matters most?",
+     "phase": "Observe",
+     "sample": "/case_studies/data/medicine-triangulation-4.json",
+     "phase_name": "Observe the current state"
+    },
+    {
+     "n": 5,
+     "tool": "multiple_regression",
+     "tool_name": "Multiple regression",
+     "open_name": "multiple regression tool",
+     "title": "Untangle the factors together",
+     "why": "Put training, sickness, agency use and division into one model of the falls rate, so each factor is judged while holding the others steady.",
+     "look": "Training compliance, sickness and agency use each have a clear link with falls once the others are taken into account, and training makes the biggest difference. Division adds nothing on top: Medicine’s higher falls are explained by its workforce measures, not by being Medicine.",
+     "next": "Numbers show what; staff can tell us why.",
+     "phase": "Observe",
+     "sample": "/case_studies/data/medicine-triangulation-5.json",
+     "phase_name": "Observe the current state"
+    },
+    {
+     "n": 6,
+     "tool": "qualitative_analysis",
+     "tool_name": "Qualitative survey analysis",
+     "open_name": "qualitative survey analysis tool",
+     "title": "Hear from staff: why is this happening?",
+     "why": "Code free-text comments from a staff pulse survey on Medicine’s wards. Qualitative data explains the “why” behind the numbers.",
+     "look": "Agency staff without induction, no protected training time and exhaustion come up again and again. They match what the regression found.",
+     "next": "Let’s pull the evidence together into causes.",
+     "phase": "Observe",
+     "sample": "/case_studies/data/medicine-triangulation-6.json",
+     "phase_name": "Observe the current state"
+    },
+    {
+     "n": 7,
+     "tool": "fishbone_diagram",
+     "tool_name": "Fishbone diagram",
+     "open_name": "fishbone diagram",
+     "title": "Bring the evidence together",
+     "why": "Put the quantitative and qualitative findings on one cause and effect diagram with the divisional team.",
+     "look": "Workforce causes explain the quality problem, and the agency spend increase is a symptom of the same thing.",
+     "next": "What will the Board do about it?",
+     "phase": "Create",
+     "sample": "/case_studies/data/medicine-triangulation-7.json",
+     "phase_name": "Create the plan"
+    },
+    {
+     "n": 8,
+     "tool": "driver_diagram",
+     "tool_name": "Driver diagram",
+     "open_name": "driver diagram",
+     "title": "Agree the actions",
+     "why": "Turn the causes into a plan with measures from all three areas: quality, workforce and finance.",
+     "look": "The same three actions the St Elsewhere board chose: invest in training for agency nurses, trial incentives to work at the Trust, and analyse the reasons for sickness.",
+     "next": "Track falls, training, sickness and agency spend together on one divisional page.",
+     "phase": "Create",
+     "sample": "/case_studies/data/medicine-triangulation-8.json",
+     "phase_name": "Create the plan"
+    }
+   ],
+   "source_name": "Making Data Count: Triangulating data",
+   "source_short": "Making Data Count",
+   "tool_names": [
+    "SPC chart",
+    "Box and whisker plot",
+    "Scatter plot",
+    "Multiple regression",
+    "Qualitative survey analysis",
+    "Fishbone diagram",
+    "Driver diagram"
+   ]
+  },
+  {
+   "id": "ae-occupancy",
+   "number": 6,
+   "source": "mdc",
+   "title": "A&E performance and bed occupancy: what’s really going on?",
+   "question": "Four-hour performance has got worse and bed occupancy is very high. The Medical Director is worried about length of stay and medical outliers, and the Director of Operations about A&E. Is more demand coming through the front door, or is something stopping patients leaving?",
+   "summary": "Chart each measure on the same timeline, rule out demand, look at relationships, separate the factors, and check for a tipping point in occupancy.",
+   "tools": [
+    "spc_tool",
+    "scatter_plot",
+    "multiple_regression",
+    "box_plot",
+    "driver_diagram"
+   ],
+   "source_detail": "NHS England Making Data Count, Step 7: Triangulating data. Based on the St Elsewhere Medical Director and Director of Operations conversation.",
+   "pairs": [
+    {
+     "id": "late-discharges",
+     "why": "Act on flow at ward level with the Flow Manual",
+     "title": "Why do our discharges happen late in the day?"
+    },
+    {
+     "id": "medicine-triangulation",
+     "why": "The first St Elsewhere conversation: quality, workforce and finance",
+     "title": "Quality, workforce and finance in the medicine division"
+    }
+   ],
+   "pitfalls": [
+    "Line the SPC charts up on the same months. Triangulation is about when signals start together.",
+    "Weekly data gives more points for regression, but neighbouring weeks are related (autocorrelated). Treat p-values with care.",
+    "A stable admissions chart is a finding in itself: it rules demand out."
+   ],
+   "steps": [
+    {
+     "n": 1,
+     "tool": "spc_tool",
+     "tool_name": "SPC chart (P′ chart)",
+     "open_name": "SPC chart",
+     "title": "Chart the problem: four-hour performance",
+     "why": "Plot the share of A&E attendances seen within four hours. With around 15,000 attendances a month, use the P′ (Laney) chart, so limits allow for the large totals.",
+     "look": "Months above the mean for the first year, then from month 15 a run below it, with points below the lower limit. The deterioration is real, and it started at a definite point.",
+     "next": "Did something else change at the same time?",
+     "phase": "Find",
+     "sample": "/case_studies/data/ae-occupancy-1.json",
+     "phase_name": "Find the opportunity"
+    },
+    {
+     "n": 2,
+     "tool": "spc_tool",
+     "tool_name": "SPC chart (XmR)",
+     "open_name": "SPC chart",
+     "title": "Same timeline: bed occupancy",
+     "why": "Plot monthly general and acute bed occupancy for the same months.",
+     "look": "Occupancy jumps above the upper limit, to around 96%, in the same month that four-hour performance drops.",
+     "next": "Is that because more patients are being admitted?",
+     "phase": "Find",
+     "sample": "/case_studies/data/ae-occupancy-2.json",
+     "phase_name": "Find the opportunity"
+    },
+    {
+     "n": 3,
+     "tool": "spc_tool",
+     "tool_name": "SPC chart (XmR)",
+     "open_name": "SPC chart",
+     "title": "Rule out demand: admissions from A&E",
+     "why": "Plot emergency admissions through A&E. If they rose, demand could explain the occupancy.",
+     "look": "Common cause variation only: admissions are stable, so the hospital isn’t taking in more patients. Patients must be staying longer.",
+     "next": "Who is staying longer?",
+     "phase": "Observe",
+     "sample": "/case_studies/data/ae-occupancy-3.json",
+     "phase_name": "Observe the current state"
+    },
+    {
+     "n": 4,
+     "tool": "spc_tool",
+     "tool_name": "SPC chart (XmR)",
+     "open_name": "SPC chart",
+     "title": "Find who is staying: patients in hospital 21 days or more",
+     "why": "Plot the number of long-stay patients at the end of each month.",
+     "look": "From month 15 the count is above the upper limit and still climbing, after a change in the wider system: community intermediate care beds were reduced.",
+     "next": "How closely does occupancy track four-hour performance?",
+     "phase": "Observe",
+     "sample": "/case_studies/data/ae-occupancy-4.json",
+     "phase_name": "Observe the current state"
+    },
+    {
+     "n": 5,
+     "tool": "scatter_plot",
+     "tool_name": "Scatter plot",
+     "open_name": "scatter plot",
+     "title": "Look at the relationship: occupancy and four-hour performance",
+     "why": "Plot each week’s occupancy against its four-hour performance.",
+     "look": "A strong negative relationship: the fuller the hospital, the worse A&E performs.",
+     "next": "Occupancy, long stays and outliers all rose together. Which matters most?",
+     "phase": "Observe",
+     "sample": "/case_studies/data/ae-occupancy-5.json",
+     "phase_name": "Observe the current state"
+    },
+    {
+     "n": 6,
+     "tool": "multiple_regression",
+     "tool_name": "Multiple regression",
+     "open_name": "multiple regression tool",
+     "title": "Separate the factors",
+     "why": "Model weekly four-hour performance on attendances, occupancy, long-stay patients and outliers together.",
+     "look": "Occupancy has the biggest effect, and outliers add a little. Attendances add nothing, which confirms this isn’t a front-door demand problem. Long-stay patients show no separate effect because they work through occupancy: they’re why the beds are full.",
+     "next": "Is there a tipping point in occupancy?",
+     "phase": "Observe",
+     "sample": "/case_studies/data/ae-occupancy-6.json",
+     "phase_name": "Observe the current state"
+    },
+    {
+     "n": 7,
+     "tool": "box_plot",
+     "tool_name": "Box and whisker plot",
+     "open_name": "box and whisker plot",
+     "title": "Check for a tipping point",
+     "why": "Group the weeks by occupancy band and compare four-hour performance in each band.",
+     "look": "Performance holds up below 92% occupancy but falls away above 95%. Freeing a modest number of beds would make a big difference.",
+     "next": "What will free those beds?",
+     "phase": "Create",
+     "sample": "/case_studies/data/ae-occupancy-7.json",
+     "phase_name": "Create the plan"
+    },
+    {
+     "n": 8,
+     "tool": "driver_diagram",
+     "tool_name": "Driver diagram",
+     "open_name": "driver diagram",
+     "title": "Agree the actions",
+     "why": "Turn the findings into actions with system partners. The problem started outside the hospital, so the fix needs partners too.",
+     "look": "The same choices the St Elsewhere team made: invest in OT services, convene a whole-system meeting and explore an intergenerational home.",
+     "next": "Keep all five SPC charts together on one page and review them at each meeting.",
+     "phase": "Create",
+     "sample": "/case_studies/data/ae-occupancy-8.json",
+     "phase_name": "Create the plan"
+    }
+   ],
+   "source_name": "Making Data Count: Triangulating data",
+   "source_short": "Making Data Count",
+   "tool_names": [
+    "SPC chart",
+    "Scatter plot",
+    "Multiple regression",
+    "Box and whisker plot",
+    "Driver diagram"
+   ]
+  },
+  {
+   "id": "flow-cycle-triangulated",
+   "number": 7,
+   "source": "both",
+   "title": "The Flow Improvement Cycle, triangulated",
+   "question": "The Flow Manual says to use three sources of evidence to find improvement opportunities: performance data, the monthly audits and MDT feedback. How do they fit together for one ward?",
+   "summary": "Put the three sources side by side for Ward 9, agree priorities with the MDT, and turn them into a driver diagram ready for A3 and PDSA cycles.",
+   "tools": [
+    "spc_tool",
+    "qualitative_analysis",
+    "matrix_2x2",
+    "driver_diagram"
+   ],
+   "source_detail": "GSTT Flow Manual, Chapter 7 (FOCUS change approach: triangulate performance data, monthly audits and MDT feedback), with Making Data Count Step 7.",
+   "pairs": [
+    {
+     "id": "flow-audit",
+     "why": "Check the audit is reliable before relying on it",
+     "title": "Can we trust our Flow Manual audit, and where should we focus?"
+    },
+    {
+     "id": "late-discharges",
+     "why": "A full worked example of one flow improvement",
+     "title": "Why do our discharges happen late in the day?"
+    }
+   ],
+   "pitfalls": [
+    "Agreement between sources is strong evidence. Disagreement is a question to explore, not an error.",
+    "Code MDT feedback before counting it. Raw comments are easy to skim selectively.",
+    "Record the work on the Flow Manual A3 template and feed the output into the PRM."
+   ],
+   "steps": [
+    {
+     "n": 1,
+     "tool": "spc_tool",
+     "tool_name": "SPC chart (P chart)",
+     "open_name": "SPC chart",
+     "title": "Source 1, performance data: EDD set within 24 hours",
+     "why": "Plot a Flow Manual standard from the Flow Oversight Dashboard: the share of patients with an expected discharge date set within 24 hours of admission.",
+     "look": "Stable around 60%, well short of the 90% target. The process is predictable but not capable.",
+     "next": "What does the audit say about why?",
+     "phase": "Find",
+     "sample": "/case_studies/data/flow-cycle-triangulated-1.json",
+     "phase_name": "Find the opportunity"
+    },
+    {
+     "n": 2,
+     "tool": "spc_tool",
+     "tool_name": "SPC chart (P chart)",
+     "open_name": "SPC chart",
+     "title": "Source 2, monthly audit: Proactive discharge planning standards met",
+     "why": "Plot the share of Chapter 3 audit questions answered “yes” each month, such as “Did every patient have an EDD recorded?”.",
+     "look": "Also stable at a little over half. The audit agrees with the performance data, which strengthens the case for acting.",
+     "next": "What does the MDT say gets in the way?",
+     "phase": "Find",
+     "sample": "/case_studies/data/flow-cycle-triangulated-2.json",
+     "phase_name": "Find the opportunity"
+    },
+    {
+     "n": 3,
+     "tool": "qualitative_analysis",
+     "tool_name": "Qualitative survey analysis",
+     "open_name": "qualitative survey analysis tool",
+     "title": "Source 3, MDT feedback: what gets in the way?",
+     "why": "Code comments from a board round debrief, grouped by profession. This is the Flow Manual’s third source: discussion and feedback from the MDT.",
+     "look": "Three themes stand out: the EDD isn’t updated live in Epic, there’s no challenger, and therapy, pharmacy and social work aren’t involved early. All three are Flow Manual standards.",
+     "next": "With the MDT, which do we tackle first?",
+     "phase": "Observe",
+     "sample": "/case_studies/data/flow-cycle-triangulated-3.json",
+     "phase_name": "Observe the current state"
+    },
+    {
+     "n": 4,
+     "tool": "matrix_2x2",
+     "tool_name": "2x2 matrix",
+     "open_name": "2x2 matrix",
+     "title": "Agree priorities with the MDT",
+     "why": "Score the ideas that came out of all three sources on ease and impact with the ward MDT and flow champion.",
+     "look": "Most ideas are quick wins, led by a named challenger, telling the pharmacist about next-day discharges, and an owner for every long-stay action. Typing EDDs live in Epic has the highest impact but needs a screen first, so it’s a major project.",
+     "next": "Turn these into a plan with measures.",
+     "phase": "Create",
+     "sample": "/case_studies/data/flow-cycle-triangulated-4.json",
+     "phase_name": "Create the plan"
+    },
+    {
+     "n": 5,
+     "tool": "driver_diagram",
+     "tool_name": "Driver diagram",
+     "open_name": "driver diagram",
+     "title": "Plan the improvement",
+     "why": "Each driver uses a measure from one of the three sources, so progress can be triangulated in the same way.",
+     "look": "Ready to test with PDSA cycles and record on the Flow Manual A3 template (the A3 and PDSA tools are coming to FOCUS).",
+     "next": "Re-run this cycle each month: chart, audit, listen, prioritise.",
+     "phase": "Undertake",
+     "sample": "/case_studies/data/flow-cycle-triangulated-5.json",
+     "phase_name": "Undertake the change"
+    }
+   ],
+   "source_name": "Flow Manual and Making Data Count",
+   "source_short": "Flow Manual and Making Data Count",
+   "tool_names": [
+    "SPC chart",
+    "Qualitative survey analysis",
+    "2x2 matrix",
+    "Driver diagram"
+   ]
+  },
+  {
+   "id": "drill-down",
+   "number": 11,
+   "source": "hcdg",
+   "title": "Drilling into aggregate data",
+   "question": "The Trust’s rate of hospital-acquired pressure ulcers has been stable for two years, so it gets little attention at the Quality Committee. Is every ward really stable, or is the Trust figure hiding a problem?",
+   "summary": "Follow the drill-down pathway: chart the aggregate properly, compare units fairly, look at their spread, chart the unusual unit over time, then find causes.",
+   "tools": [
+    "spc_tool",
+    "funnel_plot",
+    "box_plot",
+    "fishbone_diagram"
+   ],
+   "source_detail": "Inspired by The Health Care Data Guide (Provost and Murray), Chapter 9: drilling down into aggregate data, and the Chapter 13 case studies on caesarean section and accidental puncture rates. Scenario and figures are our own.",
+   "pairs": [
+    {
+     "id": "medicine-triangulation",
+     "why": "The same idea from Making Data Count: aggregate data hides variation",
+     "title": "Quality, workforce and finance in the medicine division"
+    }
+   ],
+   "pitfalls": [
+    "With very large totals, ordinary P and U chart limits are too narrow. Use the P′ or U′ (Laney) chart for Trust-level data.",
+    "A unit outside the funnel limits needs understanding, not blame. Look for system causes first.",
+    "Check whether the unusual unit is a recent change or has always been different: the response differs."
+   ],
+   "steps": [
+    {
+     "n": 1,
+     "tool": "spc_tool",
+     "tool_name": "SPC chart (U′ chart)",
+     "open_name": "SPC chart",
+     "title": "Chart the aggregate properly",
+     "why": "Plot the Trust’s monthly rate on a U′ (Laney) chart. With over 13,000 bed days a month, ordinary U chart limits would flag almost every month.",
+     "look": "Common cause variation: by this measure the Trust is stable. This is where many reviews stop.",
+     "next": "Is every ward stable?",
+     "phase": "Find",
+     "sample": "/case_studies/data/drill-down-1.json",
+     "phase_name": "Find the opportunity"
+    },
+    {
+     "n": 2,
+     "tool": "funnel_plot",
+     "tool_name": "Funnel plot",
+     "open_name": "funnel plot",
+     "title": "Compare wards fairly",
+     "why": "Plot each ward’s 12-month rate against its bed days. The funnel allows for size, so small wards aren’t flagged just for being small.",
+     "look": "Ward 12 and the Stroke unit sit above the upper limit. Ward 41 has the lowest rate, but it’s small enough that this could be chance. The funnel stops you over-reading it.",
+     "next": "Do these wards have high rates every month, or only some?",
+     "phase": "Observe",
+     "sample": "/case_studies/data/drill-down-2.json",
+     "phase_name": "Observe the current state"
+    },
+    {
+     "n": 3,
+     "tool": "box_plot",
+     "tool_name": "Box and whisker plot",
+     "open_name": "box and whisker plot",
+     "title": "Look at the spread month by month",
+     "why": "Show each selected ward’s monthly rates in a box, with the points, comparing the flagged wards with typical ones.",
+     "look": "The Stroke unit is consistently high, which suggests its case mix (immobile patients). Ward 12 has a wide spread: some ordinary months and some very high ones.",
+     "next": "When did Ward 12 change?",
+     "phase": "Observe",
+     "sample": "/case_studies/data/drill-down-3.json",
+     "phase_name": "Observe the current state"
+    },
+    {
+     "n": 4,
+     "tool": "spc_tool",
+     "tool_name": "SPC chart (U chart)",
+     "open_name": "SPC chart",
+     "title": "Chart the unusual ward over time",
+     "why": "Plot Ward 12 on its own U chart for 24 months.",
+     "look": "Stable for 17 months, then seven months in a row above the mean, with two above the upper limit. It’s a recent special cause, not a long-standing difference, and it began when the mattress contract changed.",
+     "next": "What changed in month 18, and why?",
+     "phase": "Observe",
+     "sample": "/case_studies/data/drill-down-4.json",
+     "phase_name": "Observe the current state"
+    },
+    {
+     "n": 5,
+     "tool": "fishbone_diagram",
+     "tool_name": "Fishbone diagram",
+     "open_name": "fishbone diagram",
+     "title": "Find the causes on Ward 12",
+     "why": "Run a cause and effect session with the Ward 12 team and the tissue viability nurse, as a learning conversation rather than a judgement.",
+     "look": "The new mattresses, used without training, are the most likely cause. Test a short training and settings checklist with a PDSA cycle, and keep the Ward 12 U chart running to see the effect.",
+     "next": "Share the learning: other wards received the same mattresses.",
+     "phase": "Create",
+     "sample": "/case_studies/data/drill-down-5.json",
+     "phase_name": "Create the plan"
+    }
+   ],
+   "source_name": "The Health Care Data Guide",
+   "source_short": "Health Care Data Guide",
+   "tool_names": [
+    "SPC chart",
+    "Funnel plot",
+    "Box and whisker plot",
+    "Fishbone diagram"
+   ]
+  },
+  {
+   "id": "readmissions-balancing",
+   "number": 12,
+   "source": "hcdg",
+   "title": "Discharge sooner, but at what cost? Readmissions as a balancing measure",
+   "question": "The Trust is pushing for earlier, quicker discharges. Are patients coming back because they went home too soon?",
+   "summary": "Track readmissions as a balancing measure, find the main reasons for coming back, check whether shorter stays mean more returns, test discharge routes, then plan safe discharge.",
+   "tools": [
+    "spc_tool",
+    "pareto_chart",
+    "scatter_plot",
+    "chi_squared",
+    "driver_diagram"
+   ],
+   "source_detail": "Inspired by The Health Care Data Guide (Provost and Murray), Chapter 13 case study F on reducing hospital readmissions, and Chapter 2 on a family of measures (outcome, process and balancing). Scenario and figures are our own.",
+   "pairs": [
+    {
+     "id": "late-discharges",
+     "why": "The improvement this balancing measure protects",
+     "title": "Why do our discharges happen late in the day?"
+    }
+   ],
+   "pitfalls": [
+    "Agree the readmission definition first (for example, emergency readmission within 30 days to any ward).",
+    "Not every readmission is avoidable. Code the reasons before acting.",
+    "No difference in a chi-squared test isn’t proof of no effect: check you had enough patients."
+   ],
+   "steps": [
+    {
+     "n": 1,
+     "tool": "spc_tool",
+     "tool_name": "SPC chart (P′ chart)",
+     "open_name": "SPC chart",
+     "title": "Track the balancing measure",
+     "why": "Plot the share of discharges readmitted within 30 days, before and after the earlier discharge programme began. Use the P′ chart for these large monthly totals.",
+     "look": "No signal after month 13: readmissions haven’t risen. The balancing measure is holding.",
+     "next": "Even if the rate is stable, why do patients come back?",
+     "phase": "Sustain",
+     "sample": "/case_studies/data/readmissions-balancing-1.json",
+     "phase_name": "Sustain the benefit"
+    },
+    {
+     "n": 2,
+     "tool": "pareto_chart",
+     "tool_name": "Pareto chart",
+     "open_name": "Pareto chart",
+     "title": "Rank the reasons for readmission",
+     "why": "Review a sample of readmitted patients’ notes and code the main reason each came back.",
+     "look": "Medicines problems and the same condition getting worse account for half of readmissions. Both can be addressed before the patient leaves.",
+     "next": "Do wards with shorter stays have more readmissions?",
+     "phase": "Observe",
+     "sample": "/case_studies/data/readmissions-balancing-2.json",
+     "phase_name": "Observe the current state"
+    },
+    {
+     "n": 3,
+     "tool": "scatter_plot",
+     "tool_name": "Scatter plot",
+     "open_name": "scatter plot",
+     "title": "Shorter stays, more returns?",
+     "why": "Plot each ward’s average length of stay against its readmission rate.",
+     "look": "No clear relationship: wards with shorter stays don’t have more readmissions.",
+     "next": "Does the way patients leave make a difference?",
+     "phase": "Observe",
+     "sample": "/case_studies/data/readmissions-balancing-3.json",
+     "phase_name": "Observe the current state"
+    },
+    {
+     "n": 4,
+     "tool": "chi_squared",
+     "tool_name": "Chi-squared test",
+     "open_name": "chi-squared test",
+     "title": "Compare discharge routes",
+     "why": "Count patients readmitted or not for each discharge route used in the earlier discharge programme, and test whether readmission depends on the route.",
+     "look": "The p-value is well above 0.05: no evidence that the Discharge Unit, criteria-led or weekend discharges lead to more readmissions.",
+     "next": "So focus on the reasons patients return.",
+     "phase": "Observe",
+     "sample": "/case_studies/data/readmissions-balancing-4.json",
+     "phase_name": "Observe the current state"
+    },
+    {
+     "n": 5,
+     "tool": "driver_diagram",
+     "tool_name": "Driver diagram",
+     "open_name": "driver diagram",
+     "title": "Plan safe discharge",
+     "why": "Aim at the top readmission reasons, while keeping the earlier discharge work going.",
+     "look": "Earlier discharge and safe discharge work together. Length of stay becomes the balancing measure for this plan.",
+     "next": "Keep readmissions on the same page as discharges before midday.",
+     "phase": "Create",
+     "sample": "/case_studies/data/readmissions-balancing-5.json",
+     "phase_name": "Create the plan"
+    }
+   ],
+   "source_name": "The Health Care Data Guide",
+   "source_short": "Health Care Data Guide",
+   "tool_names": [
+    "SPC chart",
+    "Pareto chart",
+    "Scatter plot",
+    "Chi-squared test",
+    "Driver diagram"
+   ]
+  },
+  {
+   "id": "patient-feedback",
+   "number": 14,
+   "source": "hcdg",
+   "title": "Learning from patient feedback",
+   "question": "Friends and Family Test scores on the medical wards seem to have dropped. Is it real, what are patients telling us, and is it the same on every ward?",
+   "summary": "Chart the score, code the comments, rank the themes, test whether wards differ, then plan changes with patients.",
+   "tools": [
+    "spc_tool",
+    "qualitative_analysis",
+    "pareto_chart",
+    "chi_squared",
+    "driver_diagram"
+   ],
+   "source_detail": "Inspired by The Health Care Data Guide (Provost and Murray), Chapter 11: learning from patient feedback to improve care, with the Making Data Count guidance on quantitative and qualitative data. Scenario and comments are our own.",
+   "pairs": [
+    {
+     "id": "medicine-triangulation",
+     "why": "Put patient experience alongside quality and workforce data",
+     "title": "Quality, workforce and finance in the medicine division"
+    }
+   ],
+   "pitfalls": [
+    "Response numbers change every month. Chart the percentage on a P chart, not the raw count.",
+    "Read the comments, don’t only count them. One serious comment can matter more than many mild ones.",
+    "Remove names and other personal details before sharing quotes."
+   ],
+   "steps": [
+    {
+     "n": 1,
+     "tool": "spc_tool",
+     "tool_name": "SPC chart (P chart)",
+     "open_name": "SPC chart",
+     "title": "Is the drop real?",
+     "why": "Plot the share of positive responses each month on a P chart.",
+     "look": "A run of months above the mean, then from month 17 a run below it, with points below the lower limit. The drop is a real change, not noise.",
+     "next": "What are patients saying?",
+     "phase": "Find",
+     "sample": "/case_studies/data/patient-feedback-1.json",
+     "phase_name": "Find the opportunity"
+    },
+    {
+     "n": 2,
+     "tool": "qualitative_analysis",
+     "tool_name": "Qualitative survey analysis",
+     "open_name": "qualitative survey analysis tool",
+     "title": "Code what patients are saying",
+     "why": "Code a month of Friends and Family Test comments by theme and sentiment, and pick quotes.",
+     "look": "Two themes stand out: waiting all day to go home, and visiting and loneliness. The second started when visiting hours were cut, the same month the score dropped.",
+     "next": "How often does each theme come up over six months?",
+     "phase": "Observe",
+     "sample": "/case_studies/data/patient-feedback-2.json",
+     "phase_name": "Observe the current state"
+    },
+    {
+     "n": 3,
+     "tool": "pareto_chart",
+     "tool_name": "Pareto chart",
+     "open_name": "Pareto chart",
+     "title": "Rank the negative themes",
+     "why": "Count the negative comments in each theme over six months, using the codes from the last step.",
+     "look": "Visiting and waiting to go home make up over half of negative comments.",
+     "next": "Is it the same on every ward?",
+     "phase": "Observe",
+     "sample": "/case_studies/data/patient-feedback-3.json",
+     "phase_name": "Observe the current state"
+    },
+    {
+     "n": 4,
+     "tool": "chi_squared",
+     "tool_name": "Chi-squared test",
+     "open_name": "chi-squared test",
+     "title": "Do the wards differ?",
+     "why": "Count negative comments by theme for each ward and test whether the mix of themes depends on the ward.",
+     "look": "The mix differs: Ward 7 is mostly about waiting to go home, Ward 8 about visiting, and Ward 9 about communication and plans. One plan won’t fit all three wards.",
+     "next": "Plan changes with patients, ward by ward.",
+     "phase": "Create",
+     "sample": "/case_studies/data/patient-feedback-4.json",
+     "phase_name": "Create the plan"
+    },
+    {
+     "n": 5,
+     "tool": "driver_diagram",
+     "tool_name": "Driver diagram",
+     "open_name": "driver diagram",
+     "title": "Plan the changes with patients",
+     "why": "Turn the themes into a plan, with a different emphasis for each ward, and include patient representatives.",
+     "look": "Each driver has its own qualitative and quantitative measure, so the next round of feedback can show what changed.",
+     "next": "Keep charting the score and coding comments each month.",
+     "phase": "Create",
+     "sample": "/case_studies/data/patient-feedback-5.json",
+     "phase_name": "Create the plan"
+    }
+   ],
+   "source_name": "The Health Care Data Guide",
+   "source_short": "Health Care Data Guide",
+   "tool_names": [
+    "SPC chart",
+    "Qualitative survey analysis",
+    "Pareto chart",
+    "Chi-squared test",
+    "Driver diagram"
+   ]
+  }
+ ],
+ "groups": [
+  {
+   "id": "flow",
+   "name": "GSTT Flow Manual",
+   "cases": [
+    "late-discharges",
+    "flow-audit"
+   ]
+  },
+  {
+   "id": "mdc",
+   "name": "Making Data Count: Triangulating data",
+   "cases": [
+    "medicine-triangulation",
+    "ae-occupancy"
+   ]
+  },
+  {
+   "id": "both",
+   "name": "Flow Manual and Making Data Count",
+   "cases": [
+    "flow-cycle-triangulated"
+   ]
+  },
+  {
+   "id": "hcdg",
+   "name": "The Health Care Data Guide",
+   "cases": [
+    "drill-down",
+    "readmissions-balancing",
+    "patient-feedback"
+   ]
+  }
+ ]
+}

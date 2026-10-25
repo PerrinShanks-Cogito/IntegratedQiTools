@@ -1,0 +1,115 @@
+{
+ "focus": {
+  "tool": "driver_diagram",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "title": "Reducing falls in Medicine (example)",
+ "goal": {
+  "text": "Reduce falls in Medicine to the Trust average (5 per 1,000 bed days) by September 2027",
+  "measure": "Monthly falls per 1,000 bed days (U chart)"
+ },
+ "drivers": [
+  {
+   "kind": "driver",
+   "text": "A trained, stable workforce",
+   "measure": "Mandatory training compliance",
+   "children": [
+    {
+     "kind": "driver",
+     "text": "Agency staff inducted before their first shift",
+     "measure": "",
+     "children": [
+      {
+       "kind": "project",
+       "text": "Invest in a training pack for agency nurses",
+       "measure": "",
+       "children": []
+      }
+     ]
+    },
+    {
+     "kind": "driver",
+     "text": "Protected time for training",
+     "measure": "",
+     "children": [
+      {
+       "kind": "project",
+       "text": "Rostered training days",
+       "measure": "",
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "driver",
+   "text": "Fewer vacancies",
+   "measure": "Vacancy rate",
+   "children": [
+    {
+     "kind": "driver",
+     "text": "Make the Trust an attractive place to work",
+     "measure": "",
+     "children": [
+      {
+       "kind": "project",
+       "text": "Trial new incentives to work at the Trust",
+       "measure": "",
+       "children": []
+      }
+     ]
+    },
+    {
+     "kind": "driver",
+     "text": "Faster recruitment",
+     "measure": "",
+     "children": [
+      {
+       "kind": "project",
+       "text": "Recruitment open days with on-the-day offers",
+       "measure": "",
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "driver",
+   "text": "Lower sickness absence",
+   "measure": "Sickness rate",
+   "children": [
+    {
+     "kind": "driver",
+     "text": "Understand why staff are off sick",
+     "measure": "",
+     "children": [
+      {
+       "kind": "project",
+       "text": "Analyse the reasons for staff sickness",
+       "measure": "",
+       "children": []
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "balancing": [
+  {
+   "text": "Agency spend"
+  },
+  {
+   "text": "Time staff spend away from the ward for training"
+  }
+ ],
+ "sample": {
+  "caseTitle": "Quality, workforce and finance in the medicine division",
+  "caseUrl": "/case_studies/medicine-triangulation/",
+  "step": 8,
+  "stepTitle": "Agree the actions",
+  "look": "The same three actions the St Elsewhere board chose: invest in training for agency nurses, trial incentives to work at the Trust, and analyse the reasons for sickness."
+ }
+}

@@ -1,0 +1,76 @@
+{
+ "focus": {
+  "tool": "fishbone_diagram",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "title": "Why have pressure ulcers risen on Ward 12? (example)",
+ "effect": "Pressure ulcer rate on Ward 12 has risen since month 18",
+ "categories": [
+  {
+   "name": "Equipment",
+   "causes": [
+    {
+     "text": "New dynamic mattresses",
+     "children": [
+      {
+       "text": "Staff not trained on the settings",
+       "children": []
+      },
+      {
+       "text": "Alarms silenced, not reset",
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Methods",
+   "causes": [
+    {
+     "text": "Repositioning checks not recorded",
+     "children": []
+    },
+    {
+     "text": "Skin bundle not restarted after outbreak",
+     "children": []
+    }
+   ]
+  },
+  {
+   "name": "People",
+   "causes": [
+    {
+     "text": "Two tissue viability link nurses left",
+     "children": []
+    }
+   ]
+  },
+  {
+   "name": "Materials",
+   "causes": [
+    {
+     "text": "Barrier cream supply changed",
+     "children": []
+    }
+   ]
+  },
+  {
+   "name": "Environment",
+   "causes": [
+    {
+     "text": "More bed moves to make space",
+     "children": []
+    }
+   ]
+  }
+ ],
+ "sample": {
+  "caseTitle": "Drilling into aggregate data",
+  "caseUrl": "/case_studies/drill-down/",
+  "step": 5,
+  "stepTitle": "Find the causes on Ward 12",
+  "look": "The new mattresses, used without training, are the most likely cause. Test a short training and settings checklist with a PDSA cycle, and keep the Ward 12 U chart running to see the effect."
+ }
+}

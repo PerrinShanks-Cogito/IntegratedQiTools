@@ -24,6 +24,14 @@
      template   optional { fileName, title?, sheets } for a "Data sheet" button
                 that downloads a blank .xlsx to collect the data in; see xlsx().
                 fileName and sheets can each be a function, called on each click
+     load       optional (doc) => void, for tools with their own project files
+                (those that pass save/open), so case study sample data can open
+
+   Case study sample data: a link such as
+     /spc_tool/?sample=/case_studies/data/late-discharges-2.json
+   opens that project file as soon as the page has loaded, and shows a
+   "Sample data" note with a link back to the case study. Only files under
+   /case_studies/data/ on this site are opened.
 */
 (function () {
   "use strict";
@@ -280,6 +288,29 @@
 
     /* Open */
     openBtn.addEventListener("click", () => { if (o.open) return o.open(); fileIn.click(); });
+    // Restore a project document saved by this toolbar. Returns an error
+    // message, or "" when it worked.
+    function applyDoc(doc) {
+      if (!doc || !doc.focus || !doc.fields) return "That file isn't a FOCUS project file.";
+      if (doc.focus.tool !== o.tool && !(o.formerIds || []).includes(doc.focus.tool)) {
+        const other = String(doc.focus.tool || "another tool").replace(/_/g, " ");
+        return "That file was saved from the " + other + " tool. Open it there instead.";
+      }
+      // Two passes: the first redraw can add options (such as a column
+      // picker) that the second pass then selects.
+      // A tool can throw on the first pass, before those options exist.
+      for (let pass = 0; pass < 2; pass++) {
+        try {
+          if (fieldsRoot) writeFields(fieldsRoot, doc.fields);
+          if (o.setExtra) o.setExtra(doc.extra, doc.focus.tool);
+          if (o.afterOpen) o.afterOpen();
+        } catch (e) {
+          if (pass === 1) return "Sorry, that file didn't open properly.";
+        }
+      }
+      return "";
+    }
+
     fileIn.addEventListener("change", () => {
       const f = fileIn.files && fileIn.files[0]; if (!f) return;
       const r = new FileReader();
@@ -287,23 +318,71 @@
         fileIn.value = "";
         let doc;
         try { doc = JSON.parse(r.result); } catch (e) { return say("That file isn't a FOCUS project file."); }
-        if (!doc || !doc.focus || !doc.fields) return say("That file isn't a FOCUS project file.");
-        if (doc.focus.tool !== o.tool && !(o.formerIds || []).includes(doc.focus.tool)) {
-          const other = String(doc.focus.tool || "another tool").replace(/_/g, " ");
-          return say("That file was saved from the " + other + " tool. Open it there instead.");
-        }
-        // Two passes: the first redraw can add options (such as a column
-        // picker) that the second pass then selects.
-        for (let pass = 0; pass < 2; pass++) {
-          if (fieldsRoot) writeFields(fieldsRoot, doc.fields);
-          if (o.setExtra) o.setExtra(doc.extra, doc.focus.tool);
-          if (o.afterOpen) o.afterOpen();
-        }
-        say("Opened " + f.name + ".");
+        const err = applyDoc(doc);
+        say(err || "Opened " + f.name + ".");
       };
       r.onerror = () => say("Couldn't read that file.");
       r.readAsText(f);
     });
+
+    /* Case study sample data (?sample=...) */
+    const sample = samplePath();
+    if (sample) {
+      const run = () => setTimeout(() => loadSample(sample), 0);
+      if (document.readyState === "complete") run(); else window.addEventListener("load", run, { once: true });
+    }
+    function loadSample(path) {
+      fetch(path, { credentials: "same-origin" })
+        .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+        .then(doc => {
+          if (o.hasData && o.hasData() && !confirm("Replace what you've entered with the case study sample data?")) return;
+          let err = "";
+          if (o.load) {
+            if (doc && doc.focus && doc.focus.tool && doc.focus.tool !== o.tool) err = "That sample belongs to another tool.";
+            else { try { o.load(doc); } catch (e) { err = "Sorry, the sample data didn't open."; } }
+          } else err = applyDoc(doc);
+          if (err) return say(err);
+          sampleNote(bar, doc.sample || {});
+          say("Opened the case study sample data.");
+        })
+        .catch(() => say("Sorry, the sample data couldn't be loaded."));
+    }
+  }
+
+  // The ?sample= path, if it points at a case study data file on this site.
+  function samplePath() {
+    let p;
+    try { p = new URLSearchParams(location.search).get("sample"); } catch (e) { return ""; }
+    if (!p) return "";
+    const base = (document.querySelector('meta[name="focus-base"]') || {}).content || "";
+    const rel = p.startsWith(base + "/") ? p.slice(base.length) : p;
+    return /^\/case_studies\/data\/[a-z0-9-]+\.json$/.test(rel) ? base + rel : "";
+  }
+
+  // A note under the page heading: this is sample data, from which case study.
+  function sampleNote(bar, s) {
+    const old = document.querySelector(".fa-sample"); if (old) old.remove();
+    const note = document.createElement("div");
+    note.className = "fa-sample";
+    note.setAttribute("role", "note");
+    const back = typeof s.caseUrl === "string" && /^\/case_studies\/[a-z0-9-]+\/$/.test(s.caseUrl.replace(/^.*?(\/case_studies\/)/, "$1")) ? s.caseUrl : "";
+    const b = document.createElement("b"); b.textContent = "Sample data";
+    note.appendChild(b);
+    const t = document.createElement("span");
+    t.textContent = (s.caseTitle ? " · " + s.caseTitle : "") + (s.step ? " · Step " + s.step + (s.stepTitle ? ": " + s.stepTitle : "") : "") +
+      ". Made-up figures for learning, not real GSTT data.";
+    note.appendChild(t);
+    if (s.look) {
+      const l = document.createElement("span"); l.className = "fa-sample-look";
+      l.textContent = "Look for: " + s.look;
+      note.appendChild(l);
+    }
+    if (back) {
+      const a = document.createElement("a"); a.href = back; a.textContent = "← Back to the case study";
+      note.appendChild(a);
+    }
+    const host = bar.parentNode;
+    host.parentNode.insertBefore(note, host.nextSibling);
   }
 
   window.FocusActions = { mount, say, xlsx, FORMATS };

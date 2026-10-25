@@ -65,3 +65,8 @@
 .fh-foot{margin-top:2rem;border-top:1px solid var(--fh-line);color:var(--fh-muted);font-size:.85rem}
 .fh-foot .fh-inner{padding:1rem 1.25rem 1.5rem}
 .fh-foot p{margin:0}
+
+/* Case studies menu */
+.fh-cases li{flex-direction:column;align-items:flex-start;gap:.1rem}
+.fh-cases .fh-group{padding:.7rem .6rem .25rem;font-size:.78rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--fh-muted)}
+.fh-cases .fh-group+li{border-top:0}

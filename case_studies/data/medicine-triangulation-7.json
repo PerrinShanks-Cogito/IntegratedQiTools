@@ -1,0 +1,86 @@
+{
+ "focus": {
+  "tool": "fishbone_diagram",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "title": "Why have falls risen in Medicine? (example)",
+ "effect": "Falls per 1,000 bed days have risen in Medicine",
+ "categories": [
+  {
+   "name": "People",
+   "causes": [
+    {
+     "text": "High sickness absence",
+     "children": [
+      {
+       "text": "Stress and back injuries",
+       "children": []
+      }
+     ]
+    },
+    {
+     "text": "Vacancies filled by agency",
+     "children": [
+      {
+       "text": "Staff leaving for better-paid posts nearby",
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Methods",
+   "causes": [
+    {
+     "text": "Agency staff not inducted",
+     "children": [
+      {
+       "text": "No falls bundle briefing",
+       "children": []
+      }
+     ]
+    },
+    {
+     "text": "No protected training time",
+     "children": []
+    }
+   ]
+  },
+  {
+   "name": "Materials",
+   "causes": [
+    {
+     "text": "Practice educator post vacant",
+     "children": []
+    }
+   ]
+  },
+  {
+   "name": "Equipment",
+   "causes": [
+    {
+     "text": "Sensor alarms not used by temporary staff",
+     "children": []
+    }
+   ]
+  },
+  {
+   "name": "Environment",
+   "causes": [
+    {
+     "text": "Bays unobserved at shift change",
+     "children": []
+    }
+   ]
+  }
+ ],
+ "sample": {
+  "caseTitle": "Quality, workforce and finance in the medicine division",
+  "caseUrl": "/case_studies/medicine-triangulation/",
+  "step": 7,
+  "stepTitle": "Bring the evidence together",
+  "look": "Workforce causes explain the quality problem, and the agency spend increase is a symptom of the same thing."
+ }
+}

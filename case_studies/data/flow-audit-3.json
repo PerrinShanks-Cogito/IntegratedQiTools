@@ -1,0 +1,25 @@
+{
+ "focus": {
+  "tool": "chi_squared",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "fields": {
+  "data": "Clinical Group\tEmbedded\tNot yet embedded\nMedicine\t21\t39\nSurgery\t31\t17\nCardiovascular\t27\t12\nOlder people’s care\t24\t18",
+  "hasHeader": true,
+  "mode": "independence",
+  "alpha": "0.05",
+  "title": "Board rounds chapter: audits Embedded or not, by Clinical Group, last 3 months (example)",
+  "valLabel": "Ward audits",
+  "order": "entered",
+  "swap": false
+ },
+ "extra": null,
+ "sample": {
+  "caseTitle": "Can we trust our Flow Manual audit, and where should we focus?",
+  "caseUrl": "/case_studies/flow-audit/",
+  "step": 3,
+  "stepTitle": "Test whether Clinical Groups really differ",
+  "look": "A small p-value: the split really does differ between groups, and Medicine has far more Not yet embedded audits than expected. Focus support there."
+ }
+}

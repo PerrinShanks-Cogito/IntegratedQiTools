@@ -1,0 +1,25 @@
+{
+ "focus": {
+  "tool": "pareto_chart",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "fields": {
+  "data": "Delay reason\tPatients delayed\nAwaiting discharge medicines (TTO)\t142\nAwaiting transport\t61\nAwaiting senior review\t48\nAwaiting discharge letter\t37\nAwaiting therapy assessment\t26\nAwaiting family or carer\t22\nAwaiting equipment\t14\nAwaiting diagnostic result\t11\nOther\t9",
+  "hasHeader": true,
+  "title": "Delays on the day of discharge, Ward 7, July to September (example)",
+  "yLabel": "Patients delayed",
+  "cutoff": "80",
+  "groupAfter": "0",
+  "aligned": true,
+  "showLabels": true
+ },
+ "extra": null,
+ "sample": {
+  "caseTitle": "Why do our discharges happen late in the day?",
+  "caseUrl": "/case_studies/late-discharges/",
+  "step": 3,
+  "stepTitle": "Rank the delay reasons recorded in Epic",
+  "look": "Medicines and transport together make up over half of all delays. Fix these first."
+ }
+}

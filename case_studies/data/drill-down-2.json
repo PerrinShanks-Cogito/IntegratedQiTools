@@ -1,0 +1,29 @@
+{
+ "focus": {
+  "tool": "funnel_plot",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "fields": {
+  "data": "Ward\tPressure ulcers\tBed days\nWard 7\t6\t9800\nWard 8\t11\t9400\nWard 9\t16\t10100\nWard 10\t15\t8700\nWard 11\t11\t9900\nWard 12\t25\t9600\nWard 20\t13\t8200\nWard 21\t3\t7900\nWard 22\t11\t8800\nWard 23\t8\t6100\nWard 24\t3\t5200\nWard 30\t5\t9300\nWard 31\t10\t8900\nWard 32\t11\t9100\nWard 33\t8\t7400\nWard 40\t3\t4300\nWard 41\t2\t3900\nCritical care\t6\t5600\nStroke unit\t22\t7800\nRenal ward\t8\t6900",
+  "hasHeader": true,
+  "title": "Pressure ulcers per 1,000 bed days by ward (example)",
+  "dates": "last 12 months",
+  "measure": "Pressure ulcers",
+  "popLabel": "Bed days",
+  "scale": "1000",
+  "centre": "pooled",
+  "xMin": "",
+  "xMax": "",
+  "showWarn": true,
+  "labels": true
+ },
+ "extra": null,
+ "sample": {
+  "caseTitle": "Drilling into aggregate data",
+  "caseUrl": "/case_studies/drill-down/",
+  "step": 2,
+  "stepTitle": "Compare wards fairly",
+  "look": "Ward 12 and the Stroke unit sit above the upper limit. Ward 41 has the lowest rate, but it’s small enough that this could be chance. The funnel stops you over-reading it."
+ }
+}

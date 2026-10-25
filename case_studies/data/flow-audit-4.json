@@ -1,0 +1,33 @@
+{
+ "focus": {
+  "tool": "matrix_2x2",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "fields": {
+  "preset": "ease_impact",
+  "cX": "",
+  "cY": "",
+  "cTL": "",
+  "cTR": "",
+  "cBL": "",
+  "cBR": "",
+  "data": "Idea\tEase\tImpact\nAppoint a challenger at every board round\t8\t8\nFix the board round start at 9am\t6\t7\nUpdate EDDs live in Epic during the round\t6\t8\nBoard round script on the wall\t9\t4\nConsultant of the Week model\t2\t9\nFriday planning for weekend discharges\t5\t7\nFit to Sit prompt on the board\t8\t5\nRefer to the Discharge Unit at board round\t7\t6\nVirtual board round for outlying patients\t4\t5\nTherapist at every board round\t3\t6\nFlow champion on every ward\t5\t8\nNew bed management system\t1\t4",
+  "hasHeader": true,
+  "title": "Board round improvement ideas, Medicine (example)",
+  "radio:scale": "auto",
+  "xSplit": "",
+  "ySplit": "",
+  "xLabel": "",
+  "yLabel": "",
+  "showNames": true
+ },
+ "extra": null,
+ "sample": {
+  "caseTitle": "Can we trust our Flow Manual audit, and where should we focus?",
+  "caseUrl": "/case_studies/flow-audit/",
+  "step": 4,
+  "stepTitle": "Choose the priorities",
+  "look": "Quick wins: the challenger role, live EDD updates, a fixed 9am start and Discharge Unit referrals. Consultant of the Week is high impact but hard, so plan it as a bigger project."
+ }
+}

@@ -1,0 +1,35 @@
+{
+ "focus": {
+  "tool": "multiple_regression",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "fields": {
+  "data": "Ward\tTraining compliance (%)\tSickness (%)\tAgency shifts (%)\tDivision\tFalls per 1,000 bed days\nWard 7\t78\t6.2\t19.9\tMedicine\t9.4\nWard 7\t76\t5.5\t19.4\tMedicine\t9.0\nWard 7\t79\t6.1\t22.8\tMedicine\t8.2\nWard 7\t76\t6.6\t20.3\tMedicine\t8.4\nWard 8\t73\t7.6\t16.2\tMedicine\t10.9\nWard 8\t73\t8.3\t18.3\tMedicine\t9.8\nWard 8\t74\t7.8\t16.1\tMedicine\t9.8\nWard 8\t78\t6.8\t17.9\tMedicine\t9.7\nWard 9\t78\t6.5\t18.5\tMedicine\t8.4\nWard 9\t75\t7.1\t19.3\tMedicine\t9.2\nWard 9\t78\t6.4\t19.6\tMedicine\t8.0\nWard 9\t79\t5.7\t18.6\tMedicine\t6.1\nWard 10\t71\t5.5\t24.4\tMedicine\t10.2\nWard 10\t68\t5.5\t24.6\tMedicine\t11.2\nWard 10\t69\t5.9\t21.2\tMedicine\t9.6\nWard 10\t67\t6.6\t22.7\tMedicine\t10.4\nWard 11\t69\t5.9\t17.6\tMedicine\t10.0\nWard 11\t71\t6.5\t13.9\tMedicine\t9.0\nWard 11\t73\t5.6\t14.0\tMedicine\t8.6\nWard 11\t70\t6.6\t14.3\tMedicine\t10.2\nWard 12\t78\t6.4\t14.8\tMedicine\t8.1\nWard 12\t80\t6.6\t15.3\tMedicine\t7.6\nWard 12\t81\t7.1\t13.3\tMedicine\t8.8\nWard 12\t76\t5.9\t15.1\tMedicine\t9.3\nWard 20\t82\t4.7\t9.3\tSurgery\t6.6\nWard 20\t84\t5.1\t5.8\tSurgery\t6.9\nWard 20\t83\t5.6\t10.1\tSurgery\t7.0\nWard 20\t83\t4.3\t5.1\tSurgery\t4.6\nWard 21\t85\t3.5\t10.4\tSurgery\t6.7\nWard 21\t85\t3.6\t6.4\tSurgery\t6.5\nWard 21\t87\t3.9\t10.2\tSurgery\t5.1\nWard 21\t88\t3.3\t8.0\tSurgery\t4.2\nWard 22\t83\t5.1\t4.7\tSurgery\t6.5\nWard 22\t82\t4.1\t2.8\tSurgery\t6.5\nWard 22\t84\t5.1\t1.9\tSurgery\t6.2\nWard 22\t82\t4.9\t7.0\tSurgery\t6.8\nWard 23\t92\t3.2\t9.5\tSurgery\t3.0\nWard 23\t95\t4.2\t8.8\tSurgery\t4.1\nWard 23\t93\t4.6\t6.2\tSurgery\t3.6\nWard 23\t95\t3.4\t6.4\tSurgery\t3.2\nWard 24\t87\t4.8\t10.0\tSurgery\t6.2\nWard 24\t85\t5.7\t11.4\tSurgery\t6.4\nWard 24\t83\t4.3\t13.3\tSurgery\t6.1\nWard 24\t83\t4.5\t14.1\tSurgery\t5.8\nWard 30\t81\t5.1\t12.6\tOlder people’s care\t7.4\nWard 30\t80\t6.3\t11.2\tOlder people’s care\t6.9\nWard 30\t82\t5.7\t12.1\tOlder people’s care\t7.9\nWard 30\t81\t6.2\t11.8\tOlder people’s care\t8.8\nWard 31\t80\t6.1\t9.4\tOlder people’s care\t7.8\nWard 31\t79\t5.1\t7.6\tOlder people’s care\t5.9\nWard 31\t80\t5.1\t8.8\tOlder people’s care\t5.6\nWard 31\t85\t4.2\t6.3\tOlder people’s care\t5.1\nWard 32\t85\t5.2\t15.2\tOlder people’s care\t7.2\nWard 32\t86\t5.2\t15.0\tOlder people’s care\t7.1\nWard 32\t81\t6.5\t12.5\tOlder people’s care\t8.9\nWard 32\t87\t6.3\t12.5\tOlder people’s care\t6.1\nWard 33\t88\t4.3\t17.0\tOlder people’s care\t5.3\nWard 33\t83\t5.1\t17.4\tOlder people’s care\t8.3\nWard 33\t85\t5.3\t16.3\tOlder people’s care\t5.5\nWard 33\t84\t5.2\t13.0\tOlder people’s care\t7.9\nWard 40\t90\t5.1\t2.9\tWomen’s and children’s\t4.4\nWard 40\t92\t4.3\t1.0\tWomen’s and children’s\t2.9\nWard 40\t92\t4.8\t2.1\tWomen’s and children’s\t4.5\nWard 40\t90\t4.6\t3.3\tWomen’s and children’s\t4.8\nWard 41\t98\t3.9\t7.5\tWomen’s and children’s\t4.4\nWard 41\t95\t4.6\t10.6\tWomen’s and children’s\t3.4\nWard 41\t96\t4.8\t10.5\tWomen’s and children’s\t4.4\nWard 41\t92\t5.2\t7.1\tWomen’s and children’s\t5.1\nWard 42\t91\t3.0\t5.4\tWomen’s and children’s\t3.9\nWard 42\t92\t3.7\t3.4\tWomen’s and children’s\t2.9\nWard 42\t91\t3.6\t4.8\tWomen’s and children’s\t4.1\nWard 42\t92\t3.4\t2.0\tWomen’s and children’s\t4.9",
+  "hasHeader": true,
+  "yCol": "5",
+  "title": "What goes with higher falls rates? Ward-months (example)",
+  "flagOdd": true,
+  "use-1": true,
+  "use-2": true,
+  "use-3": true,
+  "use-4": true,
+  "use-5": true
+ },
+ "extra": {
+  "chartType": "effects",
+  "whatIf": {
+   "Training compliance (%)": 83,
+   "Sickness (%)": 5.4,
+   "Agency shifts (%)": 12,
+   "Division": "Medicine"
+  }
+ },
+ "sample": {
+  "caseTitle": "Quality, workforce and finance in the medicine division",
+  "caseUrl": "/case_studies/medicine-triangulation/",
+  "step": 5,
+  "stepTitle": "Untangle the factors together",
+  "look": "Training compliance, sickness and agency use each have a clear link with falls once the others are taken into account, and training makes the biggest difference. Division adds nothing on top: Medicine’s higher falls are explained by its workforce measures, not by being Medicine."
+ }
+}

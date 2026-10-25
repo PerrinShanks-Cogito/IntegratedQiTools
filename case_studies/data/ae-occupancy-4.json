@@ -1,0 +1,45 @@
+{
+ "focus": {
+  "tool": "spc_tool",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "fields": {
+  "team": "St Elsewhere NHS Trust (example)",
+  "per": "1000",
+  "perUnit": "",
+  "yLabel": "",
+  "target": "",
+  "floor": false,
+  "radio:base": "first",
+  "baseN": "14",
+  "screen": false,
+  "radio:ctype": "p",
+  "showMR": true,
+  "radio:unit": "pct",
+  "yMin": "",
+  "yMax": "",
+  "dateFmt": "dmy",
+  "showNotes": true,
+  "shiftLen": "7",
+  "trendLen": "7",
+  "twoThree": true,
+  "useTrend": true,
+  "radio:spctype": "xmr",
+  "data": "Month\tPatients\tNote\nOct 2024\t111\t\nNov 2024\t114\t\nDec 2024\t115\t\nJan 2025\t123\t\nFeb 2025\t123\t\nMar 2025\t111\t\nApr 2025\t120\t\nMay 2025\t110\t\nJun 2025\t113\t\nJul 2025\t112\t\nAug 2025\t117\t\nSep 2025\t116\t\nOct 2025\t124\t\nNov 2025\t111\t\nDec 2025\t147\tCommunity intermediate care beds reduced\nJan 2026\t161\t\nFeb 2026\t157\t\nMar 2026\t152\t\nApr 2026\t168\t\nMay 2026\t169\t\nJun 2026\t171\t\nJul 2026\t171\t\nAug 2026\t178\t\nSep 2026\t174\t",
+  "title": "Patients in hospital 21 days or more, month end (example)",
+  "radio:dir": "down"
+ },
+ "extra": {
+  "type": "xmr",
+  "breaks": [],
+  "useBaseN": true
+ },
+ "sample": {
+  "caseTitle": "A&E performance and bed occupancy: what’s really going on?",
+  "caseUrl": "/case_studies/ae-occupancy/",
+  "step": 4,
+  "stepTitle": "Find who is staying: patients in hospital 21 days or more",
+  "look": "From month 15 the count is above the upper limit and still climbing, after a change in the wider system: community intermediate care beds were reduced."
+ }
+}
