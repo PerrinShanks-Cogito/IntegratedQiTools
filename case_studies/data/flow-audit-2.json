@@ -1,0 +1,27 @@
+{
+ "focus": {
+  "tool": "bar_chart",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "fields": {
+  "data": "Chapter\tMedicine\tSurgery\tCardiovascular\tOlder people’s care\nFlow principles\t51\t76\t75\t73\nBoard rounds\t41\t60\t58\t58\nProactive discharge planning\t53\t64\t77\t60\nIndependence and deconditioning\t33\t55\t57\t52\nPathways out of hospital\t53\t66\t69\t70\nOperational flow and escalation\t63\t77\t77\t78",
+  "hasHeader": true,
+  "title": "% of ward audits rated Embedded, by chapter and Clinical Group, last 3 months (example)",
+  "xLabel": "",
+  "yLabel": "% Embedded",
+  "radio:orient": "v",
+  "radio:sort": "none",
+  "radio:layout": "group",
+  "showLabels": true,
+  "showAvg": false
+ },
+ "extra": null,
+ "sample": {
+  "caseTitle": "Can we trust our Flow Manual audit, and where should we focus?",
+  "caseUrl": "/case_studies/flow-audit/",
+  "step": 2,
+  "stepTitle": "Compare chapters across Clinical Groups",
+  "look": "Board rounds and Independence and deconditioning are the weakest chapters everywhere, and Medicine is lowest on most chapters."
+ }
+}

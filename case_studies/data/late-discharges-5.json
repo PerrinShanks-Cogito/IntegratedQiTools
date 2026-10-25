@@ -1,0 +1,128 @@
+{
+ "focus": {
+  "tool": "driver_diagram",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "title": "Ward 7 discharges before midday (example)",
+ "goal": {
+  "text": "Increase discharges before midday on Ward 7 from 16% to 33% by March 2027",
+  "measure": "Weekly % of discharges before 12pm (P chart)"
+ },
+ "drivers": [
+  {
+   "kind": "driver",
+   "text": "Decide on discharge the day before",
+   "measure": "% patients with an EDD reviewed at board round",
+   "children": [
+    {
+     "kind": "driver",
+     "text": "EDD agreed on admission and reviewed daily",
+     "measure": "",
+     "children": [
+      {
+       "kind": "project",
+       "text": "Challenger asks “can they go today or tomorrow?”",
+       "measure": "",
+       "children": []
+      }
+     ]
+    },
+    {
+     "kind": "driver",
+     "text": "Criteria-led discharge used",
+     "measure": "",
+     "children": [
+      {
+       "kind": "project",
+       "text": "Agree criteria at the post-take ward round",
+       "measure": "",
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "driver",
+   "text": "Medicines ready before the day",
+   "measure": "% TTOs written by 4pm the day before",
+   "children": [
+    {
+     "kind": "driver",
+     "text": "TTOs written the day before",
+     "measure": "",
+     "children": [
+      {
+       "kind": "project",
+       "text": "Afternoon TTO slot for next-day discharges",
+       "measure": "",
+       "children": []
+      }
+     ]
+    },
+    {
+     "kind": "driver",
+     "text": "Pharmacy prioritises next-day discharges",
+     "measure": "",
+     "children": [
+      {
+       "kind": "project",
+       "text": "Pharmacist at the 2pm huddle",
+       "measure": "",
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "driver",
+   "text": "Patients leave the bed space early",
+   "measure": "% discharges through the Discharge Unit",
+   "children": [
+    {
+     "kind": "driver",
+     "text": "Fit to Sit and the Discharge Unit used",
+     "measure": "",
+     "children": [
+      {
+       "kind": "project",
+       "text": "Discharge Unit referral at board round",
+       "measure": "",
+       "children": []
+      }
+     ]
+    },
+    {
+     "kind": "driver",
+     "text": "Transport booked the day before",
+     "measure": "",
+     "children": [
+      {
+       "kind": "project",
+       "text": "Book transport when the EDD is confirmed",
+       "measure": "",
+       "children": []
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "balancing": [
+  {
+   "text": "30-day emergency readmissions"
+  },
+  {
+   "text": "Patient experience of discharge"
+  }
+ ],
+ "sample": {
+  "caseTitle": "Why do our discharges happen late in the day?",
+  "caseUrl": "/case_studies/late-discharges/",
+  "step": 5,
+  "stepTitle": "Plan the changes",
+  "look": "Each change idea traces back to a cause from the fishbone and a delay from the Pareto chart. Readmissions is the balancing measure."
+ }
+}

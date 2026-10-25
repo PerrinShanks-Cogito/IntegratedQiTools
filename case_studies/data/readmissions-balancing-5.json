@@ -1,0 +1,108 @@
+{
+ "focus": {
+  "tool": "driver_diagram",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "title": "Safe earlier discharge (example)",
+ "goal": {
+  "text": "Keep 30-day readmissions at or below 11.8% while discharges before midday rise to 33%",
+  "measure": "Monthly 30-day readmissions (P′ chart)"
+ },
+ "drivers": [
+  {
+   "kind": "driver",
+   "text": "Patients understand and have their medicines",
+   "measure": "% patients given medicines counselling",
+   "children": [
+    {
+     "kind": "driver",
+     "text": "Medicines reconciled and explained",
+     "measure": "",
+     "children": [
+      {
+       "kind": "project",
+       "text": "Pharmacist counselling for patients on 5+ medicines",
+       "measure": "",
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "driver",
+   "text": "Problems caught early at home",
+   "measure": "% patients called within 48 hours",
+   "children": [
+    {
+     "kind": "driver",
+     "text": "Safety-netting after discharge",
+     "measure": "",
+     "children": [
+      {
+       "kind": "project",
+       "text": "Phone call within 48 hours",
+       "measure": "",
+       "children": []
+      },
+      {
+       "kind": "project",
+       "text": "Clear “who to call” card",
+       "measure": "",
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "driver",
+   "text": "Support in place on the day",
+   "measure": "% packages confirmed before discharge",
+   "children": [
+    {
+     "kind": "driver",
+     "text": "Care and equipment confirmed",
+     "measure": "",
+     "children": [
+      {
+       "kind": "project",
+       "text": "Package start confirmed at board round",
+       "measure": "",
+       "children": []
+      }
+     ]
+    },
+    {
+     "kind": "driver",
+     "text": "Follow-up booked before leaving",
+     "measure": "",
+     "children": [
+      {
+       "kind": "project",
+       "text": "Book clinic follow-up in Epic before discharge",
+       "measure": "",
+       "children": []
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "balancing": [
+  {
+   "text": "Length of stay"
+  },
+  {
+   "text": "Discharges before midday"
+  }
+ ],
+ "sample": {
+  "caseTitle": "Discharge sooner, but at what cost? Readmissions as a balancing measure",
+  "caseUrl": "/case_studies/readmissions-balancing/",
+  "step": 5,
+  "stepTitle": "Plan safe discharge",
+  "look": "Earlier discharge and safe discharge work together. Length of stay becomes the balancing measure for this plan."
+ }
+}

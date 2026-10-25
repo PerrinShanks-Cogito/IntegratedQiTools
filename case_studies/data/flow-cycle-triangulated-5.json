@@ -1,0 +1,108 @@
+{
+ "focus": {
+  "tool": "driver_diagram",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "title": "Ward 9 proactive discharge planning (example)",
+ "goal": {
+  "text": "90% of Ward 9 patients have an EDD within 24 hours of admission by March 2027",
+  "measure": "Weekly % EDD within 24 hours (P chart); monthly Chapter 3 audit (P chart)"
+ },
+ "drivers": [
+  {
+   "kind": "driver",
+   "text": "Constructive challenge at every board round",
+   "measure": "Audit: “Was a challenger appointed?”",
+   "children": [
+    {
+     "kind": "driver",
+     "text": "Challenger role assigned daily",
+     "measure": "",
+     "children": [
+      {
+       "kind": "project",
+       "text": "Name the challenger on the board each morning",
+       "measure": "",
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "driver",
+   "text": "The whole MDT plans from day one",
+   "measure": "Audit: “Were all core MDT members present?”",
+   "children": [
+    {
+     "kind": "driver",
+     "text": "Therapy and pharmacy at board round",
+     "measure": "",
+     "children": [
+      {
+       "kind": "project",
+       "text": "Therapist joins from day one",
+       "measure": "",
+       "children": []
+      },
+      {
+       "kind": "project",
+       "text": "Pharmacist told about next-day discharges",
+       "measure": "",
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "driver",
+   "text": "Plans recorded live",
+   "measure": "Audit: “Were actions and updates recorded live in Epic?”",
+   "children": [
+    {
+     "kind": "driver",
+     "text": "Epic used live in the round",
+     "measure": "",
+     "children": [
+      {
+       "kind": "project",
+       "text": "Large screen for the discharge planning view",
+       "measure": "",
+       "children": []
+      }
+     ]
+    },
+    {
+     "kind": "driver",
+     "text": "Every action has an owner and a date",
+     "measure": "",
+     "children": [
+      {
+       "kind": "project",
+       "text": "Owner and due date in Discharge Planning Activity comments",
+       "measure": "",
+       "children": []
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "balancing": [
+  {
+   "text": "Board round length"
+  },
+  {
+   "text": "Staff experience of board rounds"
+  }
+ ],
+ "sample": {
+  "caseTitle": "The Flow Improvement Cycle, triangulated",
+  "caseUrl": "/case_studies/flow-cycle-triangulated/",
+  "step": 5,
+  "stepTitle": "Plan the improvement",
+  "look": "Ready to test with PDSA cycles and record on the Flow Manual A3 template (the A3 and PDSA tools are coming to FOCUS)."
+ }
+}

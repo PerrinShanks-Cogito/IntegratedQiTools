@@ -1,0 +1,45 @@
+{
+ "focus": {
+  "tool": "spc_tool",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "fields": {
+  "team": "Ward 9 (example)",
+  "per": "1000",
+  "perUnit": "",
+  "yLabel": "",
+  "target": "80",
+  "floor": false,
+  "radio:base": "all",
+  "baseN": "20",
+  "screen": false,
+  "radio:ctype": "p",
+  "showMR": true,
+  "radio:unit": "pct",
+  "yMin": "",
+  "yMax": "",
+  "dateFmt": "dmy",
+  "showNotes": true,
+  "shiftLen": "7",
+  "trendLen": "7",
+  "twoThree": true,
+  "useTrend": true,
+  "radio:spctype": "p",
+  "data": "Month\tStandards met\tStandards audited\tNote\nAug 2025\t24\t42\t\nSep 2025\t21\t39\t\nOct 2025\t20\t36\t\nNov 2025\t24\t39\t\nDec 2025\t25\t37\t\nJan 2026\t22\t42\t\nFeb 2026\t20\t42\t\nMar 2026\t22\t39\t\nApr 2026\t21\t40\t\nMay 2026\t19\t37\t\nJun 2026\t19\t42\t\nJul 2026\t24\t43\t\nAug 2026\t17\t39\t\nSep 2026\t25\t42\t",
+  "title": "Ward 9: Proactive discharge planning audit standards met (example)",
+  "radio:dir": "up"
+ },
+ "extra": {
+  "type": "p",
+  "breaks": [],
+  "useBaseN": false
+ },
+ "sample": {
+  "caseTitle": "The Flow Improvement Cycle, triangulated",
+  "caseUrl": "/case_studies/flow-cycle-triangulated/",
+  "step": 2,
+  "stepTitle": "Source 2, monthly audit: Proactive discharge planning standards met",
+  "look": "Also stable at a little over half. The audit agrees with the performance data, which strengthens the case for acting."
+ }
+}

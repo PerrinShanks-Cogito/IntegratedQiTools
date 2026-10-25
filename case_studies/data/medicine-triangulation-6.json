@@ -1,0 +1,318 @@
+{
+ "focus": {
+  "tool": "qualitative_analysis",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "fields": {
+  "question": "What would make the biggest difference to safe care on your ward?",
+  "data": "ID\tGroup\tComment\n1\tWard 7\tWe are always short, and the agency nurses don’t know our patients or where anything is kept.\n2\tWard 8\tI haven’t been able to do my manual handling update for months because I can’t be released from the ward.\n3\tWard 9\tAgency staff get no ward induction, so they don’t know the falls bundle or how to use the sensor alarms.\n4\tWard 7\tSickness has gone up because people are exhausted. I’ve done four long days in a row to cover gaps.\n5\tWard 10\tOur team is really supportive and the matron is visible, which helps on hard days.\n6\tWard 11\tWe lost three experienced nurses to the hospital down the road; they pay more for the same band.\n7\tWard 12\tTraining is all online and we never get protected time to do it.\n8\tWard 8\tNight shifts are mostly bank and agency, so supervision of confused patients is hard.\n9\tWard 9\tRecruitment takes so long that good candidates take other jobs before we can offer.\n10\tWard 7\tWhen we have a full team, falls are rare. It’s the gaps that cause them.\n11\tWard 10\tThe new starters are great but they need time with someone experienced.\n12\tWard 11\tI’m thinking of leaving because I can’t give the care I want to.\n13\tWard 12\tAgency nurses are often brilliant, but they don’t get access to Epic training straight away.\n14\tWard 8\tSickness absence is mostly stress and back injuries.\n15\tWard 9\tWe need enhanced care support workers for patients at high risk of falls.\n16\tWard 7\tHandover is rushed because we start late and everyone is behind.\n17\tWard 10\tFlexible working would help me stay. At the moment it’s all or nothing.\n18\tWard 11\tPressure area checks get missed when we’re short.\n19\tWard 12\tOur practice educator post has been vacant for a year.\n20\tWard 9\tProud of my team and how we pull together.\n21\tWard 8\tThe rota is published late so it’s hard to plan childcare, and people go off sick.\n22\tWard 7\tAgency staff are not allowed to do some tasks, so the permanent staff carry more.\n23\tWard 11\tI would like a clear career path, otherwise I’ll move on.\n24\tWard 12\tFalls happen at night and at shift change when there is nobody in the bay.",
+  "hasHeader": true,
+  "textCol": "",
+  "idCol": "",
+  "groupCol": "",
+  "radio:sample": "all",
+  "sampleN": "",
+  "thickAt": "30",
+  "radio:wcSize": "freq",
+  "radio:wcUnit": "words",
+  "wcFilter": "all",
+  "wcMax": "60",
+  "wcMin": "1",
+  "wcExclude": "",
+  "wcStop": true,
+  "wcPlural": true,
+  "radio:approach": "combined",
+  "newCode": "",
+  "codeView": "all",
+  "codeSearch": "",
+  "method": "",
+  "redact": true
+ },
+ "extra": {
+  "codes": [
+   {
+    "id": "c1",
+    "name": "Staffing levels",
+    "desc": "Not enough staff on shift",
+    "keywords": "short, gaps, nobody, full team",
+    "color": "#005EB8"
+   },
+   {
+    "id": "c2",
+    "name": "Agency and bank induction",
+    "desc": "Temporary staff not inducted or trained for the ward",
+    "keywords": "agency, bank, induction",
+    "color": "#007F3B"
+   },
+   {
+    "id": "c3",
+    "name": "Training time",
+    "desc": "Protected time and access to training",
+    "keywords": "training, update, educator, released",
+    "color": "#AE2573"
+   },
+   {
+    "id": "c4",
+    "name": "Wellbeing and sickness",
+    "desc": "Exhaustion, stress and sickness absence",
+    "keywords": "sickness, exhausted, stress",
+    "color": "#330072"
+   },
+   {
+    "id": "c5",
+    "name": "Recruitment and retention",
+    "desc": "Hiring and keeping staff",
+    "keywords": "leaving, recruitment, pay, career, stay",
+    "color": "#8A1538"
+   },
+   {
+    "id": "c6",
+    "name": "Team support",
+    "desc": "Positive team and leadership",
+    "keywords": "supportive, proud, together",
+    "color": "#00667A"
+   },
+   {
+    "id": "c7",
+    "name": "Patient safety",
+    "desc": "Falls, pressure areas and supervision",
+    "keywords": "falls, pressure, supervision, confused",
+    "color": "#7A4600"
+   }
+  ],
+  "cid": 7,
+  "coding": {
+   "id:1": {
+    "codes": [
+     "c1",
+     "c2"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 1,
+    "quote": true
+   },
+   "id:2": {
+    "codes": [
+     "c3"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 2
+   },
+   "id:3": {
+    "codes": [
+     "c2",
+     "c7"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 3,
+    "quote": true
+   },
+   "id:4": {
+    "codes": [
+     "c4",
+     "c1"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 4,
+    "quote": true
+   },
+   "id:5": {
+    "codes": [
+     "c6"
+    ],
+    "sent": "pos",
+    "note": "",
+    "order": 5
+   },
+   "id:6": {
+    "codes": [
+     "c5"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 6
+   },
+   "id:7": {
+    "codes": [
+     "c3"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 7
+   },
+   "id:8": {
+    "codes": [
+     "c2",
+     "c7"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 8
+   },
+   "id:9": {
+    "codes": [
+     "c5"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 9
+   },
+   "id:10": {
+    "codes": [
+     "c1",
+     "c7"
+    ],
+    "sent": "mix",
+    "note": "",
+    "order": 10,
+    "quote": true
+   },
+   "id:11": {
+    "codes": [
+     "c3"
+    ],
+    "sent": "mix",
+    "note": "",
+    "order": 11
+   },
+   "id:12": {
+    "codes": [
+     "c5",
+     "c4"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 12
+   },
+   "id:13": {
+    "codes": [
+     "c2",
+     "c3"
+    ],
+    "sent": "mix",
+    "note": "",
+    "order": 13
+   },
+   "id:14": {
+    "codes": [
+     "c4"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 14
+   },
+   "id:15": {
+    "codes": [
+     "c7",
+     "c1"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 15
+   },
+   "id:16": {
+    "codes": [
+     "c1"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 16
+   },
+   "id:17": {
+    "codes": [
+     "c5"
+    ],
+    "sent": "mix",
+    "note": "",
+    "order": 17
+   },
+   "id:18": {
+    "codes": [
+     "c7",
+     "c1"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 18,
+    "quote": true
+   },
+   "id:19": {
+    "codes": [
+     "c3"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 19
+   },
+   "id:20": {
+    "codes": [
+     "c6"
+    ],
+    "sent": "pos",
+    "note": "",
+    "order": 20
+   },
+   "id:21": {
+    "codes": [
+     "c4"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 21
+   },
+   "id:22": {
+    "codes": [
+     "c2",
+     "c1"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 22
+   },
+   "id:23": {
+    "codes": [
+     "c5"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 23
+   },
+   "id:24": {
+    "codes": [
+     "c7",
+     "c1"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 24
+   }
+  },
+  "seq": 24,
+  "findings": {
+   "c2": {
+    "text": "Temporary staff often start without a ward induction or the falls bundle, so the safety processes depend on a shrinking group of permanent staff.",
+    "impact": "high",
+    "skip": []
+   },
+   "c3": {
+    "text": "Staff can’t be released for mandatory training, which matches the fall in compliance seen in the data.",
+    "impact": "high",
+    "skip": []
+   }
+  },
+  "sample": null,
+  "boost": []
+ },
+ "sample": {
+  "caseTitle": "Quality, workforce and finance in the medicine division",
+  "caseUrl": "/case_studies/medicine-triangulation/",
+  "step": 6,
+  "stepTitle": "Hear from staff: why is this happening?",
+  "look": "Agency staff without induction, no protected training time and exhaustion come up again and again. They match what the regression found."
+ }
+}

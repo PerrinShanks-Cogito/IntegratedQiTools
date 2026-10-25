@@ -1,0 +1,45 @@
+{
+ "focus": {
+  "tool": "spc_tool",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "fields": {
+  "team": "Ward 7 (example)",
+  "per": "1000",
+  "perUnit": "",
+  "yLabel": "",
+  "target": "33",
+  "floor": false,
+  "radio:base": "all",
+  "baseN": "20",
+  "screen": false,
+  "radio:ctype": "p",
+  "showMR": true,
+  "radio:unit": "pct",
+  "yMin": "",
+  "yMax": "",
+  "dateFmt": "dmy",
+  "showNotes": true,
+  "shiftLen": "7",
+  "trendLen": "7",
+  "twoThree": true,
+  "useTrend": true,
+  "radio:spctype": "p",
+  "data": "Week starting\tDischarges before 12pm\tAll discharges\tNote\n06/10/2025\t5\t76\t\n13/10/2025\t11\t62\t\n20/10/2025\t11\t65\t\n27/10/2025\t14\t60\t\n03/11/2025\t10\t61\t\n10/11/2025\t16\t65\t\n17/11/2025\t6\t60\t\n24/11/2025\t12\t65\t\n01/12/2025\t10\t59\t\n08/12/2025\t9\t70\t\n15/12/2025\t13\t67\t\n22/12/2025\t13\t72\t\n29/12/2025\t7\t66\t\n05/01/2026\t14\t61\t\n12/01/2026\t17\t75\t\n19/01/2026\t4\t60\t\n26/01/2026\t11\t64\t\n02/02/2026\t6\t72\t\n09/02/2026\t6\t61\t\n16/02/2026\t10\t73\t\n23/02/2026\t17\t71\t\n02/03/2026\t8\t63\t\n09/03/2026\t12\t72\t\n16/03/2026\t12\t67\t\n23/03/2026\t10\t72\t\n30/03/2026\t6\t70\t",
+  "title": "Ward 7 discharges before midday (example)",
+  "radio:dir": "up"
+ },
+ "extra": {
+  "type": "p",
+  "breaks": [],
+  "useBaseN": false
+ },
+ "sample": {
+  "caseTitle": "Why do our discharges happen late in the day?",
+  "caseUrl": "/case_studies/late-discharges/",
+  "step": 4,
+  "stepTitle": "Set a baseline: discharges before midday",
+  "look": "Common cause variation around 16%, with no signals. The process is stable, but it will never reach 33% without a change to the system."
+ }
+}

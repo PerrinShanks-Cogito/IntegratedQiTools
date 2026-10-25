@@ -1,0 +1,45 @@
+{
+ "focus": {
+  "tool": "spc_tool",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "fields": {
+  "team": "St Elsewhere NHS Trust (example)",
+  "per": "1000",
+  "perUnit": "",
+  "yLabel": "£000s",
+  "target": "",
+  "floor": false,
+  "radio:base": "all",
+  "baseN": "20",
+  "screen": false,
+  "radio:ctype": "p",
+  "showMR": true,
+  "radio:unit": "pct",
+  "yMin": "",
+  "yMax": "",
+  "dateFmt": "dmy",
+  "showNotes": true,
+  "shiftLen": "7",
+  "trendLen": "7",
+  "twoThree": true,
+  "useTrend": true,
+  "radio:spctype": "xmr",
+  "data": "Month\tAgency spend (£000s)\nOct 2024\t1461\nNov 2024\t1474\nDec 2024\t1530\nJan 2025\t1487\nFeb 2025\t1522\nMar 2025\t1505\nApr 2025\t1475\nMay 2025\t1510\nJun 2025\t1525\nJul 2025\t1473\nAug 2025\t1509\nSep 2025\t1513\nOct 2025\t1450\nNov 2025\t1458\nDec 2025\t1455\nJan 2026\t1448\nFeb 2026\t1523\nMar 2026\t1536\nApr 2026\t1503\nMay 2026\t1472\nJun 2026\t1482\nJul 2026\t1507\nAug 2026\t1470\nSep 2026\t1466",
+  "title": "Trust nursing agency spend, £000s (example)",
+  "radio:dir": "down"
+ },
+ "extra": {
+  "type": "xmr",
+  "breaks": [],
+  "useBaseN": false
+ },
+ "sample": {
+  "caseTitle": "Quality, workforce and finance in the medicine division",
+  "caseUrl": "/case_studies/medicine-triangulation/",
+  "step": 1,
+  "stepTitle": "Start with the Trust total: agency spend",
+  "look": "Common cause variation only: spend looks stable, so at Trust level there seems to be nothing to worry about."
+ }
+}

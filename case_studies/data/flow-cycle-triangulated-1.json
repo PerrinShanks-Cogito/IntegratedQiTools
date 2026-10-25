@@ -1,0 +1,45 @@
+{
+ "focus": {
+  "tool": "spc_tool",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "fields": {
+  "team": "Ward 9 (example)",
+  "per": "1000",
+  "perUnit": "",
+  "yLabel": "",
+  "target": "90",
+  "floor": false,
+  "radio:base": "all",
+  "baseN": "20",
+  "screen": false,
+  "radio:ctype": "p",
+  "showMR": true,
+  "radio:unit": "pct",
+  "yMin": "",
+  "yMax": "",
+  "dateFmt": "dmy",
+  "showNotes": true,
+  "shiftLen": "7",
+  "trendLen": "7",
+  "twoThree": true,
+  "useTrend": true,
+  "radio:spctype": "p",
+  "data": "Week starting\tEDD within 24 hours\tAdmissions\tNote\n30/03/2026\t22\t34\t\n06/04/2026\t30\t44\t\n13/04/2026\t22\t34\t\n20/04/2026\t22\t38\t\n27/04/2026\t20\t37\t\n04/05/2026\t16\t34\t\n11/05/2026\t24\t39\t\n18/05/2026\t21\t38\t\n25/05/2026\t29\t46\t\n01/06/2026\t19\t40\t\n08/06/2026\t27\t41\t\n15/06/2026\t22\t36\t\n22/06/2026\t26\t37\t\n29/06/2026\t27\t42\t\n06/07/2026\t20\t35\t\n13/07/2026\t19\t41\t\n20/07/2026\t24\t36\t\n27/07/2026\t26\t40\t\n03/08/2026\t21\t39\t\n10/08/2026\t30\t42\t\n17/08/2026\t27\t43\t\n24/08/2026\t17\t36\t\n31/08/2026\t22\t34\t\n07/09/2026\t20\t35\t\n14/09/2026\t22\t36\t\n21/09/2026\t25\t42\t",
+  "title": "Ward 9: patients with an EDD within 24 hours of admission (example)",
+  "radio:dir": "up"
+ },
+ "extra": {
+  "type": "p",
+  "breaks": [],
+  "useBaseN": false
+ },
+ "sample": {
+  "caseTitle": "The Flow Improvement Cycle, triangulated",
+  "caseUrl": "/case_studies/flow-cycle-triangulated/",
+  "step": 1,
+  "stepTitle": "Source 1, performance data: EDD set within 24 hours",
+  "look": "Stable around 60%, well short of the 90% target. The process is predictable but not capable."
+ }
+}

@@ -1,0 +1,45 @@
+{
+ "focus": {
+  "tool": "spc_tool",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "fields": {
+  "team": "Medicine (example)",
+  "per": "1000",
+  "perUnit": "",
+  "yLabel": "",
+  "target": "",
+  "floor": false,
+  "radio:base": "all",
+  "baseN": "20",
+  "screen": false,
+  "radio:ctype": "laney",
+  "showMR": true,
+  "radio:unit": "pct",
+  "yMin": "",
+  "yMax": "",
+  "dateFmt": "dmy",
+  "showNotes": true,
+  "shiftLen": "7",
+  "trendLen": "7",
+  "twoThree": true,
+  "useTrend": true,
+  "radio:spctype": "p",
+  "data": "Month\tReadmitted within 30 days\tDischarges\tNote\nOct 2024\t345\t2902\t\nNov 2024\t328\t2931\t\nDec 2024\t349\t2909\t\nJan 2025\t341\t2949\t\nFeb 2025\t305\t2709\t\nMar 2025\t366\t2800\t\nApr 2025\t338\t2923\t\nMay 2025\t350\t2822\t\nJun 2025\t345\t2908\t\nJul 2025\t376\t2928\t\nAug 2025\t366\t2819\t\nSep 2025\t308\t2799\t\nOct 2025\t328\t2764\tEarlier discharge programme starts\nNov 2025\t316\t2887\t\nDec 2025\t309\t2742\t\nJan 2026\t346\t2845\t\nFeb 2026\t352\t2812\t\nMar 2026\t332\t2935\t\nApr 2026\t327\t2931\t\nMay 2026\t352\t2940\t\nJun 2026\t324\t2764\t\nJul 2026\t342\t2791\t\nAug 2026\t335\t2830\t\nSep 2026\t364\t2750\t",
+  "title": "Emergency readmissions within 30 days (example)",
+  "radio:dir": "down"
+ },
+ "extra": {
+  "type": "p",
+  "breaks": [],
+  "useBaseN": false
+ },
+ "sample": {
+  "caseTitle": "Discharge sooner, but at what cost? Readmissions as a balancing measure",
+  "caseUrl": "/case_studies/readmissions-balancing/",
+  "step": 1,
+  "stepTitle": "Track the balancing measure",
+  "look": "No signal after month 13: readmissions haven’t risen. The balancing measure is holding."
+ }
+}

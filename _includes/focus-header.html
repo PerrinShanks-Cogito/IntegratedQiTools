@@ -29,6 +29,19 @@
         </ul>
         <p class="fh-note">Tools still in development or ideation are listed so you know what is coming.</p>
       </div></details>
+      <details class="fh-dd"><summary>Case studies</summary><div class="fh-menu">
+        <ul class="fh-list fh-cases">
+          <li><a href="{{ '/case_studies/' | relative_url }}"{% if page.url == '/case_studies/' %} aria-current="page"{% endif %}>All case studies</a><span class="fh-desc">Link tools together for a deeper analysis</span></li>
+          {%- for g in site.data.case_studies.groups %}
+          <li class="fh-group" role="presentation">{{ g.name }}</li>
+          {%- for id in g.cases %}
+          {%- assign c = site.data.case_studies.cases | where: "id", id | first %}
+          <li>{% if c.id == page.case_id %}<span class="fh-here" aria-current="page">{{ c.title }}</span>{% else %}<a href="{{ '/case_studies/' | append: c.id | append: '/' | relative_url }}">{{ c.title }}</a>{% endif %}<span class="fh-desc">{{ c.tool_names | join: ' → ' }}</span></li>
+          {%- endfor %}
+          {%- endfor %}
+        </ul>
+        <p class="fh-note">Each step opens a tool with made-up sample data, one click at a time.</p>
+      </div></details>
     </div>
   </div>
 </header>

@@ -1,0 +1,45 @@
+{
+ "focus": {
+  "tool": "spc_tool",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "fields": {
+  "team": "St Elsewhere NHS Trust (example)",
+  "per": "1000",
+  "perUnit": "",
+  "yLabel": "",
+  "target": "78",
+  "floor": false,
+  "radio:base": "all",
+  "baseN": "20",
+  "screen": false,
+  "radio:ctype": "laney",
+  "showMR": true,
+  "radio:unit": "pct",
+  "yMin": "",
+  "yMax": "",
+  "dateFmt": "dmy",
+  "showNotes": true,
+  "shiftLen": "7",
+  "trendLen": "7",
+  "twoThree": true,
+  "useTrend": true,
+  "radio:spctype": "p",
+  "data": "Month\tWithin 4 hours\tAttendances\tNote\nOct 2024\t12200\t15542\t\nNov 2024\t12257\t15730\t\nDec 2024\t11803\t15417\t\nJan 2025\t11897\t15492\t\nFeb 2025\t11653\t14942\t\nMar 2025\t11724\t15239\t\nApr 2025\t11807\t15064\t\nMay 2025\t11518\t14952\t\nJun 2025\t12062\t15544\t\nJul 2025\t11544\t14901\t\nAug 2025\t11990\t15465\t\nSep 2025\t11863\t15449\t\nOct 2025\t12262\t15719\t\nNov 2025\t12115\t15732\t\nDec 2025\t11090\t15866\tCommunity intermediate care beds reduced\nJan 2026\t10307\t14848\t\nFeb 2026\t11204\t15709\t\nMar 2026\t11078\t15387\t\nApr 2026\t11027\t15601\t\nMay 2026\t10572\t14978\t\nJun 2026\t11156\t15879\t\nJul 2026\t10410\t14948\t\nAug 2026\t10835\t15598\t\nSep 2026\t11000\t15495\t",
+  "title": "Patients seen within 4 hours in A&E (example)",
+  "radio:dir": "up"
+ },
+ "extra": {
+  "type": "p",
+  "breaks": [],
+  "useBaseN": false
+ },
+ "sample": {
+  "caseTitle": "A&E performance and bed occupancy: what’s really going on?",
+  "caseUrl": "/case_studies/ae-occupancy/",
+  "step": 1,
+  "stepTitle": "Chart the problem: four-hour performance",
+  "look": "Months above the mean for the first year, then from month 15 a run below it, with points below the lower limit. The deterioration is real, and it started at a definite point."
+ }
+}

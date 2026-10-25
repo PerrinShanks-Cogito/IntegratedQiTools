@@ -1617,9 +1617,11 @@ $('#screen').addEventListener('change', e => { state.screen = e.target.checked; 
 $('#showMR').addEventListener('change', e => { state.showMR = e.target.checked; renderAll(); });
 document.querySelectorAll('input[name=ctype]').forEach(r => r.addEventListener('change', e => { state.laney = e.target.value === 'laney'; renderAll(); }));
 // Changing the unit converts the target and axis values so they keep meaning the same thing
+// (only when the person clicks: reopening a project file sets the unit along with
+// values already saved in that unit, so they mustn't be converted again)
 document.querySelectorAll('input[name=unit]').forEach(r => r.addEventListener('change', e => {
   const f = e.target.value === 'pct' ? 100 : 0.01;
-  ['#target', '#yMin', '#yMax'].forEach(id => { const v = numOrNull($(id).value); if (v !== null) $(id).value = +(v * f).toPrecision(10); });
+  if (e.isTrusted) ['#target', '#yMin', '#yMax'].forEach(id => { const v = numOrNull($(id).value); if (v !== null) $(id).value = +(v * f).toPrecision(10); });
   state.unit = e.target.value; showType(); readTarget(); readAxes(); renderAll();
 }));
 $('#yMin').addEventListener('input', () => { readAxes(); renderAll(); });

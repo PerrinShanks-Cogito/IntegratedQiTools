@@ -1,0 +1,25 @@
+{
+ "focus": {
+  "tool": "chi_squared",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "fields": {
+  "data": "Discharge route\tReadmitted\tNot readmitted\nDischarge Unit\t118\t902\nDirect from the ward\t241\t1779\nCriteria-led discharge\t52\t418\nWeekend discharge\t61\t437",
+  "hasHeader": true,
+  "mode": "independence",
+  "alpha": "0.05",
+  "title": "Readmitted within 30 days, by discharge route (example)",
+  "valLabel": "Patients",
+  "order": "entered",
+  "swap": false
+ },
+ "extra": null,
+ "sample": {
+  "caseTitle": "Discharge sooner, but at what cost? Readmissions as a balancing measure",
+  "caseUrl": "/case_studies/readmissions-balancing/",
+  "step": 4,
+  "stepTitle": "Compare discharge routes",
+  "look": "The p-value is well above 0.05: no evidence that the Discharge Unit, criteria-led or weekend discharges lead to more readmissions."
+ }
+}

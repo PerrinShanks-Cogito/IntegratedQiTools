@@ -1,0 +1,45 @@
+{
+ "focus": {
+  "tool": "spc_tool",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "fields": {
+  "team": "St Elsewhere NHS Trust (example)",
+  "per": "1000",
+  "perUnit": "",
+  "yLabel": "%",
+  "target": "92",
+  "floor": false,
+  "radio:base": "first",
+  "baseN": "14",
+  "screen": false,
+  "radio:ctype": "p",
+  "showMR": true,
+  "radio:unit": "pct",
+  "yMin": "",
+  "yMax": "",
+  "dateFmt": "dmy",
+  "showNotes": true,
+  "shiftLen": "7",
+  "trendLen": "7",
+  "twoThree": true,
+  "useTrend": true,
+  "radio:spctype": "xmr",
+  "data": "Month\tOccupancy (%)\tNote\nOct 2024\t91.7\t\nNov 2024\t91.6\t\nDec 2024\t90.5\t\nJan 2025\t91.8\t\nFeb 2025\t91.0\t\nMar 2025\t91.2\t\nApr 2025\t91.0\t\nMay 2025\t91.0\t\nJun 2025\t91.1\t\nJul 2025\t92.3\t\nAug 2025\t90.8\t\nSep 2025\t90.6\t\nOct 2025\t91.9\t\nNov 2025\t90.1\t\nDec 2025\t94.7\tCommunity intermediate care beds reduced\nJan 2026\t94.8\t\nFeb 2026\t96.4\t\nMar 2026\t96.5\t\nApr 2026\t96.3\t\nMay 2026\t95.5\t\nJun 2026\t95.1\t\nJul 2026\t96.7\t\nAug 2026\t96.4\t\nSep 2026\t96.5\t",
+  "title": "General and acute bed occupancy, % (example)",
+  "radio:dir": "down"
+ },
+ "extra": {
+  "type": "xmr",
+  "breaks": [],
+  "useBaseN": true
+ },
+ "sample": {
+  "caseTitle": "A&E performance and bed occupancy: what’s really going on?",
+  "caseUrl": "/case_studies/ae-occupancy/",
+  "step": 2,
+  "stepTitle": "Same timeline: bed occupancy",
+  "look": "Occupancy jumps above the upper limit, to around 96%, in the same month that four-hour performance drops."
+ }
+}

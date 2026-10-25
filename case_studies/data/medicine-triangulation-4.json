@@ -1,0 +1,26 @@
+{
+ "focus": {
+  "tool": "scatter_plot",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "fields": {
+  "data": "Ward\tMandatory training compliance (%)\tFalls per 1,000 bed days\tDivision\nWard 7\t77\t8.5\tMedicine\nWard 8\t76\t8.7\tMedicine\nWard 9\t78\t8.7\tMedicine\nWard 10\t70\t9.7\tMedicine\nWard 11\t70\t10.0\tMedicine\nWard 12\t79\t7.6\tMedicine\nWard 20\t84\t6.5\tSurgery\nWard 21\t88\t4.2\tSurgery\nWard 22\t84\t6.0\tSurgery\nWard 23\t93\t5.0\tSurgery\nWard 24\t84\t6.5\tSurgery\nWard 30\t82\t7.0\tOlder people’s care\nWard 31\t82\t6.8\tOlder people’s care\nWard 32\t84\t7.6\tOlder people’s care\nWard 33\t86\t6.8\tOlder people’s care\nWard 40\t93\t3.9\tWomen’s and children’s\nWard 41\t95\t4.0\tWomen’s and children’s\nWard 42\t91\t3.8\tWomen’s and children’s",
+  "hasHeader": true,
+  "title": "Mandatory training compliance and falls, by ward (example)",
+  "xLabel": "",
+  "yLabel": "",
+  "showTrend": true,
+  "byGroup": true,
+  "flagOdd": true,
+  "zero": false
+ },
+ "extra": null,
+ "sample": {
+  "caseTitle": "Quality, workforce and finance in the medicine division",
+  "caseUrl": "/case_studies/medicine-triangulation/",
+  "step": 4,
+  "stepTitle": "Look for a relationship: training and falls",
+  "look": "Wards with lower training compliance tend to have more falls, and Medicine’s wards sit in the bottom-right corner."
+ }
+}

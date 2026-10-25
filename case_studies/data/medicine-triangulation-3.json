@@ -1,0 +1,26 @@
+{
+ "focus": {
+  "tool": "box_plot",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "fields": {
+  "data": "Division\tFalls per 1,000 bed days\nMedicine\t6.1\nMedicine\t7.0\nMedicine\t9.5\nMedicine\t6.0\nMedicine\t6.6\nMedicine\t4.7\nMedicine\t3.8\nMedicine\t9.1\nMedicine\t7.3\nMedicine\t8.2\nMedicine\t6.5\nMedicine\t6.6\nMedicine\t9.0\nMedicine\t6.2\nMedicine\t5.0\nMedicine\t7.1\nMedicine\t8.6\nMedicine\t6.9\nMedicine\t6.5\nMedicine\t11.9\nMedicine\t6.2\nMedicine\t9.7\nMedicine\t5.7\nMedicine\t6.8\nMedicine\t3.0\nMedicine\t6.9\nMedicine\t6.5\nMedicine\t6.3\nMedicine\t7.4\nMedicine\t9.0\nMedicine\t7.6\nMedicine\t9.1\nMedicine\t6.4\nMedicine\t6.1\nMedicine\t6.0\nMedicine\t5.7\nMedicine\t7.3\nMedicine\t7.4\nMedicine\t8.4\nMedicine\t6.6\nMedicine\t7.5\nMedicine\t7.1\nMedicine\t8.8\nMedicine\t8.3\nMedicine\t6.5\nMedicine\t7.7\nMedicine\t8.8\nMedicine\t7.1\nMedicine\t7.3\nMedicine\t7.0\nMedicine\t8.8\nMedicine\t5.9\nMedicine\t7.2\nMedicine\t9.8\nMedicine\t5.8\nMedicine\t10.2\nMedicine\t7.5\nMedicine\t5.7\nMedicine\t10.0\nMedicine\t8.8\nMedicine\t9.0\nMedicine\t7.5\nMedicine\t8.0\nMedicine\t9.0\nMedicine\t9.0\nMedicine\t8.1\nMedicine\t7.7\nMedicine\t8.1\nMedicine\t8.2\nMedicine\t9.4\nMedicine\t6.2\nMedicine\t7.1\nSurgery\t3.5\nSurgery\t3.6\nSurgery\t5.9\nSurgery\t4.9\nSurgery\t4.0\nSurgery\t4.4\nSurgery\t5.4\nSurgery\t2.1\nSurgery\t6.6\nSurgery\t3.5\nSurgery\t5.6\nSurgery\t3.8\nSurgery\t5.3\nSurgery\t3.4\nSurgery\t3.8\nSurgery\t4.2\nSurgery\t4.2\nSurgery\t3.5\nSurgery\t2.8\nSurgery\t6.6\nSurgery\t4.4\nSurgery\t5.9\nSurgery\t5.1\nSurgery\t4.1\nSurgery\t3.3\nSurgery\t5.0\nSurgery\t6.4\nSurgery\t4.6\nSurgery\t5.8\nSurgery\t5.8\nSurgery\t5.4\nSurgery\t2.2\nSurgery\t6.2\nSurgery\t3.5\nSurgery\t3.4\nSurgery\t4.6\nSurgery\t4.5\nSurgery\t6.0\nSurgery\t5.4\nSurgery\t4.1\nSurgery\t4.8\nSurgery\t3.9\nSurgery\t3.9\nSurgery\t5.3\nSurgery\t3.8\nSurgery\t4.0\nSurgery\t7.1\nSurgery\t4.2\nSurgery\t5.0\nSurgery\t5.5\nSurgery\t0.9\nSurgery\t5.8\nSurgery\t0.9\nSurgery\t3.0\nSurgery\t2.4\nSurgery\t3.9\nSurgery\t3.5\nSurgery\t3.3\nSurgery\t7.4\nSurgery\t6.6\nOlder people’s care\t5.0\nOlder people’s care\t6.2\nOlder people’s care\t5.9\nOlder people’s care\t6.6\nOlder people’s care\t6.2\nOlder people’s care\t7.6\nOlder people’s care\t6.0\nOlder people’s care\t5.0\nOlder people’s care\t6.6\nOlder people’s care\t4.8\nOlder people’s care\t7.0\nOlder people’s care\t5.7\nOlder people’s care\t8.3\nOlder people’s care\t7.0\nOlder people’s care\t7.1\nOlder people’s care\t6.7\nOlder people’s care\t4.5\nOlder people’s care\t1.4\nOlder people’s care\t6.1\nOlder people’s care\t6.6\nOlder people’s care\t6.6\nOlder people’s care\t4.3\nOlder people’s care\t5.9\nOlder people’s care\t4.2\nOlder people’s care\t3.9\nOlder people’s care\t5.5\nOlder people’s care\t6.9\nOlder people’s care\t5.0\nOlder people’s care\t8.3\nOlder people’s care\t6.1\nOlder people’s care\t6.7\nOlder people’s care\t5.4\nOlder people’s care\t7.8\nOlder people’s care\t5.5\nOlder people’s care\t6.0\nOlder people’s care\t7.4\nOlder people’s care\t4.7\nOlder people’s care\t5.2\nOlder people’s care\t8.6\nOlder people’s care\t7.8\nOlder people’s care\t5.9\nOlder people’s care\t7.7\nOlder people’s care\t5.1\nOlder people’s care\t6.0\nOlder people’s care\t4.8\nOlder people’s care\t7.7\nOlder people’s care\t7.0\nOlder people’s care\t7.0\nWomen’s and children’s\t0.6\nWomen’s and children’s\t2.0\nWomen’s and children’s\t2.3\nWomen’s and children’s\t2.2\nWomen’s and children’s\t1.1\nWomen’s and children’s\t2.0\nWomen’s and children’s\t2.9\nWomen’s and children’s\t1.6\nWomen’s and children’s\t2.7\nWomen’s and children’s\t1.4\nWomen’s and children’s\t1.2\nWomen’s and children’s\t5.6\nWomen’s and children’s\t2.7\nWomen’s and children’s\t2.5\nWomen’s and children’s\t1.5\nWomen’s and children’s\t0.3\nWomen’s and children’s\t2.0\nWomen’s and children’s\t3.6\nWomen’s and children’s\t2.9\nWomen’s and children’s\t4.3\nWomen’s and children’s\t0.3\nWomen’s and children’s\t1.0\nWomen’s and children’s\t0.3\nWomen’s and children’s\t3.6\nWomen’s and children’s\t3.1\nWomen’s and children’s\t2.6\nWomen’s and children’s\t0.3\nWomen’s and children’s\t3.5\nWomen’s and children’s\t0.3\nWomen’s and children’s\t1.3\nWomen’s and children’s\t2.0\nWomen’s and children’s\t4.3\nWomen’s and children’s\t3.0\nWomen’s and children’s\t2.9\nWomen’s and children’s\t0.6\nWomen’s and children’s\t2.9",
+  "hasHeader": true,
+  "title": "Falls per 1,000 bed days, each ward each month, last 12 months, by division (example)",
+  "valLabel": "Falls per 1,000 bed days",
+  "order": "entered",
+  "whiskers": "tukey",
+  "showMean": true,
+  "showPoints": false,
+  "zero": false
+ },
+ "extra": null,
+ "sample": {
+  "caseTitle": "Quality, workforce and finance in the medicine division",
+  "caseUrl": "/case_studies/medicine-triangulation/",
+  "step": 3,
+  "stepTitle": "Compare falls across divisions",
+  "look": "Medicine’s whole box sits higher than every other division. This isn’t one bad ward; the whole division is affected."
+ }
+}

@@ -72,3 +72,20 @@
   .fa-status{text-align:left}
 }
 @media print{.fa-bar{display:none!important}}
+
+/* "Sample data" note shown when a case study opens a tool with ?sample= */
+.fa-sample{
+  --fa-ink:#212B32; --fa-muted:#4C6272; --fa-bg:#FFF4DB; --fa-edge:#FFB81C; --fa-link:#005EB8;
+  display:flex; flex-wrap:wrap; align-items:baseline; gap:.25rem .6rem;
+  margin:.75rem 0 1rem; padding:.7rem 1rem; border-left:6px solid var(--fa-edge); border-radius:4px;
+  background:var(--fa-bg); color:var(--fa-ink);
+  font-family:Figtree, "Frutiger", "Helvetica Neue", Arial, sans-serif; font-size:.95rem; line-height:1.4;
+}
+.fa-sample b{font-weight:700}
+.fa-sample .fa-sample-look{flex-basis:100%; color:var(--fa-ink)}
+.fa-sample a{color:var(--fa-link); font-weight:700; text-underline-offset:3px; margin-left:auto}
+.fa-sample a:focus-visible{outline:3px solid var(--fa-edge); outline-offset:2px}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .fa-sample{--fa-ink:#E8EEF2; --fa-muted:#A3B6C3; --fa-bg:#3A2E10; --fa-link:#7DB6EE}
+}
+:root[data-theme="dark"] .fa-sample{--fa-ink:#E8EEF2; --fa-muted:#A3B6C3; --fa-bg:#3A2E10; --fa-link:#7DB6EE}

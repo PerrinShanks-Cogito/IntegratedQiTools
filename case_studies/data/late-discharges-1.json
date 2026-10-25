@@ -1,0 +1,217 @@
+{
+ "focus": {
+  "tool": "process_map",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "title": "Ward 7 discharge day, current state (example)",
+ "scope": {
+  "start": "Patient is discussed at the morning board round",
+  "end": "Patient leaves the ward",
+  "who": "Adult medical inpatients going home on pathway 0"
+ },
+ "unit": "min",
+ "active": "current",
+ "maps": {
+  "current": {
+   "lanes": [
+    {
+     "id": "l0",
+     "name": "Patient",
+     "patient": true
+    },
+    {
+     "id": "l1",
+     "name": "Consultant and medical team",
+     "patient": false
+    },
+    {
+     "id": "l2",
+     "name": "Nurse in charge",
+     "patient": false
+    },
+    {
+     "id": "l3",
+     "name": "Pharmacy",
+     "patient": false
+    },
+    {
+     "id": "l4",
+     "name": "Transport",
+     "patient": false
+    }
+   ],
+   "steps": [
+    {
+     "id": "s0",
+     "lane": "l0",
+     "type": "terminator",
+     "text": "Patient waits for the board round",
+     "value": "",
+     "time": 0,
+     "issue": "",
+     "bottleneck": false,
+     "noTo": "",
+     "yesLabel": "Yes",
+     "noLabel": "No"
+    },
+    {
+     "id": "s1",
+     "lane": "l1",
+     "type": "step",
+     "text": "Board round confirms medically ready for discharge",
+     "value": "va",
+     "time": 15,
+     "issue": "Starts 09:40 on most days, not 09:00",
+     "bottleneck": false,
+     "noTo": "",
+     "yesLabel": "Yes",
+     "noLabel": "No"
+    },
+    {
+     "id": "s2",
+     "lane": "l1",
+     "type": "decision",
+     "text": "Criteria-led discharge set yesterday?",
+     "value": "nnva",
+     "time": 1,
+     "issue": "Rarely set the day before",
+     "bottleneck": false,
+     "noTo": "",
+     "yesLabel": "Yes",
+     "noLabel": "No"
+    },
+    {
+     "id": "s3",
+     "lane": "l0",
+     "type": "wait",
+     "text": "Waits for the consultant ward round",
+     "value": "nva",
+     "time": 120,
+     "issue": "Ward round finishes around 12:30",
+     "bottleneck": true,
+     "noTo": "",
+     "yesLabel": "Yes",
+     "noLabel": "No"
+    },
+    {
+     "id": "s4",
+     "lane": "l1",
+     "type": "step",
+     "text": "Writes discharge medicines (TTO)",
+     "value": "nnva",
+     "time": 20,
+     "issue": "TTOs written after the ward round",
+     "bottleneck": false,
+     "noTo": "",
+     "yesLabel": "Yes",
+     "noLabel": "No"
+    },
+    {
+     "id": "s5",
+     "lane": "l3",
+     "type": "wait",
+     "text": "TTO waits in the pharmacy queue",
+     "value": "nva",
+     "time": 150,
+     "issue": "Afternoon peak in the dispensary",
+     "bottleneck": true,
+     "noTo": "",
+     "yesLabel": "Yes",
+     "noLabel": "No"
+    },
+    {
+     "id": "s6",
+     "lane": "l3",
+     "type": "step",
+     "text": "Screens and dispenses TTO",
+     "value": "va",
+     "time": 25,
+     "issue": "",
+     "bottleneck": false,
+     "noTo": "",
+     "yesLabel": "Yes",
+     "noLabel": "No"
+    },
+    {
+     "id": "s7",
+     "lane": "l1",
+     "type": "step",
+     "text": "Writes the discharge letter (EDL)",
+     "value": "nnva",
+     "time": 30,
+     "issue": "Often left until the TTO arrives",
+     "bottleneck": false,
+     "noTo": "",
+     "yesLabel": "Yes",
+     "noLabel": "No"
+    },
+    {
+     "id": "s8",
+     "lane": "l2",
+     "type": "step",
+     "text": "Books transport",
+     "value": "nnva",
+     "time": 10,
+     "issue": "Only booked once medicines are back",
+     "bottleneck": false,
+     "noTo": "",
+     "yesLabel": "Yes",
+     "noLabel": "No"
+    },
+    {
+     "id": "s9",
+     "lane": "l4",
+     "type": "wait",
+     "text": "Waits for transport",
+     "value": "nva",
+     "time": 90,
+     "issue": "",
+     "bottleneck": false,
+     "noTo": "",
+     "yesLabel": "Yes",
+     "noLabel": "No"
+    },
+    {
+     "id": "s10",
+     "lane": "l0",
+     "type": "wait",
+     "text": "Waits in the bed space, not the Discharge Unit",
+     "value": "nva",
+     "time": 45,
+     "issue": "Fit to Sit not considered",
+     "bottleneck": false,
+     "noTo": "",
+     "yesLabel": "Yes",
+     "noLabel": "No"
+    },
+    {
+     "id": "s11",
+     "lane": "l0",
+     "type": "terminator",
+     "text": "Patient leaves the ward",
+     "value": "",
+     "time": 0,
+     "issue": "",
+     "bottleneck": false,
+     "noTo": "",
+     "yesLabel": "Yes",
+     "noLabel": "No"
+    }
+   ]
+  },
+  "future": null
+ },
+ "view": {
+  "timeline": true,
+  "issues": true,
+  "handoffs": true
+ },
+ "sample": {
+  "caseTitle": "Why do our discharges happen late in the day?",
+  "caseUrl": "/case_studies/late-discharges/",
+  "step": 1,
+  "stepTitle": "Map the discharge day as it really happens",
+  "look": "The long waits after the decision to discharge: for the ward round, the pharmacy queue and transport. Very little of the six or more hours adds value for the patient."
+ }
+}

@@ -1,0 +1,45 @@
+{
+ "focus": {
+  "tool": "spc_tool",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "fields": {
+  "team": "St Elsewhere NHS Trust (example)",
+  "per": "1000",
+  "perUnit": "bed days",
+  "yLabel": "",
+  "target": "",
+  "floor": false,
+  "radio:base": "all",
+  "baseN": "20",
+  "screen": false,
+  "radio:ctype": "laney",
+  "showMR": true,
+  "radio:unit": "pct",
+  "yMin": "",
+  "yMax": "",
+  "dateFmt": "dmy",
+  "showNotes": true,
+  "shiftLen": "7",
+  "trendLen": "7",
+  "twoThree": true,
+  "useTrend": true,
+  "radio:spctype": "u",
+  "data": "Month\tPressure ulcers\tBed days\tNote\nOct 2024\t14\t13007\t\nNov 2024\t16\t13138\t\nDec 2024\t17\t13130\t\nJan 2025\t17\t12901\t\nFeb 2025\t18\t12980\t\nMar 2025\t14\t13165\t\nApr 2025\t17\t12772\t\nMay 2025\t15\t12883\t\nJun 2025\t17\t13005\t\nJul 2025\t11\t12907\t\nAug 2025\t14\t13209\t\nSep 2025\t14\t12977\t\nOct 2025\t21\t13017\t\nNov 2025\t24\t12972\t\nDec 2025\t15\t13052\t\nJan 2026\t14\t13155\t\nFeb 2026\t20\t13061\t\nMar 2026\t15\t12967\t\nApr 2026\t18\t13098\t\nMay 2026\t13\t13207\t\nJun 2026\t11\t12984\t\nJul 2026\t17\t13182\t\nAug 2026\t21\t13000\t\nSep 2026\t13\t13107\t",
+  "title": "Trust hospital-acquired pressure ulcers (category 2+) per 1,000 bed days (example)",
+  "radio:dir": "down"
+ },
+ "extra": {
+  "type": "u",
+  "breaks": [],
+  "useBaseN": false
+ },
+ "sample": {
+  "caseTitle": "Drilling into aggregate data",
+  "caseUrl": "/case_studies/drill-down/",
+  "step": 1,
+  "stepTitle": "Chart the aggregate properly",
+  "look": "Common cause variation: by this measure the Trust is stable. This is where many reviews stop."
+ }
+}

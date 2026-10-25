@@ -1,0 +1,34 @@
+{
+ "focus": {
+  "tool": "multiple_regression",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "fields": {
+  "data": "Week starting\tA&E attendances\tBed occupancy (%)\tPatients 21+ days\tMedical outliers\tSeen within 4 hours (%)\n01/09/2025\t3623\t91.4\t128\t17\t76.4\n08/09/2025\t3679\t91.8\t132\t18\t77.8\n15/09/2025\t3471\t90.0\t124\t18\t77.9\n22/09/2025\t3451\t91.6\t113\t21\t76.2\n29/09/2025\t3551\t90.3\t109\t20\t78.1\n06/10/2025\t3745\t89.3\t110\t12\t80.1\n13/10/2025\t3586\t91.3\t117\t18\t78.6\n20/10/2025\t3618\t90.5\t126\t18\t76.6\n27/10/2025\t3527\t90.0\t110\t23\t79.1\n03/11/2025\t3388\t91.9\t109\t19\t77.2\n10/11/2025\t3402\t91.7\t109\t15\t80.2\n17/11/2025\t3612\t92.0\t120\t20\t78.2\n24/11/2025\t3396\t89.7\t109\t15\t78.7\n01/12/2025\t3511\t91.3\t115\t15\t77.1\n08/12/2025\t3398\t91.5\t114\t16\t74.7\n15/12/2025\t3638\t92.6\t121\t17\t75.6\n22/12/2025\t3384\t90.7\t115\t24\t74.6\n29/12/2025\t3591\t90.4\t123\t23\t76.8\n05/01/2026\t3566\t89.4\t111\t19\t75.5\n12/01/2026\t3631\t91.2\t125\t24\t77.0\n19/01/2026\t3443\t91.5\t131\t12\t78.3\n26/01/2026\t3706\t90.7\t121\t20\t78.9\n02/02/2026\t3487\t95.8\t162\t31\t71.2\n09/02/2026\t3625\t95.4\t150\t38\t71.9\n16/02/2026\t3637\t95.2\t156\t34\t70.7\n23/02/2026\t3641\t94.9\t169\t38\t74.4\n02/03/2026\t3356\t97.0\t170\t30\t70.5\n09/03/2026\t3679\t94.6\t158\t38\t71.6\n16/03/2026\t3535\t95.9\t164\t37\t69.3\n23/03/2026\t3540\t96.6\t160\t38\t69.0\n30/03/2026\t3420\t95.2\t150\t31\t71.5\n06/04/2026\t3501\t96.5\t150\t30\t71.2\n13/04/2026\t3635\t95.7\t150\t40\t68.7\n20/04/2026\t3717\t96.1\t162\t30\t70.3\n27/04/2026\t3697\t95.8\t157\t35\t70.9\n04/05/2026\t3360\t94.2\t152\t31\t74.2\n11/05/2026\t3543\t96.8\t157\t38\t69.8\n18/05/2026\t3607\t95.1\t149\t38\t73.6\n25/05/2026\t3682\t94.2\t154\t39\t73.9\n01/06/2026\t3516\t95.8\t157\t40\t70.7\n08/06/2026\t3384\t97.4\t149\t33\t69.1\n15/06/2026\t3425\t96.8\t167\t35\t70.6\n22/06/2026\t3428\t97.1\t162\t39\t67.5\n29/06/2026\t3721\t94.8\t168\t33\t72.1\n06/07/2026\t3542\t97.0\t162\t31\t70.6\n13/07/2026\t3377\t97.2\t161\t39\t70.2\n20/07/2026\t3582\t94.9\t148\t40\t70.6\n27/07/2026\t3362\t96.3\t149\t40\t70.0\n03/08/2026\t3637\t97.6\t168\t34\t67.5\n10/08/2026\t3685\t97.3\t164\t39\t67.3\n17/08/2026\t3637\t94.7\t163\t35\t71.9\n24/08/2026\t3550\t95.1\t156\t33\t69.6",
+  "hasHeader": true,
+  "yCol": "5",
+  "title": "What goes with four-hour performance? Weekly (example)",
+  "flagOdd": true,
+  "use-1": true,
+  "use-2": true,
+  "use-3": true,
+  "use-4": true
+ },
+ "extra": {
+  "chartType": "effects",
+  "whatIf": {
+   "A&E attendances": 3550,
+   "Bed occupancy (%)": 94,
+   "Patients 21+ days": 140,
+   "Medical outliers": 26
+  }
+ },
+ "sample": {
+  "caseTitle": "A&E performance and bed occupancy: what’s really going on?",
+  "caseUrl": "/case_studies/ae-occupancy/",
+  "step": 6,
+  "stepTitle": "Separate the factors",
+  "look": "Occupancy has the biggest effect, and outliers add a little. Attendances add nothing, which confirms this isn’t a front-door demand problem. Long-stay patients show no separate effect because they work through occupancy: they’re why the beds are full."
+ }
+}

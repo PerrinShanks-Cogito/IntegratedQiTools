@@ -1,0 +1,108 @@
+{
+ "focus": {
+  "tool": "driver_diagram",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "title": "Improving patient experience on the medical wards (example)",
+ "goal": {
+  "text": "Return Friends and Family Test positive responses to 93% by June 2027",
+  "measure": "Monthly % positive (P chart)"
+ },
+ "drivers": [
+  {
+   "kind": "driver",
+   "text": "Patients aren’t left alone",
+   "measure": "Negative comments on visiting",
+   "children": [
+    {
+     "kind": "driver",
+     "text": "Family can be present",
+     "measure": "",
+     "children": [
+      {
+       "kind": "project",
+       "text": "Restore evening visiting",
+       "measure": "",
+       "children": []
+      },
+      {
+       "kind": "project",
+       "text": "Carers can stay for patients with dementia",
+       "measure": "",
+       "children": []
+      }
+     ]
+    },
+    {
+     "kind": "driver",
+     "text": "Somewhere to go off the bed",
+     "measure": "",
+     "children": [
+      {
+       "kind": "project",
+       "text": "Reopen the day room",
+       "measure": "",
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "driver",
+   "text": "Leaving hospital is on time",
+   "measure": "% discharges before midday (Ward 7)",
+   "children": [
+    {
+     "kind": "driver",
+     "text": "Medicines ready the day before",
+     "measure": "",
+     "children": [
+      {
+       "kind": "project",
+       "text": "Link to the late discharges work",
+       "measure": "",
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "driver",
+   "text": "Patients know the plan",
+   "measure": "Negative comments on communication (Ward 9)",
+   "children": [
+    {
+     "kind": "driver",
+     "text": "One consistent message",
+     "measure": "",
+     "children": [
+      {
+       "kind": "project",
+       "text": "Daily “plan for today” on the bedside board",
+       "measure": "",
+       "children": []
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "balancing": [
+  {
+   "text": "Infection control incidents"
+  },
+  {
+   "text": "Staff time spent on visiting"
+  }
+ ],
+ "sample": {
+  "caseTitle": "Learning from patient feedback",
+  "caseUrl": "/case_studies/patient-feedback/",
+  "step": 5,
+  "stepTitle": "Plan the changes with patients",
+  "look": "Each driver has its own qualitative and quantitative measure, so the next round of feedback can show what changed."
+ }
+}

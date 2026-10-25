@@ -77,6 +77,28 @@ Improvement's SPC P chart tool (version 3.0)):
 - `staticwebapp.config.json` – Azure Static Web Apps routing (custom 404,
   trailing slashes, security headers).
 
+## Case studies
+
+The **Case studies** menu and `/case_studies/` show worked examples that link
+several tools together, drawn from the GSTT Flow Manual, NHS England's Making
+Data Count step 7 (triangulating data) and The Health Care Data Guide (Provost
+and Murray; scenarios and figures are our own). Each step opens a tool with
+made-up sample data already filled in.
+
+- `_case_studies/build.py` – the single source for the case studies: the
+  narrative for every step and the generator for its sample data. Edit it, then
+  run `python3 _case_studies/build.py` from the repository root. It writes
+  `_data/case_studies.json`, a project file per step in `case_studies/data/`
+  and a page stub per case in `case_studies/<case>/`. Commit what it writes.
+- `_layouts/case_study.html` – the case study page; `case_studies/index.html`
+  – the list. Styles are in `assets/css/site.css` (prefixed `.cs`).
+- One-click samples: a link such as
+  `/spc_tool/?sample=/case_studies/data/late-discharges-4.json` makes the
+  shared toolbar open that project file when the page loads, with a "Sample
+  data" note and a link back to the case study. Only files under
+  `/case_studies/data/` are opened. Tools with their own project files (process
+  map, fishbone and driver diagrams) pass `load` to `FocusActions.mount()`.
+
 ## Run locally
 
 ```sh

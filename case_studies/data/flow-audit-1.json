@@ -1,0 +1,30 @@
+{
+ "focus": {
+  "tool": "attribute_agreement",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "fields": {
+  "data": "Scenario\tStandard (flow lead)\tAuditor A trial 1\tAuditor A trial 2\tAuditor B trial 1\tAuditor B trial 2\tAuditor C trial 1\tAuditor C trial 2\n1\tEmbedded\tEmbedded\tEmbedded\tEmbedded\tEmbedded\tEmbedded\tEmbedded\n2\tEmbedded\tEmbedded\tEmbedded\tEmbedded\tEmbedded\tEmbedded\tEmbedded\n3\tEmbedded\tEmbedded\tEmbedded\tEmbedded\tEmbedded\tNot yet embedded\tNot yet embedded\n4\tEmbedded\tEmbedded\tEmbedded\tEmbedded\tEmbedded\tEmbedded\tEmbedded\n5\tEmbedded\tEmbedded\tEmbedded\tEmbedded\tEmbedded\tEmbedded\tEmbedded\n6\tNot yet embedded\tNot yet embedded\tNot yet embedded\tNot yet embedded\tNot yet embedded\tNot yet embedded\tNot yet embedded\n7\tEmbedded\tEmbedded\tEmbedded\tEmbedded\tEmbedded\tEmbedded\tEmbedded\n8\tEmbedded\tEmbedded\tEmbedded\tEmbedded\tEmbedded\tEmbedded\tEmbedded\n9\tNot yet embedded\tNot yet embedded\tNot yet embedded\tNot yet embedded\tNot yet embedded\tNot yet embedded\tNot yet embedded\n10\tNot yet embedded\tNot yet embedded\tNot yet embedded\tNot yet embedded\tNot yet embedded\tNot yet embedded\tNot yet embedded\n11\tEmbedded\tEmbedded\tEmbedded\tEmbedded\tEmbedded\tNot yet embedded\tEmbedded\n12\tNot yet embedded\tNot yet embedded\tNot yet embedded\tNot yet embedded\tNot yet embedded\tEmbedded\tNot yet embedded\n13\tEmbedded\tEmbedded\tEmbedded\tEmbedded\tEmbedded\tNot yet embedded\tEmbedded\n14\tNot yet embedded\tNot yet embedded\tNot yet embedded\tNot yet embedded\tNot yet embedded\tNot yet embedded\tNot yet embedded\n15\tNot yet embedded\tNot yet embedded\tNot yet embedded\tNot yet embedded\tNot yet embedded\tNot yet embedded\tNot yet embedded\n16\tNot yet embedded\tNot yet embedded\tNot yet embedded\tNot yet embedded\tNot yet embedded\tNot yet embedded\tNot yet embedded\n17\tEmbedded\tEmbedded\tEmbedded\tNot yet embedded\tEmbedded\tNot yet embedded\tEmbedded\n18\tNot yet embedded\tNot yet embedded\tNot yet embedded\tNot yet embedded\tNot yet embedded\tNot yet embedded\tNot yet embedded\n19\tNot yet embedded\tNot yet embedded\tNot yet embedded\tNot yet embedded\tNot yet embedded\tEmbedded\tNot yet embedded\n20\tNot yet embedded\tNot yet embedded\tNot yet embedded\tNot yet embedded\tNot yet embedded\tEmbedded\tNot yet embedded",
+  "hasHeader": true,
+  "hasId": true,
+  "hasStd": true,
+  "trials": "2",
+  "ordered": false,
+  "title": "Board round chapter ratings: agreement between auditors (example)"
+ },
+ "extra": {
+  "catOrder": [
+   "Embedded",
+   "Not yet embedded"
+  ],
+  "chartType": "agreement"
+ },
+ "sample": {
+  "caseTitle": "Can we trust our Flow Manual audit, and where should we focus?",
+  "caseUrl": "/case_studies/flow-audit/",
+  "step": 1,
+  "stepTitle": "Check the auditors agree",
+  "look": "Auditors A and B agree well with the standard. Auditor C is less consistent, even with themselves, so retrain them on the Challenger and attendance standards before trusting their wards’ results."
+ }
+}

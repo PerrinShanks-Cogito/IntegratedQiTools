@@ -1,0 +1,66 @@
+---
+layout: default
+---
+{%- comment -%}
+  One case study page. The page sets `case_id`; everything else comes from
+  _data/case_studies.json, which _case_studies/build.py writes.
+{%- endcomment -%}
+{%- assign c = site.data.case_studies.cases | where: "id", page.case_id | first -%}
+<div class="wrap cs">
+  <nav class="cs-crumbs" aria-label="Breadcrumb"><a href="{{ '/case_studies/' | relative_url }}">Case studies</a> <span aria-hidden="true">/</span> <span>{{ c.source_short }}</span></nav>
+  <section class="hero cs-hero">
+    <p class="cs-kicker"><span class="cs-src cs-src-{{ c.source }}">{{ c.source_name }}</span></p>
+    <h1>{{ c.title }}</h1>
+    <p class="cs-question">{{ c.question }}</p>
+  </section>
+
+  <ol class="cs-chain" aria-label="Tools in this case study, in order">
+    {%- for s in c.steps %}
+    <li><a href="#step-{{ s.n }}"><span class="cs-chain-n">{{ s.n }}</span>{{ s.tool_name }}</a></li>
+    {%- endfor %}
+  </ol>
+
+  <div class="cs-layout">
+    <div class="cs-steps">
+      <p class="cs-how">Each step opens a tool with made-up sample data already filled in. Read the step, open the tool, then compare what you see with “What to look for”. Use <b>Back to the case study</b> on the tool page to return.</p>
+      {%- for s in c.steps %}
+      <article class="cs-step" id="step-{{ s.n }}" aria-labelledby="step-{{ s.n }}-h">
+        <div class="cs-step-rail" aria-hidden="true"><span>{{ s.n }}</span></div>
+        <div class="cs-step-body">
+          <p class="cs-step-meta"><span class="cs-phase" title="{{ s.phase_name }}"><b>{{ s.phase | slice: 0 }}</b>{{ s.phase_name }}</span><span class="cs-tool">{{ s.tool_name }}</span></p>
+          <h2 id="step-{{ s.n }}-h">{{ s.title }}</h2>
+          <p>{{ s.why }}</p>
+          <div class="cs-look"><h3>What to look for</h3><p>{{ s.look }}</p></div>
+          <p class="cs-actions">
+            <a class="cs-btn" href="{{ '/' | append: s.tool | append: '/' | relative_url }}?sample={{ s.sample | relative_url | uri_escape }}">Open the {{ s.open_name }} with sample data <span aria-hidden="true">&rarr;</span></a>
+            <a class="cs-dl" href="{{ s.sample | relative_url }}" download>Download the project file</a>
+          </p>
+          <p class="cs-next"><span>Next question</span> {{ s.next }}</p>
+        </div>
+      </article>
+      {%- endfor %}
+    </div>
+
+    <aside class="cs-side" aria-label="About this case study">
+      <section>
+        <h2>In short</h2>
+        <p>{{ c.summary }}</p>
+      </section>
+      <section>
+        <h2>Where it comes from</h2>
+        <p>{{ c.source_detail }}</p>
+      </section>
+      <section>
+        <h2>Watch out for</h2>
+        <ul>{% for p in c.pitfalls %}<li>{{ p }}</li>{% endfor %}</ul>
+      </section>
+      {%- if c.pairs.size > 0 %}
+      <section>
+        <h2>Pairs well with</h2>
+        <ul class="cs-pairs">{% for p in c.pairs %}<li><a href="{{ '/case_studies/' | append: p.id | append: '/' | relative_url }}">{{ p.title }}</a><span>{{ p.why }}</span></li>{% endfor %}</ul>
+      </section>
+      {%- endif %}
+      <p class="cs-note">All figures are made up for learning and are not real GSTT data.</p>
+    </aside>
+  </div>
+</div>

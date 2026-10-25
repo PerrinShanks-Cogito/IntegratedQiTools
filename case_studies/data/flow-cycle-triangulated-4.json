@@ -1,0 +1,33 @@
+{
+ "focus": {
+  "tool": "matrix_2x2",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "fields": {
+  "preset": "ease_impact",
+  "cX": "",
+  "cY": "",
+  "cTL": "",
+  "cTR": "",
+  "cBL": "",
+  "cBR": "",
+  "data": "Idea\tEase\tImpact\nChallenger named on the board each morning\t9\t8\nEDD typed live in Epic during board round\t4\t9\nTherapy at board round from day one\t4\t8\nFixed 9am start, chair keeps time\t7\t6\nFriday weekend planning huddle\t6\t7\nLarge screen for the Epic discharge view\t3\t6\nTell families the EDD on admission\t8\t6\nPharmacist told next-day discharges at board round\t8\t7\nLocum consultant induction to the board round\t5\t5\nOwner and date for every long-stay action\t8\t7",
+  "hasHeader": true,
+  "title": "Ward 9 board round ideas (example)",
+  "radio:scale": "auto",
+  "xSplit": "",
+  "ySplit": "",
+  "xLabel": "",
+  "yLabel": "",
+  "showNames": true
+ },
+ "extra": null,
+ "sample": {
+  "caseTitle": "The Flow Improvement Cycle, triangulated",
+  "caseUrl": "/case_studies/flow-cycle-triangulated/",
+  "step": 4,
+  "stepTitle": "Agree priorities with the MDT",
+  "look": "Most ideas are quick wins, led by a named challenger, telling the pharmacist about next-day discharges, and an owner for every long-stay action. Typing EDDs live in Epic has the highest impact but needs a screen first, so it’s a major project."
+ }
+}

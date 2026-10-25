@@ -1,0 +1,317 @@
+{
+ "focus": {
+  "tool": "qualitative_analysis",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "fields": {
+  "question": "What was good about your stay, and what could we do better?",
+  "data": "ID\tGroup\tComment\n1\tWard 7\tWaited all day to go home. I was told in the morning I could leave but didn’t get my medicines until 6pm.\n2\tWard 8\tNurses were kind and patient with my mum.\n3\tWard 7\tToo noisy at night to sleep. Alarms going off constantly.\n4\tWard 9\tNobody told us what the plan was, we had to keep asking.\n5\tWard 7\tDischarge was chaotic. Transport came before my letter was ready.\n6\tWard 8\tFood was fine, good choice.\n7\tWard 9\tDoctors explained everything clearly and involved me in decisions.\n8\tWard 7\tMy family couldn’t visit in the evening any more and I felt very alone.\n9\tWard 8\tThe day room was closed so I spent two weeks next to my bed.\n10\tWard 9\tPain relief was late most nights.\n11\tWard 7\tI was ready to go at 10am but sat in a chair until the evening.\n12\tWard 8\tLovely staff, thank you.\n13\tWard 9\tDifferent doctors every day said different things about when I could go home.\n14\tWard 7\tStaff were rushed off their feet but always polite.\n15\tWard 8\tVisiting hours are too short for people who work.\n16\tWard 9\tI didn’t know who my nurse was.\n17\tWard 7\tWaiting for the pharmacy took hours.\n18\tWard 8\tClean and calm ward.\n19\tWard 9\tNobody asked what I wanted.\n20\tWard 7\tThe noise from the nurses’ station kept me awake.\n21\tWard 8\tMy husband wasn’t allowed to stay with me even though I have dementia.\n22\tWard 9\tGreat care from the physiotherapists, they got me walking again.\n23\tWard 7\tTold I was going home three days running, then it was cancelled.\n24\tWard 9\tNot enough information about my medicines when I left.",
+  "hasHeader": true,
+  "textCol": "",
+  "idCol": "",
+  "groupCol": "",
+  "radio:sample": "all",
+  "sampleN": "",
+  "thickAt": "30",
+  "radio:wcSize": "freq",
+  "radio:wcUnit": "words",
+  "wcFilter": "all",
+  "wcMax": "60",
+  "wcMin": "1",
+  "wcExclude": "",
+  "wcStop": true,
+  "wcPlural": true,
+  "radio:approach": "combined",
+  "newCode": "",
+  "codeView": "all",
+  "codeSearch": "",
+  "method": "",
+  "redact": true
+ },
+ "extra": {
+  "codes": [
+   {
+    "id": "c1",
+    "name": "Waiting to go home",
+    "desc": "Delays on the day of discharge",
+    "keywords": "medicines, pharmacy, ready to go, waited all day",
+    "color": "#005EB8"
+   },
+   {
+    "id": "c2",
+    "name": "Communication and plans",
+    "desc": "Being told the plan and who is caring for them",
+    "keywords": "told, plan, explained, information",
+    "color": "#007F3B"
+   },
+   {
+    "id": "c3",
+    "name": "Visiting and loneliness",
+    "desc": "Visiting hours, family presence, day room",
+    "keywords": "visit, family, alone, day room",
+    "color": "#AE2573"
+   },
+   {
+    "id": "c4",
+    "name": "Noise at night",
+    "desc": "Sleep and noise",
+    "keywords": "noise, noisy, alarms, awake",
+    "color": "#330072"
+   },
+   {
+    "id": "c5",
+    "name": "Staff kindness",
+    "desc": "How staff treated people",
+    "keywords": "kind, lovely, polite, patient",
+    "color": "#8A1538"
+   },
+   {
+    "id": "c6",
+    "name": "Being involved",
+    "desc": "Involved in decisions",
+    "keywords": "involved, asked what I wanted",
+    "color": "#00667A"
+   },
+   {
+    "id": "c7",
+    "name": "Pain and basic care",
+    "desc": "Pain relief and basic needs",
+    "keywords": "pain",
+    "color": "#7A4600"
+   },
+   {
+    "id": "c8",
+    "name": "Environment and food",
+    "desc": "Ward, cleanliness and food",
+    "keywords": "food, clean",
+    "color": "#003087"
+   }
+  ],
+  "cid": 8,
+  "coding": {
+   "id:1": {
+    "codes": [
+     "c1"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 1,
+    "quote": true
+   },
+   "id:2": {
+    "codes": [
+     "c5"
+    ],
+    "sent": "pos",
+    "note": "",
+    "order": 2
+   },
+   "id:3": {
+    "codes": [
+     "c4"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 3
+   },
+   "id:4": {
+    "codes": [
+     "c2"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 4
+   },
+   "id:5": {
+    "codes": [
+     "c1",
+     "c2"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 5
+   },
+   "id:6": {
+    "codes": [
+     "c8"
+    ],
+    "sent": "pos",
+    "note": "",
+    "order": 6
+   },
+   "id:7": {
+    "codes": [
+     "c2",
+     "c6"
+    ],
+    "sent": "pos",
+    "note": "",
+    "order": 7,
+    "quote": true
+   },
+   "id:8": {
+    "codes": [
+     "c3"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 8,
+    "quote": true
+   },
+   "id:9": {
+    "codes": [
+     "c3"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 9
+   },
+   "id:10": {
+    "codes": [
+     "c7"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 10
+   },
+   "id:11": {
+    "codes": [
+     "c1"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 11
+   },
+   "id:12": {
+    "codes": [
+     "c5"
+    ],
+    "sent": "pos",
+    "note": "",
+    "order": 12
+   },
+   "id:13": {
+    "codes": [
+     "c2"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 13,
+    "quote": true
+   },
+   "id:14": {
+    "codes": [
+     "c5"
+    ],
+    "sent": "mix",
+    "note": "",
+    "order": 14
+   },
+   "id:15": {
+    "codes": [
+     "c3"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 15
+   },
+   "id:16": {
+    "codes": [
+     "c2"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 16
+   },
+   "id:17": {
+    "codes": [
+     "c1"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 17
+   },
+   "id:18": {
+    "codes": [
+     "c8"
+    ],
+    "sent": "pos",
+    "note": "",
+    "order": 18
+   },
+   "id:19": {
+    "codes": [
+     "c6"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 19
+   },
+   "id:20": {
+    "codes": [
+     "c4"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 20
+   },
+   "id:21": {
+    "codes": [
+     "c3"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 21,
+    "quote": true
+   },
+   "id:22": {
+    "codes": [
+     "c5"
+    ],
+    "sent": "pos",
+    "note": "",
+    "order": 22
+   },
+   "id:23": {
+    "codes": [
+     "c1",
+     "c2"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 23
+   },
+   "id:24": {
+    "codes": [
+     "c2"
+    ],
+    "sent": "neg",
+    "note": "",
+    "order": 24
+   }
+  },
+  "seq": 24,
+  "findings": {
+   "c3": {
+    "text": "A new theme since visiting hours were cut and the day room closed. Patients, especially those with dementia, describe feeling alone. This lines up with when the score dropped.",
+    "impact": "high",
+    "skip": []
+   },
+   "c1": {
+    "text": "Patients told they could go in the morning wait until evening, mostly for medicines. This links to the late discharge work (case study 1).",
+    "impact": "high",
+    "skip": []
+   }
+  },
+  "sample": null,
+  "boost": []
+ },
+ "sample": {
+  "caseTitle": "Learning from patient feedback",
+  "caseUrl": "/case_studies/patient-feedback/",
+  "step": 2,
+  "stepTitle": "Code what patients are saying",
+  "look": "Two themes stand out: waiting all day to go home, and visiting and loneliness. The second started when visiting hours were cut, the same month the score dropped."
+ }
+}

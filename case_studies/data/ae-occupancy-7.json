@@ -1,0 +1,26 @@
+{
+ "focus": {
+  "tool": "box_plot",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "fields": {
+  "data": "Occupancy band\tSeen within 4 hours (%)\nBelow 92%\t76.4\nBelow 92%\t77.8\nBelow 92%\t77.9\nBelow 92%\t76.2\nBelow 92%\t78.1\nBelow 92%\t80.1\nBelow 92%\t78.6\nBelow 92%\t76.6\nBelow 92%\t79.1\nBelow 92%\t77.2\nBelow 92%\t80.2\nBelow 92%\t78.7\nBelow 92%\t77.1\nBelow 92%\t74.7\nBelow 92%\t74.6\nBelow 92%\t76.8\nBelow 92%\t75.5\nBelow 92%\t77.0\nBelow 92%\t78.3\nBelow 92%\t78.9\n92% to 95%\t78.2\n92% to 95%\t75.6\n92% to 95%\t74.4\n92% to 95%\t71.6\n92% to 95%\t74.2\n92% to 95%\t73.9\n92% to 95%\t72.1\n92% to 95%\t70.6\n92% to 95%\t71.9\nAbove 95%\t71.2\nAbove 95%\t71.9\nAbove 95%\t70.7\nAbove 95%\t70.5\nAbove 95%\t69.3\nAbove 95%\t69.0\nAbove 95%\t71.5\nAbove 95%\t71.2\nAbove 95%\t68.7\nAbove 95%\t70.3\nAbove 95%\t70.9\nAbove 95%\t69.8\nAbove 95%\t73.6\nAbove 95%\t70.7\nAbove 95%\t69.1\nAbove 95%\t70.6\nAbove 95%\t67.5\nAbove 95%\t70.6\nAbove 95%\t70.2\nAbove 95%\t70.0\nAbove 95%\t67.5\nAbove 95%\t67.3\nAbove 95%\t69.6",
+  "hasHeader": true,
+  "title": "Four-hour performance by occupancy band, weekly (example)",
+  "valLabel": "% seen within 4 hours",
+  "order": "entered",
+  "whiskers": "tukey",
+  "showMean": true,
+  "showPoints": true,
+  "zero": false
+ },
+ "extra": null,
+ "sample": {
+  "caseTitle": "A&E performance and bed occupancy: what’s really going on?",
+  "caseUrl": "/case_studies/ae-occupancy/",
+  "step": 7,
+  "stepTitle": "Check for a tipping point",
+  "look": "Performance holds up below 92% occupancy but falls away above 95%. Freeing a modest number of beds would make a big difference."
+ }
+}

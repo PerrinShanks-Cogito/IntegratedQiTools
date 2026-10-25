@@ -1,0 +1,26 @@
+{
+ "focus": {
+  "tool": "box_plot",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "fields": {
+  "data": "Ward\tRate per 1,000 bed days\nWard 7\t0.0\nWard 7\t2.45\nWard 7\t0.0\nWard 7\t1.23\nWard 7\t0.0\nWard 7\t1.23\nWard 7\t0.0\nWard 7\t0.0\nWard 7\t0.0\nWard 7\t1.23\nWard 7\t1.23\nWard 7\t0.0\nWard 9\t2.38\nWard 9\t1.19\nWard 9\t1.19\nWard 9\t0.0\nWard 9\t1.19\nWard 9\t1.19\nWard 9\t3.57\nWard 9\t1.19\nWard 9\t0.0\nWard 9\t0.0\nWard 9\t0.0\nWard 9\t3.57\nWard 12\t0.0\nWard 12\t2.5\nWard 12\t0.0\nWard 12\t2.5\nWard 12\t0.0\nWard 12\t1.25\nWard 12\t6.25\nWard 12\t3.75\nWard 12\t2.5\nWard 12\t3.75\nWard 12\t0.0\nWard 12\t1.25\nWard 22\t0.0\nWard 22\t0.0\nWard 22\t2.73\nWard 22\t1.36\nWard 22\t0.0\nWard 22\t1.36\nWard 22\t1.36\nWard 22\t1.36\nWard 22\t2.73\nWard 22\t1.36\nWard 22\t0.0\nWard 22\t0.0\nStroke unit\t1.54\nStroke unit\t4.62\nStroke unit\t3.08\nStroke unit\t1.54\nStroke unit\t0.0\nStroke unit\t3.08\nStroke unit\t1.54\nStroke unit\t3.08\nStroke unit\t4.62\nStroke unit\t0.0\nStroke unit\t6.15\nStroke unit\t0.0\nWard 41\t0.0\nWard 41\t0.0\nWard 41\t0.0\nWard 41\t0.0\nWard 41\t0.0\nWard 41\t0.0\nWard 41\t3.08\nWard 41\t0.0\nWard 41\t0.0\nWard 41\t0.0\nWard 41\t0.0\nWard 41\t6.15",
+  "hasHeader": true,
+  "title": "Monthly pressure ulcers per 1,000 bed days, selected wards, last 12 months (example)",
+  "valLabel": "Rate per 1,000 bed days",
+  "order": "entered",
+  "whiskers": "tukey",
+  "showMean": true,
+  "showPoints": true,
+  "zero": false
+ },
+ "extra": null,
+ "sample": {
+  "caseTitle": "Drilling into aggregate data",
+  "caseUrl": "/case_studies/drill-down/",
+  "step": 3,
+  "stepTitle": "Look at the spread month by month",
+  "look": "The Stroke unit is consistently high, which suggests its case mix (immobile patients). Ward 12 has a wide spread: some ordinary months and some very high ones."
+ }
+}

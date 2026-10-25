@@ -1,0 +1,45 @@
+{
+ "focus": {
+  "tool": "spc_tool",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "fields": {
+  "team": "Medical wards (example)",
+  "per": "1000",
+  "perUnit": "",
+  "yLabel": "",
+  "target": "93",
+  "floor": false,
+  "radio:base": "all",
+  "baseN": "20",
+  "screen": false,
+  "radio:ctype": "p",
+  "showMR": true,
+  "radio:unit": "pct",
+  "yMin": "",
+  "yMax": "",
+  "dateFmt": "dmy",
+  "showNotes": true,
+  "shiftLen": "7",
+  "trendLen": "7",
+  "twoThree": true,
+  "useTrend": true,
+  "radio:spctype": "p",
+  "data": "Month\tPositive responses\tAll responses\tNote\nOct 2024\t218\t234\t\nNov 2024\t197\t213\t\nDec 2024\t200\t219\t\nJan 2025\t198\t211\t\nFeb 2025\t169\t186\t\nMar 2025\t170\t182\t\nApr 2025\t176\t203\t\nMay 2025\t197\t211\t\nJun 2025\t190\t199\t\nJul 2025\t184\t192\t\nAug 2025\t196\t207\t\nSep 2025\t181\t193\t\nOct 2025\t189\t201\t\nNov 2025\t217\t232\t\nDec 2025\t192\t212\t\nJan 2026\t188\t205\t\nFeb 2026\t197\t233\tVisiting hours cut; day room closed\nMar 2026\t188\t228\t\nApr 2026\t192\t226\t\nMay 2026\t190\t221\t\nJun 2026\t211\t240\t\nJul 2026\t201\t239\t\nAug 2026\t166\t202\t\nSep 2026\t186\t217\t",
+  "title": "Friends and Family Test: % positive, medical wards (example)",
+  "radio:dir": "up"
+ },
+ "extra": {
+  "type": "p",
+  "breaks": [],
+  "useBaseN": false
+ },
+ "sample": {
+  "caseTitle": "Learning from patient feedback",
+  "caseUrl": "/case_studies/patient-feedback/",
+  "step": 1,
+  "stepTitle": "Is the drop real?",
+  "look": "A run of months above the mean, then from month 17 a run below it, with points below the lower limit. The drop is a real change, not noise."
+ }
+}

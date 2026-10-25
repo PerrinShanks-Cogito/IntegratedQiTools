@@ -1,0 +1,103 @@
+{
+ "focus": {
+  "tool": "fishbone_diagram",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "title": "Why are discharges late in the day? (example)",
+ "effect": "Most discharges happen after 3pm",
+ "categories": [
+  {
+   "name": "People",
+   "causes": [
+    {
+     "text": "No challenger at board round",
+     "children": [
+      {
+       "text": "Role not on the board round script",
+       "children": []
+      }
+     ]
+    },
+    {
+     "text": "Junior doctors on the ward round until midday",
+     "children": []
+    }
+   ]
+  },
+  {
+   "name": "Methods",
+   "causes": [
+    {
+     "text": "TTOs written on the day of discharge",
+     "children": [
+      {
+       "text": "Discharge not planned the day before",
+       "children": []
+      }
+     ]
+    },
+    {
+     "text": "EDD not reviewed every day",
+     "children": []
+    },
+    {
+     "text": "Criteria-led discharge rarely used",
+     "children": [
+      {
+       "text": "Criteria not agreed at the post-take round",
+       "children": []
+      }
+     ]
+    },
+    {
+     "text": "Transport booked after medicines arrive",
+     "children": []
+    }
+   ]
+  },
+  {
+   "name": "Materials",
+   "causes": [
+    {
+     "text": "Patients’ own medicines not brought in",
+     "children": []
+    }
+   ]
+  },
+  {
+   "name": "Equipment",
+   "causes": [
+    {
+     "text": "Epic not updated live during board round",
+     "children": [
+      {
+       "text": "Too few screens in the board round room",
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Environment",
+   "causes": [
+    {
+     "text": "Discharge Unit seen as far away",
+     "children": []
+    },
+    {
+     "text": "Pharmacy afternoon peak",
+     "children": []
+    }
+   ]
+  }
+ ],
+ "sample": {
+  "caseTitle": "Why do our discharges happen late in the day?",
+  "caseUrl": "/case_studies/late-discharges/",
+  "step": 2,
+  "stepTitle": "Find the causes behind the late discharges",
+  "look": "Causes cluster under Methods: discharge isn’t planned the day before, so everything happens in sequence on the day."
+ }
+}

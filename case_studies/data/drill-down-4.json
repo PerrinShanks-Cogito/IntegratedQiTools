@@ -1,0 +1,45 @@
+{
+ "focus": {
+  "tool": "spc_tool",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "fields": {
+  "team": "Ward 12 (example)",
+  "per": "1000",
+  "perUnit": "bed days",
+  "yLabel": "",
+  "target": "",
+  "floor": false,
+  "radio:base": "all",
+  "baseN": "20",
+  "screen": false,
+  "radio:ctype": "p",
+  "showMR": true,
+  "radio:unit": "pct",
+  "yMin": "",
+  "yMax": "",
+  "dateFmt": "dmy",
+  "showNotes": true,
+  "shiftLen": "7",
+  "trendLen": "7",
+  "twoThree": true,
+  "useTrend": true,
+  "radio:spctype": "u",
+  "data": "Month\tPressure ulcers\tBed days\tNote\nOct 2024\t0\t760\t\nNov 2024\t0\t814\t\nDec 2024\t0\t830\t\nJan 2025\t2\t767\t\nFeb 2025\t1\t829\t\nMar 2025\t1\t793\t\nApr 2025\t0\t805\t\nMay 2025\t1\t800\t\nJun 2025\t0\t808\t\nJul 2025\t0\t824\t\nAug 2025\t1\t798\t\nSep 2025\t1\t770\t\nOct 2025\t0\t829\t\nNov 2025\t1\t803\t\nDec 2025\t0\t823\t\nJan 2026\t2\t790\t\nFeb 2026\t0\t811\t\nMar 2026\t6\t776\tMattress contract changed; new dynamic mattresses\nApr 2026\t3\t761\t\nMay 2026\t2\t836\t\nJun 2026\t3\t815\t\nJul 2026\t3\t792\t\nAug 2026\t5\t807\t\nSep 2026\t2\t790\t",
+  "title": "Ward 12 pressure ulcers per 1,000 bed days (example)",
+  "radio:dir": "down"
+ },
+ "extra": {
+  "type": "u",
+  "breaks": [],
+  "useBaseN": false
+ },
+ "sample": {
+  "caseTitle": "Drilling into aggregate data",
+  "caseUrl": "/case_studies/drill-down/",
+  "step": 4,
+  "stepTitle": "Chart the unusual ward over time",
+  "look": "Stable for 17 months, then seven months in a row above the mean, with two above the upper limit. It’s a recent special cause, not a long-standing difference, and it began when the mattress contract changed."
+ }
+}

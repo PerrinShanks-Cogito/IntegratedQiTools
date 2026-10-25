@@ -1,0 +1,25 @@
+{
+ "focus": {
+  "tool": "chi_squared",
+  "version": 1,
+  "saved": "2026-10-25T09:00:00.000Z"
+ },
+ "fields": {
+  "data": "Ward\tVisiting and loneliness\tWaiting to go home\tCommunication and plans\tOther themes\nWard 7\t22\t39\t11\t12\nWard 8\t33\t12\t9\t13\nWard 9\t19\t15\t21\t16",
+  "hasHeader": true,
+  "mode": "independence",
+  "alpha": "0.05",
+  "title": "Negative comments by theme and ward, last 6 months (example)",
+  "valLabel": "Negative comments",
+  "order": "entered",
+  "swap": false
+ },
+ "extra": null,
+ "sample": {
+  "caseTitle": "Learning from patient feedback",
+  "caseUrl": "/case_studies/patient-feedback/",
+  "step": 4,
+  "stepTitle": "Do the wards differ?",
+  "look": "The mix differs: Ward 7 is mostly about waiting to go home, Ward 8 about visiting, and Ward 9 about communication and plans. One plan won’t fit all three wards."
+ }
+}
