@@ -52,7 +52,7 @@
   name: SPC chart
   status: Beta
   group: Measure over time
-  description: Build statistical process control charts with process limits to tell common cause from special cause variation. An XmR chart for a value each week or month, or a P chart for a count out of a total.
+  description: Build statistical process control charts with process limits to tell common cause from special cause variation. An XmR chart for a value each week or month, a P chart for a count out of a total, or a T chart for the dates of rare events.
 
 - id: p_chart
   name: P chart
