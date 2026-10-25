@@ -11,7 +11,8 @@
      fileName   () => base name for saved files, without extension
      fields     element (or selector) whose inputs are saved and reopened
      getExtra   () => any extra state to save alongside the fields
-     setExtra   (extra) => restore that extra state
+     setExtra   (extra, fromTool) => restore that extra state; fromTool is the id
+                the file was saved under, which may be one of formerIds
      afterOpen  () => redraw once the fields have been restored
      save/open  optional overrides for tools that have their own project files
      example    () => fill the tool with its example data
@@ -295,7 +296,7 @@
         // picker) that the second pass then selects.
         for (let pass = 0; pass < 2; pass++) {
           if (fieldsRoot) writeFields(fieldsRoot, doc.fields);
-          if (o.setExtra) o.setExtra(doc.extra);
+          if (o.setExtra) o.setExtra(doc.extra, doc.focus.tool);
           if (o.afterOpen) o.afterOpen();
         }
         say("Opened " + f.name + ".");

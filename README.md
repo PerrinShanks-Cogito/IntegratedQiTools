@@ -27,8 +27,7 @@ Improvement's SPC P chart tool (version 3.0)):
 | Tree plot (treemap) | `/tree_plot/` |
 | Bar chart | `/bar_chart/` |
 | Run chart | `/run_chart/` |
-| SPC chart (XmR) | `/spc_tool/` |
-| P chart | `/p_chart/` |
+| SPC chart (XmR and P chart) | `/spc_tool/` (`/p_chart/` redirects to `/spc_tool/?type=p`) |
 | T chart (rare events) | `/t_chart/` |
 | Histogram | `/histogram/` |
 | Box and whisker plot | `/box_plot/` |
@@ -71,6 +70,10 @@ Improvement's SPC P chart tool (version 3.0)):
   header in place of the tool's own, removal of the old per-tool menu script,
   links to other tools pointing inside this app rather than Netlify, and the
   shared Open / Save / Export toolbar in place of each tool's own export buttons.
+- `spc_tool/index.html` – one SPC chart page for several chart types (XmR and P
+  so far), picked on the page or with `?type=xmr` / `?type=p`. Each type has its
+  own parsing and limits; the special cause rules, drawing, plain-English reading
+  and exports are shared. Project files saved from the old P chart tool still open.
 - `staticwebapp.config.json` – Azure Static Web Apps routing (custom 404,
   trailing slashes, security headers).
 
