@@ -49,10 +49,10 @@
   description: Plot data over time and check it against the four run chart rules to spot shifts, trends and non-random patterns.
 
 - id: spc_tool
-  name: SPC chart (XmR)
+  name: SPC chart
   status: Beta
   group: Measure over time
-  description: Build statistical process control charts with control limits to tell common cause from special cause variation.
+  description: Build statistical process control charts with process limits to tell common cause from special cause variation. An XmR chart for a value each week or month, a P chart for a count out of a total, a U chart for a rate such as falls per 1,000 bed days, a C chart for a count, or a T chart for the dates of rare events.
 
 - id: p_chart
   name: P chart
