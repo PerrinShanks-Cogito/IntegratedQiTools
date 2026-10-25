@@ -54,18 +54,6 @@
   group: Measure over time
   description: Build statistical process control charts with process limits to tell common cause from special cause variation. An XmR chart for a value each week or month, a P chart for a count out of a total, a U chart for a rate such as falls per 1,000 bed days, a C chart for a count, or a T chart for the dates of rare events.
 
-- id: p_chart
-  name: P chart
-  status: Beta
-  group: Measure over time
-  description: Chart a proportion over time, such as patients seen within four hours out of all who attended, with limits that allow for how many patients there were in each week or month.
-
-- id: t_chart
-  name: T chart (rare events)
-  status: Beta
-  group: Measure over time
-  description: Chart the time between rare events, such as never events or falls with harm, to see whether they are becoming more or less frequent when they happen too seldom for an ordinary SPC chart.
-
 - id: histogram
   name: Histogram
   status: Beta
