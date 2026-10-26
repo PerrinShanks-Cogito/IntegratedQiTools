@@ -590,7 +590,11 @@ details.read summary{cursor:pointer;font-weight:600;color:var(--blue);margin-bot
     rec.push(cell); recs.push(rec);
     return recs.map(r => r.map(x => x.trim())).filter(r => r.some(x => x !== ''));
   }
+  const TOTALS = 'Theme totals';
+  // Everything from the Theme totals heading of a coded responses CSV onwards is left out.
+  const TOTALS_RE = /(^|\r?\n)[ \t]*"?Theme totals"?[ \t,]*(\r?\n[\s\S]*)?$/i;
   function split(text) {
+    text = text.replace(TOTALS_RE, '');
     if (!text.trim()) return null;
     const lines = text.split(/\r?\n/).filter(l => l.trim());
     if (text.includes('\t')) return parseDelimited(text, '\t') || lines.map(l => l.split('\t').map(x => x.trim()));
@@ -1402,6 +1406,14 @@ details.read summary{cursor:pointer;font-weight:600;color:var(--blue);margin-bot
       return [r.id, ...(g ? [r.group] : []), shown(r.text), ...codes.map(k => cs.includes(k.id) ? 1 : ''), c.sent ? SENT[c.sent] : '', c.quote ? 1 : '', c.pii ? 1 : '', c.safe ? 1 : '', c.note || ''];
     }));
   }
+  // How many responses each theme was coded on, largest first, laid out as two columns for the Pareto chart tool.
+  // Pasting the CSV back in stops at the TOTALS heading, so these rows aren't read as responses.
+  function totalsRows() {
+    const u = usage(activeRows());
+    const used = allCodes().filter(c => u[c.id] > 0).sort((a, b) => u[b.id] - u[a.id] || allCodes().indexOf(a) - allCodes().indexOf(b));
+    if (!used.length) return [];
+    return [[], [TOTALS], ['Copy the Theme and Responses columns below, including the headings, into the Pareto chart tool.'], ['Theme', 'Responses'], ...used.map(c => [c.name, u[c.id]])];
+  }
   function summaryText() {
     const act = activeRows(), u = usage(act), q = els.question.value.trim();
     const lines = [];
@@ -1446,7 +1458,7 @@ details.read summary{cursor:pointer;font-weight:600;color:var(--blue);margin-bot
         });
       }
     }
-    if (a === 'csv') downloadBlob(new Blob([tableRows().map(r => r.map(csvCell).join(',')).join('\r\n')], { type: 'text/csv' }), fileName() + '-coded.csv').then(ok => saved(ok, 'Coded responses downloaded.'), failed);
+    if (a === 'csv') downloadBlob(new Blob([tableRows().concat(totalsRows()).map(r => r.map(csvCell).join(',')).join('\r\n')], { type: 'text/csv' }), fileName() + '-coded.csv').then(ok => saved(ok, 'Coded responses downloaded.'), failed);
     if (a === 'copytable') copyText(tableRows().map(r => r.map(v => String(v).replace(/[\t\n]+/g, ' ')).join('\t')).join('\n')).then(ok => status(ok ? 'Table copied — paste it into Excel.' : 'Copy was blocked.'));
     if (a === 'copysummary') copyText(summaryText()).then(ok => status(ok ? 'Findings copied.' : 'Copy was blocked.'));
   }
@@ -1752,7 +1764,7 @@ details.read summary{cursor:pointer;font-weight:600;color:var(--blue);margin-bot
       { type: 'copyimg', label: 'Copy word cloud', run: () => act('copyimg', 'cloud') },
       { type: 'png', label: 'Theme map (PNG)', hint: 'Themes by group, for reports', run: () => act('png', 'map') },
       { type: 'svg', label: 'Theme map (SVG)', run: () => act('svg', 'map') },
-      { type: 'csv', label: 'Coded responses (.csv)', hint: 'A column for each code. Opens in Excel', run: () => act('csv') },
+      { type: 'csv', label: 'Coded responses (.csv)', hint: 'A column for each code, with theme totals for a Pareto chart. Opens in Excel', run: () => act('csv') },
       { type: 'copytable', label: 'Copy coded responses', run: () => act('copytable') },
       { type: 'copysummary', label: 'Copy findings', hint: 'Method, findings and quotes, as text', run: () => act('copysummary') }
     ],
