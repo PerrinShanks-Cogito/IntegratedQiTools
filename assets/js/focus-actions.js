@@ -227,8 +227,11 @@
   /* ---------- charts kept for the A3 report ---------- */
   /* Kept in IndexedDB on this site, so every tool can add to it and the A3
      report tool can read it. Nothing leaves the browser. Each clip is
-     { id, tool, toolName, title, svg, doc, added }. */
+     { id, tool, toolName, title, svg, doc, added, exp, named, page }. */
   let capture = null, a3Running = false;
+  // Marks clips added from this page load, so adding the same chart again
+  // replaces it rather than filling the list with copies.
+  const PAGE = Date.now().toString(36) + Math.random().toString(36).slice(2);
   const clips = (function () {
     let dbp = null;
     function db() {
@@ -253,10 +256,30 @@
         tx.onerror = tx.onabort = () => reject(tx.error);
       }));
     }
+    // The same chart again: same tool, export and title, and either a title
+    // the person gave it or added from this same page. Resolves to "updated"
+    // or "added".
+    function keep(clip) {
+      return db().then(d => new Promise((resolve, reject) => {
+        const tx = d.transaction("clips", "readwrite"), st = tx.objectStore("clips");
+        let result = "added";
+        const req = st.getAll();
+        req.onsuccess = () => {
+          const same = (req.result || []).find(c => c.tool === clip.tool && c.exp === clip.exp &&
+            c.title === clip.title && (clip.named || c.page === clip.page));
+          if (same) { result = "updated"; st.put(Object.assign({}, clip, { id: same.id })); }
+          else st.add(clip);
+        };
+        tx.oncomplete = () => resolve(result);
+        tx.onerror = tx.onabort = () => reject(tx.error);
+      }));
+    }
     return {
       add: clip => run("clips", "readwrite", st => st.add(clip)),
+      keep,
       list: () => run("clips", "readonly", st => st.getAll()).then(a => (a || []).sort((x, y) => y.added.localeCompare(x.added))),
       remove: id => run("clips", "readwrite", st => st.delete(id)),
+      removeMany: ids => run("clips", "readwrite", st => { ids.forEach(id => st.delete(id)); }),
       getDraft: key => run("drafts", "readonly", st => st.get(key)),
       setDraft: (key, val) => run("drafts", "readwrite", st => st.put(val, key)),
       clearDraft: key => run("drafts", "readwrite", st => st.delete(key))
@@ -376,13 +399,17 @@
             fields: fieldsRoot ? readFields(fieldsRoot) : {},
             extra: o.getExtra ? o.getExtra() : null
           };
-          return clips.add({
+          const named = !!base && base !== fallbackName.replace(/-/g, " ");
+          return clips.keep({
             tool: o.tool, toolName: name, svg, doc, added: new Date().toISOString(),
-            title: base && base !== fallbackName.replace(/-/g, " ") ? base.replace(/^./, c => c.toUpperCase()) : name +
-              (exp.label ? " – " + exp.label.replace(/\s*\(SVG\)\s*$/i, "").toLowerCase() : "")
+            title: named ? base.replace(/^./, c => c.toUpperCase()) : name +
+              (exp.label ? " – " + exp.label.replace(/\s*\(SVG\)\s*$/i, "").toLowerCase() : ""),
+            exp: (exp.type || "") + "|" + (exp.label || ""), named, page: PAGE
           });
         }).then(
-          () => say("Added to your A3 report charts. Open the A3 report tool to place it."),
+          r => say(r === "updated"
+            ? "Updated this chart in your A3 report charts. To keep both, give the chart a different name first."
+            : "Added to your A3 report charts. Open the A3 report tool to place it."),
           () => say("Sorry, the chart couldn't be kept in this browser for the A3 report."));
       };
       timer = setTimeout(() => { capture = null; }, 5000);
