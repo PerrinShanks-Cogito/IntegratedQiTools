@@ -1129,6 +1129,14 @@ function assuranceText(){
   const a = model.assurance, T = fv(state.target) + (isU() ? ' ' + rateName() : '');
   if (!a) return null;
   const caution = model.lastStatus !== 'common' ? ' The latest data shows a special cause signal, so treat this as provisional until the process settles.' : '';
+  if (isP()){
+    // Name the limit the target is compared with, rather than a "favourable" or "unfavourable" side
+    const L = model.lim[model.n - 1], up = state.dir === 'up';
+    const lower = `the lower limit of ${fv(clampV(L.lcl))}`, upper = `the upper limit of ${fv(clampV(L.ucl))}`;
+    if (a === 'pass') return { title: 'Consistently meets target', short: `Consistently meets the target of ${T}`, long: `The target of ${T} is ${up ? 'below ' + lower : 'above ' + upper}, so even a poor period is likely to meet it. The process should meet the target consistently if nothing changes.` + caution };
+    if (a === 'fail') return { title: 'Will not meet target', short: `Will not meet the target of ${T} without change`, long: `The target of ${T} is ${up ? 'above ' + upper : 'below ' + lower}, so even a good period is unlikely to reach it. The process won't meet the target without a change to the system.` + caution };
+    return { title: 'Hit and miss', short: `Will sometimes meet the target of ${T}`, long: `The target of ${T} is between ${lower} and ${upper}, so the process will meet it some of the time and miss it some of the time, by chance alone.` + caution };
+  }
   if (a === 'pass') return { title: 'Consistently meets target', short: `Consistently meets the target of ${T}`, long: `The target of ${T} sits outside the latest limits on the favourable side, so the process should meet it consistently if nothing changes.` + caution };
   if (a === 'fail') return { title: 'Will not meet target', short: `Will not meet the target of ${T} without change`, long: `The target of ${T} sits outside the latest limits on the unfavourable side, so the process won't meet it without a change to the system.` + caution };
   return { title: 'Hit and miss', short: `Will sometimes meet the target of ${T}`, long: `The target of ${T} falls within the latest limits, so the process will meet it some of the time and miss it some of the time, by chance alone.` + caution };
