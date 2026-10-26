@@ -21,7 +21,7 @@
         <ul class="fh-list">
           <li><a href="{{ '/' | relative_url }}"{% unless current_tool %} aria-current="page"{% endunless %}>All tools</a></li>
           {%- for t in site.data.tools %}
-          <li>{% if t.id == page.tool_id %}<span class="fh-here" aria-current="page">{{ t.name }}</span><span class="fh-tag fh-tag-here">You are here</span>{% else %}<a href="{{ '/' | append: t.id | append: '/' | relative_url }}">{{ t.name }}</a><span class="fh-tag fh-tag-{{ t.status | downcase }}">{{ t.status }}</span>{% endif %}</li>
+          <li>{% if t.id == page.tool_id %}<span class="fh-here" aria-current="page">{{ t.name }}</span><span class="fh-tag fh-tag-here">You are here</span>{% else %}<a href="{{ '/' | append: t.id | append: '/' | relative_url }}">{{ t.name }}</a>{% if t.status %}<span class="fh-tag fh-tag-{{ t.status | downcase }}">{{ t.status }}</span>{% endif %}{% endif %}</li>
           {%- endfor %}
           {%- for t in site.data.upcoming_tools %}
           <li><span class="fh-off">{{ t.name }}</span><span class="fh-tag fh-tag-idea">{{ t.status }}</span></li>

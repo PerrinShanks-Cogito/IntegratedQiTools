@@ -2,49 +2,41 @@
 # "QI charting tools" menu. `id` must match the tool's folder name.
 - id: process_map
   name: Process map
-  status: Beta
   group: Understand the system
   description: Map each step of a process, mark waits and handoffs, and see where time and effort are lost before you redesign it.
 
 - id: driver_diagram
   name: Driver diagram
-  status: Beta
   group: Understand the system
   description: Link your aim to the primary and secondary drivers that influence it, and the change ideas you plan to test.
 
 - id: fishbone_diagram
   name: Fishbone diagram
-  status: Beta
   group: Understand the system
   description: Map the causes behind a problem as a cause and effect (Ishikawa) diagram, grouped into categories such as People, Methods and Equipment.
 
 - id: pareto_chart
   name: Pareto chart
-  status: Beta
   group: Prioritise
   description: Rank causes or categories by how often they occur so you can focus on the vital few that make the biggest difference.
 
 - id: matrix_2x2
   name: 2x2 matrix
-  status: Beta
   group: Prioritise
   description: Score items on two measures and see them in four groups, such as change ideas by ease and impact, stakeholders by influence and interest, or risks by likelihood and consequence, with a data sheet for your team to score them in.
 
 - id: tree_plot
   name: Tree plot
-  status: Beta
   group: Prioritise
   description: See how a total breaks down into groups and the items within them, such as incidents by directorate, ward and type, with each box sized by its share and a data sheet to collect your data in.
 
 - id: bar_chart
   name: Bar chart
-  status: Beta
   group: Prioritise
   description: Compare counts or values across categories, such as wards, teams or reasons, side by side.
 
 - id: run_chart
   name: Run chart
-  status: Beta
   group: Measure over time
   description: Plot data over time and check it against the four run chart rules to spot shifts, trends and non-random patterns.
 
@@ -56,7 +48,6 @@
 
 - id: histogram
   name: Histogram
-  status: Beta
   group: Explore your data
   description: See the shape and spread of a set of measurements, such as waiting times or length of stay.
 
@@ -86,7 +77,6 @@
 
 - id: scatter_plot
   name: Scatter plot
-  status: Beta
   group: Explore your data
   description: Plot pairs of values to see whether two measures are related, and how strongly.
 
