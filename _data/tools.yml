@@ -134,8 +134,8 @@
   group: Plan capacity
   description: Compare the capacity your service needs with what it has, and see the waiting list you can sustain, using the NHS demand and capacity core model.
 
-- id: a3_poster
-  name: A3 poster
+- id: a3_report
+  name: A3 report
   status: Alpha
   group: Share your work
-  description: Tell the story of your improvement project on one A3 page, from the problem and its causes to the changes you tested and what happened, with charts from the other tools resized to fit.
+  description: Tell the story of your improvement project on one A3 page, from the background and root causes to the changes you tested and how you will sustain them, with charts from the other tools and your own pictures, and export it to PowerPoint.
