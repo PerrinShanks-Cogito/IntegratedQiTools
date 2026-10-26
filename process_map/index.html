@@ -256,7 +256,6 @@ select.field{overflow:visible;cursor:pointer}
     <p class="meta">Swimlane map of what really happens, with value, waits and hand-offs counted for you.</p>
     <div class="actions" style="margin-top:.75rem">
       <button class="btn" id="btnTable" type="button">Edit as table</button>
-      <button class="btn" id="btnNew" type="button">New map</button>
     </div>
   </div>
   <div data-focus-actions></div>
@@ -1014,16 +1013,15 @@ function loadExampleProject(){
   if(hasContent()&&!confirm("Replace your maps with the blood test example?")) return;
   state=example(); selected=null; autoFit=true; persist(); renderAll();
 }
-$("#btnNew").addEventListener("click",()=>{
-  if(hasContent()&&!confirm("Start a new, empty map? Export a project file first if you want to keep this one.")) return;
-  const v=state.view; state=blank(); state.view=v; selected=null; autoFit=true; persist(); renderAll(); $("#title").focus(); trackCleared();
-});
+function newProject(){
+  const v=state.view; state=blank(); state.view=v; selected=null; autoFit=true; persist(); renderAll(); $("#title").focus();
+}
 /* Shared toolbar (Open, Save, Export) */
 function withMap(fn){const m=map(); if(!m){toast("There's no redesign to export. Switch to the current map.");return;} fn(m);}
 FocusActions.mount({
   tool:"process_map", toolName:"process map", fileName:()=>slug(), say:m=>toast(m),
   explain:{root:"#analysis", place:"#canvasWrap", visibleOnly:false},
-  hasData:()=>hasContent(), load:doc=>{state=normalise(doc);selected=null;autoFit=true;persist();renderAll();},
+  hasData:()=>hasContent(), reset:()=>{newProject();trackCleared();}, load:doc=>{state=normalise(doc);selected=null;autoFit=true;persist();renderAll();},
   example:()=>loadExampleProject(),
   save:()=>saveFile(slug()+".json",JSON.stringify(state,null,2),"application/json"),
   open:()=>$("#fileIn").click(),

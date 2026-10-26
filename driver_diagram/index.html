@@ -201,7 +201,6 @@ dialog::backdrop{background:rgba(0,20,40,.5)}
     <p class="meta">Goal, drivers, projects and balancing measures, laid out left to right.</p>
     <div class="actions" style="margin-top:.75rem">
       <button class="btn" id="btnOutline" type="button">Edit as outline</button>
-      <button class="btn" id="btnNew" type="button">New diagram</button>
     </div>
   </div>
   <div data-focus-actions></div>
@@ -786,10 +785,9 @@ function loadExampleProject(){
   if(hasContent()&&!confirm("Replace your current diagram with the fuel costs example?")) return;
   state=example(); selected=null; autoFit=true; persist(); renderAll();
 }
-$("#btnNew").addEventListener("click",()=>{
-  if(hasContent()&&!confirm("Start a new, empty diagram? Export a project file first if you want to keep this one.")) return;
-  state=blank(); selected=null; autoFit=true; persist(); renderAll(); $("#goalText").focus(); trackCleared();
-});
+function newProject(){
+  state=blank(); selected=null; autoFit=true; persist(); renderAll(); $("#goalText").focus();
+}
 function hasContent(){return !!(state.goal.text.trim()||state.drivers.length||state.balancing.length);}
 
 /* Shared toolbar (Open, Save, Export) */
@@ -800,7 +798,7 @@ FocusActions.mount({
     (function w(a,d){a.forEach(n=>{L.push("  ".repeat(d)+"- "+(n.kind==="project"?"Change idea: ":(d===0?"Primary driver: ":"Secondary driver: "))+(n.text||"untitled")+(n.measure?" (measure: "+n.measure+")":""));w(n.children||[],d+1);});})(state.drivers,0);
     if(state.balancing.length) L.push("Balancing measures: "+state.balancing.map(b=>b.text).join("; "));
     return L.join("\n");}},
-  hasData:()=>hasContent(), load:doc=>{state=normalise(doc);selected=null;autoFit=true;persist();renderAll();},
+  hasData:()=>hasContent(), reset:()=>{newProject();trackCleared();}, load:doc=>{state=normalise(doc);selected=null;autoFit=true;persist();renderAll();},
   example:()=>loadExampleProject(),
   save:()=>saveFile(slug()+".json",JSON.stringify(state,null,2),"application/json"),
   open:()=>$("#fileIn").click(),
