@@ -904,6 +904,7 @@ window.matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", (
 
 /* Shared toolbar (Open, Save, Export) */
 FocusActions.mount({
+  explain: { root: "#out", place: "#check" },
   tool: "run_chart", toolName: "run chart",
   example: loadExample, hasData: () => !!els.data.value.trim(),
   fileName: exportName,

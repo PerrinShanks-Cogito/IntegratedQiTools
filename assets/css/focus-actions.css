@@ -89,3 +89,57 @@
   :root:not([data-theme="light"]) .fa-sample{--fa-ink:#E8EEF2; --fa-muted:#A3B6C3; --fa-bg:#3A2E10; --fa-link:#7DB6EE}
 }
 :root[data-theme="dark"] .fa-sample{--fa-ink:#E8EEF2; --fa-muted:#A3B6C3; --fa-bg:#3A2E10; --fa-link:#7DB6EE}
+
+/* "Need further help to understand the analysis?" link and Copilot panel
+   (assets/js/focus-explain.js). Prefixed .fx. */
+.fx{
+  --fx-blue:#005EB8; --fx-ink:#212B32; --fx-muted:#4C6272; --fx-line:#D8DDE0; --fx-surface:#FFFFFF;
+  --fx-bg:#F0F4F5; --fx-hover:#E6F0FA; --fx-yellow:#FFB81C; --fx-warn-bg:#FFF4DB; --fx-on-blue:#FFFFFF;
+  font-family:Figtree, "Frutiger", "Helvetica Neue", Arial, sans-serif; line-height:1.45; color:var(--fx-ink);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .fx{
+    --fx-blue:#5AA2EA; --fx-ink:#E8EEF2; --fx-muted:#A3B6C3; --fx-line:#2A3E4F; --fx-surface:#162533;
+    --fx-bg:#0E1A24; --fx-hover:#15314B; --fx-warn-bg:#3A2E10; --fx-on-blue:#0E1A24;
+  }
+}
+:root[data-theme="dark"] .fx{
+  --fx-blue:#5AA2EA; --fx-ink:#E8EEF2; --fx-muted:#A3B6C3; --fx-line:#2A3E4F; --fx-surface:#162533;
+  --fx-bg:#0E1A24; --fx-hover:#15314B; --fx-warn-bg:#3A2E10; --fx-on-blue:#0E1A24;
+}
+.fx *,.fx *::before,.fx *::after{box-sizing:border-box}
+.fx-wrap{display:flex; flex-wrap:wrap; align-items:center; gap:.25rem .75rem; margin:1rem 0; padding:.75rem 1rem;
+  border:1px dashed var(--fx-line); border-radius:8px; background:var(--fx-surface)}
+.fx-wrap[hidden]{display:none}
+.fx-link{display:inline-flex; align-items:center; gap:.45rem; margin:0; padding:.2rem 0; border:0; background:none;
+  color:var(--fx-blue); font:inherit; font-size:1rem; font-weight:700; text-decoration:underline; text-underline-offset:3px; cursor:pointer}
+.fx-link:hover{text-decoration-thickness:2px}
+.fx-link:focus-visible,.fx-btn:focus-visible,.fx-x:focus-visible,.fx-text:focus-visible{outline:3px solid var(--fx-yellow); outline-offset:2px}
+.fx-hint{color:var(--fx-muted); font-size:.9rem}
+
+.fx-dlg{width:min(760px, calc(100vw - 2rem)); max-height:calc(100vh - 2rem); overflow:auto; padding:1.5rem 1.5rem 1.25rem;
+  border:1px solid var(--fx-line); border-radius:10px; background:var(--fx-surface); box-shadow:0 18px 48px rgba(0,20,40,.35)}
+.fx-dlg::backdrop{background:rgba(0,20,40,.5)}
+.fx-dlg h2{margin:0 2.5rem .4rem 0; font-size:1.35rem; line-height:1.25}
+.fx-lead{margin:0 0 .75rem; color:var(--fx-muted)}
+.fx-close-form{position:absolute; top:.75rem; right:.75rem; margin:0}
+.fx-x{width:2.4rem; height:2.4rem; border:1px solid var(--fx-line); border-radius:6px; background:var(--fx-surface); color:var(--fx-ink); font-size:1.5rem; line-height:1; cursor:pointer}
+.fx-x:hover{background:var(--fx-hover)}
+.fx-steps{margin:0 0 1rem; padding-left:1.25rem}
+.fx-steps li+li{margin-top:.35rem}
+.fx-removed{color:var(--fx-muted)}
+.fx-label{display:block; font-weight:700; margin:0 0 .3rem}
+.fx-text{display:block; width:100%; min-height:14rem; padding:.7rem .8rem; border:2px solid var(--fx-line); border-radius:6px;
+  background:var(--fx-bg); color:var(--fx-ink); font:.88rem/1.45 ui-monospace, SFMono-Regular, Consolas, monospace; resize:vertical;
+  white-space:pre-wrap; overflow-wrap:anywhere; tab-size:2}
+.fx-warn{margin:.85rem 0; padding:.65rem .9rem; border-left:5px solid var(--fx-yellow); border-radius:4px; background:var(--fx-warn-bg); font-size:.93rem}
+.fx-actions{display:flex; flex-wrap:wrap; gap:.5rem}
+.fx-btn{display:inline-flex; align-items:center; justify-content:center; min-height:2.6rem; padding:.5rem .95rem; border:2px solid var(--fx-blue);
+  border-radius:4px; background:var(--fx-surface); color:var(--fx-blue); font:inherit; font-weight:700; text-decoration:none; cursor:pointer}
+.fx-btn:hover{background:var(--fx-hover)}
+.fx-btn.fx-primary{background:var(--fx-blue); color:var(--fx-on-blue); flex-basis:100%}
+.fx-btn.fx-primary:hover{filter:brightness(.92)}
+.fx-btn[hidden]{display:none}
+.fx-status{min-height:1.4em; margin:.6rem 0 0; font-weight:600}
+.fx-sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+@media print{.fx-wrap{display:none}}

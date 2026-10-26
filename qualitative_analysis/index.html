@@ -1758,6 +1758,25 @@ details.read summary{cursor:pointer;font-weight:600;color:var(--blue);margin-bot
     setExtra: x => { state = Object.assign(blankState(), x || {}); },
     afterOpen: () => { headerTouched = true; update(); },
     ready: () => rows.length > 0,
+    // Copilot prompt: themes, counts and the person's own findings only. Free-text
+    // comments and quotes are left out, as they may identify people.
+    // The theme map, not the word cloud: words from comments could include names.
+    explain: { place: 'section.panel[aria-labelledby="result-h"]', png: () => act('png', 'map'), text: () => {
+      const SENT = { pos: 'positive', neg: 'negative', mix: 'mixed', neu: 'neutral' };
+      const L = ['Qualitative analysis of free-text survey responses.', 'Question asked: ' + (els.question.value.trim() || '(not given)'),
+        'Responses with a comment: ' + rows.length + '. Responses coded so far: ' + rows.filter(isCoded).length + '.', '', 'Themes (codes), with how many responses mention each:'];
+      allCodes().forEach(c => {
+        const list = rows.filter(r => { const x = state.coding[r.key]; return x && x.codes.includes(c.id); });
+        if (!list.length && c.id === 'other') return;
+        const s = {}; list.forEach(r => { const v = (state.coding[r.key] || {}).sent; if (v) s[v] = (s[v] || 0) + 1; });
+        const sent = Object.keys(s).map(k => s[k] + ' ' + (SENT[k] || k)).join(', ');
+        L.push('- ' + c.name + ': ' + list.length + (sent ? ' (' + sent + ')' : '') + (c.desc ? '. ' + c.desc : ''));
+      });
+      const f = allCodes().filter(c => state.findings[c.id] && state.findings[c.id].text);
+      if (f.length) { L.push('', 'My findings so far:'); f.forEach(c => L.push('- ' + c.name + (state.findings[c.id].impact ? ' (impact: ' + state.findings[c.id].impact + ')' : '') + ': ' + state.findings[c.id].text)); }
+      L.push('', 'The comments themselves are not included, to protect people’s privacy.');
+      return L.join('\n');
+    } },
     exports: [
       { type: 'png', label: 'Word cloud (PNG)', run: () => act('png', 'cloud') },
       { type: 'svg', label: 'Word cloud (SVG)', run: () => act('svg', 'cloud') },

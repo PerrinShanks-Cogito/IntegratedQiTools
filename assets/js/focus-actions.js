@@ -24,6 +24,8 @@
      template   optional { fileName, title?, sheets } for a "Data sheet" button
                 that downloads a blank .xlsx to collect the data in; see xlsx().
                 fileName and sheets can each be a function, called on each click
+     explain    optional settings for the "Need further help to understand the
+                analysis?" link to Microsoft 365 Copilot; see focus-explain.js
      load       optional (doc) => void, for tools with their own project files
                 (those that pass save/open), so case study sample data can open
 
@@ -324,6 +326,9 @@
       r.onerror = () => say("Couldn't read that file.");
       r.readAsText(f);
     });
+
+    /* "Need further help to understand the analysis?" link (focus-explain.js) */
+    if (window.FocusExplain) { try { window.FocusExplain.setup(o); } catch (e) { /* the tool still works without it */ } }
 
     /* Case study sample data (?sample=...) */
     const sample = samplePath();

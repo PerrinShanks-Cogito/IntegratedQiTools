@@ -3,7 +3,7 @@
   tool's name next to FOCUS and mark it as the current tool in the menu.
 {%- endcomment -%}
 {%- assign current_tool = site.data.tools | where: "id", page.tool_id | first -%}
-<header class="fh">
+<header class="fh"{% if current_tool %} data-tool-name="{{ current_tool.name | escape }}" data-tool-desc="{{ current_tool.description | escape }}"{% endif %}>
   <div class="fh-top">
     <div class="fh-inner">
       <a class="fh-brand" href="{{ '/' | relative_url }}"><b>FOCUS</b>{% if current_tool %}<span>{{ current_tool.name }}</span>{% else %}<span>QI charting tools</span>{% endif %}</a>
