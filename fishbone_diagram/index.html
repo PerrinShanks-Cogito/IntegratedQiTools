@@ -882,6 +882,10 @@ async function copyTable(){
 /* Shared toolbar (Example, Open, Save, Export) */
 FocusActions.mount({
   tool:TOOL, toolName:"cause and effect diagram", fileName:()=>slug(), say:m=>toast(m),
+  explain:{place:"#canvasWrap", text:()=>{
+    const L=["Cause and effect (fishbone) diagram: "+(state.title||"untitled"),"Effect (the problem): "+(state.effect||"(not set)")];
+    state.categories.forEach(c=>{L.push("Category: "+c.name);(function w(a,d){a.forEach(n=>{L.push("  ".repeat(d)+"- "+(n.text||"untitled"));w(n.children||[],d+1);});})(c.causes,1);});
+    return L.join("\n");}},
   hasData:()=>hasContent(), load:doc=>{state=normalise(doc);selected=null;autoFit=true;persist();renderAll();},
   example:()=>loadExampleProject(),
   save:()=>saveFile(slug()+".json",projectJson(),"application/json"),

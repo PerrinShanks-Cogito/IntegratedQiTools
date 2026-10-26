@@ -63,6 +63,17 @@ Improvement's SPC P chart tool (version 3.0)):
   own export functions; chart tools save and reopen everything in their data
   and settings panel. Styles are in `assets/css/focus-actions.css`, prefixed
   `.fa`.
+- `assets/js/focus-explain.js` – the **Need further help to understand the
+  analysis?** link under every tool's analysis. It builds a prompt for
+  Microsoft 365 Copilot Chat from the analysis on the page, removes anything
+  that looks like personal identifying information (names with a title,
+  emails, phone, NHS and hospital numbers, postcodes, dates of birth, links),
+  shows it for the person to check and edit, then copies it, downloads the
+  tool's PNG and opens Copilot Chat to paste and attach them. Copilot Chat
+  can't be pre-filled from a link. `FocusActions.mount()` sets it up for every
+  tool; a tool can pass `explain` to point it at its own analysis (the
+  diagram tools and qualitative analysis do; qualitative sends themes and
+  findings only, never comments, and the theme map rather than the word cloud).
 - `_config.yml` – site settings and the header links (`links:`).
 - `<tool>/index.html` – each tool's original single-file page. The only
   changes from ImprovementTools are front matter (`tool_id`), the shared

@@ -1021,6 +1021,7 @@ $("#btnNew").addEventListener("click",()=>{
 function withMap(fn){const m=map(); if(!m){toast("There's no redesign to export. Switch to the current map.");return;} fn(m);}
 FocusActions.mount({
   tool:"process_map", toolName:"process map", fileName:()=>slug(), say:m=>toast(m),
+  explain:{root:"#analysis", place:"#canvasWrap", visibleOnly:false},
   hasData:()=>hasContent(), load:doc=>{state=normalise(doc);selected=null;autoFit=true;persist();renderAll();},
   example:()=>loadExampleProject(),
   save:()=>saveFile(slug()+".json",JSON.stringify(state,null,2),"application/json"),
