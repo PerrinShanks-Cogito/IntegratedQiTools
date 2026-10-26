@@ -1,6 +1,4 @@
 # Listed in the menu so people know what is coming. No link until built.
-- name: A3 poster generator
-  status: In ideation
 - name: PDSA snapshot generator
   status: In ideation
 - name: Highlight report

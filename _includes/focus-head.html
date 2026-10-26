@@ -25,9 +25,13 @@ function trackCleared() {
   trackChart.key = "";
   trackUsage("data_cleared");
 }
-/* Wraps FocusActions export entries so each successful export is counted. */
+/* Wraps FocusActions export entries so each successful export is counted.
+   An SVG export run for "Add to A3 report" is counted as format "a3". */
 function trackExports(list) {
-  return list.map(x => Object.assign({}, x, { run: () => { const r = x.run(); trackUsage("chart_exported", { format: x.type }); return r; } }));
+  return list.map(x => Object.assign({}, x, { run: () => {
+    const a3 = window.FocusActions && FocusActions.addingToA3();
+    const r = x.run(); trackUsage("chart_exported", { format: a3 ? "a3" : x.type }); return r;
+  } }));
 }
 /* settings maps an event property to the id of a <select> or checkbox, or the
    name of a radio group. Only list controls with fixed choices, never a field

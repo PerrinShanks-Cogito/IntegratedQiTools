@@ -35,6 +35,12 @@
    New asks whether to save first whenever hasData() says there is something
    to lose (or always, for tools that don't pass hasData).
 
+   A3 report: every tool with an SVG export also gets "Add to A3 report" in
+   its Export menu. It runs the tool's own SVG export, catches the file in
+   saveFile() instead of saving it, and keeps it in this browser (IndexedDB,
+   see clips below) for the A3 report tool to place. Pass a3: false to leave
+   it out.
+
    Case study sample data: a link such as
      /spc_tool/?sample=/case_studies/data/late-discharges-2.json
    opens that project file as soon as the page has loaded, and shows a
@@ -104,10 +110,17 @@
     png: ["image/png", "PNG image"], svg: ["image/svg+xml", "SVG image"],
     csv: ["text/csv", "CSV file"], json: ["application/json", "Saved work"],
     xlsx: ["application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Excel workbook"],
-    html: ["text/html", "Web page"], pdf: ["application/pdf", "PDF document"]
+    html: ["text/html", "Web page"], pdf: ["application/pdf", "PDF document"],
+    pptx: ["application/vnd.openxmlformats-officedocument.presentationml.presentation", "PowerPoint presentation"]
   };
   async function saveFile(name, data, mime) {
     const blob = data instanceof Blob ? data : new Blob([data], { type: mime });
+    if (capture && /\.svg$/i.test(name)) {
+      const done = capture; capture = null;
+      done(blob);
+      // Never settles, so the tool doesn't also say it saved a file.
+      return new Promise(() => {});
+    }
     if (typeof window.showSaveFilePicker === "function") {
       const ext = (String(name).match(/\.([a-z0-9]+)$/i) || [])[1];
       const t = ext && SAVE_TYPES[ext.toLowerCase()];
@@ -174,13 +187,14 @@
     '<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>';
   const CRC = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
   const crc32 = b => { let c = 0xFFFFFFFF; for (let i = 0; i < b.length; i++) c = CRC[(c ^ b[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; };
-  // An uncompressed ("stored") zip, which is all an .xlsx needs to be.
-  function zip(files) {
+  // An uncompressed ("stored") zip, which is all an .xlsx or .pptx needs to
+  // be. Each file is [name, text or Uint8Array].
+  function zip(files, type) {
     const enc = new TextEncoder(), parts = [], dir = [];
     let off = 0;
     const u16 = v => [v & 255, (v >>> 8) & 255], u32 = v => [v & 255, (v >>> 8) & 255, (v >>> 16) & 255, (v >>> 24) & 255];
     files.forEach(([name, text]) => {
-      const nm = enc.encode(name), data = enc.encode(text), crc = crc32(data);
+      const nm = enc.encode(name), data = typeof text === "string" ? enc.encode(text) : text, crc = crc32(data);
       const common = [...u16(20), ...u16(0x0800), ...u16(0), ...u16(0), ...u16(0x21), ...u32(crc), ...u32(data.length), ...u32(data.length), ...u16(nm.length), ...u16(0)];
       const local = new Uint8Array([...u32(0x04034b50), ...common]);
       parts.push(local, nm, data);
@@ -189,7 +203,7 @@
     });
     const dirLen = dir.reduce((n, p) => n + p.length, 0);
     const end = new Uint8Array([...u32(0x06054b50), ...u16(0), ...u16(0), ...u16(files.length), ...u16(files.length), ...u32(dirLen), ...u32(off), ...u16(0)]);
-    return new Blob([...parts, ...dir, end], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+    return new Blob([...parts, ...dir, end], { type: type || "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
   }
   function xlsx(sheets) {
     const ws = sheets.map((sh, i) => ["xl/worksheets/sheet" + (i + 1) + ".xml", sheetXml(sh)]);
@@ -209,6 +223,45 @@
       ...ws
     ]);
   }
+
+  /* ---------- charts kept for the A3 report ---------- */
+  /* Kept in IndexedDB on this site, so every tool can add to it and the A3
+     report tool can read it. Nothing leaves the browser. Each clip is
+     { id, tool, toolName, title, svg, doc, added }. */
+  let capture = null, a3Running = false;
+  const clips = (function () {
+    let dbp = null;
+    function db() {
+      if (!dbp) dbp = new Promise((resolve, reject) => {
+        if (!window.indexedDB) return reject(new Error("no IndexedDB"));
+        const r = indexedDB.open("focus-a3", 1);
+        r.onupgradeneeded = () => {
+          r.result.createObjectStore("clips", { keyPath: "id", autoIncrement: true });
+          r.result.createObjectStore("drafts");
+        };
+        r.onsuccess = () => resolve(r.result);
+        r.onerror = () => reject(r.error);
+      });
+      dbp.catch(() => { dbp = null; });
+      return dbp;
+    }
+    function run(store, mode, fn) {
+      return db().then(d => new Promise((resolve, reject) => {
+        const tx = d.transaction(store, mode);
+        const req = fn(tx.objectStore(store));
+        tx.oncomplete = () => resolve(req && req.result);
+        tx.onerror = tx.onabort = () => reject(tx.error);
+      }));
+    }
+    return {
+      add: clip => run("clips", "readwrite", st => st.add(clip)),
+      list: () => run("clips", "readonly", st => st.getAll()).then(a => (a || []).sort((x, y) => y.added.localeCompare(x.added))),
+      remove: id => run("clips", "readwrite", st => st.delete(id)),
+      getDraft: key => run("drafts", "readonly", st => st.get(key)),
+      setDraft: (key, val) => run("drafts", "readwrite", st => st.put(val, key)),
+      clearDraft: key => run("drafts", "readwrite", st => st.delete(key))
+    };
+  })();
 
   let sayFn = null, statusEl = null, statusTimer = null;
   function say(msg) {
@@ -266,7 +319,12 @@
     list.innerHTML = (o.exports || []).map((e, i) => {
       const f = FORMATS[e.type] || { label: e.label || e.type, hint: "" };
       return '<button type="button" role="menuitem" data-i="' + i + '">' + (e.label || f.label) + '<small>' + (e.hint || f.hint) + '</small></button>';
-    }).join("");
+    }).join("") + (o.a3 === false ? "" : (o.exports || []).map((e, i) => {
+      if (e.type !== "svg") return "";
+      const what = e.label ? e.label.replace(/\s*\(SVG\)\s*$/i, "") : "";
+      return '<button type="button" role="menuitem" data-a3="' + i + '">' + (what ? "Add " + escHtml(what.toLowerCase()) + " to A3 report" : "Add to A3 report") +
+        '<small>Place it on an A3 report with the A3 report tool</small></button>';
+    }).join(""));
     const items = [...list.querySelectorAll('[role="menuitem"]')];
 
     function setOpen(open) {
@@ -299,10 +357,40 @@
       }
     });
     list.addEventListener("click", e => {
-      const b = e.target.closest("[data-i]"); if (!b || b.disabled) return;
+      const b = e.target.closest("[data-i],[data-a3]"); if (!b || b.disabled) return;
       setOpen(false); expBtn.focus();
+      if (b.dataset.a3) return addToA3(o.exports[+b.dataset.a3]);
       try { o.exports[+b.dataset.i].run(); } catch (err) { say("Sorry, that export didn't work."); }
     });
+
+    /* Add to A3 report: run the SVG export and keep the file it makes */
+    function addToA3(exp) {
+      let timer = 0;
+      capture = blob => {
+        clearTimeout(timer);
+        blob.text().then(svg => {
+          const name = (o.toolName || "chart").replace(/^./, c => c.toUpperCase());
+          const base = baseName().replace(/-/g, " ");
+          const doc = o.save ? null : {
+            focus: { tool: o.tool, version: 1, saved: new Date().toISOString() },
+            fields: fieldsRoot ? readFields(fieldsRoot) : {},
+            extra: o.getExtra ? o.getExtra() : null
+          };
+          return clips.add({
+            tool: o.tool, toolName: name, svg, doc, added: new Date().toISOString(),
+            title: base && base !== fallbackName.replace(/-/g, " ") ? base.replace(/^./, c => c.toUpperCase()) : name +
+              (exp.label ? " – " + exp.label.replace(/\s*\(SVG\)\s*$/i, "").toLowerCase() : "")
+          });
+        }).then(
+          () => say("Added to your A3 report charts. Open the A3 report tool to place it."),
+          () => say("Sorry, the chart couldn't be kept in this browser for the A3 report."));
+      };
+      timer = setTimeout(() => { capture = null; }, 5000);
+      a3Running = true;
+      try { exp.run(); }
+      catch (err) { capture = null; clearTimeout(timer); say("Sorry, the chart couldn't be added to the A3 report."); }
+      finally { a3Running = false; }
+    }
 
     /* Data sheet */
     const tplBtn = bar.querySelector('[data-fa="template"]');
@@ -484,5 +572,5 @@
     host.parentNode.insertBefore(note, host.nextSibling);
   }
 
-  window.FocusActions = { mount, say, xlsx, saveFile, FORMATS };
+  window.FocusActions = { mount, say, xlsx, zip, saveFile, FORMATS, clips, addingToA3: () => a3Running };
 })();

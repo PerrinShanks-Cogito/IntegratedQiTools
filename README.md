@@ -10,7 +10,7 @@ instructions for a cause and effect diagram, and the demand and capacity model,
 which was built here from the NHS Improvement and NHS England demand and
 capacity core model (version 4.2) and its user guidance, and the multiple
 regression tool, tree plot (treemap), box and whisker plot, ANOVA,
-chi-squared test and Weibull reliability analysis, which were all built here, and the design of experiments, attribute agreement analysis and Gauge R&R tools, which were built here from the DOE, Attribute Agreement Analysis and Gauge R&R sheets of the AAS Data Analysis Toolkit, and the power and sample size tool, which was built here from the Power and Sample Size section of the AAS Advanced Analysis Toolkit, and the 2x2 matrix (ease and impact, stakeholder analysis and other 2x2 grids), which was built here, and the hypothesis test selector, which was built here from the [hypothesis test selection road map](https://perrinshanks.com/hypothesis-test-selection-road-map/) and runs the chosen test on pasted data, and the qualitative survey analysis tool, which was built here from the Making Data Count step 9 session on qualitative data, and the funnel plot, which was
+chi-squared test and Weibull reliability analysis, which were all built here, and the design of experiments, attribute agreement analysis and Gauge R&R tools, which were built here from the DOE, Attribute Agreement Analysis and Gauge R&R sheets of the AAS Data Analysis Toolkit, and the power and sample size tool, which was built here from the Power and Sample Size section of the AAS Advanced Analysis Toolkit, and the 2x2 matrix (ease and impact, stakeholder analysis and other 2x2 grids), which was built here, and the A3 report, which was built here from the CITI A3 report template, and the hypothesis test selector, which was built here from the [hypothesis test selection road map](https://perrinshanks.com/hypothesis-test-selection-road-map/) and runs the chosen test on pasted data, and the qualitative survey analysis tool, which was built here from the Making Data Count step 9 session on qualitative data, and the funnel plot, which was
 built here from the NHS Improvement funnel plot tool (version 2.0), and the T
 chart for rare events, which was built here from NHS England's T chart rare
 events SPC tool (version 2.0), and the P chart, which was built here from NHS
@@ -42,6 +42,7 @@ Improvement's SPC P chart tool (version 3.0)):
 | Hypothesis test selector | `/hypothesis_test_selector/` |
 | Power and sample size | `/power_sample_size/` |
 | Demand and capacity model | `/demand_capacity/` |
+| A3 report | `/a3_report/` |
 
 ## How it fits together
 
@@ -74,6 +75,20 @@ Improvement's SPC P chart tool (version 3.0)):
   tool; a tool can pass `explain` to point it at its own analysis (the
   diagram tools and qualitative analysis do; qualitative sends themes and
   findings only, never comments, and the theme map rather than the word cloud).
+- **Add to A3 report** – `focus-actions.js` adds this to the Export menu of
+  every tool with an SVG export (a tool can opt out with `a3: false`). It runs
+  the tool's own SVG export, catches the file in `FocusActions.saveFile()`
+  instead of saving it, and keeps it with the tool's project document in
+  IndexedDB (`FocusActions.clips`), so nothing leaves the browser.
+- `a3_report/index.html` – the A3 report, with the sections, questions and
+  guidance of the CITI A3 report template. It places charts from the other
+  tools and the user's own PNG or JPG pictures, and shares the space between
+  sections: when there is too much to fit it shrinks the charts first, then
+  the body text down to 9pt, and then says which column to shorten. One
+  layout feeds the preview, the SVG, PNG and print exports and the editable
+  A3 PowerPoint, which it writes in the browser (`FocusActions.zip`). Charts
+  and pictures are copied into the project file, and the report in progress is
+  kept in IndexedDB so going to another tool to add a chart loses nothing.
 - `_config.yml` – site settings and the header links (`links:`).
 - `<tool>/index.html` – each tool's original single-file page. The only
   changes from ImprovementTools are front matter (`tool_id`), the shared
