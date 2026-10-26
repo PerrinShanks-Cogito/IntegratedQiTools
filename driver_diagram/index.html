@@ -850,10 +850,8 @@ async function saveFile(name,data,mime){
     }
     return;
   }
-  const blob=data instanceof Blob?data:new Blob([data],{type:mime});
-  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name;
-  document.body.appendChild(a); a.click();
-  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},800);
+  try{if(await FocusActions.saveFile(name,data,mime)) toast("Saved "+name);}
+  catch(err){toast("Couldn't save "+name+".");}
 }
 let tt;
 function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("show"),2600);}

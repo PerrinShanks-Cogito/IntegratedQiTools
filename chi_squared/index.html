@@ -922,11 +922,7 @@ td.tot,th.tot{font-weight:700}
   async function downloadBlob(blob, name) {
     const d = await getDownloads();
     if (d) { const r = await d.save({ filename: name, data: blob }); return r && r.status !== 'declined'; }
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob); a.download = name;
-    document.body.appendChild(a); a.click();
-    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
-    return true;
+    return FocusActions.saveFile(name, blob);
   }
   function status(msg) { FocusActions.say(msg); }
   function toPNG(cb) {

@@ -96,12 +96,43 @@
     });
   }
 
-  function download(name, data, mime) {
+  /* Save a file, letting the person choose where with a "Save as" window
+     where the browser supports it (Chrome, Edge). Elsewhere, or where the
+     window can't open, falls back to a normal download.
+     Resolves true when saved, false when the person cancels. */
+  const SAVE_TYPES = {
+    png: ["image/png", "PNG image"], svg: ["image/svg+xml", "SVG image"],
+    csv: ["text/csv", "CSV file"], json: ["application/json", "Saved work"],
+    xlsx: ["application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Excel workbook"],
+    html: ["text/html", "Web page"], pdf: ["application/pdf", "PDF document"]
+  };
+  async function saveFile(name, data, mime) {
+    const blob = data instanceof Blob ? data : new Blob([data], { type: mime });
+    if (typeof window.showSaveFilePicker === "function") {
+      const ext = (String(name).match(/\.([a-z0-9]+)$/i) || [])[1];
+      const t = ext && SAVE_TYPES[ext.toLowerCase()];
+      const opts = { suggestedName: name };
+      if (t) opts.types = [{ description: t[1], accept: { [t[0]]: ["." + ext.toLowerCase()] } }];
+      let handle = null;
+      try { handle = await window.showSaveFilePicker(opts); }
+      catch (err) { if (err && err.name === "AbortError") return false; }
+      if (handle) {
+        const w = await handle.createWritable();
+        await w.write(blob); await w.close();
+        return true;
+      }
+    }
     const a = document.createElement("a");
-    a.href = URL.createObjectURL(data instanceof Blob ? data : new Blob([data], { type: mime }));
+    a.href = URL.createObjectURL(blob);
     a.download = name;
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    return true;
+  }
+  function download(name, data, mime, msg) {
+    return saveFile(name, data, mime).then(
+      ok => say(ok ? msg : "Download cancelled."),
+      () => say("The file couldn’t be saved here."));
   }
   function safeName(s, fallback) {
     return (String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60)) || fallback;
@@ -280,8 +311,7 @@
       tplBtn.addEventListener("click", () => {
         const sheets = typeof o.template.sheets === "function" ? o.template.sheets() : o.template.sheets;
         const name = typeof o.template.fileName === "function" ? o.template.fileName() : o.template.fileName;
-        download(name, xlsx(sheets));
-        say("Downloaded " + name + ". Fill it in, then copy and paste it here.");
+        download(name, xlsx(sheets), undefined, "Saved " + name + ". Fill it in, then copy and paste it here.");
       });
     }
 
@@ -349,8 +379,7 @@
         fields: fieldsRoot ? readFields(fieldsRoot) : {},
         extra: o.getExtra ? o.getExtra() : null
       };
-      download(baseName() + ".json", JSON.stringify(doc, null, 2), "application/json");
-      say("Saved " + baseName() + ".json. Use Open to carry on later.");
+      download(baseName() + ".json", JSON.stringify(doc, null, 2), "application/json", "Saved " + baseName() + ".json. Use Open to carry on later.");
     });
 
     /* Open */
@@ -455,5 +484,5 @@
     host.parentNode.insertBefore(note, host.nextSibling);
   }
 
-  window.FocusActions = { mount, say, xlsx, FORMATS };
+  window.FocusActions = { mount, say, xlsx, saveFile, FORMATS };
 })();

@@ -694,11 +694,10 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
   // ---- exports ----
   function svgEl() { return document.querySelector('#chart svg'); }
   function fileName() { return slug(current && current.title); }
-  function downloadBlob(blob, name) {
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob); a.download = name;
-    document.body.appendChild(a); a.click();
-    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  function downloadBlob(blob, name, msg) {
+    FocusActions.saveFile(name, blob).then(
+      ok => status(ok ? msg : 'Download cancelled.'),
+      () => status('The file couldn’t be saved here.'));
   }
   function status(msg) { FocusActions.say(msg); }
 
@@ -738,8 +737,8 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
   function act(a) {
     if (a === 'example') return loadExample();
     if (!current) return;
-    if (a === 'png') toPNG(b => { downloadBlob(b, fileName() + '.png'); status('PNG downloaded.'); });
-    if (a === 'svg') { downloadBlob(new Blob([new XMLSerializer().serializeToString(svgEl())], { type: 'image/svg+xml' }), fileName() + '.svg'); status('SVG downloaded.'); }
+    if (a === 'png') toPNG(b => { downloadBlob(b, fileName() + '.png', 'PNG downloaded.'); });
+    if (a === 'svg') { downloadBlob(new Blob([new XMLSerializer().serializeToString(svgEl())], { type: 'image/svg+xml' }), fileName() + '.svg', 'SVG downloaded.'); }
     if (a === 'copyimg') {
       if (!(navigator.clipboard && window.ClipboardItem)) return status('Your browser can’t copy images — use Download PNG.');
       toPNG(async b => {
@@ -747,7 +746,7 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
         catch (e) { status('Copy was blocked — use Download PNG.'); }
       });
     }
-    if (a === 'csv') { downloadBlob(new Blob([tableRows().map(r => r.map(csvCell).join(',')).join('\r\n')], { type: 'text/csv' }), fileName() + '.csv'); status('Table downloaded.'); }
+    if (a === 'csv') { downloadBlob(new Blob([tableRows().map(r => r.map(csvCell).join(',')).join('\r\n')], { type: 'text/csv' }), fileName() + '.csv', 'Table downloaded.'); }
     if (a === 'copytable') copyText(tableRows().map(r => r.join('\t')).join('\n')).then(ok => status(ok ? 'Table copied — paste it into Excel.' : 'Copy was blocked.'));
   }
 
