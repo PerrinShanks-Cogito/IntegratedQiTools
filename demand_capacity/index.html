@@ -1008,9 +1008,9 @@ async function svgToPng(svg, W, H){
   return await new Promise(r => c.toBlob(r, 'image/png'));
 }
 function download(name, blob){
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name;
-  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-  FocusActions.say(`Saved ${name}.`);
+  return FocusActions.saveFile(name, blob).then(
+    ok => FocusActions.say(ok ? `Saved ${name}.` : 'Download cancelled.'),
+    () => FocusActions.say('The file couldn’t be saved here.'));
 }
 const csvCell = v => /[",\n]/.test(String(v)) ? `"${String(v).replace(/"/g, '""')}"` : String(v);
 function csvText(){
