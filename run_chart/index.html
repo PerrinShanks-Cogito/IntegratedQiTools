@@ -673,6 +673,7 @@ function run(){
   const an = analyse(data, opts);
   an.notes.forEach(t => els.notes.innerHTML += `<li>${esc(t)}</li>`);
   state = { data, an, opts };
+  trackChart({ points: data.points.length });
   renderVerdict(); renderChart(); renderRules(); renderNext(); renderTable();
 }
 
@@ -894,8 +895,9 @@ el("clear").addEventListener("click", () => {
   els.data.value = ""; els.measure.value = ""; measureTouched = false;
   els.medmode.value = "all"; els.firstnWrap.hidden = true;
   document.getElementById("dir-none").checked = true;
-  run(); els.data.focus();
+  run(); els.data.focus(); trackCleared();
 });
+trackSettings({ improvement: "dir", median: "medmode" });
 
 new ResizeObserver(() => { if (state.data) renderChart(); }).observe(els.chart);
 window.matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => state.data && renderChart());
@@ -911,12 +913,12 @@ FocusActions.mount({
   fields: 'aside.panel[aria-label="Your data and settings"]',
   afterOpen: () => { measureTouched = !!els.measure.value.trim(); run(); },
   ready: () => !!state.data,
-  exports: [
+  exports: trackExports([
     { type: "png", run: exportPNG },
     { type: "svg", run: exportSVG },
     { type: "csv", run: exportCSV },
     { type: "copysummary", run: copySummary }
-  ]
+  ])
 });
 
 // Exposed for testing
@@ -924,5 +926,6 @@ window.__runchart = { parseInput, analyse, findShifts, findTrends, countRuns, pa
 run();
 })();
 </script>
+<script src="{{ '/assets/js/analytics.js' | relative_url }}" data-tool="run-chart"></script>
 </body>
 </html>

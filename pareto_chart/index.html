@@ -454,6 +454,7 @@ tr.cutrow td{border-bottom:2px dashed var(--muted)}
     const n = res.rows.length, k = res.vital, reach = res.rows[k - 1].cum;
     const sentence = `${k} of ${n} categories account for ${pct(reach)}% of the total (${nf.format(res.total)}).`;
 
+    trackChart({ points: n });
     const svg = renderSVG(res, {
       title, yLabel, xLabel: p.catLabel, cutoff,
       aligned: els.aligned.checked, showLabels: els.showLabels.checked,
@@ -559,9 +560,10 @@ tr.cutrow td{border-bottom:2px dashed var(--muted)}
   els.data.addEventListener('input', schedule);
   els.hasHeader.addEventListener('change', () => { headerTouched = true; update(); });
   ['title', 'yLabel', 'cutoff', 'groupAfter'].forEach(id => els[id].addEventListener('input', schedule));
+  trackSettings({ alignAxes: 'aligned', showLabels: 'showLabels' });
   ['aligned', 'showLabels'].forEach(id => els[id].addEventListener('change', update));
   $('exampleBtn2').addEventListener('click', loadExample);
-  $('clearBtn').addEventListener('click', () => { els.data.value = ''; headerTouched = false; els.hasHeader.checked = false; update(); els.data.focus(); });
+  $('clearBtn').addEventListener('click', () => { els.data.value = ''; headerTouched = false; els.hasHeader.checked = false; update(); els.data.focus(); trackCleared(); });
   els.result.addEventListener('click', e => { const b = e.target.closest('button[data-act]'); if (b) act(b.dataset.act); });
 
 
@@ -573,10 +575,11 @@ tr.cutrow td{border-bottom:2px dashed var(--muted)}
     fields: 'section.panel[aria-labelledby="data-h"]',
     afterOpen: () => update(),
     ready: () => !!current,
-    exports: ['png', 'svg', 'copyimg', 'csv', 'copytable'].map(type => ({ type, run: () => act(type) }))
+    exports: trackExports(['png', 'svg', 'copyimg', 'csv', 'copytable'].map(type => ({ type, run: () => act(type) })))
   });
 })();
 </script>
 {% include focus-footer.html %}
+<script src="{{ '/assets/js/analytics.js' | relative_url }}" data-tool="pareto"></script>
 </body>
 </html>

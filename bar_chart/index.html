@@ -560,6 +560,7 @@ fieldset.opts legend{font-weight:600;margin:0 0 .35rem;padding:0}
     const yLabel = (els.yLabel.value.trim() || d.valHead || 'Value') + (layout === 'pct' ? ' (% of each bar)' : '');
     const sm = summarise(d, layout);
     const plain = sm.head.replace(/<[^>]+>/g, '');
+    trackChart({ points: d.cats.length * d.series.length });
     const svg = renderSVG(d, {
       title, xLabel, yLabel, orient: radio('orient'), layout,
       showLabels: els.showLabels.checked, showAvg: els.showAvg.checked,
@@ -676,7 +677,8 @@ fieldset.opts legend{font-weight:600;margin:0 0 .35rem;padding:0}
   ['showLabels', 'showAvg'].forEach(id => els[id].addEventListener('change', update));
   document.querySelectorAll('input[name=orient],input[name=sort],input[name=layout]').forEach(r => r.addEventListener('change', update));
   $('exampleBtn2').addEventListener('click', loadExample);
-  $('clearBtn').addEventListener('click', () => { els.data.value = ''; els.title.value = ''; els.xLabel.value = ''; els.yLabel.value = ''; headerTouched = false; els.hasHeader.checked = false; update(); els.data.focus(); });
+  trackSettings({ orientation: 'orient', sort: 'sort', layout: 'layout', showLabels: 'showLabels', showAverage: 'showAvg' });
+  $('clearBtn').addEventListener('click', () => { els.data.value = ''; els.title.value = ''; els.xLabel.value = ''; els.yLabel.value = ''; headerTouched = false; els.hasHeader.checked = false; update(); els.data.focus(); trackCleared(); });
   els.result.addEventListener('click', e => { const b = e.target.closest('button[data-act]'); if (b) act(b.dataset.act); });
 
 
@@ -690,10 +692,11 @@ fieldset.opts legend{font-weight:600;margin:0 0 .35rem;padding:0}
     fields: 'section.panel[aria-labelledby="data-h"]',
     afterOpen: () => update(),
     ready: () => !!current,
-    exports: ['png', 'svg', 'copyimg', 'csv', 'copytable'].map(type => ({ type, run: () => act(type) }))
+    exports: trackExports(['png', 'svg', 'copyimg', 'csv', 'copytable'].map(type => ({ type, run: () => act(type) })))
   });
 })();
 </script>
 {% include focus-footer.html %}
+<script src="{{ '/assets/js/analytics.js' | relative_url }}" data-tool="bar-chart"></script>
 </body>
 </html>

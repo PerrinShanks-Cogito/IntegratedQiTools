@@ -1239,6 +1239,7 @@ function renderAllInner(){
     return;
   }
   model = compute();
+  trackChart({ points: model.n, chartType: state.type });
   const p = livePalette(), v = variationText(), a = assuranceText(), L = model.lim[model.n - 1], o = openText();
   const latest = isT() ? `Latest gap, before the event on ${state.rows[model.n - 1].label}` : `Latest point, ${pointName(model.n - 1)}`;
   let h = `<div class="badges"><div class="badge">${varBadge(p)}<div><strong>${esc(v.title)}</strong><small>${esc(latest)}</small></div></div>`;
@@ -1706,8 +1707,9 @@ function loadExample(){
 }
 $('#clearBtn').onclick = () => {
   $('#data').value = ''; state.breaks.clear(); $('#title').value = ''; $('#team').value = ''; $('#yLabel').value = ''; $('#target').value = '';
-  readForm(); readData(); renderAll(); $('#data').focus();
+  readForm(); readData(); renderAll(); $('#data').focus(); trackCleared();
 };
+trackSettings({ chartType: 'spctype', direction: 'dir', floorAtZero: 'floor', baseline: 'base', screenMovingRanges: 'screen', pChartType: 'ctype', showMovingRange: 'showMR', unit: 'unit', dateFormat: 'dateFmt', showNotes: 'showNotes', twoOfThree: 'twoThree', useTrend: 'useTrend' });
 
 /* ---------- Blank data collection sheet ---------- */
 // The columns are in the order each chart's parser reads them, with guidance on collecting the data for that chart
@@ -1810,7 +1812,7 @@ FocusActions.mount({
   },
   afterOpen: () => { clearTimeout(parseTimer); readForm(); readData(); renderAll(); },
   ready: () => !!model,
-  exports: ['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) })),
+  exports: trackExports(['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) }))),
   template: { title: 'Download a spreadsheet to collect your data in, set up for the chart you have chosen', fileName: () => `${state.type}-chart-data-sheet.xlsx`, sheets: dataSheet }
 });
 
@@ -1824,5 +1826,6 @@ readForm(); readData(); renderAll();
 })();
 </script>
 {% include focus-footer.html %}
+<script src="{{ '/assets/js/analytics.js' | relative_url }}" data-tool="spc"></script>
 </body>
 </html>

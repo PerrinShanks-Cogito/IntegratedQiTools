@@ -860,6 +860,7 @@ td.tot,th.tot{font-weight:700}
         ` ${sig ? 'The split differs between groups' : 'No clear difference between the groups'}, ${pIs(t.pMain)}.`;
       current = { o, t };
       svg = renderTable(o);
+      trackChart({ points: rows.length * cols.length });
       headline = sig ? 'The groups <strong>differ</strong>' : 'No clear difference between the groups';
       sub = `${t.useFisher ? 'Fisher’s exact test' : 'Chi-squared test of independence'} on ${nf.format(t.N)}${valName ? ' ' + lower(valName) : ' counts'} in ${rows.length} groups and ${cols.length} categories, at the ${Math.round(alpha * 100)}% significance level.`;
       tiles = [[pf(t.pMain), t.useFisher ? 'p-value (Fisher’s exact)' : 'p-value'], [nf.format(t.chi2), `Chi-squared (df = ${t.df})`], [nf.format(t.V), 'Cramér’s V (strength)'], [nf.format(t.N), 'Total count']];
@@ -888,6 +889,7 @@ td.tot,th.tot{font-weight:700}
         ` ${sig ? 'The counts differ from what was expected' : 'No clear difference from what was expected'}, ${pIs(t.p)}.`;
       current = { o, t };
       svg = renderFit(o);
+      trackChart({ points: cats.length });
       headline = sig ? 'The counts <strong>differ</strong> from what was expected' : 'No clear difference from what was expected';
       sub = `Chi-squared goodness of fit test on ${nf.format(t.N)}${valName ? ' ' + lower(valName) : ' counts'} in ${cats.length} categories, against ${p.exp ? 'your expected split' : 'an equal split'}, at the ${Math.round(alpha * 100)}% significance level.`;
       tiles = [[pf(t.p), 'p-value'], [nf.format(t.chi2), `Chi-squared (df = ${t.df})`], [nf.format(t.effect), 'Cohen’s w (strength)'], [nf.format(t.N), 'Total count']];
@@ -998,7 +1000,8 @@ td.tot,th.tot{font-weight:700}
   [els.title, els.valLabel].forEach(el => el.addEventListener('input', schedule));
   [els.alpha, els.order, els.swap].forEach(el => el.addEventListener('change', update));
   $('exampleBtn2').addEventListener('click', loadExample);
-  $('clearBtn').addEventListener('click', () => { els.data.value = ''; els.title.value = ''; els.valLabel.value = ''; headerTouched = false; modeTouched = false; els.hasHeader.checked = false; els.swap.checked = false; update(); els.data.focus(); });
+  trackSettings({ test: 'mode', alpha: 'alpha', order: 'order', swap: 'swap' });
+  $('clearBtn').addEventListener('click', () => { els.data.value = ''; els.title.value = ''; els.valLabel.value = ''; headerTouched = false; modeTouched = false; els.hasHeader.checked = false; els.swap.checked = false; update(); els.data.focus(); trackCleared(); });
   els.result.addEventListener('click', e => { const b = e.target.closest('button[data-act]'); if (b) act(b.dataset.act); });
 
   update(); // start empty, ready for the user's data
@@ -1011,10 +1014,11 @@ td.tot,th.tot{font-weight:700}
     fields: 'section.panel[aria-labelledby="data-h"]',
     afterOpen: () => { headerTouched = true; modeTouched = true; update(); },
     ready: () => !!current,
-    exports: ['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) }))
+    exports: trackExports(['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) })))
   });
 })();
 </script>
 {% include focus-footer.html %}
+<script src="{{ '/assets/js/analytics.js' | relative_url }}" data-tool="chi-squared"></script>
 </body>
 </html>

@@ -675,6 +675,7 @@ input[aria-invalid=true]{border-color:var(--danger)}
     if (errs.length) return renderEmpty(errs);
     const r = solve(o);
     current = r;
+    trackChart({ test: o.test, solveFor: o.mode });
     const stats = [];
     if (o.mode === 'power') {
       stats.push([pc(r.power), 'Power', r.power >= 0.8 ? 'good' : 'poor']);
@@ -787,10 +788,11 @@ input[aria-invalid=true]{border-color:var(--danger)}
 
   // ---- events ----
   [els.alpha, els.n, els.power, els.diff, els.sd, els.levels, els.title].forEach(el => el.addEventListener('input', schedule));
+  trackSettings({ test: 'test', sides: 'sides', solveFor: 'solve' });
   els.test.addEventListener('change', () => { swapFamily(); update(); });
   els.sides.addEventListener('change', update);
   document.querySelectorAll('input[name="solve"]').forEach(el => el.addEventListener('change', update));
-  $('clearBtn').addEventListener('click', () => { resetForm(); update(); els.test.focus(); });
+  $('clearBtn').addEventListener('click', () => { resetForm(); update(); els.test.focus(); trackCleared(); });
   // Keep separate values for tests of means and of proportions, so switching between them
   // brings back what was last entered for that kind of test
   const stash = { mean: { sd: '1.4', diff: '0.5' }, prop: { sd: '40', diff: '60' } };
@@ -814,10 +816,11 @@ input[aria-invalid=true]{border-color:var(--danger)}
     fields: 'section.panel[aria-labelledby="data-h"]',
     afterOpen: () => { family = TESTS[els.test.value].prop ? 'prop' : 'mean'; update(); },
     ready: () => !!current,
-    exports: ['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) }))
+    exports: trackExports(['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) })))
   });
 })();
 </script>
 {% include focus-footer.html %}
+<script src="{{ '/assets/js/analytics.js' | relative_url }}" data-tool="power-sample-size"></script>
 </body>
 </html>

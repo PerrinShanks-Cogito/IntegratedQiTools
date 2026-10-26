@@ -643,6 +643,7 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
       outTxt = `${nf.format(out)} of ${nf.format(st.n)} values (${pct(out / st.n * 100)}%) fall outside your limits: ${parts.join(' and ')}.`;
     }
 
+    trackChart({ points: st.n });
     const svg = renderSVG(st, B, {
       title, xLabel, lsl, usl,
       showMean: els.showMean.checked, showNormal: els.showNormal.checked,
@@ -766,7 +767,8 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
   ['title', 'xLabel', 'binVal', 'binStart', 'lsl', 'usl'].forEach(id => els[id].addEventListener('input', schedule));
   ['showMean', 'showNormal', 'asPct', 'showLabels'].forEach(id => els[id].addEventListener('change', update));
   $('exampleBtn2').addEventListener('click', loadExample);
-  $('clearBtn').addEventListener('click', () => { els.data.value = ''; headerTouched = false; colTouched = false; els.hasHeader.checked = false; update(); els.data.focus(); });
+  trackSettings({ binMode: 'binMode', showMeanMedian: 'showMean', showNormal: 'showNormal', percentages: 'asPct', showLabels: 'showLabels' });
+  $('clearBtn').addEventListener('click', () => { els.data.value = ''; headerTouched = false; colTouched = false; els.hasHeader.checked = false; update(); els.data.focus(); trackCleared(); });
   els.result.addEventListener('click', e => { const b = e.target.closest('button[data-act]'); if (b) act(b.dataset.act); });
 
 
@@ -778,10 +780,11 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
     fields: 'section.panel[aria-labelledby="data-h"]',
     afterOpen: () => update(),
     ready: () => !!current,
-    exports: ['png', 'svg', 'copyimg', 'csv', 'copytable'].map(type => ({ type, run: () => act(type) }))
+    exports: trackExports(['png', 'svg', 'copyimg', 'csv', 'copytable'].map(type => ({ type, run: () => act(type) })))
   });
 })();
 </script>
 {% include focus-footer.html %}
+<script src="{{ '/assets/js/analytics.js' | relative_url }}" data-tool="histogram"></script>
 </body>
 </html>

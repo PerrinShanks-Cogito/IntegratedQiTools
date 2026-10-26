@@ -785,6 +785,7 @@ td.poor{color:var(--danger);font-weight:700}
     const main = o.histSd > 0 ? get('grr').pproc : get('grr').psv, g = grade(main);
     o.aria = (o.title ? o.title + '. ' : '') + `${CHARTS[chartType]}. Gauge R&R is ${pc(main)} of ${o.histSd > 0 ? 'process' : 'study'} variation, ${g.text.toLowerCase()}. ${ndc} distinct categories.`;
     const svg = chartType === 'rchart' || chartType === 'xbar' ? panelsSVG(o, chartType) : chartType === 'bypart' ? dotsSVG(o, 'part') : chartType === 'byapp' ? dotsSVG(o, 'app') : chartType === 'inter' ? interSVG(o) : chartType === 'run' ? runSVG(o) : componentsSVG(o);
+    trackChart({ points: d.obs.length });
     const legendNote = {
       components: 'Each group of bars shows a source of variation. The dashed lines mark the 10% and 30% guidelines; the measurement bars (Gauge R&R, repeatability and reproducibility) should be short and the part-to-part bars tall.',
       rchart: 'The range of each appraiser’s repeat measurements of each part. Points above the upper limit (in red) show readings that were unusually inconsistent.',
@@ -915,7 +916,8 @@ td.poor{color:var(--danger);font-weight:700}
   els.hasHeader.addEventListener('change', () => { headerTouched = true; update(); });
   [els.title, els.lsl, els.usl, els.histSd].forEach(el => el.addEventListener('input', schedule));
   [els.method, els.k].forEach(el => el.addEventListener('change', update));
-  $('clearBtn').addEventListener('click', () => { els.data.value = ''; els.title.value = ''; els.lsl.value = ''; els.usl.value = ''; els.histSd.value = ''; headerTouched = false; els.hasHeader.checked = false; update(); els.data.focus(); });
+  trackSettings({ method: 'method', spread: 'k', chartType: 'chartType' });
+  $('clearBtn').addEventListener('click', () => { els.data.value = ''; els.title.value = ''; els.lsl.value = ''; els.usl.value = ''; els.histSd.value = ''; headerTouched = false; els.hasHeader.checked = false; update(); els.data.focus(); trackCleared(); });
   els.result.addEventListener('click', e => { const b = e.target.closest('button[data-act]'); if (b) act(b.dataset.act); });
   els.result.addEventListener('change', e => { if (e.target.id === 'chartType') { chartType = e.target.value; update(); $('chartType').focus(); } });
 
@@ -931,11 +933,12 @@ td.poor{color:var(--danger);font-weight:700}
     setExtra: x => { if (x && CHARTS[x.chartType]) chartType = x.chartType; },
     afterOpen: () => { headerTouched = true; update(); },
     ready: () => !!current,
-    exports: ['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) })),
+    exports: trackExports(['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) }))),
     template: { fileName: 'gauge-rr-data-sheet.xlsx', sheets: dataSheet }
   });
 })();
 </script>
 {% include focus-footer.html %}
+<script src="{{ '/assets/js/analytics.js' | relative_url }}" data-tool="gauge-rr"></script>
 </body>
 </html>

@@ -723,6 +723,7 @@ function renderDiagram(){
   }
   $("#canvas").innerHTML=layout(state,{scale:zoom}).svg;
   $("#zoomLabel").textContent=Math.round(zoom*100)+"%";
+  if(hasContent()) trackChart({points:(function c(a){return a.reduce((n,x)=>n+1+c(x.children||[]),0);})(state.categories.flatMap(k=>k.causes))});
 }
 $("#canvas").addEventListener("click",e=>{
   const g=e.target.closest("g.box"); if(!g) return;
@@ -840,7 +841,7 @@ function loadExampleProject(){
 }
 $("#btnNew").addEventListener("click",()=>{
   if(hasContent()&&!confirm("Start a new diagram with the standard categories? Save a project file first if you want to keep this one.")) return;
-  state=blank(); selected=null; autoFit=true; persist(); renderAll(); $("#effectText").focus();
+  state=blank(); selected=null; autoFit=true; persist(); renderAll(); $("#effectText").focus(); trackCleared();
 });
 
 function slug(){return (state.title||"cause-and-effect").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,60)||"cause-and-effect";}
@@ -891,14 +892,15 @@ FocusActions.mount({
   save:()=>saveFile(slug()+".json",projectJson(),"application/json"),
   open:()=>$("#fileIn").click(),
   ready:()=>!!(state.effect.trim()||hasCauses()),
-  exports:[
+  exports:trackExports([
     {type:"png",run:()=>exportPng()},
     {type:"svg",run:()=>saveFile(slug()+".svg",layout(state,{export:true}).svg,"image/svg+xml")},
     {type:"copyimg",run:()=>copyImage()},
     {type:"csv",label:"Cause table (.csv)",run:()=>saveFile(slug()+".csv","﻿"+tableRows().map(r=>r.map(csvCell).join(",")).join("\r\n"),"text/csv")},
     {type:"copytable",run:()=>copyTable()}
-  ]
+  ])
 });
+trackSettings({categorySet:"catSet"});
 $("#fileIn").addEventListener("change",e=>{
   const f=e.target.files&&e.target.files[0]; if(!f) return;
   const r=new FileReader();
@@ -944,5 +946,6 @@ renderAll();
 })();
 </script>
 {% include focus-footer.html %}
+<script src="{{ '/assets/js/analytics.js' | relative_url }}" data-tool="fishbone"></script>
 </body>
 </html>

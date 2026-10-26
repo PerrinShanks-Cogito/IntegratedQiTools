@@ -643,6 +643,7 @@ details.adv summary{cursor:pointer;font-weight:600;color:var(--blue);margin-bott
     const { o, model, pred } = r, sw = shapeWords(model.beta);
     o.aria = (o.title ? o.title + '. ' : '') + `${CHARTS[chartType]}. Weibull shape ${fmt(model.beta)}, scale ${fmt(model.alpha)}${o.three ? `, threshold ${fmt(model.theta)}` : ''}. ${sw.tag}.`;
     const svg = chartType === 'hist' ? histSVG(r) : chartType === 'surv' ? curveSVG(r, 'surv') : chartType === 'haz' ? curveSVG(r, 'haz') : probSVG(r);
+    trackChart({ points: r.N });
     const legend = {
       prob: 'Each dot is a failure, plotted on Weibull scales; the red line is the fitted distribution. If the Weibull distribution fits, the dots lie close to the line. The dashed grid line marks 63.2%, which the line crosses at the scale.',
       hist: 'Bars show how many items failed in each period; the red curve is the fitted distribution, scaled to the number of items.',
@@ -752,7 +753,8 @@ details.adv summary{cursor:pointer;font-weight:600;color:var(--blue);margin-bott
   els.hasHeader.addEventListener('change', () => { headerTouched = true; update(); });
   ['threshold', 'censor', 'lsl', 'usl', 'atTime', 'atPct', 'shapeIn', 'scaleIn', 'title', 'unit'].forEach(k => els[k].addEventListener('input', schedule));
   els.model.addEventListener('change', update);
-  $('clearBtn').addEventListener('click', () => { clearAll(); update(); els.data.focus(); });
+  trackSettings({ model: 'model', chartType: 'chartType' });
+  $('clearBtn').addEventListener('click', () => { clearAll(); update(); els.data.focus(); trackCleared(); });
   els.result.addEventListener('click', e => { const b = e.target.closest('button[data-act]'); if (b) act(b.dataset.act); });
   els.result.addEventListener('change', e => { if (e.target.id === 'chartType') { chartType = e.target.value; update(); $('chartType').focus(); } });
 
@@ -768,10 +770,11 @@ details.adv summary{cursor:pointer;font-weight:600;color:var(--blue);margin-bott
     setExtra: x => { if (x && CHARTS[x.chartType]) chartType = x.chartType; },
     afterOpen: () => { headerTouched = true; update(); },
     ready: () => !!current,
-    exports: ['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) }))
+    exports: trackExports(['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) })))
   });
 })();
 </script>
 {% include focus-footer.html %}
+<script src="{{ '/assets/js/analytics.js' | relative_url }}" data-tool="weibull-reliability"></script>
 </body>
 </html>

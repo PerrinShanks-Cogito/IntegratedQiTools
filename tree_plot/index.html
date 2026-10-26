@@ -574,6 +574,7 @@ tr.group td{font-weight:700;background:var(--bg)}
       aria: (title ? title + '. ' : '') + `Tree plot of ${nf.format(total)} ${valName ? lower(valName) : ''} in ${ls.length} boxes. Largest: ${tops.slice(0, 3).map(t => `${t.name} ${pct(t.value / total * 100)}%`).join(', ')}.`
     };
     const svg = renderSVG(res, o);
+    trackChart({ points: ls.length });
     current = { res, title, valName };
 
     const big = tops[0];
@@ -700,7 +701,8 @@ tr.group td{font-weight:700;background:var(--bg)}
   [els.title, els.valLabel, els.minPct].forEach(el => el.addEventListener('input', schedule));
   [els.showValues, els.showPct].forEach(el => el.addEventListener('change', update));
   $('exampleBtn2').addEventListener('click', loadExample);
-  $('clearBtn').addEventListener('click', () => { els.data.value = ''; els.title.value = ''; els.valLabel.value = ''; els.minPct.value = '0'; headerTouched = false; els.hasHeader.checked = false; update(); els.data.focus(); });
+  trackSettings({ showValues: 'showValues', showPercentages: 'showPct' });
+  $('clearBtn').addEventListener('click', () => { els.data.value = ''; els.title.value = ''; els.valLabel.value = ''; els.minPct.value = '0'; headerTouched = false; els.hasHeader.checked = false; update(); els.data.focus(); trackCleared(); });
   els.result.addEventListener('click', e => { const b = e.target.closest('button[data-act]'); if (b) act(b.dataset.act); });
 
   update(); // start empty, ready for the user's data
@@ -713,11 +715,12 @@ tr.group td{font-weight:700;background:var(--bg)}
     fields: 'section.panel[aria-labelledby="data-h"]',
     afterOpen: () => { headerTouched = true; update(); },
     ready: () => !!current,
-    exports: ['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) })),
+    exports: trackExports(['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) }))),
     template: { fileName: 'tree-plot-data-sheet.xlsx', sheets: dataSheet }
   });
 })();
 </script>
 {% include focus-footer.html %}
+<script src="{{ '/assets/js/analytics.js' | relative_url }}" data-tool="tree-plot"></script>
 </body>
 </html>
