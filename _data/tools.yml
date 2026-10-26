@@ -51,6 +51,11 @@
   group: Explore your data
   description: See the shape and spread of a set of measurements, such as waiting times or length of stay.
 
+- id: scatter_plot
+  name: Scatter plot
+  group: Explore your data
+  description: Plot pairs of values to see whether two measures are related, and how strongly.
+
 - id: box_plot
   name: Box and whisker plot
   status: Beta
@@ -74,11 +79,6 @@
   status: Beta
   group: Explore your data
   description: Compare a rate across populations of different sizes, such as falls on each ward or referrals from each GP practice, and see which stand out once size is taken into account.
-
-- id: scatter_plot
-  name: Scatter plot
-  group: Explore your data
-  description: Plot pairs of values to see whether two measures are related, and how strongly.
 
 - id: multiple_regression
   name: Multiple regression
