@@ -155,7 +155,6 @@ dialog::backdrop{background:rgba(0,20,40,.5)}
     <p class="meta">Also called a fishbone or Ishikawa diagram. The effect sits at the head and the causes branch off the bones.</p>
     <div class="actions" style="margin-top:.75rem">
       <button class="btn" id="btnOutline" type="button">Edit as outline</button>
-      <button class="btn" id="btnNew" type="button">New diagram</button>
     </div>
   </div>
   <div data-focus-actions></div>
@@ -839,10 +838,9 @@ function loadExampleProject(){
   if(hasContent()&&!confirm("Replace your current diagram with the discharge medicines example?")) return;
   state=example(); selected=null; autoFit=true; persist(); renderAll();
 }
-$("#btnNew").addEventListener("click",()=>{
-  if(hasContent()&&!confirm("Start a new diagram with the standard categories? Save a project file first if you want to keep this one.")) return;
-  state=blank(); selected=null; autoFit=true; persist(); renderAll(); $("#effectText").focus(); trackCleared();
-});
+function newProject(){
+  state=blank(); selected=null; autoFit=true; persist(); renderAll(); $("#effectText").focus();
+}
 
 function slug(){return (state.title||"cause-and-effect").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,60)||"cause-and-effect";}
 function projectJson(){
@@ -887,7 +885,7 @@ FocusActions.mount({
     const L=["Cause and effect (fishbone) diagram: "+(state.title||"untitled"),"Effect (the problem): "+(state.effect||"(not set)")];
     state.categories.forEach(c=>{L.push("Category: "+c.name);(function w(a,d){a.forEach(n=>{L.push("  ".repeat(d)+"- "+(n.text||"untitled"));w(n.children||[],d+1);});})(c.causes,1);});
     return L.join("\n");}},
-  hasData:()=>hasContent(), load:doc=>{state=normalise(doc);selected=null;autoFit=true;persist();renderAll();},
+  hasData:()=>hasContent(), reset:()=>{newProject();trackCleared();}, load:doc=>{state=normalise(doc);selected=null;autoFit=true;persist();renderAll();},
   example:()=>loadExampleProject(),
   save:()=>saveFile(slug()+".json",projectJson(),"application/json"),
   open:()=>$("#fileIn").click(),

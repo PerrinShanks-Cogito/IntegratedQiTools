@@ -1,6 +1,6 @@
 /* © Guy’s and St Thomas’ NHS Foundation Trust 2026. All rights reserved. */
 
-/* Shared FOCUS tool toolbar: Example, Open, Save and an Export menu, shown in the
+/* Shared FOCUS tool toolbar: New, Example, Open, Save and an Export menu, shown in the
    top right of every tool's page heading so they all work the same way.
 
    A tool calls FocusActions.mount({...}) once its own script has set up:
@@ -28,6 +28,12 @@
                 analysis?" link to Microsoft 365 Copilot; see focus-explain.js
      load       optional (doc) => void, for tools with their own project files
                 (those that pass save/open), so case study sample data can open
+     reset      optional () => void, to clear the tool for a new analysis. Without
+                it, New reloads the page empty (tools that keep their own state,
+                such as in localStorage, must pass this)
+
+   New asks whether to save first whenever hasData() says there is something
+   to lose (or always, for tools that don't pass hasData).
 
    Case study sample data: a link such as
      /spc_tool/?sample=/case_studies/data/late-discharges-2.json
@@ -48,6 +54,7 @@
   };
 
   const ICONS = {
+    new: '<svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" focusable="false"><path d="M11.5 2.5h-7v15h11V6.5zM11.5 2.5v4h4M10 9v6M7 12h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     example: '<svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" focusable="false"><path d="M10 2.75a5 5 0 0 0-2.9 9.07c.4.29.65.74.65 1.23v.45h4.5v-.45c0-.49.25-.94.65-1.23A5 5 0 0 0 10 2.75zM8 16.5h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     open: '<svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" focusable="false"><path d="M2.5 5.5a1 1 0 0 1 1-1h4l1.5 1.75h7.5a1 1 0 0 1 1 1v7.25a1 1 0 0 1-1 1h-13a1 1 0 0 1-1-1z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>',
     save: '<svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" focusable="false"><path d="M3.5 3.5h10l3 3v10h-13z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M6.5 3.5v4h6v-4M6.5 16.5v-5h7v5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>',
@@ -55,6 +62,7 @@
     export: '<svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" focusable="false"><path d="M10 3v9M6.5 6.5 10 3l3.5 3.5M4 12v4.5h12V12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>'
   };
 
+  const escHtml = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   const $ = (sel, root) => (typeof sel === "string" ? (root || document).querySelector(sel) : sel);
 
   /* ---------- saving and restoring form fields ---------- */
@@ -192,6 +200,7 @@
     bar.classList.add("fa-bar");
     bar.innerHTML =
       '<div class="fa-btns">' +
+        '<button type="button" class="fa-btn" data-fa="new">' + ICONS.new + '<span>New</span></button>' +
         (o.template ? '<button type="button" class="fa-btn" data-fa="template">' + ICONS.sheet + '<span>Data sheet</span></button>' : '') +
         (o.example ? '<button type="button" class="fa-btn" data-fa="example">' + ICONS.example + '<span>Example</span></button>' : '') +
         '<button type="button" class="fa-btn" data-fa="open">' + ICONS.open + '<span>Open</span></button>' +
@@ -202,7 +211,17 @@
         '</div>' +
       '</div>' +
       '<input type="file" accept=".json,application/json" class="fa-file" tabindex="-1" aria-hidden="true">' +
-      '<p class="fa-status" role="status" aria-live="polite"></p>';
+      '<p class="fa-status" role="status" aria-live="polite"></p>' +
+      '<dialog class="fa-dialog" aria-labelledby="fa-new-title" aria-describedby="fa-new-text">' +
+        '<h2 id="fa-new-title">Start a new analysis?</h2>' +
+        '<p id="fa-new-text">This clears the ' + escHtml(o.toolName || "tool") + '. Anything you haven\'t saved will be lost. ' +
+          'Save a project file first if you want to keep this one and open it again later.</p>' +
+        '<div class="fa-dialog-btns">' +
+          '<button type="button" class="fa-btn fa-primary-solid" data-fa-new="save">' + ICONS.save + '<span>Save, then start new</span></button>' +
+          '<button type="button" class="fa-btn" data-fa-new="discard">Start new without saving</button>' +
+          '<button type="button" class="fa-btn fa-quiet" data-fa-new="cancel">Cancel</button>' +
+        '</div>' +
+      '</dialog>';
     statusEl = bar.querySelector(".fa-status");
 
     const openBtn = bar.querySelector('[data-fa="open"]');
@@ -275,6 +294,52 @@
         o.example();
       });
     }
+
+    /* New: ask to save first, then clear the tool */
+    const newBtn = bar.querySelector('[data-fa="new"]');
+    const dlg = bar.querySelector(".fa-dialog");
+    newBtn.title = "Clear the tool and start a new analysis";
+    function startNew() {
+      if (o.reset) {
+        try { o.reset(); } catch (e) { return say("Sorry, the tool couldn't be cleared. Reload the page instead."); }
+        const note = document.querySelector(".fa-sample"); if (note) note.remove();
+        if (window.trackToolEvent) window.trackToolEvent("new_analysis");
+        return say("Started a new analysis.");
+      }
+      if (window.trackToolEvent) window.trackToolEvent("new_analysis");
+      // Put every field back to how the page first loaded, so the browser
+      // doesn't restore what was typed when the page loads again.
+      document.querySelectorAll("input, textarea, select").forEach(el => {
+        if (el.type === "file") el.value = "";
+        else if (el.type === "checkbox" || el.type === "radio") el.checked = el.defaultChecked;
+        else if (el.tagName === "SELECT") [...el.options].forEach(op => { op.selected = op.defaultSelected; });
+        else if ("defaultValue" in el) el.value = el.defaultValue;
+      });
+      // Load the page again without ?sample= or anything else in the address.
+      location.replace(location.pathname);
+    }
+    function closeNew() { if (dlg.open) dlg.close(); newBtn.focus(); }
+    newBtn.addEventListener("click", () => {
+      if (o.hasData && !o.hasData()) return startNew();
+      if (typeof dlg.showModal !== "function") {
+        if (confirm("Start a new analysis? Anything you haven't saved will be lost. Choose Cancel, then Save, to keep it.")) startNew();
+        return;
+      }
+      dlg.showModal();
+      dlg.querySelector('[data-fa-new="save"]').focus();
+    });
+    dlg.addEventListener("click", e => {
+      if (e.target === dlg) return closeNew(); // click on the backdrop
+      const b = e.target.closest("[data-fa-new]"); if (!b) return;
+      const act = b.dataset.faNew;
+      if (act === "cancel") return closeNew();
+      dlg.close();
+      if (act === "discard") return startNew();
+      saveBtn.click();
+      // Give the browser a moment to start the download before the page reloads.
+      setTimeout(startNew, o.reset ? 0 : 600);
+    });
+    dlg.addEventListener("cancel", e => { e.preventDefault(); closeNew(); });
 
     /* Save */
     saveBtn.addEventListener("click", () => {

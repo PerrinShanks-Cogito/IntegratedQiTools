@@ -58,6 +58,22 @@
 .fa-list button:disabled{opacity:.5; cursor:not-allowed}
 .fa-list small{display:block; font-weight:400; font-size:.82rem; color:var(--fa-muted); margin-top:.1rem}
 
+/* "Start a new analysis?" dialog, opened by New */
+.fa-bar .fa-dialog{
+  width:min(30rem, calc(100vw - 2rem)); margin:auto; padding:1.25rem 1.25rem 1rem;
+  background:var(--fa-surface); color:var(--fa-ink); border:1px solid var(--fa-line); border-radius:8px;
+  box-shadow:0 16px 40px rgba(0,20,40,.3); text-align:left;
+}
+.fa-bar .fa-dialog::backdrop{background:rgba(0,20,40,.45)}
+.fa-dialog h2{margin:0 0 .5rem; font-size:1.2rem; line-height:1.3; color:var(--fa-ink)}
+.fa-dialog p{margin:0 0 1rem; color:var(--fa-ink); line-height:1.45}
+.fa-dialog-btns{display:flex; flex-wrap:wrap; gap:.5rem}
+.fa-bar .fa-dialog .fa-btn{white-space:normal}
+.fa-bar .fa-btn.fa-primary-solid{background:var(--fa-blue); color:var(--fa-on-blue)}
+.fa-bar .fa-btn.fa-primary-solid:hover{background:var(--fa-blue-dark); border-color:var(--fa-blue-dark)}
+.fa-bar .fa-btn.fa-quiet{border-color:transparent}
+.fa-bar .fa-btn.fa-quiet:hover{border-color:var(--fa-line)}
+
 .fa-file{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; opacity:0}
 .fa-status{margin:0; min-height:1.2em; font-size:.88rem; color:var(--fa-muted); text-align:right; max-width:28rem}
 .fa-status:empty{display:none}
