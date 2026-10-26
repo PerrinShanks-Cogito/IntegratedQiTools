@@ -723,6 +723,7 @@ td.yes{color:var(--green);font-weight:700}
       ` ${sig ? 'The means differ' : 'No clear difference between the means'}, ${pIs(res.p)}.`;
     current = { stats, o, res, cls, wel, spread, pairs };
     const svg = renderSVG(stats, o);
+    trackChart({ points: nVals });
 
     const headline = sig ? 'The group means <strong>differ</strong>' : 'No clear difference between the group means';
     const sub = `${o.useWelch ? 'Welch’s' : 'One-way'} ANOVA of ${nVals} values in ${stats.length} groups, at the ${Math.round(alpha * 100)}% significance level.`;
@@ -824,7 +825,8 @@ td.yes{color:var(--green);font-weight:700}
   [els.title, els.valLabel].forEach(el => el.addEventListener('input', schedule));
   [els.method, els.alpha, els.order, els.showPoints, els.zero].forEach(el => el.addEventListener('change', update));
   $('exampleBtn2').addEventListener('click', loadExample);
-  $('clearBtn').addEventListener('click', () => { els.data.value = ''; els.title.value = ''; els.valLabel.value = ''; headerTouched = false; els.hasHeader.checked = false; update(); els.data.focus(); });
+  trackSettings({ method: 'method', alpha: 'alpha', order: 'order', showPoints: 'showPoints', zeroAxis: 'zero' });
+  $('clearBtn').addEventListener('click', () => { els.data.value = ''; els.title.value = ''; els.valLabel.value = ''; headerTouched = false; els.hasHeader.checked = false; update(); els.data.focus(); trackCleared(); });
   els.result.addEventListener('click', e => { const b = e.target.closest('button[data-act]'); if (b) act(b.dataset.act); });
 
   update(); // start empty, ready for the user's data
@@ -837,10 +839,11 @@ td.yes{color:var(--green);font-weight:700}
     fields: 'section.panel[aria-labelledby="data-h"]',
     afterOpen: () => { headerTouched = true; update(); },
     ready: () => !!current,
-    exports: ['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) }))
+    exports: trackExports(['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) })))
   });
 })();
 </script>
 {% include focus-footer.html %}
+<script src="{{ '/assets/js/analytics.js' | relative_url }}" data-tool="anova"></script>
 </body>
 </html>

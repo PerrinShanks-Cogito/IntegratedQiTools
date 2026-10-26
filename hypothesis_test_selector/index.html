@@ -1167,6 +1167,7 @@ button.link:hover{background:none;color:var(--navy)}
     els.pick.value = r.node.test ? r.id : '';
     answers = r.steps.map(s => s.a);
     renderAsk(r); renderRoute(r); renderResult(r); renderTree(r);
+    if (r.node.test) trackChart({ points: r.steps.length, test: r.id });
   }
   function choose(a) { answers.push(a); update(); focusAsk(); }
   function focusAsk() {
@@ -1227,6 +1228,7 @@ button.link:hover{background:none;color:var(--navy)}
     if (a === 'runexample' || a === 'runclear') {
       runs[current.id] = a === 'runexample' ? RUN[current.id].example() : {};
       renderResult(current);
+      if (a === 'runclear') trackCleared();
       return a === 'runexample' ? status('Example data added.') : $('run-data') ? $('run-data').focus() : null;
     }
     if (a === 'runcopy') return lastRun && copyText(lastRun.res.copy).then(ok => status(ok ? 'Copied.' : 'Copy was blocked.'));
@@ -1281,8 +1283,9 @@ button.link:hover{background:none;color:var(--navy)}
     answers = ROUTES[b.dataset.leaf].slice(); update();
     els.result.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
+  trackSettings({ test: 'pickTest', alpha: 'run-alpha' });
   els.back.addEventListener('click', () => { answers.pop(); update(); focusAsk(); });
-  $('clearBtn').addEventListener('click', () => { answers = []; runs = {}; els.title.value = ''; update(); focusAsk(); });
+  $('clearBtn').addEventListener('click', () => { answers = []; runs = {}; els.title.value = ''; update(); focusAsk(); trackCleared(); });
   // Redraw only the route chart, so typing a title doesn't disturb the data pasted below it
   els.title.addEventListener('input', () => { const c = $('chart'); if (c) c.innerHTML = routeSVG(walk(answers)); });
   els.result.addEventListener('click', e => { const b = e.target.closest('button[data-act]'); if (b) act(b.dataset.act); });
@@ -1324,10 +1327,11 @@ button.link:hover{background:none;color:var(--navy)}
     },
     afterOpen: () => update(),
     ready: () => !!current,
-    exports: ['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) }))
+    exports: trackExports(['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) })))
   });
 })();
 </script>
 {% include focus-footer.html %}
+<script src="{{ '/assets/js/analytics.js' | relative_url }}" data-tool="hypothesis-test-selector"></script>
 </body>
 </html>

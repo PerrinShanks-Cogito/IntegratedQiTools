@@ -542,6 +542,7 @@ details.values .tablewrap{margin-top:.6rem}
     const plain = k.none ? 'No clear relationship' : `${cap(k.word)} ${k.dir} correlation`;
     const sub = `r = ${f2(st.r)} across ${st.n} pairs${k.none ? (st.p >= 0.05 ? ', which could easily be chance' : '') : `. ${cap(yLabel.toLowerCase())} tends to ${st.r > 0 ? 'rise' : 'fall'} as ${xLabel.toLowerCase()} rises`}.`;
 
+    trackChart({ points: p.rows.length });
     const svg = renderSVG(p, m, {
       title, xLabel, yLabel, showTrend: els.showTrend.checked, byGroup: els.byGroup.checked && p.hasGroup,
       flagOdd: els.flagOdd.checked, zero: els.zero.checked,
@@ -658,7 +659,8 @@ details.values .tablewrap{margin-top:.6rem}
   ['title', 'xLabel', 'yLabel'].forEach(id => els[id].addEventListener('input', schedule));
   ['showTrend', 'byGroup', 'flagOdd', 'zero'].forEach(id => els[id].addEventListener('change', update));
   $('exampleBtn2').addEventListener('click', loadExample);
-  $('clearBtn').addEventListener('click', () => { els.data.value = ''; els.title.value = ''; els.xLabel.value = ''; els.yLabel.value = ''; headerTouched = false; els.hasHeader.checked = false; update(); els.data.focus(); });
+  trackSettings({ showTrend: 'showTrend', colourByGroup: 'byGroup', highlightOdd: 'flagOdd', zeroAxes: 'zero' });
+  $('clearBtn').addEventListener('click', () => { els.data.value = ''; els.title.value = ''; els.xLabel.value = ''; els.yLabel.value = ''; headerTouched = false; els.hasHeader.checked = false; update(); els.data.focus(); trackCleared(); });
   els.result.addEventListener('click', e => { const b = e.target.closest('button[data-act]'); if (b) act(b.dataset.act); });
 
 
@@ -672,10 +674,11 @@ details.values .tablewrap{margin-top:.6rem}
     fields: 'section.panel[aria-labelledby="data-h"]',
     afterOpen: () => update(),
     ready: () => !!current,
-    exports: ['png', 'svg', 'copyimg', 'csv', 'copytable'].map(type => ({ type, run: () => act(type) }))
+    exports: trackExports(['png', 'svg', 'copyimg', 'csv', 'copytable'].map(type => ({ type, run: () => act(type) })))
   });
 })();
 </script>
 {% include focus-footer.html %}
+<script src="{{ '/assets/js/analytics.js' | relative_url }}" data-tool="scatter-plot"></script>
 </body>
 </html>

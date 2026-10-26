@@ -687,6 +687,7 @@ td.poor{color:var(--warn);font-weight:700}
     const what = res.allStd ? 'every rating matched the standard' : res.between ? 'every appraiser agreed' : `${d.apps[0]} agreed with themselves`;
     const o = { title, aria: (title ? title + '. ' : '') + `${CHARTS[chartType]}. ${d.samples.length} cases, ${d.nApp} appraisers, ${d.trials} trials. ${what} on ${pc(top.p)} of cases.` };
     const svg = chartType === 'agreement' && canAgree ? agreementSVG(o) : gridSVG(o);
+    trackChart({ points: d.samples.length });
 
     const g2 = rating(top.coef);
     const headline = res.allStd
@@ -820,7 +821,8 @@ td.poor{color:var(--warn);font-weight:700}
     const again = els.cats.querySelector(`button[data-move="${j}"][data-dir="${b.dataset.dir}"]`) || els.cats.querySelector(`button[data-move="${j}"]:not([disabled])`);
     if (again) again.focus();
   });
-  $('clearBtn').addEventListener('click', () => { els.data.value = ''; els.title.value = ''; resetAuto(); update(); els.data.focus(); });
+  trackSettings({ trials: 'trials', ordered: 'ordered', chartType: 'chartType' });
+  $('clearBtn').addEventListener('click', () => { els.data.value = ''; els.title.value = ''; resetAuto(); update(); els.data.focus(); trackCleared(); });
   els.result.addEventListener('click', e => { const b = e.target.closest('button[data-act]'); if (b) act(b.dataset.act); });
   els.result.addEventListener('change', e => { if (e.target.id === 'chartType') { chartType = e.target.value; update(); $('chartType').focus(); } });
 
@@ -836,11 +838,12 @@ td.poor{color:var(--warn);font-weight:700}
     setExtra: x => { if (x) { if (Array.isArray(x.catOrder)) catOrder = x.catOrder.map(String); if (CHARTS[x.chartType]) chartType = x.chartType; } },
     afterOpen: () => { Object.keys(touched).forEach(k => { touched[k] = true; }); update(); },
     ready: () => !!current,
-    exports: ['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) })),
+    exports: trackExports(['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) }))),
     template: { fileName: 'attribute-agreement-data-sheet.xlsx', sheets: dataSheet }
   });
 })();
 </script>
 {% include focus-footer.html %}
+<script src="{{ '/assets/js/analytics.js' | relative_url }}" data-tool="attribute-agreement"></script>
 </body>
 </html>

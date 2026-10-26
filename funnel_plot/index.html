@@ -609,6 +609,7 @@ td.flag{color:var(--warn);font-weight:700}
     o.aria = (o.chartTitle ? o.chartTitle + '. ' : '') + `Funnel plot of ${plural(a.rows.length, 'population', 'populations')}. Centre line ${rateText(a.p, o)}. ` +
       (outs.length ? `Outside the 99.7% limits: ${outs.slice(0, 10).map(r => `${r.name} (${STATUS[r.status].toLowerCase()})`).join(', ')}${outs.length > 10 ? ' and more' : ''}.` : 'Every population is within the 99.7% limits.');
     const drawn = renderSVG(a, o);
+    trackChart({ points: a.rows.length });
     if (drawn.hidden) note += ` ${plural(drawn.hidden, 'population is', 'populations are')} outside the horizontal axis range you set, so not drawn.`;
     els.detected.textContent = note;
     current = { a, o };
@@ -720,9 +721,10 @@ td.flag{color:var(--warn);font-weight:700}
   [els.title, els.dates, els.measure, els.popLabel, els.xMin, els.xMax].forEach(el => el.addEventListener('input', schedule));
   [els.scale, els.centre, els.showWarn, els.labels].forEach(el => el.addEventListener('change', update));
   $('exampleBtn2').addEventListener('click', loadExample);
+  trackSettings({ scale: 'scale', centre: 'centre', showWarningLimits: 'showWarn', labelOutliers: 'labels' });
   $('clearBtn').addEventListener('click', () => {
     ['data', 'title', 'dates', 'measure', 'popLabel', 'xMin', 'xMax'].forEach(k => { els[k].value = ''; });
-    headerTouched = false; els.hasHeader.checked = false; update(); els.data.focus();
+    headerTouched = false; els.hasHeader.checked = false; update(); els.data.focus(); trackCleared();
   });
   els.result.addEventListener('click', e => { const b = e.target.closest('button[data-act]'); if (b) act(b.dataset.act); });
 
@@ -736,10 +738,11 @@ td.flag{color:var(--warn);font-weight:700}
     fields: 'section.panel[aria-labelledby="data-h"]',
     afterOpen: () => { headerTouched = true; update(); },
     ready: () => !!current,
-    exports: ['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) }))
+    exports: trackExports(['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) })))
   });
 })();
 </script>
 {% include focus-footer.html %}
+<script src="{{ '/assets/js/analytics.js' | relative_url }}" data-tool="funnel-plot"></script>
 </body>
 </html>

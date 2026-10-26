@@ -843,6 +843,7 @@ details.read summary{cursor:pointer;font-weight:600;color:var(--blue);margin-bot
       els.empty.querySelector('p').textContent = data ? 'No comments found yet. Check the comments column, or paste one comment per row.' : 'Paste your survey comments on the left to start.';
       return;
     }
+    trackChart({ points: rows.length });
     fillFilters();
     if (tab === 'overview') renderOverview();
     else if (tab === 'cloud') renderCloud();
@@ -1625,8 +1626,9 @@ details.read summary{cursor:pointer;font-weight:600;color:var(--blue);margin-bot
   $('clearBtn').addEventListener('click', () => {
     if (Object.keys(state.coding).length && !confirm('Clear your comments and all your coding?')) return;
     els.data.value = ''; els.question.value = ''; state = blankState(); headerTouched = false; els.hasHeader.checked = false; chosenWord = null;
-    update(); els.data.focus();
+    update(); els.data.focus(); trackCleared();
   });
+  trackSettings({ sample: 'sample', cloudSize: 'wcSize', cloudUnit: 'wcUnit', leaveOutCommonWords: 'wcStop', groupPlurals: 'wcPlural', approach: 'approach', hidePersonalDetails: 'redact' });
   els.question.addEventListener('input', () => schedule(render));
   document.querySelectorAll('input[name=sample]').forEach(r => r.addEventListener('change', () => { page = 0; render(); }));
   $('drawBtn').addEventListener('click', drawSample);
@@ -1777,7 +1779,7 @@ details.read summary{cursor:pointer;font-weight:600;color:var(--blue);margin-bot
       L.push('', 'The comments themselves are not included, to protect people’s privacy.');
       return L.join('\n');
     } },
-    exports: [
+    exports: trackExports([
       { type: 'png', label: 'Word cloud (PNG)', run: () => act('png', 'cloud') },
       { type: 'svg', label: 'Word cloud (SVG)', run: () => act('svg', 'cloud') },
       { type: 'copyimg', label: 'Copy word cloud', run: () => act('copyimg', 'cloud') },
@@ -1786,7 +1788,7 @@ details.read summary{cursor:pointer;font-weight:600;color:var(--blue);margin-bot
       { type: 'csv', label: 'Coded responses (.csv)', hint: 'A column for each code, with theme totals for a Pareto chart. Opens in Excel', run: () => act('csv') },
       { type: 'copytable', label: 'Copy coded responses', run: () => act('copytable') },
       { type: 'copysummary', label: 'Copy findings', hint: 'Method, findings and quotes, as text', run: () => act('copysummary') }
-    ],
+    ]),
     template: {
       fileName: () => fileName().replace(/^qualitative-analysis$/, 'qualitative') + '-coding-sheet.xlsx',
       title: 'Download a spreadsheet to code comments in, with a column for each code',
@@ -1796,5 +1798,6 @@ details.read summary{cursor:pointer;font-weight:600;color:var(--blue);margin-bot
 })();
 </script>
 {% include focus-footer.html %}
+<script src="{{ '/assets/js/analytics.js' | relative_url }}" data-tool="qualitative-analysis"></script>
 </body>
 </html>

@@ -913,6 +913,7 @@ td.yes{color:var(--green);font-weight:700}
       });
     }
     renderTerms();
+    trackChart({ points: obs.length });
 
     const title = state.title.trim();
     if (!CHARTS[state.chartType]) state.chartType = 'pareto';
@@ -1109,6 +1110,7 @@ td.yes{color:var(--green);font-weight:700}
     if (e.target.checked) include(key); else exclude(key);
     update();
   });
+  trackSettings({ factors: 'nFactors', repeats: 'reps', goal: 'goal', alpha: 'alpha', runView: 'view', chartType: 'chartType' });
   $('reduceBtn').addEventListener('click', () => {
     if (!observations().length) return status('Enter some results first.');
     reduce(); update(); status('Model reduced to the terms that make a clear difference.');
@@ -1120,7 +1122,7 @@ td.yes{color:var(--green);font-weight:700}
   });
   $('clearBtn').addEventListener('click', () => {
     if (hasResults() && !confirm('Clear your factors and results and start again?')) return;
-    restore(null); renderAll();
+    restore(null); renderAll(); trackCleared();
   });
   els.runs.addEventListener('input', e => {
     const s = e.target.dataset.std; if (!s) return;
@@ -1164,10 +1166,11 @@ td.yes{color:var(--green);font-weight:700}
     setExtra: x => restore(x),
     afterOpen: () => renderAll(),
     ready: () => !!current,
-    exports: ['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) }))
+    exports: trackExports(['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) })))
   });
 })();
 </script>
 {% include focus-footer.html %}
+<script src="{{ '/assets/js/analytics.js' | relative_url }}" data-tool="design-of-experiments"></script>
 </body>
 </html>

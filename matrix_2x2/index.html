@@ -729,6 +729,7 @@ select:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px var(--ye
     const yLabel = els.yLabel.value.trim() || d.yHead || p.y.name;
     const sm = summarise(d, xLabel, yLabel);
     const plain = sm.head.replace(/<[^>]+>/g, '');
+    trackChart({ points: d.items.length });
     const svg = renderSVG(d, {
       title, xLabel, yLabel, showNames: els.showNames.checked,
       aria: (title ? title + '. ' : '') + `2x2 matrix of ${count(d.items.length, p.item)}, ${xLabel} across and ${yLabel} up. ${plain}.`
@@ -911,13 +912,14 @@ select:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px var(--ye
     schedule();
   });
   els.hasHeader.addEventListener('change', () => { headerTouched = true; update(); });
+  trackSettings({ matrixType: 'preset', scale: 'scale', showNames: 'showNames' });
   els.preset.addEventListener('change', () => { applyPreset(); update(); });
   ['cX', 'cY', 'cTL', 'cTR', 'cBL', 'cBR'].forEach(id => els[id].addEventListener('input', () => { applyPreset(); schedule(); }));
   ['title', 'xLabel', 'yLabel', 'xSplit', 'ySplit'].forEach(id => els[id].addEventListener('input', schedule));
   els.showNames.addEventListener('change', update);
   document.querySelectorAll('input[name=scale]').forEach(r => r.addEventListener('change', update));
   $('exampleBtn2').addEventListener('click', loadExample);
-  $('clearBtn').addEventListener('click', () => { ['data', 'title', 'xLabel', 'yLabel', 'xSplit', 'ySplit'].forEach(id => { els[id].value = ''; }); headerTouched = false; els.hasHeader.checked = false; update(); els.data.focus(); });
+  $('clearBtn').addEventListener('click', () => { ['data', 'title', 'xLabel', 'yLabel', 'xSplit', 'ySplit'].forEach(id => { els[id].value = ''; }); headerTouched = false; els.hasHeader.checked = false; update(); els.data.focus(); trackCleared(); });
   els.result.addEventListener('click', e => { const b = e.target.closest('button[data-act]'); if (b) act(b.dataset.act); });
 
   applyPreset();
@@ -931,7 +933,7 @@ select:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px var(--ye
     fields: 'section.panel[aria-labelledby="data-h"]',
     afterOpen: () => { headerTouched = true; applyPreset(); update(); },
     ready: () => !!current,
-    exports: ['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) })),
+    exports: trackExports(['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) }))),
     template: {
       fileName: () => slug(els.preset.value.replace(/_/g, '-')) + '-data-sheet.xlsx',
       title: 'Download a spreadsheet to list your items and score them for this matrix type',
@@ -941,5 +943,6 @@ select:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px var(--ye
 })();
 </script>
 {% include focus-footer.html %}
+<script src="{{ '/assets/js/analytics.js' | relative_url }}" data-tool="matrix-2x2"></script>
 </body>
 </html>

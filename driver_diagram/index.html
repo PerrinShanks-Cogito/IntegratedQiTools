@@ -681,6 +681,7 @@ function renderDiagram(){
   }
   $("#canvas").innerHTML=layout(state,{scale:zoom}).svg;
   $("#zoomLabel").textContent=Math.round(zoom*100)+"%";
+  if(hasContent()) trackChart({points:(function c(a){return a.reduce((n,x)=>n+1+c(x.children||[]),0);})(state.drivers)});
 }
 $("#canvas").addEventListener("click",e=>{
   const g=e.target.closest("g.box"); if(!g) return;
@@ -787,7 +788,7 @@ function loadExampleProject(){
 }
 $("#btnNew").addEventListener("click",()=>{
   if(hasContent()&&!confirm("Start a new, empty diagram? Export a project file first if you want to keep this one.")) return;
-  state=blank(); selected=null; autoFit=true; persist(); renderAll(); $("#goalText").focus();
+  state=blank(); selected=null; autoFit=true; persist(); renderAll(); $("#goalText").focus(); trackCleared();
 });
 function hasContent(){return !!(state.goal.text.trim()||state.drivers.length||state.balancing.length);}
 
@@ -804,10 +805,10 @@ FocusActions.mount({
   save:()=>saveFile(slug()+".json",JSON.stringify(state,null,2),"application/json"),
   open:()=>$("#fileIn").click(),
   ready:()=>hasContent(),
-  exports:[
+  exports:trackExports([
     {type:"png",run:()=>exportPng()},
     {type:"svg",run:()=>saveFile(slug()+".svg",layout(state,{export:true}).svg,"image/svg+xml")}
-  ]
+  ])
 });
 function slug(){return (state.title||"driver-diagram").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,60)||"driver-diagram";}
 function exportPng(){
@@ -865,5 +866,6 @@ renderAll();
 })();
 </script>
 {% include focus-footer.html %}
+<script src="{{ '/assets/js/analytics.js' | relative_url }}" data-tool="driver-diagram"></script>
 </body>
 </html>

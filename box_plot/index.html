@@ -567,6 +567,7 @@ td.warn{color:var(--warn);font-weight:600}
     o.aria = (title ? title + '. ' : '') + `Box and whisker plot of ${nVals} values in ${stats.length} group${stats.length === 1 ? '' : 's'}. ` +
       stats.slice(0, 8).map(s => `${s.name}: median ${nf.format(s.med)}, quartiles ${nf.format(s.q1)} to ${nf.format(s.q3)}`).join('; ') + (stats.length > 8 ? '; and more.' : '.');
     const svg = renderSVG(stats, o);
+    trackChart({ points: nVals });
     current = { stats, o };
 
     const all = p.groups.flatMap(g => g.values).sort((a, b) => a - b);
@@ -679,7 +680,8 @@ td.warn{color:var(--warn);font-weight:600}
   [els.title, els.valLabel].forEach(el => el.addEventListener('input', schedule));
   [els.order, els.whiskers, els.showMean, els.showPoints, els.zero].forEach(el => el.addEventListener('change', update));
   $('exampleBtn2').addEventListener('click', loadExample);
-  $('clearBtn').addEventListener('click', () => { els.data.value = ''; els.title.value = ''; els.valLabel.value = ''; headerTouched = false; els.hasHeader.checked = false; update(); els.data.focus(); });
+  trackSettings({ order: 'order', whiskers: 'whiskers', showMean: 'showMean', showPoints: 'showPoints', zeroAxis: 'zero' });
+  $('clearBtn').addEventListener('click', () => { els.data.value = ''; els.title.value = ''; els.valLabel.value = ''; headerTouched = false; els.hasHeader.checked = false; update(); els.data.focus(); trackCleared(); });
   els.result.addEventListener('click', e => { const b = e.target.closest('button[data-act]'); if (b) act(b.dataset.act); });
 
   update(); // start empty, ready for the user's data
@@ -692,10 +694,11 @@ td.warn{color:var(--warn);font-weight:600}
     fields: 'section.panel[aria-labelledby="data-h"]',
     afterOpen: () => { headerTouched = true; update(); },
     ready: () => !!current,
-    exports: ['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) }))
+    exports: trackExports(['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) })))
   });
 })();
 </script>
 {% include focus-footer.html %}
+<script src="{{ '/assets/js/analytics.js' | relative_url }}" data-tool="box-plot"></script>
 </body>
 </html>

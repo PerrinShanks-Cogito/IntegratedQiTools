@@ -696,6 +696,7 @@ function renderCanvas(){
   const svg=canvasEl.querySelector("svg");
   svg.setAttribute("width",Math.round(Lr.W*zoom)); svg.setAttribute("height",Math.round(Lr.H*zoom));
   $("#zoomLabel").textContent=Math.round(zoom*100)+"%";
+  if(hasContent()) trackChart({points:m.steps.length,map:state.active});
 }
 canvasEl.addEventListener("click",e=>{
   const st=e.target.closest("[data-start]"); if(st){startRedesign(st.dataset.start);return;}
@@ -1015,7 +1016,7 @@ function loadExampleProject(){
 }
 $("#btnNew").addEventListener("click",()=>{
   if(hasContent()&&!confirm("Start a new, empty map? Export a project file first if you want to keep this one.")) return;
-  const v=state.view; state=blank(); state.view=v; selected=null; autoFit=true; persist(); renderAll(); $("#title").focus();
+  const v=state.view; state=blank(); state.view=v; selected=null; autoFit=true; persist(); renderAll(); $("#title").focus(); trackCleared();
 });
 /* Shared toolbar (Open, Save, Export) */
 function withMap(fn){const m=map(); if(!m){toast("There's no redesign to export. Switch to the current map.");return;} fn(m);}
@@ -1026,7 +1027,7 @@ FocusActions.mount({
   example:()=>loadExampleProject(),
   save:()=>saveFile(slug()+".json",JSON.stringify(state,null,2),"application/json"),
   open:()=>$("#fileIn").click(),
-  exports:[
+  exports:trackExports([
     {type:"png",hint:"The map you're viewing, for slides",run:()=>withMap(m=>exportPng(m))},
     {type:"svg",run:()=>withMap(m=>saveFile(slug()+suffix()+".svg",layout(m,{export:true}).svg,"image/svg+xml"))},
     {type:"csv",label:"Step table (.csv)",run:()=>withMap(m=>{
@@ -1034,8 +1035,9 @@ FocusActions.mount({
       const csv=toTable(m).split("\n").map((r,i)=>[i?i:"Step number"].concat(r.split("\t")).map(q).join(",")).join("\n");
       saveFile(slug()+suffix()+".csv","\uFEFF"+csv,"text/csv");
     })}
-  ]
+  ])
 });
+trackSettings({timeline:"vTimeline",issues:"vIssues",handoffs:"vHandoffs",timeUnit:"unitSel"});
 function slug(){return (state.title||"process-map").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,60)||"process-map";}
 function suffix(){return state.active==="future"?"-redesign":"-current";}
 function exportPng(m){
@@ -1096,5 +1098,6 @@ if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>renderCan
 })();
 </script>
 {% include focus-footer.html %}
+<script src="{{ '/assets/js/analytics.js' | relative_url }}" data-tool="process-map"></script>
 </body>
 </html>

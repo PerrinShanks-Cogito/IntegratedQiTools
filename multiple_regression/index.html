@@ -731,6 +731,7 @@ td.sig{font-weight:700}
     if (!CHARTS[chartType]) chartType = 'effects';
     const o = { title, yName, flagOdd: els.flagOdd.checked, aria: (title ? title + '. ' : '') + `${CHARTS[chartType]} for a regression of ${yName} on ${m.k} factors. R squared ${Math.round(m.r2 * 100)}%, ${m.n} rows.` };
     const svg = chartType === 'effects' ? effectsSVG(m, o) : pointsSVG(d, m, o, chartType);
+    trackChart({ points: d.rows.length, factors: d.xs.length });
     current = { d, m, title, yName };
 
     const cs = m.coefs;
@@ -864,8 +865,9 @@ td.sig{font-weight:700}
   els.picker.addEventListener('change', update);
   els.flagOdd.addEventListener('change', update);
   $('exampleBtn2').addEventListener('click', loadExample);
-  $('clearBtn').addEventListener('click', () => { els.data.value = ''; els.title.value = ''; headerTouched = false; els.hasHeader.checked = false; colSig = ''; whatIf = {}; els.picker.innerHTML = ''; els.yCol.innerHTML = ''; update(); els.data.focus(); });
+  $('clearBtn').addEventListener('click', () => { els.data.value = ''; els.title.value = ''; headerTouched = false; els.hasHeader.checked = false; colSig = ''; whatIf = {}; els.picker.innerHTML = ''; els.yCol.innerHTML = ''; update(); els.data.focus(); trackCleared(); });
   els.result.addEventListener('click', e => { const b = e.target.closest('button[data-act]'); if (b) act(b.dataset.act); });
+  trackSettings({ highlightUnusual: 'flagOdd', chartType: 'chartType' });
   els.result.addEventListener('change', e => { if (e.target.id === 'chartType') { chartType = e.target.value; update(); } });
   els.result.addEventListener('input', e => { const k = e.target.dataset && e.target.dataset.wi; if (k) { whatIf[k] = e.target.value; updatePrediction(); } });
   els.result.addEventListener('change', e => { const k = e.target.dataset && e.target.dataset.wi; if (k) { whatIf[k] = e.target.value; updatePrediction(); } });
@@ -882,10 +884,11 @@ td.sig{font-weight:700}
     setExtra: x => { if (x) { if (CHARTS[x.chartType]) chartType = x.chartType; if (x.whatIf) whatIf = Object.assign({}, x.whatIf); } },
     afterOpen: () => update(),
     ready: () => !!current,
-    exports: ['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) }))
+    exports: trackExports(['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) })))
   });
 })();
 </script>
 {% include focus-footer.html %}
+<script src="{{ '/assets/js/analytics.js' | relative_url }}" data-tool="multiple-regression"></script>
 </body>
 </html>

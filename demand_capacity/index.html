@@ -812,6 +812,7 @@ function renderAll(){
   $('#outTitle').textContent = svc ? `${svc}: demand and capacity` : 'Your demand and capacity summary';
   statusLines(m);
   if (!m.ready){ out.innerHTML = emptyState(m); return; }
+  trackChart({ points: m.rows.length });
   const u = unitWord(m, true), U = m.unit;
   const v = verdict(m);
   const pl = `${Math.round(m.pLow * 100)}th`;
@@ -1075,15 +1076,16 @@ FocusActions.mount({
   setExtra: x => { state.excluded = new Set((x && x.excluded) || []); },
   afterOpen: () => { clearTimeout(timer); syncFields(); renderAll(); },
   ready: () => !!(state.m && state.m.ready),
-  exports: [
+  exports: trackExports([
     { type: 'png', run: () => doExport('png') },
     { type: 'svg', run: () => doExport('svg') },
     { type: 'copyimg', run: () => doExport('copyimg') },
     { type: 'csv', run: () => doExport('csv'), hint: 'Week by week required and available capacity' },
     { type: 'copytable', run: () => doExport('copytable') },
     { type: 'copysummary', run: () => doExport('copysummary') }
-  ]
+  ])
 });
+trackSettings({ unit: 'unit', percentile: 'pctLower', sameDay: 'sameDay', seasons: 'seasons', capacityView: 'capView', showPercentiles: 'optPct', showSameDay: 'optSame' });
 
 let rz; new ResizeObserver(() => { clearTimeout(rz); rz = setTimeout(drawCharts, 80); }).observe(out);
 if (window.matchMedia) window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', drawCharts);
@@ -1092,5 +1094,6 @@ syncFields(); renderAll();
 })();
 </script>
 {% include focus-footer.html %}
+<script src="{{ '/assets/js/analytics.js' | relative_url }}" data-tool="demand-capacity"></script>
 </body>
 </html>
