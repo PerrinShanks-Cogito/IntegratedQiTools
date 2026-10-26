@@ -159,6 +159,9 @@ textarea{min-height:110px;font:inherit}
 .clip b{display:block;font-size:.95rem;line-height:1.3;overflow-wrap:anywhere}
 .clip small{display:block;color:var(--muted);font-size:.82rem}
 .clip .btns{margin-top:.35rem}
+.clip .on{display:inline-block;margin-top:.2rem;padding:0 .4rem;border-radius:3px;background:#E3F1E6;color:#00401E;font-size:.8rem;font-weight:600}
+.tidy{margin:0 0 .6rem}
+.tidy p{margin:0 0 .35rem;font-size:.92rem}
 .btns button.sm{padding:.25rem .6rem;font-size:.88rem}
 .sub{font-size:1rem;margin:1.1rem 0 .5rem}
 .placed{list-style:none;margin:0;padding:0;display:grid;gap:.6rem}
@@ -252,6 +255,7 @@ textarea{min-height:110px;font:inherit}
       <p class="hint">A PNG or JPG from anywhere, such as a photo or a chart from Excel. You can also paste a picture onto this page.</p>
       <h3 class="sub">From your other tools</h3>
       <p class="hint">In any tool, choose <b>Export</b>, then <b>Add to A3 report</b>. The chart is kept in this browser and shows up here.</p>
+      <div class="tidy" id="tidy"></div>
       <ul class="tray" id="tray"></ul>
     </section>
 
@@ -277,7 +281,7 @@ textarea{min-height:110px;font:inherit}
 
 <section class="notes" aria-label="About A3 reports">
   <p><b>What an A3 report is:</b> a way of telling the story of an improvement project on one sheet of A3 paper, from the problem and its root causes to the changes tested and how they will be sustained. Keeping it to one page makes you focus on what matters, and makes it easy to share on a ward, at a huddle or at a poster event.</p>
-  <p><b>Adding charts and pictures:</b> build a chart in any FOCUS tool, such as a <a href="{{ '/run_chart/' | relative_url }}">run chart</a>, <a href="{{ '/spc_tool/' | relative_url }}">SPC chart</a>, <a href="{{ '/pareto_chart/' | relative_url }}">Pareto chart</a> or <a href="{{ '/fishbone_diagram/' | relative_url }}">fishbone diagram</a>, then choose <b>Export</b> and <b>Add to A3 report</b>. Use <b>Add a picture</b>, or paste, for anything else. Charts from the tools are kept in this browser on this computer until you delete them. Everything placed on the report is saved in its project file, so use <b>Save</b> to keep it and open it again on another computer.</p>
+  <p><b>Adding charts and pictures:</b> build a chart in any FOCUS tool, such as a <a href="{{ '/run_chart/' | relative_url }}">run chart</a>, <a href="{{ '/spc_tool/' | relative_url }}">SPC chart</a>, <a href="{{ '/pareto_chart/' | relative_url }}">Pareto chart</a> or <a href="{{ '/fishbone_diagram/' | relative_url }}">fishbone diagram</a>, then choose <b>Export</b> and <b>Add to A3 report</b>. Use <b>Add a picture</b>, or paste, for anything else. Charts from the tools are kept in this browser on this computer until you delete them. Adding the same chart again updates it rather than adding a copy, and the list offers to remove charts already on the report and charts over 3 months old. Everything placed on the report is saved in its project file, so use <b>Save</b> to keep it and open it again on another computer.</p>
   <p><b>Fitting it on the page:</b> the report shares out the space between sections. When there is too much to fit, it makes the charts smaller first, then the text, down to 9pt. If it still doesn't fit, it tells you which column to shorten. <b>Export</b> gives you an editable A3 PowerPoint, an A3 PDF (through your browser's print window) or a PNG image for slides.</p>
   <div class="notice">Want to build your skills? <a href="https://coh.gstt.nhs.uk/course/view.php?id=3199" target="_blank" rel="noopener">Book QI training with the CITI Academy</a>.</div>
 </section>
@@ -613,6 +617,7 @@ textarea{min-height:110px;font:inherit}
       placed.length + (placed.length === 1 ? ' chart or picture' : ' charts and pictures');
     $('warnings').innerHTML = lay.warnings.map(w => '<p class="warn">' + esc(w) + '</p>').join('');
     renderPlaced();
+    markTray();
     saveDraft();
   }
   let timer = 0;
@@ -708,17 +713,57 @@ textarea{min-height:110px;font:inherit}
     store.list().then(list => {
       thumbs.forEach(u => URL.revokeObjectURL(u)); thumbs = [];
       const ul = $('tray');
-      if (!list.length) { ul.innerHTML = '<li class="none">No charts yet.</li>'; return; }
+      ul._clips = list;
+      if (!list.length) { ul.innerHTML = '<li class="none">No charts yet.</li>'; return markTray(); }
       ul.innerHTML = list.map(c => {
         const u = URL.createObjectURL(new Blob([c.svg], { type: 'image/svg+xml' })); thumbs.push(u);
         const when = new Date(c.added);
         return '<li class="clip" data-id="' + c.id + '"><img src="' + u + '" alt="">' +
-          '<div><b>' + esc(c.title) + '</b><small>' + esc(c.toolName) + ' · ' + esc(when.toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })) + '</small>' +
+          '<div><b>' + esc(c.title) + '</b><small>' + esc(c.toolName) + ' · ' + esc(when.toLocaleString('en-GB', { day: 'numeric', month: 'short', year: when.getFullYear() === new Date().getFullYear() ? undefined : 'numeric', hour: '2-digit', minute: '2-digit' })) + '</small>' +
+          '<span class="on" hidden>On the report</span>' +
           '<div class="btns"><button type="button" class="sm" data-act="add">Add to report</button><button type="button" class="sm" data-act="delete">Delete</button></div></div></li>';
       }).join('');
       ul._clips = list;
+      markTray();
     }, () => { $('tray').innerHTML = '<li class="none">Charts can’t be kept in this browser, for example in a private window. You can still add pictures and write your report.</li>'; });
   }
+  /* ---------- keeping the list short ---------- */
+  // A chart is on the report when its cleaned SVG matches one placed there,
+  // so this works for reports opened from a file too.
+  const cleaned = new Map();
+  function cleanOf(c) {
+    const k = c.id + '|' + c.added;
+    if (!cleaned.has(k)) cleaned.set(k, cleanSvg(c.svg));
+    return cleaned.get(k);
+  }
+  const OLD = 90 * 864e5;
+  let tidyLater = false;
+  function markTray() {
+    const ul = $('tray'), list = ul._clips || [], box = $('tidy');
+    const srcs = new Set(placed.map(p => p.src));
+    const on = list.filter(c => srcs.has(cleanOf(c)));
+    const onIds = new Set(on.map(c => c.id));
+    ul.querySelectorAll('li.clip').forEach(li => { li.querySelector('.on').hidden = !onIds.has(+li.dataset.id); });
+    // Wait for the saved draft, so charts on it don't count as old.
+    const old = restoring || tidyLater ? [] : list.filter(c => !onIds.has(c.id) && Date.now() - new Date(c.added) > OLD);
+    const n = k => k + (k === 1 ? ' chart' : ' charts');
+    box.innerHTML =
+      (old.length ? '<p>' + n(old.length) + ' in this list ' + (old.length === 1 ? 'is' : 'are') + ' over 3 months old and not on the report.</p>' +
+        '<div class="btns" style="margin-bottom:.5rem"><button type="button" class="sm" data-act="old">Remove ' + (old.length === 1 ? 'it' : 'them') + '</button><button type="button" class="sm" data-act="later">Not now</button></div>' : '') +
+      (on.length ? '<div class="btns"><button type="button" class="sm" data-act="placed">Remove ' + n(on.length) + ' already on the report</button></div>' : '');
+    box._old = old.map(c => c.id); box._on = on.map(c => c.id);
+  }
+  $('tidy').addEventListener('click', e => {
+    const b = e.target.closest('button[data-act]'), box = $('tidy'); if (!b) return;
+    if (b.dataset.act === 'later') { tidyLater = true; return markTray(); }
+    const ids = b.dataset.act === 'old' ? box._old : box._on;
+    if (!ids || !ids.length) return;
+    const what = b.dataset.act === 'old' ? 'over 3 months old' : 'already on the report';
+    if (!confirm('Remove ' + ids.length + (ids.length === 1 ? ' chart' : ' charts') + ' ' + what + ' from this list?' +
+      (b.dataset.act === 'placed' ? ' The report keeps its own copy.' : ''))) return;
+    store.removeMany(ids).then(() => { FocusActions.say('Removed ' + ids.length + (ids.length === 1 ? ' chart' : ' charts') + ' from the list.'); loadTray(); },
+      () => FocusActions.say('Sorry, the charts couldn’t be removed.'));
+  });
   $('tray').addEventListener('click', e => {
     const b = e.target.closest('button[data-act]'); if (!b) return;
     const id = +b.closest('li').dataset.id, clip = ($('tray')._clips || []).find(c => c.id === id);
