@@ -15,6 +15,7 @@ links:
   citi_academy: "https://coh.gstt.nhs.uk/course/view.php?id=3199"
   feedback: "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=slTDN7CF9UeyIge0jXdO49aeA-DV7cxNn3HtO8zfVhdURFNZRkUyVUpBUUhTRjlOSE5JWlJNMlBXQS4u"
   qi_coach: "https://m365.cloud.microsoft/chat/?titleId=T_9a8ef1bb-12ee-5134-a332-f2a26e2f1bd9&source=embedded-builder"
+  video: "https://www.youtube.com/watch?v=K1bdWVruXCE"
 
 include:
   - staticwebapp.config.json
