@@ -206,8 +206,20 @@ reference answers from SciPy and NumPy: distributions and p-values, critical
 values, quantiles, ranks, descriptive statistics, the Anderson-Darling test,
 one-way and Welch's ANOVA, the one-sample t-test, chi-squared and Fisher's
 exact tests, correlation, least squares regression and power. Each tool keeps
-its own copy of these functions, so every copy is checked: 72 tests, about
-1,550 comparisons.
+its own copy of these functions, so every copy is checked.
+
+It also checks the SPC chart (XmR, P, U, C and T charts, including Laney's P'
+and U', breaks, a fixed baseline, screened moving ranges and every signal
+rule), the run chart (median, shifts, trends, runs and astronomical points)
+and the funnel plot (limits and each row's status). There's no standard
+library for these, so `reference_spc.py` is a separate Python version written
+from the published rules: NHS England's Making Data Count, the IHI run chart
+rules and the funnel plot method on its page. The data goes in as pasted text
+through each tool's own reader, so reading the numbers is tested too. Cases
+on each rule's boundary (6 points against 7 for a shift, a repeated value in a
+trend) are checked in Python before they're written.
+
+79 tests, about 1,600 comparisons.
 
 ```sh
 node --test tests/stats/stats.test.js
@@ -229,12 +241,18 @@ figures.
   distribution (accurate to 1.2 × 10⁻⁷), and the power of a t-test, which uses
   a normal approximation to the noncentral t distribution and is within 0.01
   of the exact power.
+- A known difference waiting on a decision is marked `todo`: it runs and
+  reports but doesn't stop a deploy. There is one: the run chart's table of
+  the expected number of runs has upper limits one below the published
+  Provost and Murray table (for example 8 rather than 9 for 10 useful
+  observations), so a chart with exactly the published maximum is called
+  "too many runs".
 
 Not covered yet: the hypothesis test selector's individual tests (two-sample
 and paired t, Mann-Whitney, Kruskal-Wallis and the rest are written inside
 its `RUN` table; their building blocks are covered), the power of tests of
-proportions, SPC and run chart limits and rules, the funnel plot, Gauge R&R,
-attribute agreement, design of experiments and Weibull analysis.
+proportions, Gauge R&R, attribute agreement, design of experiments and
+Weibull analysis.
 
 ## Deploy to Azure Static Web Apps
 

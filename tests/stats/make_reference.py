@@ -42,9 +42,10 @@ def data(kind, n, **k):
 groups = []
 
 
-def group(id, fn, tools, cases, tol=1e-9, abs_tol=1e-12, call=None, globals=None, note=None):
+def group(id, fn, tools, cases, tol=1e-9, abs_tol=1e-12, call=None, globals=None, note=None, todo=None):
+    """`todo` marks a known difference that's reported but doesn't fail the run."""
     groups.append({k: v for k, v in dict(id=id, fn=fn, tools=tools, call=call, globals=globals,
-                                          tol=tol, abs=abs_tol, note=note, cases=cases).items() if v is not None})
+                                          tol=tol, abs=abs_tol, note=note, todo=todo, cases=cases).items() if v is not None})
 
 
 SEL = "hypothesis_test_selector"
@@ -271,6 +272,160 @@ for levels in [3, 5]:
             pa.append({"args": [{"test": "anova", "levels": levels, "alpha": 0.05, "sd": 1, "sides": 2}, n, d], "expect": r(stats.ncf.sf(fc, d1, d2, lam))})
 group("power of a one-way ANOVA", "powerAt", ["power_sample_size"], pa, tol=1e-6, abs_tol=1e-9,
       note="difference between the highest and lowest means, others in the middle (the least favourable case, as Minitab uses)")
+
+# ------------------------------------------------------------- SPC, run chart and funnel plot
+# The reference is an independent Python version of the published rules
+# (reference_spc.py). Boundary cases are built so the rule's outcome is known,
+# and checked here before they're written.
+from datetime import date, timedelta
+import reference_spc as R
+
+rng2 = np.random.default_rng(1620)
+
+
+def clean(o):
+    if isinstance(o, dict):
+        return {k: clean(v) for k, v in o.items()}
+    if isinstance(o, (list, tuple)):
+        return [clean(v) for v in o]
+    if isinstance(o, (bool, np.bool_)):
+        return bool(o)
+    if isinstance(o, (int, float, np.integer, np.floating)):
+        return float(o)
+    return o
+
+
+def rules(res):
+    return sorted({(e["rule"], e["side"]) for e in res["events"]})
+
+
+wiggle = lambda n, lo=9, hi=11: [lo if i % 2 else hi for i in range(n)]
+X = {  # XmR series: name -> (values, options, the signals they must show)
+    "random": (np.round(rng2.normal(50, 5, 30), 1).tolist(), {}, None),
+    "seven above the mean": (wiggle(12) + [12, 13, 12, 13, 12, 13, 12] + wiggle(5), {}, [("shift", "hi")]),
+    "six above the mean": (wiggle(12) + [12, 13, 12, 13, 12, 13] + [9, 11, 9, 11, 9, 11], {}, []),
+    "point on the mean breaks a shift": (wiggle(12) + [12, 13, 12, 10.6, 12, 13, 12, 13] + wiggle(4), {}, None),
+    "seven rising": (wiggle(6) + [8, 9, 10, 11, 12, 13, 14] + wiggle(6), {}, [("trend", "hi")]),
+    "six rising": (wiggle(6) + [8, 9, 10, 11, 12, 13] + wiggle(7), {}, []),
+    "repeat ends a trend": (wiggle(6) + [8, 9, 10, 10, 11, 12, 13, 14] + wiggle(6), {}, []),
+    "seven falling": (wiggle(6) + [14, 13, 12, 11, 10, 9, 8] + wiggle(6), {}, [("trend", "lo")]),
+    "one point outside": (wiggle(10) + [25] + wiggle(10), {}, [("outside", "hi")]),
+    "two of three high": (wiggle(10, 9.5, 10.5) + [12.8, 10.6, 12.8] + wiggle(8, 9.5, 10.5), {}, [("twothree", "hi")]),
+    "two of three, rule off": (wiggle(10, 9.5, 10.5) + [12.8, 10.6, 12.8] + wiggle(8, 9.5, 10.5), {"twoThree": False}, []),
+    "step change with a break": (np.round(np.r_[rng2.normal(20, 2, 15), rng2.normal(30, 2, 15)], 1).tolist(), {"breaks": [15]}, None),
+    "baseline of the first 12": (np.round(np.r_[rng2.normal(20, 2, 12), rng2.normal(26, 2, 14)], 1).tolist(), {"useBaseN": True, "baseN": 12}, None),
+    "screened moving ranges": (np.round(np.r_[rng2.normal(40, 3, 10), [80], rng2.normal(40, 3, 10)], 1).tolist(), {"screen": True}, None),
+    "lower limit floored at 0": ([2, 0, 5, 1, 0, 6, 1, 0, 2, 7, 0, 1, 3, 0, 5], {"floor": True}, None),
+    "lower is better": (wiggle(10) + [25] + wiggle(10), {"dir": "down"}, [("outside", "hi")]),
+    "no preferred direction": (wiggle(6) + [8, 9, 10, 11, 12, 13, 14] + wiggle(6), {"dir": "none"}, [("trend", "hi")]),
+    "shift of 6 when set to 6": (wiggle(12) + [12, 13, 12, 13, 12, 13] + [9, 11, 9, 11, 9, 11], {"shiftLen": 6}, [("shift", "hi")]),
+}
+xc = []
+for name, (v, o, must) in X.items():
+    res = R.spc_xmr(v, o.get("breaks", ()), o.get("baseN") if o.get("useBaseN") else None, o.get("screen", False),
+                    o.get("floor", False), o.get("shiftLen", 7), o.get("trendLen", 7), o.get("twoThree", True), o.get("dir", "up"))
+    if must is not None:
+        assert rules(res) == must, (name, rules(res))
+    xc.append({"name": name, "args": ["xmr", v, o], "expect": clean(res)})
+group("SPC XmR chart: limits and signals", "compute", ["spc_tool"], xc, call="spc", tol=1e-9, abs_tol=1e-12,
+      note="reference: Making Data Count rules written independently in Python")
+
+pn = rng2.integers(80, 150, 24)
+pdata = [[int(rng2.binomial(n, 0.12)), int(n)] for n in pn]
+pdata[18][0] = int(pn[18] * 0.3)                      # one high month
+big = rng2.integers(5000, 8000, 20)
+ldata = [[int(rng2.binomial(n, min(0.95, max(0.01, rng2.normal(0.1, 0.012))))), int(n)] for n in big]
+trend_p = [[n, 100] for n in [10, 12, 11, 13, 12, 10, 11, 12, 13, 13, 14, 15, 16, 17, 18, 11, 12, 10, 11]]
+P = {
+    "P chart": ("p", pdata, {}),
+    "P chart, short (no limits yet)": ("p", pdata[:10], {}),
+    "P chart with a break": ("p", pdata, {"breaks": [12]}),
+    "Laney P' chart (large totals)": ("p", ldata, {"laney": True}),
+    "P chart, ordinary limits on the same data": ("p", ldata, {}),
+    "P chart trend: repeats don't break it": ("p", trend_p, {}),
+    "U chart": ("u", [[int(rng2.poisson(e * 0.004)), int(e)] for e in rng2.integers(800, 2500, 20)], {}),
+    "Laney U' chart": ("u", [[int(rng2.poisson(e * max(0.0005, rng2.normal(0.004, 0.001)))), int(e)] for e in rng2.integers(20000, 40000, 20)], {"laney": True}),
+}
+pc = []
+for name, (kind, d, o) in P.items():
+    res = R.spc_count([a for a, b in d], [b for a, b in d], kind, o.get("breaks", ()), o.get("laney", False),
+                      direction=o.get("dir", "up"))
+    if name.startswith("P chart trend"):
+        assert ("trend", "hi") in rules(res), rules(res)
+    pc.append({"name": name, "args": [kind, d, o], "expect": clean(res)})
+cdata = [int(x) for x in rng2.poisson(12, 25)]
+cdata[20] = 30
+res = R.spc_count(cdata, [1] * len(cdata), "c")
+assert ("outside", "hi") in rules(res)
+pc.append({"name": "C chart", "args": ["c", cdata, {}], "expect": clean(res)})
+group("SPC P, U and C charts: limits and signals", "compute", ["spc_tool"], pc, call="spc", tol=1e-9, abs_tol=1e-12,
+      note="reference: binomial and Poisson limits, and Laney's P' and U', written independently in Python")
+
+tc = []
+for name, gaps in {"T chart": [int(g) for g in np.maximum(0, np.round(rng2.exponential(25, 24)))],
+                   "T chart, events closer together": [int(g) for g in np.round(np.r_[rng2.exponential(30, 15), rng2.exponential(4, 12)])]}.items():
+    d0 = date(2024, 1, 3)
+    days = [0]
+    for g in gaps:
+        days.append(days[-1] + g)
+    iso = [(d0 + timedelta(days=x)).isoformat() for x in days]
+    res = R.spc_t(days, direction="down")
+    tc.append({"name": name, "args": ["t", iso, {"dir": "down"}], "expect": clean(res)})
+group("SPC T chart for rare events: gaps, limits and signals", "compute", ["spc_tool"], tc, call="spc", tol=1e-9, abs_tol=1e-12,
+      note="reference: gaps in days (half a day for the same day), transformed by the power 1/3.6, XmR limits, back-transformed")
+
+runc = []
+RUN = {
+    "random": (np.round(rng2.normal(30, 4, 24), 1).tolist(), {}),
+    "6 above the median": ([10, 9, 10, 9, 10, 9, 10, 9, 10, 9, 12, 12.5, 12, 13, 12, 12.5, 9, 10, 9, 10], {}),
+    "5 above the median": ([10, 9, 10, 9, 10, 9, 10, 9, 10, 9, 12, 12.5, 12, 13, 12, 9, 10, 9, 10, 9], {}),
+    "points on the median are skipped": ([5, 4, 6, 4, 6, 4, 6, 5, 6, 7, 5, 8, 6, 7, 4, 3, 5, 4], {}),
+    "5 rising": ([10, 9, 10, 9, 10, 6, 7, 8, 9, 10, 9, 10, 9, 10, 9], {}),
+    "4 rising": ([10, 9, 10, 9, 10, 6, 7, 8, 9, 7, 10, 9, 10, 9], {}),
+    "repeats are skipped in a trend": ([10, 9, 10, 9, 10, 6, 7, 7, 8, 8, 9, 10, 9, 10, 9], {}),
+    "astronomical point": ([10, 11, 9, 10, 12, 10, 11, 9, 10, 40, 10, 11], {}),
+    "baseline of the first 12": (np.round(np.r_[rng2.normal(20, 2, 12), rng2.normal(25, 2, 14)], 1).tolist(), {"medMode": "first", "firstN": 12}),
+    "80 points (runs from the normal approximation)": (np.round(rng2.normal(50, 6, 80), 1).tolist(), {}),
+}
+for name, (v, o) in RUN.items():
+    res = R.run_chart(v, o.get("firstN") if o.get("medMode") == "first" else None)
+    want = {k: res[k] for k in ("med", "shifts", "trends", "useful", "runs", "astro")}
+    if res["useful"] > 60:
+        want.update(lo=res["lo"], hi=res["hi"])
+    runc.append({"name": name, "args": [v, {"medMode": o.get("medMode", "all"), "firstN": o.get("firstN"), "dir": "up"}], "expect": clean(want)})
+assert len(R.run_chart(*RUN["6 above the median"][:1])["shifts"]) == 1 and not R.run_chart(RUN["5 above the median"][0])["shifts"]
+assert len(R.run_chart(RUN["5 rising"][0])["trends"]) == 1 and not R.run_chart(RUN["4 rising"][0])["trends"]
+assert len(R.run_chart(RUN["repeats are skipped in a trend"][0])["trends"]) == 1
+assert R.run_chart(RUN["astronomical point"][0])["astro"] == [9]
+group("run chart: median, shifts, trends, runs and astronomical points", "analyse", ["run_chart"], runc, call="runChart",
+      note="reference: the IHI run chart rules (Perla, Provost and Murray 2011) written independently in Python")
+
+# The runs table: the rows confirmed from published copies of the Provost and
+# Murray table (IHI, HQIP, ELFT). N = useful observations: (fewest, most) runs.
+PUBLISHED_RUNS = {10: (3, 9), 11: (3, 10), 12: (3, 11), 20: (6, 16), 30: (11, 21), 40: (15, 27)}
+group("run chart: runs table against the published table", "RUNS_TABLE", ["run_chart"],
+      [{"name": f"{n} useful observations", "args": [n], "expect": clean(list(v))} for n, v in PUBLISHED_RUNS.items()],
+      call="runsTable", todo="the tool's upper limits are 1 below the published Provost and Murray table; waiting for a decision on which table to use")
+
+fc = []
+fe = rng2.integers(80, 2000, 14)
+fd = [[f"Unit {chr(65 + i)}", int(rng2.binomial(n, 0.08)), int(n)] for i, n in enumerate(fe)]
+fd[3][1] = int(fd[3][2] * 0.2)
+rates = [[f"Ward {i + 1}", int(rng2.poisson(n * 1.4)), int(n)] for i, n in enumerate(rng2.integers(30, 400, 12))]
+for name, rows, centre in [("proportions, pooled average", fd, "pooled"), ("proportions, average of the rates", fd, "mean"),
+                           ("rates (Poisson)", rates, "pooled")]:
+    res = R.funnel([e for _, e, _ in rows], [n for *_, n in rows], centre)
+    fc.append({"name": name, "args": [rows, centre], "expect": clean(res)})
+assert fc[0]["expect"]["rows"][3]["status"] == "above"
+assert fc[2]["expect"]["poisson"] is True
+group("funnel plot: limits and status", "analyse", ["funnel_plot"], fc, call="funnel",
+      note="reference: average ± 3 and ± 1.96 standard errors, binomial or Poisson, written independently in Python")
+
+# Reading pasted numbers: what the run chart makes of typical cells (null = not a number)
+NUMBERS = {"1,200": 1200, "£1,234.50": 1234.5, "12%": 12, "(5)": -5, " 7 ": 7, "1.2e3": 1200, "-3.25": -3.25,
+           "abc": None, "1,2": None, "": None, "N/A": None, "<5": None}
+group("run chart: reading pasted numbers", "parseNumber", ["run_chart"],
+      [{"name": repr(k), "args": [k], "expect": clean(v)} for k, v in NUMBERS.items()], call="number")
 
 with open(OUT, "w") as f:
     json.dump({"generated_by": "tests/stats/make_reference.py", "scipy": scipy.__version__, "numpy": np.__version__,
