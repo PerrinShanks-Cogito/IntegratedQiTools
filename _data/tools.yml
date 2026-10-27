@@ -2,12 +2,6 @@
 # "QI charting tools" menu. `id` must match the tool's folder name.
 # `hidden: true` leaves a tool off the landing page and menu; its page still
 # works for anyone with the link. A group with only hidden tools isn't shown.
-- id: programme_guide
-  name: Programme guide
-  status: Beta
-  group: Run your project
-  description: Follow the FOCUS stages, from Find the opportunity to Sustain the benefit, to the programme document you need next, such as the scoping document, RAID log, highlight report or closure report, and see each one filled in for a worked example.
-
 - id: process_map
   name: Process map
   group: Understand the system
@@ -156,3 +150,10 @@
   status: Alpha
   group: Share your work
   description: Tell the story of your improvement project on one A3 page, from the background and root causes to the changes you tested and how you will sustain them, with charts from the other tools and your own pictures, and export it to PowerPoint.
+
+- id: programme_guide
+  name: Programme guide
+  status: Beta
+  hidden: true
+  group: Share your work
+  description: Follow the FOCUS stages, from Find the opportunity to Sustain the benefit, to the programme document you need next, such as the scoping document, RAID log, highlight report or closure report, and see each one filled in for a worked example.

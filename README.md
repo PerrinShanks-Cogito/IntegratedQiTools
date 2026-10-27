@@ -47,7 +47,7 @@ Improvement's SPC P chart tool (version 3.0)):
 | Demand and capacity model (hidden) | `/demand_capacity/` |
 | Admin demand and capacity model (hidden) | `/admin_demand_capacity/` |
 | A3 report | `/a3_report/` |
-| Programme guide (which programme document next, with worked examples) | `/programme_guide/` |
+| Programme guide (which programme document next, with worked examples) (hidden) | `/programme_guide/` |
 
 ## How it fits together
 
@@ -133,7 +133,9 @@ template they need next, from the high level scoping document to
 the RAID log, highlight and leadership reports and the closure report. Each
 document has a filled-in worked example (a made-up "Discharge Flow
 Programme", followed from scoping to closure) to view in the page or
-download, and the blank template.
+download, and the blank template. It sits in the Share your work group but
+is hidden from the landing page and menu for now; the page works for anyone
+with the link.
 
 - `programme_guide/templates/` – the blank CITI templates (version October
   2022), renamed `<stage>-<letter>-<name>` (the stage in the file name is
