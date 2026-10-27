@@ -334,10 +334,9 @@ td.sig{font-weight:700}
   }
 
   // ---- linear algebra and distributions ----
-  const avg = a => a.reduce((s, v) => s + v, 0) / a.length;
-  const sd = a => { const m = avg(a); return Math.sqrt(a.reduce((s, v) => s + (v - m) ** 2, 0) / (a.length - 1)); };
-  // Shared distributions, from /assets/js/focus-stats.js
-  const { tP, tCrit, fP } = FocusStats;
+  // Shared statistics, from /assets/js/focus-stats.js
+  const { tP, tCrit, fP, mean: avg, sd } = FocusStats;
+
 
   // Least squares by modified Gram-Schmidt QR. Columns that add nothing new
   // (perfectly explained by earlier ones) are dropped and reported.

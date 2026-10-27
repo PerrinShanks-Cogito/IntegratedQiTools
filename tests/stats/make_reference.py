@@ -119,20 +119,20 @@ for v in sets:
     s = sorted(v)
     for p in [0, 0.1, 0.25, 0.5, 0.75, 0.9, 1]:
         qs.append({"args": [s, p], "expect": r(np.quantile(s, p, method="linear"))})
-group("quantile (linear interpolation, R type 7 / Excel QUARTILE.INC)", "quantile", ["anova", "box_plot", "histogram"], qs)
+group("quantile (linear interpolation, R type 7 / Excel QUARTILE.INC)", "quantile", [SHARED], qs)
 
-group("mean", "mean", [SEL], [{"args": [v], "expect": r(np.mean(v))} for v in sets])
-group("variance (n - 1)", "variance", [SEL], [{"args": [v], "expect": r(np.var(v, ddof=1))} for v in sets])
-group("median", "median", [SEL], [{"args": [v], "expect": r(np.median(v))} for v in sets])
-group("standard deviation (n - 1)", "sd", ["multiple_regression"], [{"args": [v], "expect": r(np.std(v, ddof=1))} for v in sets])
+group("sum", "sum", [SHARED], [{"args": [v], "expect": r(np.sum(v))} for v in sets])
+group("mean", "mean", [SHARED], [{"args": [v], "expect": r(np.mean(v))} for v in sets])
+group("variance (n - 1)", "variance", [SHARED], [{"args": [v], "expect": r(np.var(v, ddof=1))} for v in sets])
+group("median", "median", [SHARED], [{"args": [v], "expect": r(np.median(v))} for v in sets])
+group("standard deviation (n - 1)", "sd", [SHARED], [{"args": [v], "expect": r(np.std(v, ddof=1))} for v in sets])
 
 rk = []
 for v in sets:
     ties = sum(c ** 3 - c for c in np.unique(v, return_counts=True)[1])
     rk.append({"args": [v], "expect": {"r": r(stats.rankdata(v)), "ties": r(ties)}})
-group("average ranks with ties", "ranks", [SEL], rk)
-group("average ranks with ties", "ranks", ["attribute_agreement"], [{"args": c["args"], "expect": c["expect"]["r"]} for c in rk])
-group("average ranks with ties", "rank", ["scatter_plot"], [{"args": c["args"], "expect": c["expect"]["r"]} for c in rk])
+group("average ranks with ties", "ranks", [SHARED], [{"args": c["args"], "expect": c["expect"]["r"]} for c in rk])
+group("tie correction (sum of t³ − t)", "tiesT", [SHARED], [{"args": c["args"], "expect": c["expect"]["ties"]} for c in rk])
 
 desc = []
 for v in sets[:4]:
@@ -163,11 +163,13 @@ for v in [data("normal", 12), data("normal", 60), data("skewed", 30), data("skew
     a2 = stats.anderson(v, dist="norm", method="interpolate").statistic
     a = a2 * (1 + 0.75 / n + 2.25 / n ** 2)
     ad.append({"args": [v], "expect": {"a2": r(a2), "a": r(a), "p": r(min(1, max(0, ad_p(a))))}})
-group("Anderson-Darling normality test", "andersonDarling", ["histogram"], ad, call="adHistogram", tol=1e-7, abs_tol=1e-12,
-      note="statistic from SciPy; p-value from D'Agostino and Stephens (1986), as Minitab uses")
-group("Anderson-Darling normality test", "andersonDarling", [SEL],
-      [{"args": c["args"], "expect": {"A": c["expect"]["a"], "p": c["expect"]["p"]}} for c in ad], tol=1e-7, abs_tol=1e-12,
-      note="statistic from SciPy; p-value from D'Agostino and Stephens (1986), as Minitab uses")
+# very far from normal: 1,000 values, 90% of them 0. The fitted p-value curve
+# turns back up beyond an adjusted A² of about 150, so p must be cut off at 0.
+far = [0.0 if i % 10 < 9 else 100.0 + i % 7 for i in range(1000)]
+a2 = stats.anderson(far, dist="norm", method="interpolate").statistic
+ad.append({"name": "1,000 values, 90% zero", "args": [far], "expect": {"a2": r(a2), "a": r(a2 * (1 + 0.75 / 1000 + 2.25 / 1000 ** 2)), "p": 0.0}})
+group("Anderson-Darling normality test", "andersonDarling", [SHARED], ad, tol=1e-7, abs_tol=1e-12,
+      note="statistic from SciPy; p-value from D'Agostino and Stephens (1986), as Minitab uses, taken as 0 beyond an adjusted A² of 13")
 
 # ------------------------------------------------------------- tests
 gsets = [
@@ -179,7 +181,7 @@ ow = []
 for g in gsets:
     res = stats.f_oneway(*g)
     ow.append({"args": [g], "expect": {"F": r(res.statistic), "p": r(res.pvalue)}})
-group("one-way ANOVA", "oneWay", ["anova", SEL], ow)
+group("one-way ANOVA", "oneWay", [SHARED], ow)
 
 
 def welch_anova(g):

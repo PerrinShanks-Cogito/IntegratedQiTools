@@ -346,11 +346,9 @@ td.warn{color:var(--warn);font-weight:600}
   }
 
   // ---- statistics ----
-  // Linear interpolation between order statistics, as Excel's QUARTILE.INC and R's default.
-  function quantile(sorted, p) {
-    const h = (sorted.length - 1) * p, lo = Math.floor(h);
-    return lo + 1 < sorted.length ? sorted[lo] + (h - lo) * (sorted[lo + 1] - sorted[lo]) : sorted[lo];
-  }
+  // Shared statistics, from /assets/js/focus-stats.js
+  const { quantile } = FocusStats;
+
   function describe(g, tukey) {
     const v = g.values.slice().sort((a, b) => a - b), n = v.length;
     const q1 = quantile(v, 0.25), med = quantile(v, 0.5), q3 = quantile(v, 0.75), iqr = q3 - q1;

@@ -363,33 +363,16 @@ td.yes{color:var(--green);font-weight:700}
   }
 
   // ---- distributions ----
-  // Shared distributions, from /assets/js/focus-stats.js
-  const { tP, tCrit, fP } = FocusStats;
 
   // ---- statistics ----
-  const sum = a => a.reduce((s, v) => s + v, 0);
-  function quantile(sorted, p) {
-    const h = (sorted.length - 1) * p, lo = Math.floor(h);
-    return lo + 1 < sorted.length ? sorted[lo] + (h - lo) * (sorted[lo + 1] - sorted[lo]) : sorted[lo];
-  }
+  // Shared statistics, from /assets/js/focus-stats.js
+  const { tP, tCrit, fP, sum, quantile, oneWay } = FocusStats;
+
   function describe(g) {
     const v = g.values, n = v.length, mean = sum(v) / n;
     const variance = sum(v.map(x => (x - mean) * (x - mean))) / (n - 1);
     const sorted = v.slice().sort((a, b) => a - b);
     return { name: g.name, values: v, n, mean, variance, sd: Math.sqrt(variance), med: quantile(sorted, 0.5), min: sorted[0], max: sorted[n - 1] };
-  }
-  // Standard one-way ANOVA from groups of values.
-  function oneWay(groups) {
-    const k = groups.length, N = sum(groups.map(g => g.length));
-    const means = groups.map(g => sum(g) / g.length), grand = sum(groups.map(g => sum(g))) / N;
-    const ssb = sum(groups.map((g, i) => g.length * (means[i] - grand) ** 2));
-    const ssw = sum(groups.map((g, i) => sum(g.map(x => (x - means[i]) ** 2))));
-    const dfb = k - 1, dfw = N - k, msb = ssb / dfb, msw = ssw / dfw;
-    const tiny = 1e-12 * (ssb + ssw);
-    let F, p;
-    if (ssw <= tiny) { F = ssb <= tiny ? NaN : Infinity; p = ssb <= tiny ? 1 : 0; }
-    else { F = msb / msw; p = fP(F, dfb, dfw); }
-    return { k, N, grand, ssb, ssw, sst: ssb + ssw, dfb, dfw, msb, msw, F, p, eta2: ssb + ssw > 0 ? ssb / (ssb + ssw) : 0 };
   }
   // Welch's ANOVA, which doesn't assume equal variances. Needs every group to vary.
   function welch(stats) {

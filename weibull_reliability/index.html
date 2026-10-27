@@ -265,9 +265,9 @@ details.adv summary{cursor:pointer;font-weight:600;color:var(--blue);margin-bott
   const slug = s => (s || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'weibull-reliability';
   const fmt = x => isFinite(x) ? nf4.format(+x.toPrecision(4)) : '–';
   const pc = x => isFinite(x) ? (Math.round(x * 1000) / 10).toFixed(1) + '%' : '–';
-  const sum = a => a.reduce((s, v) => s + v, 0);
-  const avg = a => sum(a) / a.length;
-  const sdev = a => { const m = avg(a); return Math.sqrt(sum(a.map(v => (v - m) ** 2)) / (a.length - 1)); };
+  // Shared statistics, from /assets/js/focus-stats.js
+  const { gamma, sum, mean: avg, sd: sdev } = FocusStats;
+
   const val = el => el.value.trim() === '' ? NaN : Number(el.value);
 
   // ---- parsing ----
@@ -292,8 +292,6 @@ details.adv summary{cursor:pointer;font-weight:600;color:var(--blue);margin-bott
   }
 
   // ---- maths ----
-  // Shared distributions, from /assets/js/focus-stats.js
-  const { gamma } = FocusStats;
 
   // Maximum likelihood fit of a Weibull distribution to failures y (already less the threshold),
   // with m items still working at time c (also less the threshold).

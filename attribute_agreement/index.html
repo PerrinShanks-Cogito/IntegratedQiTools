@@ -305,8 +305,6 @@ td.poor{color:var(--warn);font-weight:700}
   }
 
   // ---- statistics ----
-  // Shared distributions, from /assets/js/focus-stats.js
-  const { betaInv } = FocusStats;
 
   // Percent matched with an exact (Clopper–Pearson) 95% confidence interval.
   function agreement(x, n) {
@@ -325,17 +323,9 @@ td.poor{color:var(--warn);font-weight:700}
     const den = n * m * (m - 1) * cats.reduce((s, c) => { const p = tot[c] / (n * m); return s + p * (1 - p); }, 0);
     return den > 0 ? 1 - num / den : NaN;
   }
-  // Average ranks of a column of ordered values.
-  function ranks(col) {
-    const idx = col.map((v, i) => i).sort((a, b) => col[a] - col[b]), r = new Array(col.length);
-    for (let i = 0; i < idx.length;) {
-      let j = i; while (j + 1 < idx.length && col[idx[j + 1]] === col[idx[i]]) j++;
-      for (let q = i; q <= j; q++) r[idx[q]] = (i + j) / 2 + 1;
-      i = j + 1;
-    }
-    return r;
-  }
-  const tiesT = col => { const c = {}; col.forEach(v => { c[v] = (c[v] || 0) + 1; }); return Object.values(c).reduce((s, t) => s + t * t * t - t, 0); };
+  // Shared statistics, from /assets/js/focus-stats.js
+  const { betaInv, ranks, tiesT } = FocusStats;
+
   // Kendall's coefficient of concordance (W), corrected for ties; columns are raters.
   function kendallW(cols) {
     const m = cols.length, n = cols[0].length;

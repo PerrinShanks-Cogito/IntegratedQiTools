@@ -292,7 +292,9 @@ td.tot,th.tot{font-weight:700}
   const pIs = p => p < 0.001 ? 'p < 0.001' : 'p = ' + p.toFixed(3);
   const pct = a => Math.round((1 - a) * 100) + '%';
   const share = x => isFinite(x) ? Math.round(x * 100) + '%' : '–';
-  const sum = a => a.reduce((s, v) => s + v, 0);
+  // Shared statistics, from /assets/js/focus-stats.js
+  const { lgamma, chiP, zCrit, sum } = FocusStats;
+
 
   // ---- parsing ----
   function split(text) {
@@ -429,8 +431,6 @@ td.tot,th.tot{font-weight:700}
   }
 
   // ---- distributions ----
-  // Shared distributions, from /assets/js/focus-stats.js
-  const { lgamma, chiP, zCrit } = FocusStats;
 
   // Fisher's exact test for a 2 × 2 table (two-sided, summing tables no more likely than the one observed).
   function fisher(t) {
