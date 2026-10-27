@@ -6,6 +6,10 @@
 {%- endif %}
 <link rel="stylesheet" href="{{ '/assets/css/focus-actions.css' | relative_url }}">
 <script src="{{ '/assets/js/focus-actions.js' | relative_url }}"></script>
+{%- comment %} Shared statistical distributions. The build time in the link makes
+browsers fetch the new copy after each deploy, so a page never runs with an old
+copy that lacks a function it needs. {% endcomment %}
+<script src="{{ '/assets/js/focus-stats.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
 <script src="{{ '/assets/js/focus-explain.js' | relative_url }}"></script>
 <script>
 /* Usage analytics helpers for tool pages. Events go to trackToolEvent() in

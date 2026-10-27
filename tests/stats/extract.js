@@ -7,11 +7,19 @@
 // two spaces (`  function name(` or `  const name = `). load() takes the
 // functions asked for, adds any other top-level functions they call, and
 // evaluates them on their own, away from the page.
+//
+// The distributions every tool shares are in assets/js/focus-stats.js, which a
+// page takes from with `const { ibeta, tP } = FocusStats;`. load() follows
+// that too, so a tool's functions run with the shared copies the site serves.
+// The shared file itself is tested by naming it as the tool:
+// load("assets/js/focus-stats.js", ["ibeta"]).
 "use strict";
 const fs = require("fs");
 const path = require("path");
 
 const ROOT = path.resolve(__dirname, "..", "..");
+const SHARED = "assets/js/focus-stats.js";
+const fileOf = tool => path.join(ROOT, tool.endsWith(".js") ? tool : path.join(tool, "index.html"));
 
 // Index just past the end of the statement or function that starts at `start`:
 // a function ends at the brace that closes its body; a const ends at the first
@@ -96,14 +104,15 @@ function declared(stmt) {
 // smallest indent any function in the page is written at.
 function definitions(tool) {
   if (cache[tool]) return cache[tool];
-  const html = fs.readFileSync(path.join(ROOT, tool, "index.html"), "utf8");
+  const html = fs.readFileSync(fileOf(tool), "utf8");
   const indent = Math.min(...[...html.matchAll(/\n( *)function [A-Za-z_$][\w$]*\s*\(/g)].map(m => m[1].length));
   const defs = {};
-  const re = new RegExp(`\\n {${indent}}(function ([A-Za-z_$][\\w$]*)\\s*\\(|(?:const|let) ([A-Za-z_$][\\w$]*)\\s*=)`, "g");
+  const re = new RegExp(`\\n {${indent}}(function ([A-Za-z_$][\\w$]*)\\s*\\(|(?:const|let) ([A-Za-z_$][\\w$]*)\\s*=|const \\{([^}]*)\\}\\s*=\\s*FocusStats\\b)`, "g");
   let m;
   while ((m = re.exec(html))) {
     const start = m.index + 1 + indent, src = html.slice(start, endOf(html, start));
-    const names = m[2] ? [m[2]] : declared(src);
+    // `const { a, b: c } = FocusStats` declares a and c
+    const names = m[2] ? [m[2]] : m[4] ? m[4].split(",").map(x => x.split(":").pop().trim()).filter(Boolean) : declared(src);
     const def = { start, src };
     names.forEach(name => { if (!(name in defs)) defs[name] = def; });
   }
@@ -196,7 +205,10 @@ function load(tool, names, globals = {}) {
     const own = d.src.startsWith("function") ? [d.src.match(/^function ([\w$]+)/)[1]] : declared(d.src);
     return !own.some(n => n in globals);
   });
-  const pre = Object.keys(globals).map(k => `let ${k} = ${typeof globals[k] === "function" ? String(globals[k]) : JSON.stringify(globals[k])};`).join("\n");
+  // the shared distributions, for pages that take them from FocusStats
+  const shared = used.some(d => /\bFocusStats\b/.test(d.src))
+    ? `const FocusStats = (() => { const window = {}; ${fs.readFileSync(fileOf(SHARED), "utf8")}\nreturn window.FocusStats; })();` : "";
+  const pre = shared + Object.keys(globals).map(k => `let ${k} = ${typeof globals[k] === "function" ? String(globals[k]) : JSON.stringify(globals[k])};`).join("\n");
   const body = [pre, ...used.map(d => d.src), `return { ${names.join(", ")} };`].join("\n");
   try {
     return new Function(body)();
@@ -205,4 +217,4 @@ function load(tool, names, globals = {}) {
   }
 }
 
-module.exports = { load, definitions, closure };
+module.exports = { load, definitions, closure, SHARED };
