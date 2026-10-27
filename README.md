@@ -43,7 +43,7 @@ Improvement's SPC P chart tool (version 3.0)):
 | Attribute agreement analysis | `/attribute_agreement/` |
 | Design of experiments (2-level factorial) | `/design_of_experiments/` |
 | Hypothesis test selector | `/hypothesis_test_selector/` |
-| Power and sample size | `/power_sample_size/` |
+| Power and sample size (hidden) | `/power_sample_size/` |
 | Demand and capacity model (hidden) | `/demand_capacity/` |
 | Admin demand and capacity model (hidden) | `/admin_demand_capacity/` |
 | A3 report | `/a3_report/` |
