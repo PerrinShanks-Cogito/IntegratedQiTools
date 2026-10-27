@@ -267,7 +267,7 @@ footer p{max-width:90ch;margin:0 0 6px}
   </div>
 
   <footer>
-    <p>Rules follow <em>A guide to creating and interpreting run and control charts</em> (NHS Institute for Innovation and Improvement, 2009), based on the work of Robert Lloyd and on Provost &amp; Murray's <em>The Data Guide</em>. Limits for the number of runs come from the Balestracci &amp; Barlow table used in that guide, for 10 to 60 useful observations; above 60 a normal approximation is used.</p>
+    <p>Rules follow <em>A guide to creating and interpreting run and control charts</em> (NHS Institute for Innovation and Improvement, 2009), based on the work of Robert Lloyd and on Provost &amp; Murray's <em>The Data Guide</em>. Limits for the number of runs come from Provost &amp; Murray's table (Perla, Provost and Murray, <em>BMJ Quality &amp; Safety</em> 2011, adapted from Swed and Eisenhart), for 10 to 60 useful observations; above 60 a normal approximation is used.</p>
     <p>Your data stays in your browser. Nothing is uploaded or stored.</p>
     <p>{% include copyright.html %}</p>
   </footer>
@@ -278,8 +278,9 @@ footer p{max-width:90ch;margin:0 0 6px}
 "use strict";
 
 /* ---------- Reference data ---------- */
-// Lower/upper limits for number of runs, by useful observations (Balestracci & Barlow, as reproduced in the NHS guide).
-const RUNS_TABLE = {10:[3,8],11:[3,9],12:[3,10],13:[4,10],14:[4,11],15:[4,12],16:[5,12],17:[5,13],18:[6,13],19:[6,14],20:[6,15],21:[7,15],22:[7,16],23:[8,16],24:[8,17],25:[8,18],26:[9,18],27:[9,19],28:[10,19],29:[10,20],30:[11,20],31:[11,21],32:[11,22],33:[11,22],34:[12,23],35:[13,23],36:[13,24],37:[13,25],38:[14,25],39:[14,26],40:[15,26],41:[16,26],42:[16,27],43:[17,27],44:[17,28],45:[17,29],46:[17,30],47:[18,30],48:[18,31],49:[19,31],50:[19,32],51:[20,32],52:[21,32],53:[21,33],54:[22,33],55:[22,34],56:[23,34],57:[23,35],58:[24,35],59:[24,36],60:[25,36]};
+// Lower/upper limits for number of runs, by useful observations: fewer than the lower or more than the upper is a
+// signal. Table 1 of Perla, Provost and Murray (2011), adapted from Swed and Eisenhart (about a 5% risk of a false signal).
+const RUNS_TABLE = {10:[3,9],11:[3,10],12:[3,11],13:[4,11],14:[4,12],15:[5,12],16:[5,13],17:[5,13],18:[6,14],19:[6,15],20:[6,16],21:[7,16],22:[7,17],23:[7,17],24:[8,18],25:[8,18],26:[9,19],27:[10,19],28:[10,20],29:[10,20],30:[11,21],31:[11,22],32:[11,23],33:[12,23],34:[12,24],35:[12,24],36:[13,25],37:[13,25],38:[14,26],39:[14,26],40:[15,27],41:[15,27],42:[16,28],43:[16,28],44:[17,29],45:[17,30],46:[17,31],47:[18,31],48:[18,32],49:[19,32],50:[19,33],51:[20,33],52:[20,34],53:[21,34],54:[21,35],55:[22,35],56:[22,35],57:[23,36],58:[23,37],59:[24,38],60:[24,38]};
 
 const EXAMPLE = (() => {
   const vals = [17,19,20,18,16,15,17,19,21,20,18,16,17,19,20, 22,24,23,26,25,27,24,26,28,25,27,26,29,27,28];
