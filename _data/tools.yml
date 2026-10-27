@@ -128,6 +128,7 @@
 - id: power_sample_size
   name: Power and sample size
   status: Beta
+  hidden: true
   group: Test changes
   description: Work out how many patients or measurements you need before you test a change, how likely your test is to detect a real improvement, or the smallest change your sample can pick up.
 
