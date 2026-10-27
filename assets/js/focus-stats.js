@@ -42,12 +42,16 @@
      splitTable(text)     { recs, delim }: the non-blank lines split into cells
                           on tabs, or else semicolons, or else commas, with
                           spaces and surrounding quotes trimmed; null if blank
-     readNumber(raw, d)   a cell as a number, ignoring %, £, $, € and spaces,
-                          and commas that group thousands (1,234 or 1,234.5)
-                          unless the table is comma-separated (d is the
-                          delimiter splitTable found); NaN if not a number
-     isNumberCell(v, d)   whether a cell holds a number
-     numericShare(recs, c, d)  the share of column c's filled cells (after the
+     splitCells(line, d)  one line split into cells on the delimiter d, keeping
+                          a delimiter inside double quotes ("Ward A, North")
+                          as part of the cell, and reading "" inside quotes as
+                          one quote mark; cells are trimmed
+     readNumber(raw)      a cell as a number, ignoring %, £, $, € and spaces,
+                          and commas that group thousands (1,234 or 1,234.5);
+                          NaN if not a number. (Tools may pass the table's
+                          delimiter as a second argument; it isn't needed.)
+     isNumberCell(v)      whether a cell holds a number
+     numericShare(recs, c)  the share of column c's filled cells (after the
                           first row) that hold numbers
 */
 window.FocusStats = (() => {
@@ -210,29 +214,52 @@ window.FocusStats = (() => {
   }
 
   // ---- reading pasted data ----
+  // Cells as a spreadsheet writes them to CSV: a cell in double quotes can hold
+  // the delimiter, and "" inside the quotes is a quote mark. A quote that opens
+  // but never closes is taken as an ordinary character, as before.
+  function splitCells(line, delim) {
+    const out = [];
+    let cell = '', q = false;
+    for (let i = 0; i < line.length; i++) {
+      const c = line[i];
+      if (q) {
+        if (c === '"') { if (line[i + 1] === '"') { cell += '"'; i++; } else q = false; }
+        else cell += c;
+      } else if (c === '"' && cell.trim() === '') { q = true; cell = ''; }
+      else if (c === delim) { out.push(cell); cell = ''; }
+      else cell += c;
+    }
+    if (q) return line.split(delim).map(x => x.trim().replace(/^"(.*)"$/, '$1').trim());
+    out.push(cell);
+    return out.map(x => x.trim());
+  }
   function splitTable(text) {
     const lines = String(text || '').split(/\r?\n/).filter(l => l.trim() !== '');
     if (!lines.length) return null;
+    // choose the delimiter from the text outside quotes, so a name like "A; B" doesn't count
+    const bare = lines.map(l => l.replace(/"[^"]*"/g, ''));
     let delim = '\t';
-    if (!lines.some(l => l.includes('\t'))) delim = lines.some(l => l.includes(';')) ? ';' : (lines.some(l => l.includes(',')) ? ',' : '\t');
-    return { recs: lines.map(l => l.split(delim).map(x => x.trim().replace(/^"(.*)"$/, '$1').trim())), delim };
+    if (!bare.some(l => l.includes('\t'))) delim = bare.some(l => l.includes(';')) ? ';' : (bare.some(l => l.includes(',')) ? ',' : '\t');
+    return { recs: lines.map(l => splitCells(l, delim)), delim };
   }
   // Only commas that group digits in threes are taken as thousands separators.
   // Any other comma, such as a decimal comma in 1,2, makes the cell not a number,
-  // so it's reported as skipped rather than read as 12.
-  function readNumber(raw, delim) {
+  // so it's reported as skipped rather than read as 12. This holds in
+  // comma-separated data too: a comma only gets into a cell there inside quotes,
+  // as in "1,234".
+  function readNumber(raw) {
     if (raw === undefined) return NaN;
     let v = String(raw).replace(/[%£$€\s]/g, '');
-    if (delim !== ',' && /^[-+]?\d{1,3}(,\d{3})+(\.\d*)?$/.test(v)) v = v.replace(/,/g, '');
+    if (/^[-+]?\d{1,3}(,\d{3})+(\.\d*)?$/.test(v)) v = v.replace(/,/g, '');
     return v === '' || v.includes(',') ? NaN : Number(v);
   }
-  const isNumberCell = (v, delim) => v !== undefined && v !== '' && isFinite(readNumber(v, delim));
-  function numericShare(recs, c, delim) {
+  const isNumberCell = v => v !== undefined && v !== '' && isFinite(readNumber(v));
+  function numericShare(recs, c) {
     const cells = recs.slice(recs.length > 1 ? 1 : 0).map(r => r[c]).filter(v => v !== undefined && v !== '');
-    return cells.length ? cells.filter(v => isNumberCell(v, delim)).length / cells.length : 0;
+    return cells.length ? cells.filter(v => isNumberCell(v)).length / cells.length : 0;
   }
 
   return { lgamma, gamma, ibeta, betaInv, gammaQ, tP, tCdf, tInv, tCrit, fP, chiP, zP, normCdf, normInv, zCrit,
     sum, mean, variance, sd, median, quantile, ranks, tiesT, andersonDarling, oneWay,
-    splitTable, readNumber, isNumberCell, numericShare };
+    splitCells, splitTable, readNumber, isNumberCell, numericShare };
 })();

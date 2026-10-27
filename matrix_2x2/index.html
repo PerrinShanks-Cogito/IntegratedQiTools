@@ -517,6 +517,9 @@ select:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px var(--ye
   }
 
   // ---- parsing ----
+  // Shared statistics, from /assets/js/focus-stats.js
+  const { splitCells } = FocusStats;
+
   function split(text) {
     const lines = text.split(/\r?\n/).filter(l => l.trim() !== '');
     if (!lines.length) return null;
@@ -524,7 +527,7 @@ select:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px var(--ye
     if (!lines.some(l => l.includes('\t'))) delim = lines.some(l => l.includes(';')) ? /;/ : lines.some(l => l.includes(',')) ? /,/ : null;
     const recs = lines.map(l => {
       let f;
-      if (delim) f = l.split(delim).map(x => x.trim().replace(/^"(.*)"$/, '$1').trim());
+      if (delim) f = splitCells(l, delim.source === '\\t' ? '\t' : delim.source);
       else { const m = l.trim().match(/^(.*?)\s+(-?[\d.]+)\s+(-?[\d.]+)$/); f = m ? [m[1], m[2], m[3]] : [l.trim()]; }
       return f;
     });

@@ -27974,6 +27974,109 @@ false,
 " \n\n"
 ],
 "expect":null
+},
+{
+"name":"CSV with commas and semicolons inside quotes",
+"args":[
+"Ward,Days,Note\n\"Ward A, North\",3,\"a; b\"\n\"Ward \"\"B\"\"\",\"1,234\",x"
+],
+"expect":{
+"delim":",",
+"recs":[
+[
+"Ward",
+"Days",
+"Note"
+],
+[
+"Ward A, North",
+"3",
+"a; b"
+],
+[
+"Ward \"B\"",
+"1,234",
+"x"
+]
+]
+}
+},
+{
+"name":"a quote that never closes is an ordinary character",
+"args":[
+"5\" pipe,3\n\"open,4"
+],
+"expect":{
+"delim":",",
+"recs":[
+[
+"5\" pipe",
+"3"
+],
+[
+"\"open",
+"4"
+]
+]
+}
+}
+]
+},
+{
+"id":"splitting one line into cells",
+"fn":"splitCells",
+"tools":[
+"assets/js/focus-stats.js"
+],
+"tol":1e-09,
+"abs":1e-12,
+"cases":[
+{
+"name":"tabs, with a quoted tab",
+"args":[
+"A\t\"x\ty\"\t3",
+"\t"
+],
+"expect":[
+"A",
+"x\ty",
+"3"
+]
+},
+{
+"name":"semicolons, with a quoted semicolon",
+"args":[
+"\"a;b\"; 2 ;\"\"",
+";"
+],
+"expect":[
+"a;b",
+"2",
+""
+]
+},
+{
+"name":"commas, escaped quotes",
+"args":[
+"\"say \"\"hi\"\"\",1",
+","
+],
+"expect":[
+"say \"hi\"",
+"1"
+]
+},
+{
+"name":"no quotes at all",
+"args":[
+" 1 , 2,3 ",
+","
+],
+"expect":[
+"1",
+"2",
+"3"
+]
 }
 ]
 },
@@ -28049,7 +28152,7 @@ false,
 "1,234",
 ","
 ],
-"expect":null
+"expect":1234
 },
 {
 "name":"'abc' (tab-separated)",
@@ -28285,6 +28388,31 @@ true
 ],
 "skipped":0,
 "blanks":1
+}
+},
+{
+"name":"CSV with quoted names and numbers",
+"args":[
+"Ward,Admissions\n\"Ward A, North\",12\n\"Ward B\",\"1,234\"",
+true
+],
+"expect":{
+"cats":[
+{
+"name":"Ward A, North",
+"vals":[
+12
+]
+},
+{
+"name":"Ward B",
+"vals":[
+1234
+]
+}
+],
+"skipped":0,
+"blanks":0
 }
 }
 ]

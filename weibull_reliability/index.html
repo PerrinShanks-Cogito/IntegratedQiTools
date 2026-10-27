@@ -274,7 +274,7 @@ details.adv summary{cursor:pointer;font-weight:600;color:var(--blue);margin-bott
     if (!lines.length) return null;
     let delim = '\t';
     if (!lines.some(l => l.includes('\t'))) delim = lines.some(l => l.includes(';')) ? ';' : (lines.some(l => l.includes(',')) ? ',' : '\t');
-    const recs = lines.map(l => l.split(delim).map(x => x.trim().replace(/^"(.*)"$/, '$1').trim()));
+    const recs = lines.map(l => splitCells(l, delim));
     const first = r => r.find(c => c !== '' && isFinite(num(c, delim)));
     const headerGuess = recs.length > 1 && first(recs[0]) === undefined;
     const head = hasHeader ? recs[0] : null, body = hasHeader ? recs.slice(1) : recs;
@@ -285,7 +285,7 @@ details.adv summary{cursor:pointer;font-weight:600;color:var(--blue);margin-bott
 
   // ---- maths ----
   // Shared statistics, from /assets/js/focus-stats.js
-  const { gamma, sum, mean: avg, sd: sdev, readNumber: num } = FocusStats;
+  const { gamma, sum, mean: avg, sd: sdev, readNumber: num, splitCells } = FocusStats;
 
   // Maximum likelihood fit of a Weibull distribution to failures y (already less the threshold),
   // with m items still working at time c (also less the threshold).

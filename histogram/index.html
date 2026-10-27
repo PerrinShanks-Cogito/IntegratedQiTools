@@ -295,7 +295,7 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
     if (lines.length === 1 && lines[0].split(/[\s,;]+/).filter(Boolean).length > 2) {
       lines = lines[0].split(/[\s,;]+/).filter(Boolean);
     }
-    const rows = lines.map(l => l.split(delim));
+    const rows = lines.map(l => splitCells(l, delim));
     const ncols = Math.max(...rows.map(r => r.length));
     const rest = rows.length > 1 ? rows.slice(1) : rows;
     const frac = [];
@@ -327,7 +327,7 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 
   // ---- statistics ----
   // Shared statistics, from /assets/js/focus-stats.js
-  const { normCdf, quantile, andersonDarling } = FocusStats;
+  const { normCdf, quantile, andersonDarling, splitCells } = FocusStats;
 
 
   function describe(values) {

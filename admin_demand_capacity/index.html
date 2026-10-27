@@ -320,7 +320,7 @@ const state = { excluded: new Set(), showPct: true, m: null };
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 // Shared statistics, from /assets/js/focus-stats.js
-const { sum, mean, sd } = FocusStats;
+const { sum, mean, sd, splitCells } = FocusStats;
 
 function fmt(v, dp){
   if (!isFinite(v)) return '–';
@@ -376,7 +376,7 @@ function pickDelim(lines){
 function splitLines(text){
   const lines = text.split(/\r\n|\r|\n/).filter(l => l.trim());
   const delim = pickDelim(lines);
-  return { delim, rows: lines.map(l => (delim === 'ws' ? l.trim().split(/[\s ]+/) : l.split(delim)).map(f => f.trim().replace(/^"(.*)"$/, '$1'))) };
+  return { delim, rows: lines.map(l => delim === 'ws' ? l.trim().split(/[\s ]+/).map(f => f.trim().replace(/^"(.*)"$/, '$1')) : splitCells(l, delim)) };
 }
 // Work streams: name, minutes, role, turnaround days, failure demand %, waiting now
 function parseStreams(text){

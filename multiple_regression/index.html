@@ -297,14 +297,14 @@ td.sig{font-weight:700}
     else if (lines.some(l => l.includes(';'))) delim = ';';
     else if (lines.some(l => l.includes(','))) delim = ',';
     const recs = lines.map(l => {
-      const f = delim === 'ws' ? l.trim().split(/\s+/) : l.split(delim).map(x => x.trim().replace(/^"(.*)"$/, '$1').trim());
+      const f = delim === 'ws' ? l.trim().split(/\s+/) : splitCells(l, delim);
       while (f.length > 1 && f[f.length - 1] === '') f.pop();
       return f;
     });
     return { recs, delim };
   }
   // Shared statistics, from /assets/js/focus-stats.js
-  const { tP, tCrit, fP, mean: avg, sd, readNumber: num } = FocusStats;
+  const { tP, tCrit, fP, mean: avg, sd, readNumber: num, splitCells } = FocusStats;
 
   // Each column is numeric, a category (a few repeated text values) or a label (anything else)
   function classify(recs, delim, hasHeader) {
