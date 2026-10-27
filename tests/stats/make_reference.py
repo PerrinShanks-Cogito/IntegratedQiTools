@@ -1199,11 +1199,11 @@ group("Weibull: maximum likelihood fit", "mleFit", ["weibull_reliability"], wf, 
 pp, rq = [], []
 for n, N in [(10, 10), (25, 25), (18, 30)]:
     y = np.sort(np.round(weibull_min.rvs(1.7, scale=50, size=n, random_state=rng), 2)).tolist()
-    F = [(i - 0.5) / N for i in range(1, n + 1)]  # Hazen plotting positions
+    F = [(i - 0.3) / (N + 0.4) for i in range(1, n + 1)]  # median ranks, Benard's approximation
     pts = [{"t": v, "F": f, "x": math.log(v), "y": math.log(-math.log(1 - f))} for v, f in zip(y, F)]
     pp.append({"name": f"{n} failures of {N}", "args": [y, N], "expect": clean(pts)})
     rq.append({"name": f"{n} failures of {N}", "args": [pts], "expect": clean(stats.linregress([p_["x"] for p_ in pts], [p_["y"] for p_ in pts]).rvalue ** 2)})
-group("Weibull: probability plot points (Hazen plotting positions, (i − 0.5) / N)", "probPoints", ["weibull_reliability"], pp, tol=1e-12, abs_tol=1e-15)
+group("Weibull: probability plot points (median ranks, Benard: (i − 0.3) / (N + 0.4), as Minitab)", "probPoints", ["weibull_reliability"], pp, tol=1e-12, abs_tol=1e-15)
 group("Weibull: R² of the probability plot", "rsq", ["weibull_reliability"], rq, tol=1e-10)
 
 bt = []
@@ -1213,7 +1213,7 @@ for name, shape, scale, theta in [("threshold 40", 1.6, 60, 40), ("threshold 200
     N = len(y)
     def neg_r2(th):
         v = y - th
-        F = (np.arange(1, N + 1) - 0.5) / N
+        F = (np.arange(1, N + 1) - 0.3) / (N + 0.4)
         return -stats.linregress(np.log(v), np.log(-np.log(1 - F))).rvalue ** 2
     # search from 20 times the shortest time below it (not below 0 when every time is positive) up to just under it
     span = y[0] if y[0] > 0 else abs(y[0]) or 1
