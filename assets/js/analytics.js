@@ -71,7 +71,11 @@
           disableAjaxTracking: true,      // don't capture XHR calls
           disableFetchTracking: true,     // don't capture fetch calls
           enableAutoRouteTracking: false,
-          disableExceptionTracking: false // keep: tells you when a tool breaks
+          disableExceptionTracking: false, // keep: tells you when a tool breaks
+          // Chrome blocks the "unload" event and logs a permissions policy
+          // violation when the SDK listens for it; it still sends queued
+          // events on "beforeunload" and "pagehide"
+          disablePageUnloadEvents: ["unload"]
         }
       });
       ai.loadAppInsights();
