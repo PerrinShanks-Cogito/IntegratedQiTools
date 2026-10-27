@@ -1092,7 +1092,8 @@ FocusActions.mount({
   ready: () => !!(state.m && state.m.ready),
   template: {
     fileName: 'admin-demand-and-capacity-data-sheet.xlsx', sheets: dataSheet,
-    import: [['Work streams', '#streams'], ['Timed tasks', '#obs'], ['Weekly demand', '#demand'], ['Staff', '#staff'], ['Extra hours', '#adhoc'], ['Fixed work', '#fixed']].map(([sheet, into]) => ({ sheet, into }))
+    import: [['Work streams', '#streams', 'work streams'], ['Timed tasks', '#obs', 'timed observations'], ['Weekly demand', '#demand', 'weekly demand'],
+      ['Staff', '#staff', 'staff in post'], ['Extra hours', '#adhoc', 'extra hours'], ['Fixed work', '#fixed', 'fixed work']].map(([sheet, into, label]) => ({ sheet, into, label }))
   },
   exports: trackExports([
     { type: 'png', run: () => doExport('png') },

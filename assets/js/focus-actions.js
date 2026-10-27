@@ -26,11 +26,13 @@
                 xlsx(). fileName and sheets can each be a function, called on
                 each click. With import, the button becomes a menu that can also
                 bring a filled-in data sheet back in (and Open accepts .xlsx):
-                  [{ sheet, into, fixed? }]  copies each named sheet into the
-                    field matching the selector `into`, as tab-separated text
-                    like a paste from Excel. fixed = how many columns on the
-                    left the blank sheet fills in for you (such as a case
-                    number), so rows with nothing else in are left out.
+                  [{ sheet, into, fixed?, label? }]  copies each named sheet
+                    into the field matching the selector `into`, as
+                    tab-separated text like a paste from Excel. fixed = how
+                    many columns on the left the blank sheet fills in for you
+                    (such as a case number), so rows with nothing else in are
+                    left out. Every field is replaced: one whose sheet is
+                    missing is emptied, and the message names it by label.
                   (book, h) => message  for anything else; see importHelpers()
      explain    optional settings for the "Need further help to understand the
                 analysis?" link to Microsoft 365 Copilot; see focus-explain.js
@@ -609,20 +611,29 @@
         let msg;
         if (typeof imp === "function") msg = imp(book, h);
         else {
-          const got = [];
-          imp.forEach(spec => {
+          const found = imp.map(spec => {
             let rows = h.sheet(spec.sheet);
             // A single-sheet tool also takes the first sheet of a workbook laid out differently
             if (!rows && imp.length === 1) { const first = book.sheets.find(s => !/^instructions$/i.test(s.name.trim()) && s.rows.length); rows = first ? first.rows : null; }
-            if (!rows) return;
-            h.put(spec.into, h.tsv(rows, spec.fixed));
-            got.push([spec.sheet, h.count(rows, spec.fixed)]);
+            return { spec, rows };
           });
-          const rows = n => n + (n === 1 ? " row" : " rows"), filled = got.filter(g => g[1]);
-          if (!got.length) msg = new Error("That workbook doesn’t have a " + imp.map(x => x.sheet).join(" or ") + " sheet. Use a data sheet downloaded from this tool.");
-          else if (!filled.length) msg = "That data sheet has no rows filled in yet.";
-          else msg = got.length === 1 ? "Imported " + rows(got[0][1]) + " from " + f.name + "."
-            : "Imported " + f.name + ": " + filled.map(g => rows(g[1]) + " from " + g[0]).join(", ") + ".";
+          if (!found.some(x => x.rows)) msg = new Error((imp.length === 1 ? "That workbook doesn’t have a " + imp[0].sheet + " sheet."
+            : "That workbook doesn’t have any of this tool’s sheets (" + imp.map(x => x.sheet).join(", ") + "), so nothing was changed.") + " Use a data sheet downloaded from this tool.");
+          else {
+            // Every box is replaced, so nothing is left over from before: a
+            // sheet that is missing (renamed or deleted) empties its box.
+            found.forEach(x => { h.put(x.spec.into, x.rows ? h.tsv(x.rows, x.spec.fixed) : ""); });
+            const got = found.filter(x => x.rows).map(x => [x.spec.sheet, h.count(x.rows, x.spec.fixed)]);
+            const lost = found.filter(x => !x.rows).map(x => x.spec);
+            const rows = n => n + (n === 1 ? " row" : " rows"), filled = got.filter(g => g[1]);
+            const and = a => a.length > 1 ? a.slice(0, -1).join(", ") + " and " + a[a.length - 1] : a[0];
+            msg = !filled.length ? "That data sheet has no rows filled in yet."
+              : got.length === 1 ? "Imported " + rows(got[0][1]) + " from " + f.name + "."
+              : "Imported " + f.name + ": " + filled.map(g => rows(g[1]) + " from " + g[0]).join(", ") + ".";
+            if (lost.length) msg += " No " + and(lost.map(x => x.sheet)).replace(/ and /, " or ") + " sheet found, so " +
+              and(lost.map(x => x.label || "the " + x.sheet + " box")) + (lost.length === 1 ? " is" : " are") +
+              " now empty. Check the tab names match the data sheet.";
+          }
         }
         if (msg instanceof Error) return say(msg.message);
         say(msg || "Imported " + f.name + ".");
