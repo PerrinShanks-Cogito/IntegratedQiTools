@@ -1342,6 +1342,31 @@ group("share of a column that holds numbers", "numericShare", [SHARED],
           ("one row only", [["5"]], 0, "\t", 1.0),
           ("column missing", [["a"], ["1"]], 1, "\t", 0.0)]])
 
+# The bar chart and design of experiments read numbers with the same shared rule:
+# commas are thousands separators only in groups of three.
+group("bar chart: reading pasted values", "parse", ["bar_chart"], [
+    {"name": "thousands and a decimal comma (tabs)", "args": ["Ward\tAdmissions\nA\t1,234\nB\t1,2\nC\t£2,500.50\nD\tn/a", True],
+     "expect": {"cats": [{"name": "A", "vals": [1234]}, {"name": "C", "vals": [2500.5]}], "skipped": 2, "blanks": 0}},
+    {"name": "comma-separated, with an empty cell", "args": ["Ward,Jan,Feb\nA,12,\nB,7,8", True],
+     "expect": {"cats": [{"name": "A", "vals": [12, 0]}, {"name": "B", "vals": [7, 8]}], "skipped": 0, "blanks": 1}},
+    {"name": "two series, one unreadable cell", "args": ["Ward\tJan\tFeb\nA\t3\t12,5\nB\t4\t6", True],
+     "expect": {"cats": [{"name": "A", "vals": [3, 0]}, {"name": "B", "vals": [4, 6]}], "skipped": 0, "blanks": 1}}],
+      call="barChart", tol=0, abs_tol=0)
+FACT_COMMA = [{"name": "Volume", "type": "numeric", "low": "1,000", "high": "1,500"}, {"name": "Minutes", "type": "numeric", "low": "10", "high": "30"},
+              {"name": "Kiosk", "type": "text", "low": "Off", "high": "On"}, {"name": "", "type": "text", "low": "", "high": ""}]
+X = coded(3, 1); y = design_y(X, {"A": -3, "B": 2}, 1, np.random.default_rng(7))
+real = [[1000 + (x[0] + 1) / 2 * 500, 10 + (x[1] + 1) / 2 * 20, x[2]] for x in X]
+f = doe_ols(real, y, ["A", "B", "C"])
+group("design of experiments: settings with thousands commas", "uncoded", ["design_of_experiments"],
+      [{"name": "low 1,000 and high 1,500", "args": [{"k": 3, "factors": FACT_COMMA}, [{"x": x, "y": v} for x, v in zip(X, y)], ["A", "B", "C"], []],
+        "expect": clean({"uncoded": dict(zip(["", "A", "B", "C"], f.params)), "means": []})}],
+      call="doeUncoded", tol=1e-8, abs_tol=1e-9)
+dr2 = backward(X, y, ["A", "B", "C"], 0.05)
+group("design of experiments: a result with a decimal comma is left out", "reduce", ["design_of_experiments"],
+      [{"name": "run 3 typed as 31,5", "args": [{"k": 3, "reps": 1, "terms": ["A", "B", "C"], "alpha": "0.05",
+                                                  "y": {**{str(i + 1): v for i, v in enumerate(y)}, "3": "31,5"}, "factors": FACT_COMMA}],
+        "expect": backward([X[i] for i in range(8) if i != 2], [y[i] for i in range(8) if i != 2], ["A", "B", "C"], 0.05)}], call="doeReduce")
+
 with open(OUT, "w") as f:
     json.dump({"generated_by": "tests/stats/make_reference.py", "scipy": scipy.__version__, "numpy": np.__version__,
                "groups": groups}, f, indent=0, separators=(",", ":"))

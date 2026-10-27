@@ -314,12 +314,11 @@ fieldset.opts legend{font-weight:600;margin:0 0 .35rem;padding:0}
     });
     return { recs, comma: delim && delim.source === ',' };
   }
-  function num(raw, comma) {
-    if (raw === undefined) return NaN;
-    let v = String(raw).replace(/[%£$€\s]/g, '');
-    if (!comma) v = v.replace(/,/g, '');
-    return v === '' ? NaN : Number(v);
-  }
+  // Shared reader for numbers in cells, from /assets/js/focus-stats.js: commas count
+  // as thousands separators only in groups of three (1,234), and not at all when the
+  // data is comma-separated
+  const { readNumber } = FocusStats;
+  const num = (raw, comma) => readNumber(raw, comma ? ',' : '');
   function headerGuess(text) {
     const s = split(text); if (!s || s.recs.length < 2) return false;
     const h = s.recs[0];
@@ -543,7 +542,7 @@ fieldset.opts legend{font-weight:600;margin:0 0 .35rem;padding:0}
 
     let note = `Reading ${d.cats.length} categor${d.cats.length === 1 ? 'y' : 'ies'}` + (d.series.length > 1 ? ` with ${d.series.length} value columns.` : '.');
     if (d.skipped) note += ` ${d.skipped} row${d.skipped > 1 ? 's' : ''} skipped (no number found).`;
-    if (d.blanks) note += ` ${d.blanks} empty cell${d.blanks > 1 ? 's' : ''} treated as zero.`;
+    if (d.blanks) note += ` ${d.blanks} cell${d.blanks > 1 ? 's were' : ' was'} empty or not a number and ${d.blanks > 1 ? 'are' : 'is'} shown as zero.`;
     els.detected.textContent = note;
     const hasNeg = d.cats.some(c => c.vals.some(v => v < 0));
     setLayout(d.series.length, hasNeg);

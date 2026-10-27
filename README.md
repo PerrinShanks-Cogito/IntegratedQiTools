@@ -261,7 +261,7 @@ survival, density, hazard and percentile functions) is checked against
 SciPy, and the power tool's proportion tests, sample sizes and smallest
 detectable differences against statsmodels and SciPy.
 
-100 tests, about 1,000 comparisons.
+103 tests, about 1,000 comparisons.
 
 ```sh
 node --test tests/stats/stats.test.js

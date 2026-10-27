@@ -313,7 +313,9 @@ td.yes{color:var(--green);font-weight:700}
   const list = a => a.length > 1 ? a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1] : (a[0] || '');
   const pf = p => p == null ? '–' : p < 0.001 ? '< 0.001' : p.toFixed(3);
   const pIs = p => p < 0.001 ? 'p < 0.001' : 'p = ' + p.toFixed(3);
-  const num = v => { const s = String(v == null ? '' : v).trim().replace(/,/g, ''); return s === '' ? NaN : Number(s); };
+  // Shared statistics, from /assets/js/focus-stats.js. Numbers typed into the tool are
+  // read like pasted cells: commas count as thousands separators only in groups of three.
+  const { tP, tCrit, readNumber: num } = FocusStats;
 
   // ---- the design ----
   const runsN = () => (1 << state.k) * state.reps;
@@ -357,10 +359,6 @@ td.yes{color:var(--green);font-weight:700}
     }
     return out;
   }
-
-  // ---- distributions ----
-  // Shared distributions, from /assets/js/focus-stats.js
-  const { tP, tCrit } = FocusStats;
 
   // ---- the model ----
   // Inverse of a symmetric matrix by Gauss–Jordan elimination; null if singular.

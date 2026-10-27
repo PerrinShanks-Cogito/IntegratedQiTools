@@ -139,6 +139,11 @@ const CALLS = {
     const p = P.parse(text, hasHeader), r = P.compute(p.items, groupAfter, cutoff);
     return { skipped: p.skipped, total: r.total, vital: r.vital, rows: r.rows.map(d => ({ name: d.name, value: d.value, pct: d.pct, cum: d.cum })) };
   },
+  // Bar chart: pasted text through the tool's reader
+  barChart: tool => (text, hasHeader) => {
+    const d = load(tool, ["parse"]).parse(text, hasHeader);
+    return { cats: d.cats.map(c => ({ name: c.name, vals: c.vals })), skipped: d.skipped, blanks: d.blanks };
+  },
   // ...and backward elimination of terms that aren't clear
   doeReduce: tool => state => {
     const D = load(tool, ["reduce", "state"], { state });
