@@ -56,11 +56,12 @@ STAGES = [
 ]
 
 # --------------------------------------------------------------------------
-# The documents. `code` is the template's letter; `feeds` lists the
-# documents it takes information from.
+# The documents. `ref` is the CITI template's own letter; `feeds` lists the
+# documents it takes information from. Each document's FOCUS code (F1, O1,
+# C1...) comes from its stage and its place in ORDER below.
 # --------------------------------------------------------------------------
 DOCS = [
-    {"id": "scope", "code": "D", "stage": "find", "name": "High level scoping document", "kind": "slides",
+    {"id": "scope", "ref": "D", "stage": "find", "name": "High level scoping document", "kind": "slides",
      "template": "initiate-d-high-level-scope.potx", "fill": fill_slides.scope,
      "purpose": "One page that says what the project is, why it matters, what is in and out of scope, and who leads it.",
      "when": "First. Use it to get your sponsor (SRO) to agree the work is worth doing before you spend time on detail.",
@@ -68,7 +69,7 @@ DOCS = [
      "covers": ["Elevator pitch", "Scope", "Benefits", "Delivery and resourcing", "Budget", "Stakeholders", "Governance", "Assumptions", "Risks and issues", "Constraints and dependencies"],
      "feeds": [],
      "tips": ["Keep each box to two or three lines: detail belongs in the PID or support plan.", "Put numbers in the benefits box (the baseline and what you expect), not just aims.", "List what is out of scope. It saves arguments later."]},
-    {"id": "support", "code": "E2", "stage": "find", "name": "Support plan", "kind": "slides",
+    {"id": "support", "ref": "E2", "stage": "find", "name": "Support plan", "kind": "slides",
      "template": "initiate-e2-support-plan.potx", "fill": fill_slides.support_plan,
      "purpose": "The agreement between CITI and a clinical group or service: the context, scope, deliverables, metrics, approach, governance, resources and next steps.",
      "when": "When you are asking CITI for improvement support. Agree it with the clinical group before the work starts.",
@@ -76,39 +77,39 @@ DOCS = [
      "covers": ["Context and request", "Scope, deliverables and metrics", "Improvement approach (Plan, Do, Study, Act)", "Principles", "Governance", "Risks and dependencies", "Return on investment and KPIs", "Resource plan", "Next steps"],
      "feeds": ["scope"],
      "tips": ["The scope, deliverables and metrics table feeds every highlight report, so word the deliverables as things you can tick off.", "Agree the clinical group's commitment (time, people, decisions) as clearly as CITI's."]},
-    {"id": "pid", "code": "E1", "stage": "create", "name": "Project initiation document (PID)", "kind": "doc",
+    {"id": "pid", "ref": "E1", "stage": "create", "name": "Project initiation document (PID)", "kind": "doc",
      "template": "initiate-e1-project-initiation-document.dotx", "fill": fill_pid.pid,
      "purpose": "The full case for the project: case for change, SMART objectives, approach, resourcing, timescales, leadership, governance, risks, dependencies, stakeholders, return on investment and KPIs.",
      "when": "When you create the plan for a larger project, especially one that needs formal approval or a business case.",
      "owner": "Project or programme manager",
      "covers": ["Case for change", "Objectives", "Approach and resourcing", "Milestones", "Leadership and governance", "Risks, dependencies and stakeholders", "Return on investment", "KPIs and other benefits"],
-     "feeds": ["scope", "benefits", "stakeholders"],
+     "feeds": ["scope", "benefits", "stakeholders", "plan", "resources"],
      "tips": ["Use facts and figures for the case for change: your baseline from a run chart is ideal.", "Write objectives as SMART: a measure, a target and a date."]},
-    {"id": "resources", "code": "J", "stage": "create", "name": "Resource planner and tracker", "kind": "sheet",
+    {"id": "resources", "ref": "J", "stage": "create", "name": "Resource planner and tracker", "kind": "sheet",
      "template": "initiate-j-resource-planner.xlsx", "fill": fill_sheets.resources,
      "purpose": "The days each person is planned to give the project each week, and the days they actually gave.",
      "when": "Plan it when you agree resources in the PID or support plan; fill in actual days every week or month.",
      "owner": "Project manager",
      "covers": ["Planned days by person and week", "Actual days worked", "Days remaining", "External resources"],
-     "feeds": ["pid", "support"],
+     "feeds": ["support", "plan"],
      "tips": ["Enter the start date and the weeks fill in by themselves.", "A gap between planned and actual days is an early warning: log it as a risk."]},
-    {"id": "mobilisation", "code": "", "stage": "create", "name": "Programme mobilisation document", "kind": "slides",
+    {"id": "mobilisation", "ref": "", "stage": "create", "name": "Programme mobilisation document", "kind": "slides",
      "template": "mobilise-programme-mobilisation.potx", "fill": fill_slides.mobilisation,
      "purpose": "An intro manual for each team member and a team charter: what we want to achieve, how we work together and how we support each other.",
      "when": "At a workshop when the team first comes together, as you create the plan.",
      "owner": "Programme manager, with the team",
      "covers": ["Intro manual (one per person)", "Team charter: objectives and success", "Ways of working", "Supporting each other"],
-     "feeds": ["support", "pid"],
+     "feeds": ["support"],
      "tips": ["Fill it in together in the room rather than sending it round.", "Revisit the charter when new people join."]},
-    {"id": "roles", "code": "N", "stage": "create", "name": "Key programme roles", "kind": "slides",
+    {"id": "roles", "ref": "N", "stage": "create", "name": "Key programme roles", "kind": "slides",
      "template": "mobilise-n-key-programme-roles.potx", "fill": fill_slides.roles,
      "purpose": "Who fills each standard programme role (SRO, accountable executive, programme director and manager, leads, PMO, assurance) and what each is responsible for.",
      "when": "When you create the plan, alongside the organisation chart.",
      "owner": "Programme director",
      "covers": ["SRO", "Accountable executive", "Programme director and manager", "Clinical, operational and nursing leads", "PMO and assurance", "Improvement support", "Senior supplier"],
-     "feeds": ["pid", "support"],
+     "feeds": ["support"],
      "tips": ["Every role needs a name. A blank role is a risk.", "Use the comments to say how much time each person gives."]},
-    {"id": "orgchart", "code": "O", "stage": "create", "name": "Organisation chart", "kind": "slides",
+    {"id": "orgchart", "ref": "O", "stage": "create", "name": "Organisation chart", "kind": "slides",
      "template": "mobilise-o-organisation-chart.potx", "fill": fill_slides.org_chart,
      "purpose": "The programme's structure on a page: the executive team, the programme leadership, and the leads and improvement support for each workstream.",
      "when": "When you create the plan, once workstreams and leads are agreed.",
@@ -116,7 +117,7 @@ DOCS = [
      "covers": ["Programme executive team", "Programme leadership", "Core workstreams and their leads", "Enabling workstreams"],
      "feeds": ["roles"],
      "tips": ["The leads and teams named here go straight into each workstream's highlight report."]},
-    {"id": "governance", "code": "P", "stage": "create", "name": "Governance", "kind": "slides",
+    {"id": "governance", "ref": "P", "stage": "create", "name": "Governance", "kind": "slides",
      "template": "mobilise-p-governance.potx", "fill": fill_slides.governance,
      "purpose": "How the programme is steered: a chart of the forums it reports to, and a table of each forum's purpose, responsibilities, inputs, outputs and attendees.",
      "when": "When you create the plan, before the first leadership meeting.",
@@ -124,7 +125,7 @@ DOCS = [
      "covers": ["Governance chart", "Forum purpose and responsibilities", "Inputs (which report goes where)", "Outputs and attendees"],
      "feeds": ["roles", "orgchart"],
      "tips": ["Use meetings that already exist where you can.", "Say which report each forum gets: highlight reports to the huddle, the leadership report to the leadership meeting."]},
-    {"id": "benefits", "code": "K", "stage": "observe", "name": "Benefits register", "kind": "sheet",
+    {"id": "benefits", "ref": "K", "stage": "observe", "name": "Benefits register", "kind": "sheet",
      "template": "mobilise-k-benefits-register.xlsx", "fill": fill_sheets.benefits,
      "purpose": "Each benefit (and dis-benefit) with its measure, baseline, target, dates, data source and owners.",
      "when": "Set the baselines while you observe the current state, review it monthly, and use it again to show the benefit is sustained.",
@@ -132,15 +133,15 @@ DOCS = [
      "covers": ["Objective and beneficiary", "Benefit or dis-benefit", "Measure, baseline and target", "Data source and frequency", "Benefit manager and owner", "Cash releasing and £ value"],
      "feeds": ["scope", "support"],
      "tips": ["Set the baseline from data over time: a run chart or SPC chart shows whether the baseline is stable.", "Include a balancing measure as a dis-benefit, so you'd notice if the change caused harm."]},
-    {"id": "plan", "code": "B", "stage": "create", "name": "Project plan (detailed)", "kind": "sheet",
+    {"id": "plan", "ref": "B", "stage": "create", "name": "Project plan (detailed)", "kind": "sheet",
      "template": "plan-b-project-plan-detailed.xlsx", "fill": fill_sheets.plan,
      "purpose": "Every workstream broken into activities, sub-activities, milestones and meetings, with owners, dates, status, % complete and the critical path, drawn as a Gantt chart.",
      "when": "When you create the plan, before the changes start; update it every week.",
      "owner": "Project manager, with workstream leads",
      "covers": ["Workstreams, activities and milestones", "Responsible person", "Start and due dates", "Status and % complete", "Critical path", "Gantt chart by day"],
-     "feeds": ["support", "pid", "orgchart"],
+     "feeds": ["support", "orgchart"],
      "tips": ["Mark the critical path: these are the tasks that delay everything if they slip.", "The plan on a page and the leadership report are drawn from this."]},
-    {"id": "stakeholders", "code": "I", "stage": "observe", "name": "Stakeholder map and communication plan", "kind": "slides",
+    {"id": "stakeholders", "ref": "I", "stage": "observe", "name": "Stakeholder map and communication plan", "kind": "slides",
      "template": "plan-i-stakeholder-map-comms-plan.potx", "fill": fill_slides.stakeholders,
      "purpose": "Stakeholders placed by influence and interest (champions, supporters, blockers, sleepers), and a plan of how and how often you will communicate with each.",
      "when": "While you observe the current state, so you know who is affected; review it when a stakeholder's interest or influence changes.",
@@ -148,7 +149,7 @@ DOCS = [
      "covers": ["Stakeholder map", "Key interests and issues", "Communication vehicle, frequency and format", "Content provided"],
      "feeds": ["scope", "support"],
      "tips": ["The 2x2 matrix tool has a stakeholder grid you can score with your team, then copy into this map."]},
-    {"id": "onepage", "code": "A", "stage": "create", "name": "Project plan on a page", "kind": "slides",
+    {"id": "onepage", "ref": "A", "stage": "create", "name": "Project plan on a page", "kind": "slides",
      "template": "implement-a-plan-on-a-page.potx", "fill": fill_slides.plan_on_a_page,
      "purpose": "A high level timeline of the programme by workstream, with its main activities, milestones and critical path, on one slide.",
      "when": "Once the detailed plan is agreed. Use it in leadership reports and when you brief people.",
@@ -156,15 +157,15 @@ DOCS = [
      "covers": ["Workstreams by month", "Main activities", "Milestones", "Critical path"],
      "feeds": ["plan"],
      "tips": ["Show only what a senior reader needs: about 2 or 3 bars a workstream."]},
-    {"id": "raid", "code": "F", "stage": "undertake", "name": "RAID log", "kind": "sheet",
+    {"id": "raid", "ref": "F", "stage": "undertake", "name": "RAID log", "kind": "sheet",
      "template": "implement-f-raid-log.xlsx", "fill": fill_sheets.raid,
      "purpose": "The programme's Risks, Assumptions, Issues and Dependencies, each with an owner, a score or RAG, actions and status.",
      "when": "Start it when you create the plan; review it at every weekly huddle.",
      "owner": "Programme manager; each item has an owner",
      "covers": ["Risks: likelihood x impact, before and after mitigation", "Issues: impact and actions to resolve", "Assumptions", "Dependencies: who delivers what, by when", "Escalation to the executive"],
-     "feeds": ["scope", "pid", "support"],
+     "feeds": ["scope", "support"],
      "tips": ["A risk might happen; an issue is happening now. When a risk happens, close it and open an issue.", "Highlight and leadership reports copy their risks and issues from here."]},
-    {"id": "actions", "code": "M", "stage": "undertake", "name": "Action and decision log", "kind": "sheet",
+    {"id": "actions", "ref": "M", "stage": "undertake", "name": "Action and decision log", "kind": "sheet",
      "template": "implement-m-action-decision-log.xlsx", "fill": fill_sheets.actions,
      "purpose": "Actions agreed at meetings, with owners, due dates and status; and decisions made or needed, with who approved them and when.",
      "when": "At every programme meeting, from the first.",
@@ -172,7 +173,7 @@ DOCS = [
      "covers": ["Action log: owner, due and revised due dates, status", "Decisions log: decision needed, final decision, approved by, date"],
      "feeds": [],
      "tips": ["Log the decision and who made it at the time. It is hard to piece together later.", "Key decisions go into the highlight report."]},
-    {"id": "highlight", "code": "G", "stage": "undertake", "name": "Highlight report", "kind": "slides",
+    {"id": "highlight", "ref": "G", "stage": "undertake", "name": "Highlight report", "kind": "slides",
      "template": "implement-g-highlight-report.potx", "fill": fill_slides.highlight,
      "purpose": "One slide per workstream: its brief, leads, key achievements and metrics, deliverables with % done and RAG, decisions, escalations and risks.",
      "when": "Every week, for the programme weekly huddle.",
@@ -180,7 +181,7 @@ DOCS = [
      "covers": ["Brief, leads and teams", "Key achievements", "Key metrics: target and current", "Deliverables: % done, RAG, progress, next steps", "Decisions, escalations, risks and issues", "Win of the week"],
      "feeds": ["support", "orgchart", "actions", "raid", "benefits"],
      "tips": ["Use the RAG key: red is delayed and needs escalating, amber is at risk, green is on track, blue is complete.", "Show your metric as a run chart or SPC chart rather than a single number when you can."]},
-    {"id": "leadership", "code": "L", "stage": "undertake", "name": "Leadership report", "kind": "slides",
+    {"id": "leadership", "ref": "L", "stage": "undertake", "name": "Leadership report", "kind": "slides",
      "template": "implement-l-leadership-report.potx", "fill": fill_slides.leadership,
      "purpose": "One slide for the whole programme: key metrics, each workstream's deliverables with % done, due date and RAG, wins and the key risks and issues.",
      "when": "Every fortnight or month, for the programme leadership meeting.",
@@ -188,7 +189,7 @@ DOCS = [
      "covers": ["Key metrics and KPIs", "Workstream RAG and deliverables", "RAG justification and next steps", "Wins of the week", "Key risks and issues"],
      "feeds": ["plan", "onepage", "raid", "highlight", "benefits"],
      "tips": ["Explain every amber and red in the RAG justification, and say what you need from the leaders."]},
-    {"id": "closure", "code": "", "stage": "sustain", "name": "Programme closure report", "kind": "slides",
+    {"id": "closure", "ref": "", "stage": "sustain", "name": "Programme closure report", "kind": "slides",
      "template": "close-programme-closure-report.potx", "fill": fill_slides.closure,
      "purpose": "Why the programme is closing, what it achieved, the benefits against their baselines, handover of outputs and open risks, stakeholder feedback, lessons learnt and a case study.",
      "when": "At the end of the programme, or when it is stopped.",
@@ -197,6 +198,20 @@ DOCS = [
      "feeds": ["benefits", "raid", "plan"],
      "tips": ["Show the benefits as SPC charts: a sustained shift is stronger evidence than a before-and-after.", "Every open risk and output needs a named handover owner."]},
 ]
+
+# The order documents are numbered and shown in within each stage
+ORDER = [
+    "scope", "support",                                          # Find
+    "benefits", "stakeholders",                                  # Observe
+    "mobilisation", "roles", "orgchart", "governance",           # Create
+    "plan", "onepage", "resources", "pid",
+    "raid", "actions", "highlight", "leadership",                # Undertake
+    "closure",                                                   # Sustain
+]
+DOCS.sort(key=lambda d: ORDER.index(d["id"]))
+for _stage in STAGES:
+    for _n, _doc in enumerate((d for d in DOCS if d["stage"] == _stage["id"]), 1):
+        _doc["code"] = f'{_stage["letter"]}{_n}'
 
 # --------------------------------------------------------------------------
 # Decision tree. A question has options; each option leads to another
