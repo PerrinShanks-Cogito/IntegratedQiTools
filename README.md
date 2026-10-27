@@ -207,13 +207,16 @@ values, quantiles, ranks, descriptive statistics, the Anderson-Darling test,
 one-way and Welch's ANOVA, the one-sample t-test, chi-squared and Fisher's
 exact tests, correlation, least squares regression and power.
 
-The distributions every tool needs (the gamma and beta functions, and the t,
-F, chi-squared and normal p-values, cumulative probabilities and critical
-values) are in one shared file, `assets/js/focus-stats.js`, which every tool
-page loads. A tool takes what it uses with
-`const { tP, fP } = FocusStats;`. The shared file is tested once, and each
-tool's results are tested through it. Other calculations are still written
-in each tool, and every copy is checked.
+The statistics several tools need are in one shared file,
+`assets/js/focus-stats.js`, which every tool page loads:
+- the gamma and beta functions, and the t, F, chi-squared and normal p-values,
+  cumulative probabilities and critical values;
+- sum, mean, variance, standard deviation, median, quantiles and ranks;
+- the Anderson-Darling normality test and one-way ANOVA.
+
+A tool takes what it uses with `const { tP, fP } = FocusStats;`. The shared
+file is tested once, and each tool's results are tested through it. Other
+calculations are still written in each tool, and every copy is checked.
 
 It also checks the SPC chart (XmR, P, U, C and T charts, including Laney's P'
 and U', breaks, a fixed baseline, screened moving ranges and every signal
@@ -256,7 +259,7 @@ survival, density, hazard and percentile functions) is checked against
 SciPy, and the power tool's proportion tests, sample sizes and smallest
 detectable differences against statsmodels and SciPy.
 
-101 tests, about 1,050 comparisons.
+97 tests, about 980 comparisons.
 
 ```sh
 node --test tests/stats/stats.test.js

@@ -612,8 +612,9 @@ function parseT(text){
 }
 
 /* ---------- Calculation ---------- */
-const avg = a => a.reduce((s, v) => s + v, 0) / a.length;
-const sum = a => a.reduce((s, v) => s + v, 0);
+// Shared statistics, from /assets/js/focus-stats.js
+const { sum, mean: avg } = FocusStats;
+
 // Charts of counts (P, U and C) show limits once there are this many points, as in the NHS P chart tool
 const MIN_COUNT_LIMITS = 13;
 

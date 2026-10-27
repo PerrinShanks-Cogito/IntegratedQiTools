@@ -18,11 +18,6 @@ const ref = require("./reference.json");
 
 // Calls that need more than fn(...args)
 const CALLS = {
-  // the histogram describes the data first, then tests it
-  adHistogram: (tool, g) => {
-    const f = load(tool, ["describe", "andersonDarling"]);
-    return values => f.andersonDarling(f.describe(values));
-  },
   // ANOVA works out each group's statistics, then runs Welch's test on them
   welchFromGroups: (tool, g) => {
     const f = load(tool, ["describe", "welch"]);

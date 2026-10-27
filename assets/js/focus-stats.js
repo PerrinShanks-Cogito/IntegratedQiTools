@@ -1,9 +1,9 @@
 /* © Guy’s and St Thomas’ NHS Foundation Trust 2026. All rights reserved. */
 
-/* Shared statistical distributions for the FOCUS tools: the gamma and beta
-   functions and the p-values, cumulative probabilities and critical values built
-   on them. Every tool that needs one takes it from here, so there is one copy to
-   check and correct:
+/* Shared statistics for the FOCUS tools: the gamma and beta functions, the
+   p-values, cumulative probabilities and critical values built on them, and the
+   descriptive statistics and tests several tools use. Every tool that needs one
+   takes it from here, so there is one copy to check and correct:
 
      const { ibeta, tP, fP, tCrit } = FocusStats;
 
@@ -25,6 +25,17 @@
      normCdf(z)           cumulative probability of the standard normal
      normInv(p)           its inverse
      zCrit(alpha)         two-sided critical value of z
+
+     sum(a), mean(a)      total and mean (NaN when a is empty)
+     variance(a), sd(a)   sample variance and standard deviation (n − 1)
+     median(a)            middle value, or the mean of the middle two
+     quantile(sorted, p)  linear interpolation, as R type 7 and Excel's
+                          QUARTILE.INC; `sorted` must be in ascending order
+     ranks(a)             ranks from 1, with tied values given their average rank
+     tiesT(a)             the tie correction, the sum of t³ − t over tied groups
+     andersonDarling(a)   normality test: { a2, a, p }, or null with fewer than 3
+                          values or none varying
+     oneWay(groups)       one-way ANOVA on arrays of values
 */
 window.FocusStats = (() => {
   // Lanczos approximation (Numerical Recipes gammln), accurate to about 1e-10
@@ -125,5 +136,66 @@ window.FocusStats = (() => {
     return x - u / (1 + x * u / 2);
   }
 
-  return { lgamma, gamma, ibeta, betaInv, gammaQ, tP, tCdf, tInv, tCrit, fP, chiP, zP, normCdf, normInv, zCrit };
+  // ---- descriptive statistics ----
+  const sum = a => a.reduce((s, v) => s + v, 0);
+  const mean = a => sum(a) / a.length;
+  const variance = a => { const m = mean(a); return sum(a.map(x => (x - m) ** 2)) / (a.length - 1); };
+  const sd = a => Math.sqrt(variance(a));
+  function quantile(sorted, p) {
+    const h = (sorted.length - 1) * p, lo = Math.floor(h);
+    return lo + 1 < sorted.length ? sorted[lo] + (h - lo) * (sorted[lo + 1] - sorted[lo]) : sorted[lo];
+  }
+  const median = a => a.length ? quantile(a.slice().sort((x, y) => x - y), 0.5) : NaN;
+  function ranks(a) {
+    const idx = a.map((v, i) => i).sort((x, y) => a[x] - a[y]), r = new Array(a.length);
+    for (let i = 0; i < idx.length;) {
+      let j = i; while (j + 1 < idx.length && a[idx[j + 1]] === a[idx[i]]) j++;
+      for (let k = i; k <= j; k++) r[idx[k]] = (i + j) / 2 + 1;
+      i = j + 1;
+    }
+    return r;
+  }
+  const tiesT = a => { const c = new Map(); a.forEach(v => c.set(v, (c.get(v) || 0) + 1)); let t = 0; c.forEach(k => { t += k * k * k - k; }); return t; };
+
+  // Anderson-Darling test for normality, with the mean and standard deviation
+  // estimated from the data: A² with Stephens' small-sample adjustment, and the
+  // p-value from D'Agostino and Stephens (1986), as Minitab uses. Each tail
+  // probability comes straight from normCdf, so extreme values are measured
+  // accurately; beyond an adjusted A² of 13 the p-value is taken as 0, because
+  // the fitted curve turns back up there.
+  function andersonDarling(values) {
+    const n = values.length; if (n < 3) return null;
+    const m = mean(values), s = sd(values); if (!(s > 0)) return null;
+    const v = values.slice().sort((x, y) => x - y);
+    let S = 0;
+    for (let i = 0; i < n; i++) {
+      const lo = Math.max(normCdf((v[i] - m) / s), 1e-300);
+      const hi = Math.max(normCdf(-(v[n - 1 - i] - m) / s), 1e-300);
+      S += (2 * i + 1) * (Math.log(lo) + Math.log(hi));
+    }
+    const a2 = -n - S / n, a = a2 * (1 + 0.75 / n + 2.25 / (n * n));
+    const p = a < 0.2 ? 1 - Math.exp(-13.436 + 101.14 * a - 223.73 * a * a)
+      : a < 0.34 ? 1 - Math.exp(-8.318 + 42.796 * a - 59.938 * a * a)
+      : a < 0.6 ? Math.exp(0.9177 - 4.279 * a - 1.38 * a * a)
+      : a < 13 ? Math.exp(1.2937 - 5.709 * a + 0.0186 * a * a) : 0;
+    return { a2, a, p: Math.min(1, Math.max(0, p)) };
+  }
+
+  // One-way ANOVA. When nothing varies within the groups, F is Infinity (or NaN
+  // if nothing varies at all) and p is 0 (or 1).
+  function oneWay(groups) {
+    const k = groups.length, N = sum(groups.map(g => g.length));
+    const means = groups.map(mean), grand = sum(groups.map(sum)) / N;
+    const ssb = sum(groups.map((g, i) => g.length * (means[i] - grand) ** 2));
+    const ssw = sum(groups.map((g, i) => sum(g.map(x => (x - means[i]) ** 2))));
+    const dfb = k - 1, dfw = N - k, msb = ssb / dfb, msw = ssw / dfw;
+    const tiny = 1e-12 * (ssb + ssw);
+    let F, p;
+    if (ssw <= tiny) { F = ssb <= tiny ? NaN : Infinity; p = ssb <= tiny ? 1 : 0; }
+    else { F = msb / msw; p = fP(F, dfb, dfw); }
+    return { k, N, grand, ssb, ssw, sst: ssb + ssw, dfb, dfw, msb, msw, F, p, eta2: ssb + ssw > 0 ? ssb / (ssb + ssw) : 0 };
+  }
+
+  return { lgamma, gamma, ibeta, betaInv, gammaQ, tP, tCdf, tInv, tCrit, fP, chiP, zP, normCdf, normInv, zCrit,
+    sum, mean, variance, sd, median, quantile, ranks, tiesT, andersonDarling, oneWay };
 })();

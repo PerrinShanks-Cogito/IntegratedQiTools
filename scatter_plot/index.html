@@ -331,15 +331,10 @@ details.values .tablewrap{margin-top:.6rem}
   }
 
   // ---- statistics ----
-  const avg = a => a.reduce((s, v) => s + v, 0) / a.length;
-  // Shared distributions, from /assets/js/focus-stats.js
-  const { ibeta } = FocusStats;
+  // Shared statistics, from /assets/js/focus-stats.js
+  const { ibeta, mean: avg, ranks: rank } = FocusStats;
 
-  function rank(a) {
-    const idx = a.map((v, i) => [v, i]).sort((u, w) => u[0] - w[0]); const rk = new Array(a.length); let i = 0;
-    while (i < idx.length) { let j = i; while (j + 1 < idx.length && idx[j + 1][0] === idx[i][0]) j++; const rr = (i + j) / 2 + 1; for (let k = i; k <= j; k++) rk[idx[k][1]] = rr; i = j + 1; }
-    return rk;
-  }
+
   function stats(pts) {
     const n = pts.length;
     if (n < 3) return { n, ok: false };

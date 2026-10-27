@@ -326,10 +326,9 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
   }
 
   // ---- statistics ----
-  function quantile(sorted, q) {
-    const pos = (sorted.length - 1) * q, lo = Math.floor(pos), hi = Math.ceil(pos);
-    return sorted[lo] + (sorted[hi] - sorted[lo]) * (pos - lo);
-  }
+  // Shared statistics, from /assets/js/focus-stats.js
+  const { normCdf, quantile, andersonDarling } = FocusStats;
+
 
   function describe(values) {
     const s = values.slice().sort((a, b) => a - b);
@@ -345,30 +344,7 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
     return { sorted: s, n, mean, sd, skew, min: s[0], max: s[n - 1], median: quantile(s, 0.5), q1: quantile(s, 0.25), q3: quantile(s, 0.75) };
   }
 
-  // Shared distributions, from /assets/js/focus-stats.js
-  const { normCdf } = FocusStats;
 
-  // Anderson–Darling test for normality, mean and SD estimated from the data.
-  // A*² uses the small-sample adjustment; p-value from D'Agostino & Stephens (1986), as used by Minitab.
-  function andersonDarling(st) {
-    const { sorted: s, n, mean, sd } = st;
-    if (n < 8 || !(sd > 0)) return null;
-    let sum = 0;
-    for (let i = 0; i < n; i++) {
-      const lo = Math.max(normCdf((s[i] - mean) / sd), 1e-300);
-      const hi = Math.max(normCdf(-(s[n - 1 - i] - mean) / sd), 1e-300);
-      sum += (2 * i + 1) * (Math.log(lo) + Math.log(hi));
-    }
-    const a2 = -n - sum / n;
-    const a = a2 * (1 + 0.75 / n + 2.25 / (n * n));
-    let p;
-    if (a < 0.2) p = 1 - Math.exp(-13.436 + 101.14 * a - 223.73 * a * a);
-    else if (a < 0.34) p = 1 - Math.exp(-8.318 + 42.796 * a - 59.938 * a * a);
-    else if (a < 0.6) p = Math.exp(0.9177 - 4.279 * a - 1.38 * a * a);
-    else if (a < 13) p = Math.exp(1.2937 - 5.709 * a + 0.0186 * a * a);
-    else p = 0;
-    return { a2, a, p: Math.min(1, Math.max(0, p)) };
-  }
 
   function adText(ad, n) {
     if (!ad) return n < 8 ? 'Needs at least 8 values to test whether the data are normally distributed.' : 'All values are the same, so normality cannot be tested.';
@@ -651,7 +627,8 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
     const rangeTxt = (b, i) => `${fmt(b.lo)} to ${B.exact && i === B.bins.length - 1 ? '' : 'under '}${fmt(b.hi)}`;
     const stats = [['Values', nf.format(st.n)], ['Mean', f(st.mean)], ['Median', f(st.median)], ['Standard deviation', f(st.sd)],
       ['Lowest', f(st.min)], ['Highest', f(st.max)], ['Lower quartile', f(st.q1)], ['Upper quartile', f(st.q3)]];
-    const ad = andersonDarling(st);
+    // the normality test needs at least 8 values here
+    const ad = st.n >= 8 ? andersonDarling(st.sorted) : null;
     const pTxt = ad ? (ad.p < 0.005 ? '< 0.005' : ad.p.toFixed(3)) : '';
 
     els.result.innerHTML = `

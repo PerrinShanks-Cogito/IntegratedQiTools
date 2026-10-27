@@ -247,8 +247,9 @@ td.poor{color:var(--danger);font-weight:700}
   const list = a => a.length > 1 ? a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1] : (a[0] || '');
   const pc = x => isFinite(x) ? (Math.round(x * 1000) / 10).toFixed(1) + '%' : '–';
   const pf = p => p == null || !isFinite(p) ? '–' : p < 0.001 ? '< 0.001' : p.toFixed(3);
-  const sum = a => a.reduce((s, v) => s + v, 0);
-  const avg = a => sum(a) / a.length;
+  // Shared statistics, from /assets/js/focus-stats.js
+  const { fP, sum, mean: avg } = FocusStats;
+
   const byName = (a, b) => String(a).localeCompare(String(b), 'en-GB', { numeric: true });
   const lower = s => /^[A-Z][a-z]/.test(s) && !/^[A-Z][a-z]*[A-Z]/.test(s) && !/[A-Z]{2}/.test(s) ? s.charAt(0).toLowerCase() + s.slice(1) : s;
 
@@ -322,8 +323,6 @@ td.poor{color:var(--danger);font-weight:700}
   }
 
   // ---- statistics ----
-  // Shared distributions, from /assets/js/focus-stats.js
-  const { fP } = FocusStats;
 
   // Control chart constants for subgroups of 2 to 25.
   const D2 = [0, 0, 1.128, 1.693, 2.059, 2.326, 2.534, 2.704, 2.847, 2.970, 3.078, 3.173, 3.258, 3.336, 3.407, 3.472, 3.532, 3.588, 3.640, 3.689, 3.735, 3.778, 3.819, 3.858, 3.895, 3.931];

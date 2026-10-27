@@ -391,15 +391,9 @@ function parseInput(text){
 }
 
 /* ---------- Analysis ---------- */
-function median(a){
-  const s = [...a].sort((x, y) => x - y), n = s.length;
-  if (!n) return NaN;
-  return n % 2 ? s[(n-1)/2] : (s[n/2 - 1] + s[n/2]) / 2;
-}
-function quantile(sorted, q){
-  const pos = (sorted.length - 1) * q, lo = Math.floor(pos), hi = Math.ceil(pos);
-  return sorted[lo] + (sorted[hi] - sorted[lo]) * (pos - lo);
-}
+// Shared statistics, from /assets/js/focus-stats.js
+const { median, quantile } = FocusStats;
+
 const EPS = 1e-9;
 const sideOf = (v, med) => v > med + EPS ? 1 : v < med - EPS ? -1 : 0;
 
