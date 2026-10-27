@@ -20,6 +20,11 @@
     "X-Frame-Options": "SAMEORIGIN"
   },
   "mimeTypes": {
-    ".json": "application/json"
+    ".json": "application/json",
+    ".pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    ".potx": "application/vnd.openxmlformats-officedocument.presentationml.template",
+    ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ".dotx": "application/vnd.openxmlformats-officedocument.wordprocessingml.template"
   }
 }

@@ -1,0 +1,487 @@
+---
+tool_id: programme_guide
+title: "Programme guide"
+permalink: /programme_guide/
+---
+<!DOCTYPE html>
+<!-- © Guy’s and St Thomas’ NHS Foundation Trust 2026. All rights reserved. -->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Programme guide</title>
+<meta name="description" content="Follow the FOCUS stages (Find the opportunity, Observe the current state, Create the plan, Undertake the change, Sustain the benefit) to the programme document you need next, and see each one filled in for a worked example.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#005EB8; --navy:#003087; --bg:#F0F4F5; --surface:#FFFFFF; --text:#212B32;
+  --muted:#4C6272; --line:#D8DDE0; --yellow:#FFB81C; --green:#007F3B; --green-bg:#E3F2E9;
+  --blue-bg:#E6F0FA; --danger:#D5281B; --shadow:0 2px 0 #D8DDE0; --warn:#A65300;
+  --s-find:#005EB8; --s-observe:#330072; --s-create:#00A499; --s-undertake:#007F3B; --s-sustain:#7C2855;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --blue:#5AA2EA; --navy:#9CC3EF; --bg:#0E1A24; --surface:#162533; --text:#E8EEF2;
+    --muted:#A3B6C3; --line:#2A3E4F; --green:#4CC17E; --green-bg:#143326; --blue-bg:#15314B;
+    --danger:#FF7468; --shadow:0 2px 0 #0A131B; --warn:#F0A54A;
+    --s-find:#5AA2EA; --s-observe:#B79CE0; --s-create:#3CCFC2; --s-undertake:#4CC17E; --s-sustain:#E07BAE;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --blue:#5AA2EA; --navy:#9CC3EF; --bg:#0E1A24; --surface:#162533; --text:#E8EEF2;
+  --muted:#A3B6C3; --line:#2A3E4F; --green:#4CC17E; --green-bg:#143326; --blue-bg:#15314B;
+  --danger:#FF7468; --shadow:0 2px 0 #0A131B; --warn:#F0A54A;
+  --s-find:#5AA2EA; --s-observe:#B79CE0; --s-create:#3CCFC2; --s-undertake:#4CC17E; --s-sustain:#E07BAE;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Figtree,"Frutiger","Helvetica Neue",Arial,sans-serif;font-size:1rem;line-height:1.5}
+a{color:var(--blue)}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:2px;border-radius:2px}
+button{font:inherit;color:inherit}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+[hidden]{display:none !important}
+.page-head{padding:1rem 1.25rem}
+.page-head h1{margin:0;font-size:clamp(1.4rem,2.6vw,1.8rem);line-height:1.2;font-weight:800;letter-spacing:-.015em}
+.page-head .meta{color:var(--muted);margin:.15rem 0 0;max-width:80ch}
+
+/* Stages */
+.stages{padding:0 1.25rem 1rem}
+.stagebar{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.5rem}
+@media (max-width:880px){.stagebar{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}}
+.stagebtn{display:flex;flex-direction:column;justify-content:flex-start;width:100%;height:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-top:6px solid var(--sc);border-radius:8px;box-shadow:var(--shadow);padding:.65rem .8rem;cursor:pointer;color:var(--text)}
+.stagebtn:hover,.stagebtn.on{background:var(--blue-bg)}
+.stagebtn .n{display:block;color:var(--sc);font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.stagebtn b{display:block;font-size:1.05rem;font-weight:800;line-height:1.25}
+.stagebtn .fl{color:var(--sc);font-size:1.35em}
+.stagebtn small{display:block;color:var(--muted);font-size:.86rem;line-height:1.35;margin-top:.15rem}
+.codes{display:flex;flex-wrap:wrap;gap:.25rem;margin-top:.45rem}
+.code{display:inline-flex;align-items:center;justify-content:center;min-width:1.7rem;height:1.5rem;padding:0 .3rem;border-radius:4px;background:var(--sc,var(--blue));color:#fff;font-weight:800;font-size:.8rem}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .code{color:#0E1A24}}
+:root[data-theme="dark"] .code{color:#0E1A24}
+
+/* Workspace */
+main{display:grid;grid-template-columns:minmax(300px,400px) minmax(0,1fr);gap:1.25rem;padding:0 1.25rem 1.25rem;align-items:start}
+@media (max-width:880px){main{grid-template-columns:1fr}}
+@media (max-width:420px){main,.stages,.alldocs,.notes{padding-left:1rem;padding-right:1rem} .page-head{padding-left:1rem;padding-right:1rem}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow);padding:1.1rem;min-width:0}
+.panel h2{font-size:1.05rem;font-weight:700;margin:0 0 .75rem}
+.hint{color:var(--muted);font-size:.9rem;margin:0 0 .6rem}
+
+.btns{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:.4rem;border-radius:4px;padding:.45rem .85rem;font-weight:700;cursor:pointer;background:var(--surface);color:var(--blue);border:2px solid var(--blue);line-height:1.2;text-decoration:none;font-size:.95rem}
+.btn:hover{background:var(--blue-bg)}
+.btn.primary{background:var(--green);color:#fff;border-color:var(--green);box-shadow:0 3px 0 #00401E}
+.btn.primary:hover{filter:brightness(1.07);background:var(--green)}
+.btn svg{width:1.05em;height:1.05em;flex:none}
+.link{border:0;padding:0;background:none;font-weight:600;text-decoration:underline;color:var(--blue);cursor:pointer}
+
+.step{color:var(--muted);font-size:.85rem;font-weight:600;margin:0 0 .2rem;text-transform:uppercase;letter-spacing:.04em}
+.question{font-size:1.25rem;font-weight:800;line-height:1.25;margin:0 0 .35rem}
+.option{display:block;width:100%;text-align:left;border:2px solid var(--line);border-radius:6px;padding:.7rem .85rem;margin:0 0 .55rem;color:var(--text);background:var(--surface);cursor:pointer}
+.option:hover{border-color:var(--blue);background:var(--blue-bg)}
+.option b{display:block;font-weight:700;color:var(--blue)}
+.option small{display:block;color:var(--muted);font-size:.86rem;margin-top:.1rem}
+.route{list-style:none;margin:0 0 1rem;padding:0;border-top:1px solid var(--line)}
+.route li{padding:.45rem 0;border-bottom:1px solid var(--line);font-size:.93rem}
+.route .q{color:var(--muted);display:block;font-size:.84rem}
+.route .a{font-weight:700}
+
+/* Result */
+.tag{display:inline-block;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--sc,var(--blue))}
+.summary{font-size:clamp(1.3rem,2.4vw,1.7rem);line-height:1.25;font-weight:800;letter-spacing:-.01em;margin:.1rem 0 .4rem}
+.lead{margin:0 0 1rem;max-width:75ch}
+.nextup{background:var(--blue-bg);border-left:5px solid var(--blue);border-radius:0 4px 4px 0;padding:.6rem .85rem;margin:1rem 0 0;max-width:75ch}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:.8rem}
+.card{border:1px solid var(--line);border-top:5px solid var(--sc);border-radius:8px;padding:.85rem .9rem;display:flex;flex-direction:column;gap:.45rem;background:var(--surface);min-width:0}
+.card h3{margin:0;font-size:1.05rem;font-weight:800;line-height:1.25;display:flex;gap:.5rem;align-items:flex-start}
+.card h3 .code{flex:none;margin-top:.05rem}
+.card p{margin:0;font-size:.94rem}
+.card .when{color:var(--muted);font-size:.88rem}
+.card .kind{color:var(--muted);font-size:.8rem;font-weight:600}
+.card .btns{margin-top:auto;padding-top:.3rem}
+.chips{display:flex;flex-wrap:wrap;gap:.3rem;align-items:center;font-size:.85rem;color:var(--muted)}
+.chip{border:1px solid var(--line);border-radius:999px;padding:.05rem .55rem;background:var(--surface);color:var(--blue);font-weight:600;cursor:pointer;font-size:.82rem}
+.chip:hover{border-color:var(--blue);background:var(--blue-bg)}
+.tools{display:flex;flex-wrap:wrap;gap:.5rem;margin:.35rem 0 0}
+.tools a{display:inline-block;border:2px solid var(--blue);border-radius:4px;padding:.3rem .7rem;font-weight:700;text-decoration:none;font-size:.92rem}
+.tools a:hover{background:var(--blue-bg)}
+h3.sub{font-size:1rem;font-weight:700;margin:1.2rem 0 .4rem}
+.detail dl{display:grid;grid-template-columns:max-content 1fr;gap:.35rem 1rem;margin:0 0 1rem}
+.detail dt{font-weight:700}
+.detail dd{margin:0}
+.detail ul{margin:0;padding-left:1.2rem}
+.thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.5rem;margin:.4rem 0 0}
+.thumbs button{padding:0;border:1px solid var(--line);border-radius:4px;background:#fff;cursor:pointer;overflow:hidden}
+.thumbs button:hover{border-color:var(--blue)}
+.thumbs img{display:block;width:100%;height:auto}
+
+/* All documents */
+.alldocs{padding:0 1.25rem 1.25rem}
+.flow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.75rem}
+@media (max-width:1000px){.flow{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}}
+.flow h3{margin:0 0 .4rem;font-size:.95rem;font-weight:800;color:var(--sc)}
+.flow ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.4rem}
+.docbtn{display:flex;gap:.5rem;align-items:flex-start;width:100%;text-align:left;border:1px solid var(--line);border-radius:6px;padding:.45rem .55rem;background:var(--surface);color:var(--text);cursor:pointer;font-size:.92rem;line-height:1.3}
+.docbtn:hover,.docbtn.lit{border-color:var(--sc);background:var(--blue-bg)}
+.docbtn .code{flex:none}
+
+/* Example viewer */
+dialog.viewer{border:0;border-radius:10px;padding:0;width:min(1200px,96vw);max-height:94vh;overflow:hidden;background:var(--surface);color:var(--text);box-shadow:0 10px 40px rgba(0,0,0,.35)}
+dialog.viewer[open]{display:flex;flex-direction:column}
+dialog.viewer::backdrop{background:rgba(0,20,40,.6)}
+.vhead{display:flex;gap:1rem;justify-content:space-between;align-items:flex-start;padding:1rem 1.1rem .75rem;border-bottom:1px solid var(--line);flex:none}
+.vhead h2{margin:0;font-size:1.2rem;font-weight:800}
+.vhead p{margin:.15rem 0 0;color:var(--muted);font-size:.9rem}
+.vbody{padding:1rem 1.1rem 1.25rem;overflow:auto;flex:1 1 auto;min-height:0}
+.vfoot{flex:none;display:flex;flex-wrap:wrap;gap:.5rem;justify-content:space-between;align-items:center;padding:.7rem 1.1rem;border-top:1px solid var(--line)}
+.close{border:2px solid var(--line);background:var(--surface);border-radius:4px;padding:.3rem .6rem;cursor:pointer;font-weight:700;flex:none}
+.close:hover{border-color:var(--blue)}
+.pages{display:flex;flex-direction:column;gap:1rem}
+.pages figure{margin:0}
+.pages img{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:4px;background:#fff}
+.pages.doc img{max-width:780px;margin:0 auto}
+.pages figcaption{color:var(--muted);font-size:.85rem;margin-top:.25rem;text-align:center}
+.tabs{display:flex;flex-wrap:wrap;gap:.35rem;margin:0 0 .75rem;border-bottom:2px solid var(--line)}
+.tabs button{border:0;background:none;padding:.4rem .75rem;font-weight:700;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+.tabs button[aria-selected="true"]{color:var(--blue);border-bottom-color:var(--blue)}
+.tscroll{overflow-x:auto;border:1px solid var(--line);border-radius:6px}
+table.sheet{border-collapse:collapse;font-size:.84rem;min-width:100%}
+table.sheet th,table.sheet td{border:1px solid var(--line);padding:.3rem .45rem;text-align:left;vertical-align:top}
+table.sheet th{background:#002161;color:#fff;font-weight:700;position:sticky;top:0;white-space:nowrap}
+table.sheet td.nowrap{white-space:nowrap}
+table.sheet td.long{min-width:16rem}
+table.sheet tr.ws td{background:var(--blue-bg);font-weight:700}
+.rag-R{background:#FF0000 !important;color:#fff;font-weight:700}
+.rag-A{background:#FFC000 !important;color:#000;font-weight:700}
+.rag-G{background:#92D050 !important;color:#000;font-weight:700}
+.rag-B{background:#00B0F0 !important;color:#000;font-weight:700}
+.gcell{padding:0 !important;min-width:1.4rem;position:relative}
+.gbar{position:absolute;top:.45rem;height:.75rem;left:0;right:0;background:#4472C4}
+.gbar.crit{background:#C00000}
+.note{color:var(--muted);font-size:.85rem;margin:.5rem 0 0}
+
+.notes{padding:0 1.25rem 2rem;color:var(--muted);font-size:.92rem}
+.notes p{max-width:85ch;margin:0 0 .75rem}
+.notice{background:var(--blue-bg);color:var(--text);border-left:5px solid var(--blue);border-radius:0 4px 4px 0;padding:.7rem .9rem;max-width:85ch}
+.page-head,.stages,main,.alldocs,.notes{box-sizing:border-box;max-width:1340px;margin-left:auto;margin-right:auto}
+@media (prefers-reduced-motion: no-preference){.btn,.option,.stagebtn,.docbtn{transition:background .15s,border-color .15s}}
+</style>
+{% include focus-head.html %}
+</head>
+<body>
+
+{% include focus-header.html %}
+
+<div class="page-head">
+  <h1>Programme guide</h1>
+  <p class="meta">Follow the five FOCUS stages to the programme document you need next, from the first scoping page to the closure report. Answer a few questions or pick a stage, then see each document filled in for a made-up worked example, and download the example or the blank template.</p>
+</div>
+
+<section class="stages" aria-labelledby="stages-h">
+  <h2 id="stages-h" class="sr">The five FOCUS stages</h2>
+  <ol class="stagebar" id="stagebar"></ol>
+</section>
+
+<main>
+  <section class="panel" aria-labelledby="ask-h">
+    <h2 id="ask-h">Guide me</h2>
+    <div id="ask" aria-live="polite"></div>
+    <h2 id="route-h" style="margin-top:1.25rem">Your answers</h2>
+    <ol class="route" id="route" aria-labelledby="route-h"></ol>
+    <div class="btns">
+      <button type="button" class="btn" id="backBtn">Back</button>
+      <button type="button" class="btn" id="clearBtn">Start over</button>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="result-h" tabindex="-1" id="resultPanel">
+    <h2 id="result-h" class="sr">What you need</h2>
+    <div id="result"></div>
+  </section>
+</main>
+
+<section class="alldocs" aria-labelledby="all-h">
+  <div class="panel">
+    <h2 id="all-h">Every document, by stage</h2>
+    <p class="hint">Choose a document to see what it is for, what it draws on, and the filled-in example. The documents a choice draws on light up.</p>
+    <div class="flow" id="flow"></div>
+  </div>
+</section>
+
+<section class="notes" aria-label="About the programme guide">
+  <p><b>The FOCUS stages:</b> <i>Find the opportunity</i> (is it worth doing?), <i>Observe the current state</i> (how does it work now, and how well?), <i>Create the plan</i> (what will we change, who will do it, and when?), <i>Undertake the change</i> (deliver, track and report) and <i>Sustain the benefit</i> (keep the gains and hand over). Small projects need fewer documents: a scoping page, a baseline and an action log may be enough. Use the rest as your work grows.</p>
+  <p><b>The worked example:</b> every example is filled in for the same made-up programme, <span id="exName"></span>, so you can follow information from one document to the next: the support plan's deliverables become the highlight report's, risks in the RAID log appear in the leadership report, and the benefits register's baselines come back in the closure report. All names, figures and dates are made up.</p>
+  <p><b>Measuring improvement:</b> the documents say <i>what</i> you will measure; the FOCUS charting tools help you show it. Use a <a href="{{ '/run_chart/' | relative_url }}">run chart</a> or <a href="{{ '/spc_tool/' | relative_url }}">SPC chart</a> for baselines and progress, a <a href="{{ '/driver_diagram/' | relative_url }}">driver diagram</a> to link your aim to your workstreams, and the <a href="{{ '/a3_report/' | relative_url }}">A3 report</a> to tell the story on a page.</p>
+  <p><b>Templates:</b> the blank templates are the CITI programme templates (version October 2022). Download them here or from your CITI team.</p>
+  <div class="notice">Want help running a programme? <a href="https://coh.gstt.nhs.uk/course/view.php?id=3199" target="_blank" rel="noopener">Book QI training with the CITI Academy</a> or talk to the QI Coach chatbot.</div>
+</section>
+
+<dialog class="viewer" id="viewer" aria-labelledby="vTitle">
+  <div class="vhead">
+    <div>
+      <h2 id="vTitle"></h2>
+      <p id="vSub"></p>
+    </div>
+    <button type="button" class="close" id="vClose">Close<span class="sr"> the example</span></button>
+  </div>
+  <div class="vbody" id="vBody"></div>
+  <div class="vfoot" id="vFoot"></div>
+</dialog>
+
+<script>
+(function () {
+  const G = {{ site.data.programme_guide | jsonify }};
+  const BASE = '{{ "/programme_guide/" | relative_url }}';
+  const TOOLS = '{{ "/" | relative_url }}';
+  const DOCS = {}; G.docs.forEach(d => { DOCS[d.id] = d; });
+  const STAGES = {}; G.stages.forEach((s, i) => { STAGES[s.id] = Object.assign({ n: i + 1 }, s); });
+  const KIND = { slides: 'PowerPoint', sheet: 'Excel', doc: 'Word' };
+  const T = G.tree;
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const track = (name, props) => { try { if (window.trackUsage) trackUsage(name, props); } catch (e) { /* never break the page */ } };
+  const ICON = {
+    down: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>',
+    eye: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>'
+  };
+  $('exName').textContent = G.example.name;
+
+  let answers = [];   // indexes of the options chosen, from the root
+  let view = null;    // what the result panel shows when not following the tree
+
+  // ---- stage bar and document map ----
+  $('stagebar').innerHTML = G.stages.map((s, i) => {
+    const docs = G.docs.filter(d => d.stage === s.id);
+    return `<li><button type="button" class="stagebtn" data-stage="${s.id}" style="--sc:var(--s-${s.id})">
+      <span class="n">Stage ${i + 1}</span><b><span class="fl">${esc(s.name.charAt(0))}</span>${esc(s.name.slice(1))}</b><small>${esc(s.question)}</small>
+      <span class="codes" aria-hidden="true">${docs.map(d => `<span class="code">${esc(d.code || 'doc')}</span>`).join('')}</span>
+      <span class="sr">${docs.length} documents</span></button></li>`;
+  }).join('');
+  $('flow').innerHTML = G.stages.map(s => `<div style="--sc:var(--s-${s.id})"><h3>${STAGES[s.id].n}. ${esc(s.name)}</h3><ul>${
+    G.docs.filter(d => d.stage === s.id).map(d => `<li><button type="button" class="docbtn" data-doc="${d.id}"><span class="code">${esc(d.code || 'doc')}</span><span>${esc(d.name)}</span></button></li>`).join('')
+  }</ul></div>`).join('');
+
+  // ---- decision tree ----
+  function walk() {
+    // follow the answers; returns {id, steps:[{q, a}], result}
+    let id = T.root, steps = [];
+    for (const i of answers) {
+      const q = T.questions[id], o = q && q.options[i];
+      if (!o) break;
+      steps.push({ q: q.q, a: o.a });
+      if (o.result) return { steps, result: o.result };
+      id = o.next;
+    }
+    return { id, steps, result: null };
+  }
+
+  function renderAsk() {
+    const w = walk();
+    $('route').innerHTML = w.steps.length ? w.steps.map(s => `<li><span class="q">${esc(s.q)}</span><span class="a">${esc(s.a)}</span></li>`).join('') : '<li class="hint" style="border:0">Nothing chosen yet.</li>';
+    $('backBtn').disabled = !answers.length;
+    if (w.result) {
+      $('ask').innerHTML = view
+        ? `<p class="step">Done</p><p class="question">You're browsing.</p><p class="hint">Press Back to return to what your answers recommend, or start over.</p>`
+        : `<p class="step">Done</p><p class="question">Here is what you need.</p><p class="hint">Change an answer with Back, or start over to ask something else.</p>`;
+      return;
+    }
+    const q = T.questions[w.id];
+    $('ask').innerHTML = `<p class="step">Question ${w.steps.length + 1}</p><p class="question" id="qText">${esc(q.q)}</p>${q.hint ? `<p class="hint">${esc(q.hint)}</p>` : ''}
+      <div role="group" aria-labelledby="qText">${q.options.map((o, i) => `<button type="button" class="option" data-opt="${i}"><b>${esc(o.a)}</b>${o.sub ? `<small>${esc(o.sub)}</small>` : ''}</button>`).join('')}</div>`;
+  }
+
+  function render() {
+    renderAsk();
+    const w = walk();
+    document.querySelectorAll('.stagebtn').forEach(b => b.classList.toggle('on', !!view && view.stage === b.dataset.stage));
+    document.querySelectorAll('.docbtn').forEach(b => b.classList.remove('lit'));
+    if (view && view.doc) return renderDoc(DOCS[view.doc]);
+    if (view && view.stage) return renderStage(STAGES[view.stage]);
+    if (w.result) return renderResult(T.results[w.result]);
+    renderWelcome();
+  }
+
+  function card(d) {
+    return `<article class="card" style="--sc:var(--s-${d.stage})">
+      <h3><span class="code">${esc(d.code || 'doc')}</span><span>${esc(d.name)}</span></h3>
+      <span class="kind">${STAGES[d.stage].name} · ${KIND[d.kind]}</span>
+      <p>${esc(d.purpose)}</p>
+      <p class="when"><b>When:</b> ${esc(d.when)}</p>
+      ${d.feeds.length ? `<div class="chips">Draws on: ${d.feeds.map(f => `<button type="button" class="chip" data-doc="${f}">${esc(DOCS[f].name)}</button>`).join('')}</div>` : ''}
+      <div class="btns">
+        <button type="button" class="btn primary" data-example="${d.id}">${ICON.eye}See the example</button>
+        <button type="button" class="link" data-doc="${d.id}">More about it</button>
+      </div>
+    </article>`;
+  }
+
+  function toolLinks(ids) {
+    return `<div class="tools">${ids.map(t => `<a href="${TOOLS}${t}/">${esc(G.tool_names[t] || t)}</a>`).join('')}</div>`;
+  }
+
+  function renderWelcome() {
+    $('result').innerHTML = `<span class="tag">Worked example</span>
+      <p class="summary">${esc(G.example.name)}</p>
+      <p class="lead">${esc(G.example.pitch)}</p>
+      <p class="lead"><b>Aim:</b> ${esc(G.example.aim)}. It runs from ${esc(G.example.start)} to ${esc(G.example.end)}, and every example on this page is filled in for it.</p>
+      <p class="lead">Answer the questions on the left to find the documents you need, or choose a stage above.</p>
+      <h3 class="sub">Where most programmes start</h3>
+      <div class="cards">${['scope', 'highlight', 'raid'].map(id => card(DOCS[id])).join('')}</div>`;
+  }
+
+  function renderResult(r) {
+    const s = STAGES[r.stage];
+    $('result').innerHTML = `<span class="tag" style="--sc:var(--s-${s.id})">Stage ${s.n}: ${esc(s.name)}</span>
+      <p class="summary">${esc(r.title)}</p>
+      <p class="lead">${esc(r.text)}</p>
+      <div class="cards">${r.docs.map(id => card(DOCS[id])).join('')}</div>
+      <h3 class="sub">Charting tools that help at this stage</h3>${toolLinks(s.tools)}
+      ${r.next ? `<p class="nextup"><b>Next:</b> ${esc(r.next)}</p>` : ''}`;
+  }
+
+  function renderStage(s) {
+    const docs = G.docs.filter(d => d.stage === s.id);
+    $('result').innerHTML = `<span class="tag" style="--sc:var(--s-${s.id})">Stage ${s.n} of 5</span>
+      <p class="summary">${esc(s.name)}: ${esc(s.question)}</p>
+      <p class="lead">${esc(s.text)}</p>
+      <div class="cards">${docs.map(card).join('')}</div>
+      <h3 class="sub">Charting tools that help at this stage</h3>${toolLinks(s.tools)}
+      <p class="nextup">${s.n < 5 ? `<b>Next:</b> <button type="button" class="link" data-stage="${G.stages[s.n].id}">Stage ${s.n + 1}: ${esc(G.stages[s.n].name)}</button>` : 'This is the last stage.'}</p>`;
+  }
+
+  function renderDoc(d) {
+    const s = STAGES[d.stage];
+    const usedBy = G.docs.filter(x => x.feeds.includes(d.id));
+    document.querySelectorAll('.docbtn').forEach(b => b.classList.toggle('lit', b.dataset.doc === d.id || d.feeds.includes(b.dataset.doc)));
+    const thumbs = d.pages && d.pages.length ? `<h3 class="sub">The example</h3><div class="thumbs">${d.pages.slice(0, 6).map((p, i) => `<button type="button" data-example="${d.id}" data-page="${i}" aria-label="Open ${esc(d.name)} example, page ${i + 1}"><img src="${BASE}previews/${p}" alt="" loading="lazy"></button>`).join('')}</div>` : '';
+    $('result').innerHTML = `<span class="tag" style="--sc:var(--s-${s.id})">Stage ${s.n}: ${esc(s.name)} · ${KIND[d.kind]}${d.code ? ' · template ' + esc(d.code) : ''}</span>
+      <p class="summary">${esc(d.name)}</p>
+      <p class="lead">${esc(d.purpose)}</p>
+      <div class="detail"><dl>
+        <dt>When</dt><dd>${esc(d.when)}</dd>
+        <dt>Who</dt><dd>${esc(d.owner)}</dd>
+        <dt>What's in it</dt><dd>${esc(d.covers.join('; '))}</dd>
+        <dt>Draws on</dt><dd>${d.feeds.length ? `<span class="chips">${d.feeds.map(f => `<button type="button" class="chip" data-doc="${f}">${esc(DOCS[f].name)}</button>`).join('')}</span>` : 'Nothing: it is a starting point.'}</dd>
+        <dt>Feeds</dt><dd>${usedBy.length ? `<span class="chips">${usedBy.map(f => `<button type="button" class="chip" data-doc="${f.id}">${esc(f.name)}</button>`).join('')}</span>` : 'Nothing further.'}</dd>
+      </dl>
+      <h3 class="sub">Tips</h3><ul>${d.tips.map(t => `<li>${esc(t)}</li>`).join('')}</ul></div>
+      <div class="btns" style="margin-top:1rem">
+        <button type="button" class="btn primary" data-example="${d.id}">${ICON.eye}See the example</button>
+        ${downloads(d)}
+      </div>${thumbs}`;
+  }
+
+  function downloads(d) {
+    return `<a class="btn" href="${BASE}examples/${d.example}" download data-dl="example" data-id="${d.id}">${ICON.down}Example (${KIND[d.kind]})</a>
+      <a class="btn" href="${BASE}templates/${d.template}" download data-dl="template" data-id="${d.id}">${ICON.down}Blank template</a>`;
+  }
+
+  // ---- example viewer ----
+  const viewer = $('viewer');
+  function openExample(id, page, sheetName) {
+    const d = DOCS[id];
+    $('vTitle').textContent = d.name + ': worked example';
+    $('vSub').textContent = `${G.example.name} (made up). ${d.purpose}`;
+    if (d.pages && d.pages.length) {
+      const what = d.kind === 'doc' ? 'Page' : 'Slide';
+      $('vBody').innerHTML = `<div class="pages${d.kind === 'doc' ? ' doc' : ''}">${d.pages.map((p, i) => `<figure id="pg-${i}"><img src="${BASE}previews/${p}" alt="${what} ${i + 1} of the example ${esc(d.name.toLowerCase())}" loading="lazy"><figcaption>${what} ${i + 1} of ${d.pages.length}</figcaption></figure>`).join('')}</div>`;
+    } else if (d.tables) {
+      let tab = Math.max(0, d.tables.findIndex(t => sheetName && t.name.toLowerCase().startsWith(sheetName.toLowerCase())));
+      const draw = () => {
+        $('vBody').innerHTML = (d.tables.length > 1 ? `<div class="tabs" role="tablist">${d.tables.map((t, i) => `<button type="button" role="tab" aria-selected="${i === tab}" data-tab="${i}">${esc(t.name)}</button>`).join('')}</div>` : '') +
+          `<div role="tabpanel">${sheet(d.tables[tab])}</div><p class="note">A preview of the ${d.tables.length > 1 ? 'tab' : 'sheet'} from the example workbook. Download it to see every column, the formulas and the drop-down lists.</p>`;
+        $('vBody').querySelectorAll('[data-tab]').forEach(b => b.addEventListener('click', () => { tab = +b.dataset.tab; draw(); $('vBody').querySelector(`[data-tab="${tab}"]`).focus(); }));
+      };
+      draw();
+    }
+    $('vFoot').innerHTML = `<span class="note" style="margin:0">All names, figures and dates are made up.</span><span class="btns">${downloads(d)}</span>`;
+    if (!viewer.open) viewer.showModal();
+    $('vBody').scrollTop = 0;
+    if (page) { const f = $('pg-' + page); if (f) f.scrollIntoView(); }
+    track('example_viewed', { doc: id });
+  }
+
+  function sheet(t) {
+    const long = new Set(), nowrap = new Set();
+    t.columns.forEach((c, i) => {
+      const lens = t.rows.map(r => String(r[i] == null ? '' : r[i]).length);
+      const max = Math.max(0, ...lens);
+      if (max > 45) long.add(i); else if (max <= 14) nowrap.add(i);
+    });
+    let gantt = '', g = t.gantt, days = [];
+    if (g) {
+      const start = new Date(g.start + 'T00:00:00');
+      for (let w = 0; w < g.weeks; w++) { const x = new Date(start); x.setDate(x.getDate() + 7 * w); days.push(x); }
+      gantt = days.map(x => `<th scope="col" style="font-weight:600">${x.getDate()}/${x.getMonth() + 1}</th>`).join('');
+    }
+    const parse = s => { const m = /^(\d\d)\/(\d\d)\/(\d{4})$/.exec(s || ''); return m ? new Date(+m[3], m[2] - 1, +m[1]) : null; };
+    const head = `<tr>${t.columns.map(c => `<th scope="col">${esc(c)}</th>`).join('')}${gantt}</tr>`;
+    const body = t.rows.map(r => {
+      const ws = g && r[0] === 'Workstream';
+      let cells = r.map((v, i) => {
+        let cls = [];
+        if (long.has(i)) cls.push('long');
+        if (nowrap.has(i)) cls.push('nowrap');
+        if (t.rag === i && /^[RAGB]$/.test(v)) cls.push('rag-' + v);
+        if (t.heat && t.heat.includes(i)) { const n = +v; cls.push(n >= 15 ? 'rag-R' : n >= 8 ? 'rag-A' : 'rag-G'); }
+        return `<td${cls.length ? ` class="${cls.join(' ')}"` : ''}>${esc(v)}</td>`;
+      }).join('');
+      if (g) {
+        const a = parse(r[g.startCol]), b = parse(r[g.endCol]);
+        cells += days.map(x => {
+          const end = new Date(x); end.setDate(end.getDate() + 6);
+          const on = a && b && a <= end && b >= x;
+          return `<td class="gcell">${on ? `<span class="gbar${r[8] === 'Y' ? ' crit' : ''}"></span>` : ''}</td>`;
+        }).join('');
+      }
+      return `<tr${ws ? ' class="ws"' : ''}>${cells}</tr>`;
+    }).join('');
+    return `<div class="tscroll"><table class="sheet"><caption class="sr">${esc(t.name)}</caption><thead>${head}</thead><tbody>${body}</tbody></table></div>` +
+      (t.note ? `<p class="note">${esc(t.note)}</p>` : '') +
+      (g ? `<p class="note">Bars show each week an activity runs; red bars are on the critical path.</p>` : '') +
+      (t.heat ? `<p class="note">Exposure is likelihood × impact: 15 or more is red, 8 to 14 amber, below 8 green.</p>` : '');
+  }
+
+  $('vClose').addEventListener('click', () => viewer.close());
+  viewer.addEventListener('click', e => { if (e.target === viewer) viewer.close(); });
+
+  // ---- events ----
+  document.addEventListener('click', e => {
+    const el = e.target.closest('[data-opt],[data-stage],[data-doc],[data-example],[data-dl]');
+    if (!el) return;
+    if (el.dataset.dl) { track('template_downloaded', { doc: el.dataset.id, file: el.dataset.dl }); return; }
+    if (el.dataset.opt != null) { answers.push(+el.dataset.opt); view = null; render(); focusResultIfDone(); return; }
+    if (el.dataset.example) {
+      const w = walk(), r = w.result && T.results[w.result];
+      openExample(el.dataset.example, el.dataset.page ? +el.dataset.page : 0, r && r.sheet && r.docs[0] === el.dataset.example ? r.sheet : null);
+      return;
+    }
+    if (el.dataset.stage) { view = { stage: el.dataset.stage }; if (viewer.open) viewer.close(); render(); scrollToResult(); return; }
+    if (el.dataset.doc) { view = { doc: el.dataset.doc }; if (viewer.open) viewer.close(); render(); scrollToResult(); }
+  });
+  function focusResultIfDone() { if (walk().result) scrollToResult(); }
+  function scrollToResult() {
+    const p = $('resultPanel');
+    if (window.matchMedia('(max-width:880px)').matches || p.getBoundingClientRect().top < 0) p.scrollIntoView({ block: 'start' });
+    p.focus({ preventScroll: true });
+  }
+  $('backBtn').addEventListener('click', () => { if (view) view = null; else answers.pop(); render(); });
+  $('clearBtn').addEventListener('click', () => { answers = []; view = null; render(); });
+
+  // ?doc=raid opens a document, ?stage=plan a stage
+  const qs = new URLSearchParams(location.search);
+  if (DOCS[qs.get('doc')]) view = { doc: qs.get('doc') };
+  else if (STAGES[qs.get('stage')]) view = { stage: qs.get('stage') };
+  render();
+})();
+</script>
+{% include focus-footer.html %}
+<script src="{{ '/assets/js/analytics.js' | relative_url }}" data-tool="programme-guide"></script>
+</body>
+</html>

@@ -1,0 +1,2312 @@
+{
+ "example": {
+  "name": "Discharge Flow Programme",
+  "group": "Medicine Clinical Group",
+  "aim": "Increase discharges before midday on our 8 medical wards from 16% to 33%, and reduce average length of stay by 0.5 days, by 30 September 2026",
+  "pitch": "Patients on our medical wards wait most of the day to go home: only 16% leave before midday, so A&E patients wait for beds into the evening. We will redesign the discharge day with ward teams, pharmacy and transport so patients who are ready go home in the morning.",
+  "start": "12 January 2026",
+  "end": "30 September 2026"
+ },
+ "stages": [
+  {
+   "id": "find",
+   "letter": "F",
+   "name": "Find the opportunity",
+   "question": "What could be better, and is it worth doing?",
+   "text": "Spot the problem or opportunity, describe it on a page with its scope and the benefits you expect, and get a sponsor (SRO) to agree. If you need CITI's help, agree a support plan with them.",
+   "tools": [
+    "pareto_chart",
+    "run_chart"
+   ]
+  },
+  {
+   "id": "observe",
+   "letter": "O",
+   "name": "Observe the current state",
+   "question": "How does it work now, and how well?",
+   "text": "See the process as it really works, find the causes of the problem and measure where you are now. Set a baseline for each benefit you want, and map who is affected and who has a say.",
+   "tools": [
+    "process_map",
+    "fishbone_diagram",
+    "pareto_chart",
+    "run_chart",
+    "spc_tool"
+   ]
+  },
+  {
+   "id": "create",
+   "letter": "C",
+   "name": "Create the plan",
+   "question": "What will we change, who will do it, and when?",
+   "text": "Decide on the changes, set up the team, its roles and governance, and plan the activities, milestones and people's time. For larger work, write a project initiation document.",
+   "tools": [
+    "driver_diagram",
+    "matrix_2x2"
+   ]
+  },
+  {
+   "id": "undertake",
+   "letter": "U",
+   "name": "Undertake the change",
+   "question": "Are we on track, and what is getting in the way?",
+   "text": "Test and spread the changes. Keep the RAID log and the action and decision log up to date, and report progress every week to the programme huddle and every fortnight to the leadership meeting.",
+   "tools": [
+    "run_chart",
+    "spc_tool",
+    "a3_report"
+   ]
+  },
+  {
+   "id": "sustain",
+   "letter": "S",
+   "name": "Sustain the benefit",
+   "question": "Did it work, will it last, and who looks after it now?",
+   "text": "Show the benefits against their baselines and check they are holding. Hand over to named owners with a plan to keep the gains, pass on open risks and issues, and capture what you learnt.",
+   "tools": [
+    "spc_tool",
+    "a3_report"
+   ]
+  }
+ ],
+ "docs": [
+  {
+   "id": "scope",
+   "code": "D",
+   "stage": "find",
+   "name": "High level scoping document",
+   "kind": "slides",
+   "template": "initiate-d-high-level-scope.potx",
+   "purpose": "One page that says what the project is, why it matters, what is in and out of scope, and who leads it.",
+   "when": "First. Use it to get your sponsor (SRO) to agree the work is worth doing before you spend time on detail.",
+   "owner": "Project lead, with the SRO",
+   "covers": [
+    "Elevator pitch",
+    "Scope",
+    "Benefits",
+    "Delivery and resourcing",
+    "Budget",
+    "Stakeholders",
+    "Governance",
+    "Assumptions",
+    "Risks and issues",
+    "Constraints and dependencies"
+   ],
+   "feeds": [],
+   "tips": [
+    "Keep each box to two or three lines: detail belongs in the PID or support plan.",
+    "Put numbers in the benefits box (the baseline and what you expect), not just aims.",
+    "List what is out of scope. It saves arguments later."
+   ],
+   "example": "initiate-d-high-level-scope-example.pptx",
+   "pages": [
+    "initiate-d-high-level-scope-1.jpg"
+   ]
+  },
+  {
+   "id": "support",
+   "code": "E2",
+   "stage": "find",
+   "name": "Support plan",
+   "kind": "slides",
+   "template": "initiate-e2-support-plan.potx",
+   "purpose": "The agreement between CITI and a clinical group or service: the context, scope, deliverables, metrics, approach, governance, resources and next steps.",
+   "when": "When you are asking CITI for improvement support. Agree it with the clinical group before the work starts.",
+   "owner": "CITI programme director, with the clinical group lead",
+   "covers": [
+    "Context and request",
+    "Scope, deliverables and metrics",
+    "Improvement approach (Plan, Do, Study, Act)",
+    "Principles",
+    "Governance",
+    "Risks and dependencies",
+    "Return on investment and KPIs",
+    "Resource plan",
+    "Next steps"
+   ],
+   "feeds": [
+    "scope"
+   ],
+   "tips": [
+    "The scope, deliverables and metrics table feeds every highlight report, so word the deliverables as things you can tick off.",
+    "Agree the clinical group's commitment (time, people, decisions) as clearly as CITI's."
+   ],
+   "example": "initiate-e2-support-plan-example.pptx",
+   "pages": [
+    "initiate-e2-support-plan-1.jpg",
+    "initiate-e2-support-plan-2.jpg",
+    "initiate-e2-support-plan-3.jpg",
+    "initiate-e2-support-plan-4.jpg",
+    "initiate-e2-support-plan-5.jpg",
+    "initiate-e2-support-plan-6.jpg",
+    "initiate-e2-support-plan-7.jpg",
+    "initiate-e2-support-plan-8.jpg",
+    "initiate-e2-support-plan-9.jpg",
+    "initiate-e2-support-plan-10.jpg"
+   ]
+  },
+  {
+   "id": "pid",
+   "code": "E1",
+   "stage": "create",
+   "name": "Project initiation document (PID)",
+   "kind": "doc",
+   "template": "initiate-e1-project-initiation-document.dotx",
+   "purpose": "The full case for the project: case for change, SMART objectives, approach, resourcing, timescales, leadership, governance, risks, dependencies, stakeholders, return on investment and KPIs.",
+   "when": "When you create the plan for a larger project, especially one that needs formal approval or a business case.",
+   "owner": "Project or programme manager",
+   "covers": [
+    "Case for change",
+    "Objectives",
+    "Approach and resourcing",
+    "Milestones",
+    "Leadership and governance",
+    "Risks, dependencies and stakeholders",
+    "Return on investment",
+    "KPIs and other benefits"
+   ],
+   "feeds": [
+    "scope",
+    "benefits",
+    "stakeholders"
+   ],
+   "tips": [
+    "Use facts and figures for the case for change: your baseline from a run chart is ideal.",
+    "Write objectives as SMART: a measure, a target and a date."
+   ],
+   "example": "initiate-e1-project-initiation-document-example.docx",
+   "pages": [
+    "initiate-e1-project-initiation-document-1.jpg",
+    "initiate-e1-project-initiation-document-2.jpg",
+    "initiate-e1-project-initiation-document-3.jpg",
+    "initiate-e1-project-initiation-document-4.jpg",
+    "initiate-e1-project-initiation-document-5.jpg",
+    "initiate-e1-project-initiation-document-6.jpg",
+    "initiate-e1-project-initiation-document-7.jpg",
+    "initiate-e1-project-initiation-document-8.jpg"
+   ]
+  },
+  {
+   "id": "resources",
+   "code": "J",
+   "stage": "create",
+   "name": "Resource planner and tracker",
+   "kind": "sheet",
+   "template": "initiate-j-resource-planner.xlsx",
+   "purpose": "The days each person is planned to give the project each week, and the days they actually gave.",
+   "when": "Plan it when you agree resources in the PID or support plan; fill in actual days every week or month.",
+   "owner": "Project manager",
+   "covers": [
+    "Planned days by person and week",
+    "Actual days worked",
+    "Days remaining",
+    "External resources"
+   ],
+   "feeds": [
+    "pid",
+    "support"
+   ],
+   "tips": [
+    "Enter the start date and the weeks fill in by themselves.",
+    "A gap between planned and actual days is an early warning: log it as a risk."
+   ],
+   "example": "initiate-j-resource-planner-example.xlsx",
+   "tables": [
+    {
+     "name": "Planned days",
+     "columns": [
+      "Name",
+      "Role",
+      "Total planned days",
+      "02 Feb",
+      "16 Feb",
+      "02 Mar",
+      "16 Mar",
+      "30 Mar",
+      "13 Apr",
+      "27 Apr",
+      "11 May",
+      "25 May",
+      "08 Jun",
+      "22 Jun",
+      "06 Jul",
+      "20 Jul",
+      "03 Aug",
+      "17 Aug",
+      "31 Aug"
+     ],
+     "rows": [
+      [
+       "James Holloway",
+       "Programme Manager",
+       147,
+       5,
+       5,
+       5,
+       5,
+       5,
+       5,
+       5,
+       5,
+       5,
+       5,
+       5,
+       5,
+       5,
+       5,
+       3,
+       3
+      ],
+      [
+       "Ben Carter",
+       "Improvement Manager",
+       139,
+       3,
+       3,
+       5,
+       5,
+       5,
+       5,
+       5,
+       5,
+       5,
+       5,
+       5,
+       5,
+       5,
+       5,
+       3,
+       3
+      ],
+      [
+       "Hannah Lee",
+       "Improvement Manager",
+       77,
+       1,
+       1,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       1,
+       1
+      ],
+      [
+       "Chloe Evans",
+       "Project Manager",
+       77,
+       1,
+       1,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       1,
+       1
+      ],
+      [
+       "Sam Patel",
+       "Improvement Manager",
+       77,
+       1,
+       1,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       1,
+       1
+      ],
+      [
+       "Omar Siddiqui",
+       "Senior Analyst",
+       54,
+       1,
+       1,
+       2,
+       2,
+       2,
+       2,
+       2,
+       2,
+       2,
+       2,
+       2,
+       2,
+       2,
+       2,
+       1,
+       1
+      ]
+     ],
+     "note": "Every other week shown here; the workbook has every week."
+    },
+    {
+     "name": "Actual days (to 11 May)",
+     "columns": [
+      "Name",
+      "Role",
+      "Planned",
+      "Worked so far",
+      "Remaining"
+     ],
+     "rows": [
+      [
+       "James Holloway",
+       "Programme Manager",
+       147,
+       75,
+       72
+      ],
+      [
+       "Ben Carter",
+       "Improvement Manager",
+       139,
+       62,
+       77
+      ],
+      [
+       "Hannah Lee",
+       "Improvement Manager",
+       77,
+       36,
+       41
+      ],
+      [
+       "Chloe Evans",
+       "Project Manager",
+       77,
+       34,
+       43
+      ],
+      [
+       "Sam Patel",
+       "Improvement Manager",
+       77,
+       36,
+       41
+      ],
+      [
+       "Omar Siddiqui",
+       "Senior Analyst",
+       54,
+       28,
+       26
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "mobilisation",
+   "code": "",
+   "stage": "create",
+   "name": "Programme mobilisation document",
+   "kind": "slides",
+   "template": "mobilise-programme-mobilisation.potx",
+   "purpose": "An intro manual for each team member and a team charter: what we want to achieve, how we work together and how we support each other.",
+   "when": "At a workshop when the team first comes together, as you create the plan.",
+   "owner": "Programme manager, with the team",
+   "covers": [
+    "Intro manual (one per person)",
+    "Team charter: objectives and success",
+    "Ways of working",
+    "Supporting each other"
+   ],
+   "feeds": [
+    "support",
+    "pid"
+   ],
+   "tips": [
+    "Fill it in together in the room rather than sending it round.",
+    "Revisit the charter when new people join."
+   ],
+   "example": "mobilise-programme-mobilisation-example.pptx",
+   "pages": [
+    "mobilise-programme-mobilisation-1.jpg",
+    "mobilise-programme-mobilisation-2.jpg",
+    "mobilise-programme-mobilisation-3.jpg",
+    "mobilise-programme-mobilisation-4.jpg"
+   ]
+  },
+  {
+   "id": "roles",
+   "code": "N",
+   "stage": "create",
+   "name": "Key programme roles",
+   "kind": "slides",
+   "template": "mobilise-n-key-programme-roles.potx",
+   "purpose": "Who fills each standard programme role (SRO, accountable executive, programme director and manager, leads, PMO, assurance) and what each is responsible for.",
+   "when": "When you create the plan, alongside the organisation chart.",
+   "owner": "Programme director",
+   "covers": [
+    "SRO",
+    "Accountable executive",
+    "Programme director and manager",
+    "Clinical, operational and nursing leads",
+    "PMO and assurance",
+    "Improvement support",
+    "Senior supplier"
+   ],
+   "feeds": [
+    "pid",
+    "support"
+   ],
+   "tips": [
+    "Every role needs a name. A blank role is a risk.",
+    "Use the comments to say how much time each person gives."
+   ],
+   "example": "mobilise-n-key-programme-roles-example.pptx",
+   "pages": [
+    "mobilise-n-key-programme-roles-1.jpg"
+   ]
+  },
+  {
+   "id": "orgchart",
+   "code": "O",
+   "stage": "create",
+   "name": "Organisation chart",
+   "kind": "slides",
+   "template": "mobilise-o-organisation-chart.potx",
+   "purpose": "The programme's structure on a page: the executive team, the programme leadership, and the leads and improvement support for each workstream.",
+   "when": "When you create the plan, once workstreams and leads are agreed.",
+   "owner": "Programme manager",
+   "covers": [
+    "Programme executive team",
+    "Programme leadership",
+    "Core workstreams and their leads",
+    "Enabling workstreams"
+   ],
+   "feeds": [
+    "roles"
+   ],
+   "tips": [
+    "The leads and teams named here go straight into each workstream's highlight report."
+   ],
+   "example": "mobilise-o-organisation-chart-example.pptx",
+   "pages": [
+    "mobilise-o-organisation-chart-1.jpg"
+   ]
+  },
+  {
+   "id": "governance",
+   "code": "P",
+   "stage": "create",
+   "name": "Governance",
+   "kind": "slides",
+   "template": "mobilise-p-governance.potx",
+   "purpose": "How the programme is steered: a chart of the forums it reports to, and a table of each forum's purpose, responsibilities, inputs, outputs and attendees.",
+   "when": "When you create the plan, before the first leadership meeting.",
+   "owner": "Programme director, with the SRO",
+   "covers": [
+    "Governance chart",
+    "Forum purpose and responsibilities",
+    "Inputs (which report goes where)",
+    "Outputs and attendees"
+   ],
+   "feeds": [
+    "roles",
+    "orgchart"
+   ],
+   "tips": [
+    "Use meetings that already exist where you can.",
+    "Say which report each forum gets: highlight reports to the huddle, the leadership report to the leadership meeting."
+   ],
+   "example": "mobilise-p-governance-example.pptx",
+   "pages": [
+    "mobilise-p-governance-1.jpg",
+    "mobilise-p-governance-2.jpg"
+   ]
+  },
+  {
+   "id": "benefits",
+   "code": "K",
+   "stage": "observe",
+   "name": "Benefits register",
+   "kind": "sheet",
+   "template": "mobilise-k-benefits-register.xlsx",
+   "purpose": "Each benefit (and dis-benefit) with its measure, baseline, target, dates, data source and owners.",
+   "when": "Set the baselines while you observe the current state, review it monthly, and use it again to show the benefit is sustained.",
+   "owner": "Programme manager; each benefit has its own owner",
+   "covers": [
+    "Objective and beneficiary",
+    "Benefit or dis-benefit",
+    "Measure, baseline and target",
+    "Data source and frequency",
+    "Benefit manager and owner",
+    "Cash releasing and £ value"
+   ],
+   "feeds": [
+    "scope",
+    "support"
+   ],
+   "tips": [
+    "Set the baseline from data over time: a run chart or SPC chart shows whether the baseline is stable.",
+    "Include a balancing measure as a dis-benefit, so you'd notice if the change caused harm."
+   ],
+   "example": "mobilise-k-benefits-register-example.xlsx",
+   "tables": [
+    {
+     "name": "Benefits register",
+     "columns": [
+      "Objective",
+      "Beneficiary",
+      "Benefit",
+      "Enablers",
+      "Measure",
+      "Baseline",
+      "Baseline date",
+      "Target",
+      "Target date",
+      "Frequency",
+      "Data source",
+      "Benefit owner",
+      "£ value"
+     ],
+     "rows": [
+      [
+       "Discharge patients earlier in the day",
+       "Patients; A&E",
+       "B01 - AB - More discharges before midday",
+       "Board rounds; TTOs; lounge",
+       "% of discharges before 12:00, 8 wards",
+       "16%",
+       "31/12/2025",
+       "33%",
+       "30/09/2026",
+       "Weekly",
+       "Patient record discharge times",
+       "Grace Mensah",
+       ""
+      ],
+      [
+       "Reduce length of stay",
+       "Patients; Trust",
+       "B02 - AB - Shorter average length of stay",
+       "All workstreams",
+       "Average LOS (days), excl. zero-day stays",
+       "7.4",
+       "31/12/2025",
+       "6.9",
+       "30/09/2026",
+       "Monthly",
+       "Inpatient data warehouse",
+       "Tom Reid",
+       "£1.2m cost avoidance a year (3,000 bed days)"
+      ],
+      [
+       "Medicines ready on time",
+       "Patients; ward staff",
+       "B03 - AB - Faster TTOs",
+       "Technician posts; TTO the day before",
+       "Hours from TTO prescribed to ready",
+       "4.2",
+       "30/11/2025",
+       "2.0",
+       "31/07/2026",
+       "Weekly",
+       "Pharmacy system (TTO tracker)",
+       "Leila Haddad",
+       ""
+      ],
+      [
+       "Use the discharge lounge",
+       "Patients; wards",
+       "B04 - AB - More eligible discharges via the lounge",
+       "Lounge open 8am; morning transport",
+       "% of eligible discharges through the lounge",
+       "12%",
+       "31/12/2025",
+       "40%",
+       "30/09/2026",
+       "Weekly",
+       "Lounge register",
+       "Kwame Asante",
+       ""
+      ],
+      [
+       "Plan discharge from admission",
+       "Patients; families",
+       "B05 - AB - EDD set within 24 hours",
+       "Board round standard; EDD field",
+       "% of patients with an EDD within 24 hours",
+       "41%",
+       "31/01/2026",
+       "90%",
+       "30/09/2026",
+       "Weekly",
+       "Board round audit",
+       "Joy Adebayo",
+       ""
+      ],
+      [
+       "Keep patients safe",
+       "Patients",
+       "B06 - DB - Risk of more readmissions (balancing)",
+       "Criteria-led discharge safeguards",
+       "% readmitted within 30 days",
+       "13.8%",
+       "31/12/2025",
+       "No rise",
+       "30/09/2026",
+       "Monthly",
+       "Inpatient data warehouse",
+       "Dr Sofia Marquez",
+       ""
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "plan",
+   "code": "B",
+   "stage": "create",
+   "name": "Project plan (detailed)",
+   "kind": "sheet",
+   "template": "plan-b-project-plan-detailed.xlsx",
+   "purpose": "Every workstream broken into activities, sub-activities, milestones and meetings, with owners, dates, status, % complete and the critical path, drawn as a Gantt chart.",
+   "when": "When you create the plan, before the changes start; update it every week.",
+   "owner": "Project manager, with workstream leads",
+   "covers": [
+    "Workstreams, activities and milestones",
+    "Responsible person",
+    "Start and due dates",
+    "Status and % complete",
+    "Critical path",
+    "Gantt chart by day"
+   ],
+   "feeds": [
+    "support",
+    "pid",
+    "orgchart"
+   ],
+   "tips": [
+    "Mark the critical path: these are the tasks that delay everything if they slip.",
+    "The plan on a page and the leadership report are drawn from this."
+   ],
+   "example": "plan-b-project-plan-detailed-example.xlsx",
+   "tables": [
+    {
+     "name": "Activity plan",
+     "columns": [
+      "Type",
+      "ID",
+      "Activity",
+      "Responsible",
+      "Start",
+      "Due",
+      "Status",
+      "% complete",
+      "Critical path",
+      "Comments"
+     ],
+     "rows": [
+      [
+       "Workstream",
+       "1",
+       "Board rounds and criteria-led discharge",
+       "Dr Sofia Marquez",
+       "02/03/2026",
+       "05/06/2026",
+       "In progress",
+       "79%",
+       "Y",
+       ""
+      ],
+      [
+       "Activity",
+       "1.1",
+       "Agree the board round standard with Wards 5 and 6",
+       "Dr Sofia Marquez",
+       "02/03/2026",
+       "27/03/2026",
+       "COMPLETE",
+       "100%",
+       "Y",
+       "2 weeks late: ward manager leave"
+      ],
+      [
+       "Sub-activity",
+       "1.1.1",
+       "Observe 4 board rounds on each ward",
+       "Ben Carter",
+       "02/03/2026",
+       "13/03/2026",
+       "COMPLETE",
+       "100%",
+       "N",
+       ""
+      ],
+      [
+       "Sub-activity",
+       "1.1.2",
+       "Run PDSA tests of the 30-minute board round",
+       "Joy Adebayo",
+       "16/03/2026",
+       "27/03/2026",
+       "COMPLETE",
+       "100%",
+       "Y",
+       "3 PDSA cycles"
+      ],
+      [
+       "Activity",
+       "1.2",
+       "Criteria-led discharge policy through Clinical Governance",
+       "Dr Sofia Marquez",
+       "23/03/2026",
+       "24/04/2026",
+       "COMPLETE",
+       "100%",
+       "N",
+       "Approved 24/04"
+      ],
+      [
+       "Activity",
+       "1.3",
+       "Spread the board round to Wards 1 to 4, 7 and 8",
+       "Joy Adebayo",
+       "30/03/2026",
+       "05/06/2026",
+       "In progress",
+       "75%",
+       "Y",
+       "6 of 8 wards live"
+      ],
+      [
+       "Milestones",
+       "1.4",
+       "Board round live on all 8 wards",
+       "Grace Mensah",
+       "05/06/2026",
+       "05/06/2026",
+       "Not started",
+       "0%",
+       "Y",
+       ""
+      ],
+      [
+       "Workstream",
+       "2",
+       "Medicines to take out (TTOs)",
+       "Leila Haddad",
+       "02/03/2026",
+       "05/06/2026",
+       "In progress",
+       "75%",
+       "Y",
+       ""
+      ],
+      [
+       "Activity",
+       "2.1",
+       "Agree the TTO process for the day before discharge",
+       "Leila Haddad",
+       "02/03/2026",
+       "10/04/2026",
+       "COMPLETE",
+       "100%",
+       "N",
+       ""
+      ],
+      [
+       "Activity",
+       "2.2",
+       "Recruit 2 pharmacy technicians",
+       "Leila Haddad",
+       "16/03/2026",
+       "01/05/2026",
+       "COMPLETE",
+       "100%",
+       "Y",
+       "Started 05/05"
+      ],
+      [
+       "Activity",
+       "2.3",
+       "Build the daily TTO tracker",
+       "Omar Siddiqui",
+       "23/03/2026",
+       "22/05/2026",
+       "In progress",
+       "60%",
+       "N",
+       "Ward codes issue I-002"
+      ],
+      [
+       "Activity",
+       "2.4",
+       "Spread TTO the day before to all 8 wards",
+       "Arjun Mehta",
+       "20/04/2026",
+       "05/06/2026",
+       "In progress",
+       "40%",
+       "Y",
+       "Rota gaps on Wards 1 to 4"
+      ],
+      [
+       "Workstream",
+       "3",
+       "Transport and discharge lounge",
+       "Kwame Asante",
+       "09/03/2026",
+       "29/05/2026",
+       "In progress",
+       "83%",
+       "N",
+       ""
+      ],
+      [
+       "Activity",
+       "3.1",
+       "Agree 4 more morning transport slots",
+       "Kwame Asante",
+       "09/03/2026",
+       "10/04/2026",
+       "COMPLETE",
+       "100%",
+       "N",
+       ""
+      ],
+      [
+       "Activity",
+       "3.2",
+       "Open the lounge at 8am",
+       "Kwame Asante",
+       "23/03/2026",
+       "30/04/2026",
+       "COMPLETE",
+       "100%",
+       "N",
+       "Opened 30/04"
+      ],
+      [
+       "Activity",
+       "3.3",
+       "Promote the lounge at ward huddles",
+       "Chloe Evans",
+       "04/05/2026",
+       "29/05/2026",
+       "In progress",
+       "50%",
+       "N",
+       ""
+      ],
+      [
+       "Workstream",
+       "4",
+       "Complex discharges",
+       "Fiona Gallagher",
+       "09/03/2026",
+       "22/05/2026",
+       "In progress",
+       "75%",
+       "N",
+       ""
+      ],
+      [
+       "Activity",
+       "4.1",
+       "Start the daily transfer of care huddle",
+       "Fiona Gallagher",
+       "09/03/2026",
+       "13/04/2026",
+       "COMPLETE",
+       "100%",
+       "N",
+       "Live 13/04"
+      ],
+      [
+       "Activity",
+       "4.2",
+       "Plan the discharge to assess pilot",
+       "Sam Patel",
+       "20/04/2026",
+       "22/05/2026",
+       "In progress",
+       "50%",
+       "N",
+       ""
+      ],
+      [
+       "Workstream",
+       "5",
+       "Data and measurement",
+       "Omar Siddiqui",
+       "02/03/2026",
+       "22/05/2026",
+       "In progress",
+       "90%",
+       "Y",
+       ""
+      ],
+      [
+       "Activity",
+       "5.1",
+       "Agree baseline and data definitions",
+       "Omar Siddiqui",
+       "02/03/2026",
+       "13/03/2026",
+       "COMPLETE",
+       "100%",
+       "Y",
+       ""
+      ],
+      [
+       "Activity",
+       "5.2",
+       "Weekly SPC dashboard for each ward",
+       "Omar Siddiqui",
+       "16/03/2026",
+       "22/05/2026",
+       "In progress",
+       "80%",
+       "N",
+       ""
+      ],
+      [
+       "Workstream",
+       "6",
+       "PMO, comms and engagement",
+       "Ruth Adeyemi",
+       "02/03/2026",
+       "22/05/2026",
+       "In progress",
+       "72%",
+       "N",
+       ""
+      ],
+      [
+       "Activity",
+       "6.1",
+       "Launch event and ward roadshows",
+       "Nadia Rahman",
+       "02/03/2026",
+       "10/04/2026",
+       "COMPLETE",
+       "100%",
+       "N",
+       ""
+      ],
+      [
+       "Meeting",
+       "6.2",
+       "Programme Leadership Meeting (fortnightly)",
+       "Ruth Adeyemi",
+       "02/03/2026",
+       "22/05/2026",
+       "In progress",
+       "85%",
+       "N",
+       ""
+      ],
+      [
+       "Activity",
+       "6.3",
+       "Patient leaflet with the patient panel",
+       "Nadia Rahman",
+       "04/05/2026",
+       "22/05/2026",
+       "In progress",
+       "30%",
+       "N",
+       ""
+      ]
+     ],
+     "gantt": {
+      "start": "2026-03-02",
+      "weeks": 14,
+      "startCol": 4,
+      "endCol": 5
+     }
+    }
+   ]
+  },
+  {
+   "id": "stakeholders",
+   "code": "I",
+   "stage": "observe",
+   "name": "Stakeholder map and communication plan",
+   "kind": "slides",
+   "template": "plan-i-stakeholder-map-comms-plan.potx",
+   "purpose": "Stakeholders placed by influence and interest (champions, supporters, blockers, sleepers), and a plan of how and how often you will communicate with each.",
+   "when": "While you observe the current state, so you know who is affected; review it when a stakeholder's interest or influence changes.",
+   "owner": "Programme manager, with the comms lead",
+   "covers": [
+    "Stakeholder map",
+    "Key interests and issues",
+    "Communication vehicle, frequency and format",
+    "Content provided"
+   ],
+   "feeds": [
+    "scope",
+    "support"
+   ],
+   "tips": [
+    "The 2x2 matrix tool has a stakeholder grid you can score with your team, then copy into this map."
+   ],
+   "example": "plan-i-stakeholder-map-comms-plan-example.pptx",
+   "pages": [
+    "plan-i-stakeholder-map-comms-plan-1.jpg",
+    "plan-i-stakeholder-map-comms-plan-2.jpg"
+   ]
+  },
+  {
+   "id": "onepage",
+   "code": "A",
+   "stage": "create",
+   "name": "Project plan on a page",
+   "kind": "slides",
+   "template": "implement-a-plan-on-a-page.potx",
+   "purpose": "A high level timeline of the programme by workstream, with its main activities, milestones and critical path, on one slide.",
+   "when": "Once the detailed plan is agreed. Use it in leadership reports and when you brief people.",
+   "owner": "Project manager",
+   "covers": [
+    "Workstreams by month",
+    "Main activities",
+    "Milestones",
+    "Critical path"
+   ],
+   "feeds": [
+    "plan"
+   ],
+   "tips": [
+    "Show only what a senior reader needs: about 2 or 3 bars a workstream."
+   ],
+   "example": "implement-a-plan-on-a-page-example.pptx",
+   "pages": [
+    "implement-a-plan-on-a-page-1.jpg"
+   ]
+  },
+  {
+   "id": "raid",
+   "code": "F",
+   "stage": "undertake",
+   "name": "RAID log",
+   "kind": "sheet",
+   "template": "implement-f-raid-log.xlsx",
+   "purpose": "The programme's Risks, Assumptions, Issues and Dependencies, each with an owner, a score or RAG, actions and status.",
+   "when": "Start it when you create the plan; review it at every weekly huddle.",
+   "owner": "Programme manager; each item has an owner",
+   "covers": [
+    "Risks: likelihood x impact, before and after mitigation",
+    "Issues: impact and actions to resolve",
+    "Assumptions",
+    "Dependencies: who delivers what, by when",
+    "Escalation to the executive"
+   ],
+   "feeds": [
+    "scope",
+    "pid",
+    "support"
+   ],
+   "tips": [
+    "A risk might happen; an issue is happening now. When a risk happens, close it and open an issue.",
+    "Highlight and leadership reports copy their risks and issues from here."
+   ],
+   "example": "implement-f-raid-log-example.xlsx",
+   "tables": [
+    {
+     "name": "Risks",
+     "columns": [
+      "Ref",
+      "Raised",
+      "Owner",
+      "Workstream",
+      "Title",
+      "Description",
+      "L",
+      "I",
+      "Exposure",
+      "Mitigation",
+      "L after",
+      "I after",
+      "Exposure after",
+      "Trend",
+      "Status",
+      "Commentary",
+      "Escalate"
+     ],
+     "rows": [
+      [
+       "R-001",
+       "09/02/2026",
+       "Tom Reid",
+       "Board rounds and criteria-led discharge",
+       "Bed pressures",
+       "If winter-level bed pressures continue into spring, ward staff will miss board round training and the spread will slip.",
+       4,
+       4,
+       16,
+       "Train in 30-minute slots at the ward huddle; matrons protect time; start with 2 wards.",
+       3,
+       4,
+       12,
+       "Up",
+       "Open",
+       "Pressures continued into May; escalated to leadership meeting 14/05.",
+       "Yes"
+      ],
+      [
+       "R-002",
+       "09/02/2026",
+       "Dr Amara Okafor",
+       "Medicines to take out (TTOs)",
+       "Business case delay",
+       "If the pharmacy technician business case is delayed, TTOs will still wait for dispensary staff.",
+       3,
+       4,
+       12,
+       "Take to the March investment panel; agree interim bank cover.",
+       2,
+       3,
+       6,
+       "Down",
+       "Closed",
+       "Approved 18/03; both posts filled 05/05.",
+       "No"
+      ],
+      [
+       "R-003",
+       "23/02/2026",
+       "Leila Haddad",
+       "Medicines to take out (TTOs)",
+       "Technicians pulled away",
+       "If dispensary is short-staffed, ward technicians will be pulled back and TTO times will rise.",
+       3,
+       3,
+       9,
+       "Agree a minimum ward cover rule with the pharmacy manager.",
+       2,
+       3,
+       6,
+       "No Change",
+       "Open",
+       "Rule agreed 28/04; happened twice in May.",
+       "No"
+      ],
+      [
+       "R-004",
+       "02/03/2026",
+       "Kwame Asante",
+       "Transport and discharge lounge",
+       "Transport capacity",
+       "If the provider cannot add morning vehicles, patients will wait in the lounge until the afternoon.",
+       3,
+       3,
+       9,
+       "Share daily booking forecasts with the provider; review at the monthly contract meeting.",
+       2,
+       3,
+       6,
+       "Down",
+       "Open",
+       "Morning slots up from 6 to 10 a day.",
+       "No"
+      ],
+      [
+       "R-005",
+       "02/03/2026",
+       "Fiona Gallagher",
+       "Complex discharges",
+       "Social work input",
+       "If the local authority cannot staff the daily huddle, complex discharges will not move earlier.",
+       2,
+       4,
+       8,
+       "Agree named social workers and a deputy rota.",
+       2,
+       3,
+       6,
+       "No Change",
+       "Open",
+       "Running daily since 13/04.",
+       "No"
+      ],
+      [
+       "R-006",
+       "16/03/2026",
+       "James Holloway",
+       "Data and measurement",
+       "Data quality",
+       "If ward codes are wrong in the TTO data, the tracker will show the wrong wards' times.",
+       3,
+       2,
+       6,
+       "Check codes against bed management each week.",
+       1,
+       2,
+       2,
+       "Down",
+       "Closed",
+       "Merged into issue I-002.",
+       "No"
+      ]
+     ],
+     "heat": [
+      8,
+      12
+     ]
+    },
+    {
+     "name": "Issues",
+     "columns": [
+      "Ref",
+      "Raised",
+      "Owner",
+      "Workstream",
+      "Title",
+      "Description",
+      "Impact",
+      "Actions to resolve",
+      "Trend",
+      "Status",
+      "Commentary",
+      "Escalate"
+     ],
+     "rows": [
+      [
+       "I-001",
+       "20/04/2026",
+       "Dr Sofia Marquez",
+       "Medicines to take out (TTOs)",
+       "Junior doctor rota gaps",
+       "Rota gaps on Wards 1 to 4 mean TTOs are not written the day before.",
+       4,
+       "Clinical Director to raise with the rota team; decision on locum cover at leadership meeting.",
+       "Up",
+       "Open",
+       "Escalated 14/05.",
+       "Yes"
+      ],
+      [
+       "I-002",
+       "22/04/2026",
+       "Omar Siddiqui",
+       "Data and measurement",
+       "Tracker ward codes",
+       "Wards 2 and 3 have the wrong codes in the TTO tracker.",
+       2,
+       "Fix the codes with Digital; back-fill April data.",
+       "No Change",
+       "Open",
+       "Fix due 22/05.",
+       "No"
+      ],
+      [
+       "I-003",
+       "06/04/2026",
+       "Kwame Asante",
+       "Transport and discharge lounge",
+       "Lounge chairs",
+       "2 of 12 lounge chairs broken, so the lounge fills by 11am.",
+       2,
+       "Estates to replace from the capital budget.",
+       "Down",
+       "Closed",
+       "Replaced 24/04.",
+       "No"
+      ]
+     ]
+    },
+    {
+     "name": "Assumptions",
+     "columns": [
+      "Ref",
+      "Raised",
+      "Raised by",
+      "Title",
+      "Assumption",
+      "Impact if wrong",
+      "Workstream",
+      "Owner",
+      "Priority",
+      "Status"
+     ],
+     "rows": [
+      [
+       "AS-001",
+       "02/02/2026",
+       "Mobilisation workshop",
+       "Ward time",
+       "Ward teams can free 2 hours a week each for the programme.",
+       "If not, the spread to 8 wards takes longer.",
+       "Board rounds and criteria-led discharge",
+       "Grace Mensah",
+       "High",
+       "Open"
+      ],
+      [
+       "AS-002",
+       "02/02/2026",
+       "Mobilisation workshop",
+       "Transport at no cost",
+       "The transport provider can take more morning bookings within the current contract.",
+       "If not, we need a contract change (3 months).",
+       "Transport and discharge lounge",
+       "Kwame Asante",
+       "Medium",
+       "Closed"
+      ],
+      [
+       "AS-003",
+       "09/02/2026",
+       "Leadership meeting",
+       "Data available",
+       "Discharge times can be taken daily from the patient record.",
+       "If not, the dashboard is weekly and manual.",
+       "Data and measurement",
+       "Omar Siddiqui",
+       "Medium",
+       "Closed"
+      ],
+      [
+       "AS-004",
+       "09/02/2026",
+       "Leadership meeting",
+       "Readmissions stable",
+       "Earlier discharge does not raise readmissions; we track this as a balancing measure.",
+       "If readmissions rise, we pause and review.",
+       "Board rounds and criteria-led discharge",
+       "Dr Sofia Marquez",
+       "High",
+       "Open"
+      ]
+     ]
+    },
+    {
+     "name": "Dependencies",
+     "columns": [
+      "Ref",
+      "Raised",
+      "Workstream affected",
+      "Who depends on it",
+      "Who delivers it",
+      "Description",
+      "Delivery date",
+      "Status",
+      "Commentary",
+      "RAG",
+      "Priority"
+     ],
+     "rows": [
+      [
+       "DEP-001",
+       "09/02/2026",
+       "Board rounds and criteria-led discharge",
+       "Board rounds workstream",
+       "Digital (patient record team)",
+       "EDD field in the board round view",
+       "30/06/2026",
+       "Agreed",
+       "In the June release",
+       "A",
+       "High"
+      ],
+      [
+       "DEP-002",
+       "09/02/2026",
+       "Complex discharges",
+       "Complex discharges workstream",
+       "Local authority social work",
+       "Named social workers for the daily huddle",
+       "13/04/2026",
+       "Delivered",
+       "Live 13/04",
+       "G",
+       "High"
+      ],
+      [
+       "DEP-003",
+       "16/03/2026",
+       "Transport and discharge lounge",
+       "Transport and lounge workstream",
+       "Estates",
+       "Lounge refurbishment and 4 extra chairs",
+       "30/04/2026",
+       "Delivered late",
+       "Done 06/05",
+       "G",
+       "Medium"
+      ],
+      [
+       "DEP-004",
+       "16/03/2026",
+       "Board rounds and criteria-led discharge",
+       "Whole programme",
+       "UEC Programme",
+       "Same day emergency care changes, so admissions don't rise",
+       "31/07/2026",
+       "Meeting planned",
+       "Next UEC board 21/05",
+       "A",
+       "Medium"
+      ]
+     ],
+     "rag": 9
+    }
+   ]
+  },
+  {
+   "id": "actions",
+   "code": "M",
+   "stage": "undertake",
+   "name": "Action and decision log",
+   "kind": "sheet",
+   "template": "implement-m-action-decision-log.xlsx",
+   "purpose": "Actions agreed at meetings, with owners, due dates and status; and decisions made or needed, with who approved them and when.",
+   "when": "At every programme meeting, from the first.",
+   "owner": "PMO",
+   "covers": [
+    "Action log: owner, due and revised due dates, status",
+    "Decisions log: decision needed, final decision, approved by, date"
+   ],
+   "feeds": [],
+   "tips": [
+    "Log the decision and who made it at the time. It is hard to piece together later.",
+    "Key decisions go into the highlight report."
+   ],
+   "example": "implement-m-action-decision-log-example.xlsx",
+   "tables": [
+    {
+     "name": "Action log",
+     "columns": [
+      "ID",
+      "Workstream",
+      "Action",
+      "Raised at",
+      "Raised",
+      "Owner",
+      "Due",
+      "Revised due",
+      "Status",
+      "Commentary",
+      "Closed"
+     ],
+     "rows": [
+      [
+       "A-001",
+       "PMO, comms and engagement",
+       "Set up the Teams site, action log and RAID log",
+       "Kick-off, 02/02",
+       "02/02/2026",
+       "Ruth Adeyemi",
+       "06/02/2026",
+       "",
+       "Closed",
+       "Done",
+       "05/02/2026"
+      ],
+      [
+       "A-002",
+       "Data and measurement",
+       "Build the baseline: discharges before midday by ward, Oct to Dec 2025",
+       "Kick-off, 02/02",
+       "02/02/2026",
+       "Omar Siddiqui",
+       "20/02/2026",
+       "",
+       "Closed",
+       "16% baseline agreed at leadership meeting",
+       "23/02/2026"
+      ],
+      [
+       "A-003",
+       "Medicines to take out (TTOs)",
+       "Write the pharmacy technician business case",
+       "Leadership meeting, 09/02",
+       "09/02/2026",
+       "Leila Haddad",
+       "06/03/2026",
+       "",
+       "Closed",
+       "Approved 18/03",
+       "18/03/2026"
+      ],
+      [
+       "A-004",
+       "Board rounds and criteria-led discharge",
+       "Agree the board round standard with Ward 5 and 6 teams",
+       "Board rounds group, 17/02",
+       "17/02/2026",
+       "Dr Sofia Marquez",
+       "13/03/2026",
+       "27/03/2026",
+       "Closed",
+       "Moved 2 weeks for ward manager leave",
+       "25/03/2026"
+      ],
+      [
+       "A-005",
+       "Transport and discharge lounge",
+       "Ask the provider for 4 more morning slots a day",
+       "Transport group, 02/03",
+       "02/03/2026",
+       "Kwame Asante",
+       "31/03/2026",
+       "",
+       "Closed",
+       "Agreed from 13/04",
+       "09/04/2026"
+      ],
+      [
+       "A-006",
+       "Complex discharges",
+       "Agree terms of reference for the daily transfer of care huddle",
+       "Transport group, 02/03",
+       "02/03/2026",
+       "Fiona Gallagher",
+       "03/04/2026",
+       "",
+       "Closed",
+       "Signed off with local authority",
+       "01/04/2026"
+      ],
+      [
+       "A-007",
+       "Board rounds and criteria-led discharge",
+       "Train Ward 1 and 2 teams in the board round standard",
+       "Weekly huddle, 11/05",
+       "11/05/2026",
+       "Joy Adebayo",
+       "22/05/2026",
+       "",
+       "In progress",
+       "Ward 1 done; Ward 2 booked 20/05",
+       ""
+      ],
+      [
+       "A-008",
+       "Data and measurement",
+       "Fix ward codes for Wards 2 and 3 in the TTO tracker (I-002)",
+       "Weekly huddle, 27/04",
+       "27/04/2026",
+       "Omar Siddiqui",
+       "08/05/2026",
+       "22/05/2026",
+       "In progress",
+       "Waiting on Digital",
+       ""
+      ],
+      [
+       "A-009",
+       "Medicines to take out (TTOs)",
+       "Agree weekend technician cover with the pharmacy manager",
+       "TTO group, 07/05",
+       "07/05/2026",
+       "Leila Haddad",
+       "29/05/2026",
+       "",
+       "Open",
+       "",
+       ""
+      ],
+      [
+       "A-010",
+       "PMO, comms and engagement",
+       "Write the patient leaflet with the patient panel",
+       "Leadership meeting, 30/04",
+       "30/04/2026",
+       "Nadia Rahman",
+       "12/06/2026",
+       "",
+       "Open",
+       "Panel meets 03/06",
+       ""
+      ]
+     ]
+    },
+    {
+     "name": "Decisions log",
+     "columns": [
+      "ID",
+      "Workstream",
+      "Raised",
+      "Priority",
+      "Decision to be made",
+      "Due",
+      "Final decision",
+      "Approved by",
+      "Decision date",
+      "Status",
+      "Commentary",
+      "Reference"
+     ],
+     "rows": [
+      [
+       "D-001",
+       "Board rounds and criteria-led discharge",
+       "09/02/2026",
+       "High",
+       "Which wards test the board round first?",
+       "23/02/2026",
+       "Wards 5 and 6: keen ward managers, and Ward 6 ran the 2024 pilot",
+       "Programme Leadership Meeting",
+       "23/02/2026",
+       "Closed",
+       "",
+       "Baseline by ward"
+      ],
+      [
+       "D-002",
+       "Data and measurement",
+       "09/02/2026",
+       "High",
+       "Which measure is the main outcome?",
+       "23/02/2026",
+       "Discharges before midday, with length of stay and readmissions alongside",
+       "Programme Leadership Meeting",
+       "23/02/2026",
+       "Closed",
+       "",
+       "Benefits register"
+      ],
+      [
+       "D-003",
+       "Transport and discharge lounge",
+       "02/03/2026",
+       "Medium",
+       "Should the lounge open at 8am, and who staffs it?",
+       "30/03/2026",
+       "Open at 8am from 30/04, staffed by moving 1 healthcare assistant from the late shift",
+       "Medicine senior leadership team",
+       "26/03/2026",
+       "Closed",
+       "",
+       "Lounge activity data"
+      ],
+      [
+       "D-004",
+       "Medicines to take out (TTOs)",
+       "14/04/2026",
+       "Medium",
+       "How do we fund weekend TTO cover?",
+       "28/04/2026",
+       "From the technician budget, by staggering rotas",
+       "Programme Leadership Meeting",
+       "28/04/2026",
+       "Closed",
+       "",
+       "Rota options paper"
+      ],
+      [
+       "D-005",
+       "Medicines to take out (TTOs)",
+       "14/05/2026",
+       "Very high",
+       "Locum cover for junior doctor rota gaps on Wards 1 to 4 (I-001)?",
+       "28/05/2026",
+       "",
+       "Medicine Clinical Group Executive Committee",
+       "",
+       "Open",
+       "Escalated from leadership meeting 14/05",
+       "Rota gap analysis"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "highlight",
+   "code": "G",
+   "stage": "undertake",
+   "name": "Highlight report",
+   "kind": "slides",
+   "template": "implement-g-highlight-report.potx",
+   "purpose": "One slide per workstream: its brief, leads, key achievements and metrics, deliverables with % done and RAG, decisions, escalations and risks.",
+   "when": "Every week, for the programme weekly huddle.",
+   "owner": "Each workstream lead",
+   "covers": [
+    "Brief, leads and teams",
+    "Key achievements",
+    "Key metrics: target and current",
+    "Deliverables: % done, RAG, progress, next steps",
+    "Decisions, escalations, risks and issues",
+    "Win of the week"
+   ],
+   "feeds": [
+    "support",
+    "orgchart",
+    "actions",
+    "raid",
+    "benefits"
+   ],
+   "tips": [
+    "Use the RAG key: red is delayed and needs escalating, amber is at risk, green is on track, blue is complete.",
+    "Show your metric as a run chart or SPC chart rather than a single number when you can."
+   ],
+   "example": "implement-g-highlight-report-example.pptx",
+   "pages": [
+    "implement-g-highlight-report-1.jpg",
+    "implement-g-highlight-report-2.jpg",
+    "implement-g-highlight-report-3.jpg"
+   ]
+  },
+  {
+   "id": "leadership",
+   "code": "L",
+   "stage": "undertake",
+   "name": "Leadership report",
+   "kind": "slides",
+   "template": "implement-l-leadership-report.potx",
+   "purpose": "One slide for the whole programme: key metrics, each workstream's deliverables with % done, due date and RAG, wins and the key risks and issues.",
+   "when": "Every fortnight or month, for the programme leadership meeting.",
+   "owner": "Programme manager",
+   "covers": [
+    "Key metrics and KPIs",
+    "Workstream RAG and deliverables",
+    "RAG justification and next steps",
+    "Wins of the week",
+    "Key risks and issues"
+   ],
+   "feeds": [
+    "plan",
+    "onepage",
+    "raid",
+    "highlight",
+    "benefits"
+   ],
+   "tips": [
+    "Explain every amber and red in the RAG justification, and say what you need from the leaders."
+   ],
+   "example": "implement-l-leadership-report-example.pptx",
+   "pages": [
+    "implement-l-leadership-report-1.jpg",
+    "implement-l-leadership-report-2.jpg"
+   ]
+  },
+  {
+   "id": "closure",
+   "code": "",
+   "stage": "sustain",
+   "name": "Programme closure report",
+   "kind": "slides",
+   "template": "close-programme-closure-report.potx",
+   "purpose": "Why the programme is closing, what it achieved, the benefits against their baselines, handover of outputs and open risks, stakeholder feedback, lessons learnt and a case study.",
+   "when": "At the end of the programme, or when it is stopped.",
+   "owner": "Programme manager, signed off by the SRO",
+   "covers": [
+    "Closure summary and sustainability plan",
+    "Outputs, handover owners and next steps",
+    "Benefits realisation",
+    "Ongoing risks and issues",
+    "Stakeholder feedback",
+    "Lessons learnt",
+    "Case study"
+   ],
+   "feeds": [
+    "benefits",
+    "raid",
+    "plan"
+   ],
+   "tips": [
+    "Show the benefits as SPC charts: a sustained shift is stronger evidence than a before-and-after.",
+    "Every open risk and output needs a named handover owner."
+   ],
+   "example": "close-programme-closure-report-example.pptx",
+   "pages": [
+    "close-programme-closure-report-1.jpg",
+    "close-programme-closure-report-2.jpg",
+    "close-programme-closure-report-3.jpg",
+    "close-programme-closure-report-4.jpg",
+    "close-programme-closure-report-5.jpg",
+    "close-programme-closure-report-6.jpg",
+    "close-programme-closure-report-7.jpg"
+   ]
+  }
+ ],
+ "tree": {
+  "root": "start",
+  "questions": {
+   "start": {
+    "q": "What do you need to do?",
+    "hint": "Pick the closest. You can go back at any point.",
+    "options": [
+     {
+      "a": "Find out what to do next on my project or programme",
+      "sub": "Answer a few questions about where your work is",
+      "next": "agreed"
+     },
+     {
+      "a": "Record something",
+      "sub": "A risk, issue, assumption, dependency, action or decision",
+      "next": "record"
+     },
+     {
+      "a": "Report progress",
+      "sub": "To a weekly huddle, a leadership meeting or at the end",
+      "next": "report"
+     },
+     {
+      "a": "Plan something",
+      "sub": "Tasks and dates, people's time, stakeholders or benefits",
+      "next": "plan"
+     },
+     {
+      "a": "Set up the team",
+      "sub": "Ways of working, roles or governance",
+      "next": "team"
+     }
+    ]
+   },
+   "agreed": {
+    "q": "Has a sponsor (SRO) agreed the opportunity and its scope?",
+    "options": [
+     {
+      "a": "No, it's still an idea or a problem",
+      "next": "size"
+     },
+     {
+      "a": "Yes",
+      "next": "observed"
+     }
+    ]
+   },
+   "size": {
+    "q": "How big is the work?",
+    "options": [
+     {
+      "a": "A project within my own team or service",
+      "sub": "You can do it with the people and money you have",
+      "result": "scope_small"
+     },
+     {
+      "a": "A larger project or programme",
+      "sub": "It crosses teams, needs funding, approval or CITI support",
+      "next": "citi"
+     }
+    ]
+   },
+   "citi": {
+    "q": "Are you asking CITI for improvement support?",
+    "options": [
+     {
+      "a": "Yes",
+      "result": "support"
+     },
+     {
+      "a": "No, but it needs formal approval or a business case",
+      "result": "pid"
+     }
+    ]
+   },
+   "observed": {
+    "q": "Do you understand the current state, with a baseline for each benefit you want?",
+    "hint": "For example, a process map, the main causes of the problem and a run chart of where you are now.",
+    "options": [
+     {
+      "a": "No, not yet",
+      "result": "observe"
+     },
+     {
+      "a": "Yes",
+      "next": "teamready"
+     }
+    ]
+   },
+   "teamready": {
+    "q": "Is the team set up, with roles, workstream leads and meetings agreed?",
+    "options": [
+     {
+      "a": "No, not yet",
+      "result": "mobilise"
+     },
+     {
+      "a": "Yes",
+      "next": "planned"
+     }
+    ]
+   },
+   "planned": {
+    "q": "Do you have a plan with activities, owners and dates?",
+    "options": [
+     {
+      "a": "No, not yet",
+      "result": "plan"
+     },
+     {
+      "a": "Yes",
+      "next": "live"
+     }
+    ]
+   },
+   "live": {
+    "q": "Where is the work now?",
+    "options": [
+     {
+      "a": "Under way: we are testing and spreading changes",
+      "result": "implement"
+     },
+     {
+      "a": "Finishing, stopping or being handed over",
+      "result": "close"
+     }
+    ]
+   },
+   "record": {
+    "q": "What do you need to record?",
+    "options": [
+     {
+      "a": "Something that might happen and affect the work",
+      "sub": "A risk",
+      "result": "risk"
+     },
+     {
+      "a": "A problem that is happening now",
+      "sub": "An issue",
+      "result": "issue"
+     },
+     {
+      "a": "Something we are taking to be true",
+      "sub": "An assumption",
+      "result": "assumption"
+     },
+     {
+      "a": "Something we need from someone else before we can move on",
+      "sub": "A dependency",
+      "result": "dependency"
+     },
+     {
+      "a": "A task someone has agreed to do",
+      "sub": "An action",
+      "result": "action"
+     },
+     {
+      "a": "A decision made, or one that needs making",
+      "sub": "A decision",
+      "result": "decision"
+     }
+    ]
+   },
+   "report": {
+    "q": "Who is the report for?",
+    "options": [
+     {
+      "a": "The weekly programme huddle",
+      "sub": "One workstream's progress",
+      "result": "highlight"
+     },
+     {
+      "a": "The leadership meeting or senior leaders",
+      "sub": "The whole programme",
+      "result": "leadership"
+     },
+     {
+      "a": "Anyone who wants the timeline on one page",
+      "result": "onepage"
+     },
+     {
+      "a": "Everyone, at the end of the work",
+      "result": "close"
+     }
+    ]
+   },
+   "plan": {
+    "q": "What do you need to plan?",
+    "options": [
+     {
+      "a": "Tasks, owners and dates",
+      "result": "plan"
+     },
+     {
+      "a": "People's time",
+      "result": "resources"
+     },
+     {
+      "a": "Who to involve and how to keep them informed",
+      "result": "stakeholders"
+     },
+     {
+      "a": "The benefits and how we will measure them",
+      "result": "benefits"
+     }
+    ]
+   },
+   "team": {
+    "q": "What do you need to set up?",
+    "options": [
+     {
+      "a": "How we will work together as a team",
+      "result": "charter"
+     },
+     {
+      "a": "Who does what",
+      "result": "roles"
+     },
+     {
+      "a": "Meetings, reporting and escalation",
+      "result": "governance"
+     }
+    ]
+   }
+  },
+  "results": {
+   "scope_small": {
+    "stage": "find",
+    "title": "Write a high level scoping document",
+    "docs": [
+     "scope"
+    ],
+    "text": "Agree the problem, scope and benefits on one page with your sponsor. For a project in your own service this may be all the paperwork you need: then observe the current state, run your tests of change with Plan, Do, Study, Act cycles and keep an action log.",
+    "next": "Next, observe the current state: map the process and set a baseline with a run chart."
+   },
+   "support": {
+    "stage": "find",
+    "title": "Scope the opportunity and agree a support plan with CITI",
+    "docs": [
+     "scope",
+     "support"
+    ],
+    "text": "Start with the one-page scope. Then agree a support plan with CITI setting out the scope, deliverables, metrics, approach and resources.",
+    "next": "When the support plan is approved, observe the current state."
+   },
+   "pid": {
+    "stage": "find",
+    "title": "Scope the opportunity, then write a PID",
+    "docs": [
+     "scope",
+     "pid"
+    ],
+    "text": "Start with the one-page scope and get your sponsor to agree it. Larger work that needs formal approval or a business case then needs a project initiation document, with the case for change, SMART objectives, resources, milestones, governance and return on investment. You'll finish it as you create the plan.",
+    "next": "Once the scope is agreed, observe the current state so the PID's case for change has a baseline."
+   },
+   "observe": {
+    "stage": "observe",
+    "title": "Observe the current state and set baselines",
+    "docs": [
+     "benefits",
+     "stakeholders"
+    ],
+    "text": "Map the process as it really works and find the causes of the problem with the charting tools below. Record each benefit with its measure, baseline, target and owner in the benefits register, including a balancing measure, and plot each baseline over time to check it is stable. Map who is affected and who has a say.",
+    "next": "Next, create the plan."
+   },
+   "mobilise": {
+    "stage": "create",
+    "title": "Set up the team",
+    "docs": [
+     "mobilisation",
+     "roles",
+     "orgchart",
+     "governance"
+    ],
+    "text": "Hold a workshop to write the team charter and intro manuals. Agree who fills each programme role, draw the organisation chart, and agree the governance: which meetings steer the work and what each one receives.",
+    "next": "Then plan the activities, owners and dates."
+   },
+   "benefits": {
+    "stage": "observe",
+    "title": "Agree the benefits and their baselines",
+    "docs": [
+     "benefits"
+    ],
+    "text": "List each benefit with its measure, baseline, target, data source and owner in the benefits register. Include a balancing measure so you would notice harm. Plot the baseline over time to check it is stable before you change anything.",
+    "next": "Then create the plan."
+   },
+   "plan": {
+    "stage": "create",
+    "title": "Create the plan",
+    "docs": [
+     "plan",
+     "onepage",
+     "resources",
+     "pid"
+    ],
+    "text": "Break each workstream into activities with owners and dates in the detailed plan, and mark the critical path. Summarise it on the plan on a page and plan each person's time. For larger work, bring it together in a project initiation document.",
+    "next": "Then undertake the change, with a RAID log and regular reports."
+   },
+   "implement": {
+    "stage": "undertake",
+    "title": "Undertake the change: deliver, track and report",
+    "docs": [
+     "raid",
+     "actions",
+     "highlight",
+     "leadership"
+    ],
+    "text": "Review the RAID log and the action and decision log at every huddle. Each workstream writes a weekly highlight report; the programme manager pulls them together into the leadership report for the leadership meeting.",
+    "next": "Keep the plan and benefits register up to date. When the work is ending, sustain the benefit."
+   },
+   "close": {
+    "stage": "sustain",
+    "title": "Sustain the benefit and close the programme",
+    "docs": [
+     "closure",
+     "benefits",
+     "raid"
+    ],
+    "text": "Write the closure report: what was achieved, the benefits against their baselines, the sustainability plan, who owns each output and open risk from now on, stakeholder feedback and lessons learnt. Update the benefits register and the RAID log first, as the report draws on both.",
+    "next": "Keep plotting the measures on SPC charts for the following months to check the benefit is sustained, and share the case study."
+   },
+   "risk": {
+    "stage": "undertake",
+    "title": "Log a risk in the RAID log",
+    "docs": [
+     "raid"
+    ],
+    "sheet": "Risks",
+    "text": "A risk is something that might happen and would affect the work. Score its likelihood and impact from 1 to 5 (exposure is the two multiplied), add mitigating actions and score it again, give it an owner, and say whether it needs escalating.",
+    "next": "If the risk happens, close it and open an issue."
+   },
+   "issue": {
+    "stage": "undertake",
+    "title": "Log an issue in the RAID log",
+    "docs": [
+     "raid"
+    ],
+    "sheet": "Issues",
+    "text": "An issue is a problem happening now that needs action. Score its impact from 1 to 5, record the actions to resolve it and the owner, and escalate it if the programme can't resolve it.",
+    "next": "Red issues go into the highlight and leadership reports."
+   },
+   "assumption": {
+    "stage": "undertake",
+    "title": "Log an assumption in the RAID log",
+    "docs": [
+     "raid"
+    ],
+    "sheet": "Assumptions",
+    "text": "An assumption is something your plans rely on that might not be true. Record what would happen if it turned out to be wrong, and who will check it.",
+    "next": "Check assumptions at each review. One that proves wrong becomes an issue."
+   },
+   "dependency": {
+    "stage": "undertake",
+    "title": "Log a dependency in the RAID log",
+    "docs": [
+     "raid"
+    ],
+    "sheet": "Dependencies",
+    "text": "A dependency is something another team or project must deliver before you can move on. Record who depends on it, who delivers it, by when, and its RAG status.",
+    "next": "Agree the date with the team that delivers it, and review it at each huddle."
+   },
+   "action": {
+    "stage": "undertake",
+    "title": "Add it to the action log",
+    "docs": [
+     "actions"
+    ],
+    "sheet": "Action log",
+    "text": "Record the action, where it was raised, who owns it and when it is due. If the date moves, fill in the revised due date rather than overwriting the original.",
+    "next": "Review open actions at the start of each meeting."
+   },
+   "decision": {
+    "stage": "undertake",
+    "title": "Add it to the decisions log",
+    "docs": [
+     "actions"
+    ],
+    "sheet": "Decisions log",
+    "text": "Record the decision needed, when it is needed by and its priority. When it is made, record the final decision, who approved it (a person or a forum) and the date.",
+    "next": "Key decisions go into the highlight report."
+   },
+   "highlight": {
+    "stage": "undertake",
+    "title": "Write a highlight report",
+    "docs": [
+     "highlight"
+    ],
+    "text": "One slide per workstream each week. It draws on the support plan (brief, metrics and deliverables), the organisation chart (leads), the action and decision log, and the RAID log.",
+    "next": "Highlight reports feed the leadership report."
+   },
+   "leadership": {
+    "stage": "undertake",
+    "title": "Write a leadership report",
+    "docs": [
+     "leadership",
+     "onepage"
+    ],
+    "text": "One slide for the whole programme. Take the deliverables from the detailed plan, the RAG and progress from the highlight reports, the metrics from the benefits register and the key risks and issues from the RAID log. Add the plan on a page if the leaders want to see the timeline.",
+    "next": "Explain every red and amber, and say what you need from the leaders."
+   },
+   "onepage": {
+    "stage": "create",
+    "title": "Draw the plan on a page",
+    "docs": [
+     "onepage",
+     "plan"
+    ],
+    "text": "Summarise the detailed plan as a timeline by workstream, with the main activities, milestones and critical path.",
+    "next": "Update it when the detailed plan changes a milestone."
+   },
+   "resources": {
+    "stage": "create",
+    "title": "Plan people's time",
+    "docs": [
+     "resources"
+    ],
+    "text": "Enter each person, their role and the days you plan they will give each week. Fill in the actual days as you go to see the burn rate and days remaining.",
+    "next": "Agree the planned days in the support plan or PID."
+   },
+   "stakeholders": {
+    "stage": "observe",
+    "title": "Map your stakeholders and plan communications",
+    "docs": [
+     "stakeholders"
+    ],
+    "text": "Place each stakeholder by their influence and interest, then plan how, how often and in what format you will communicate with each.",
+    "next": "Champions need to be involved in decisions; blockers need to be kept satisfied."
+   },
+   "charter": {
+    "stage": "create",
+    "title": "Write a team charter",
+    "docs": [
+     "mobilisation"
+    ],
+    "text": "Use the mobilisation document at a workshop: each person fills in an intro manual, and the team agrees its objectives, what success looks like, and how it will work together and support each other.",
+    "next": "Then agree roles and governance."
+   },
+   "roles": {
+    "stage": "create",
+    "title": "Agree roles and draw the organisation chart",
+    "docs": [
+     "roles",
+     "orgchart"
+    ],
+    "text": "Name who fills each programme role and what they are responsible for, and draw the programme structure with the leads for each workstream.",
+    "next": "The organisation chart gives the leads in each highlight report."
+   },
+   "governance": {
+    "stage": "create",
+    "title": "Agree the governance",
+    "docs": [
+     "governance"
+    ],
+    "text": "Draw how the programme fits into the Trust's meetings, and agree the purpose, responsibilities, inputs, outputs and attendees of each programme forum.",
+    "next": "Set the dates of the meetings and the reports each one needs."
+   }
+  }
+ },
+ "tool_names": {
+  "process_map": "Process map",
+  "fishbone_diagram": "Fishbone diagram",
+  "pareto_chart": "Pareto chart",
+  "run_chart": "Run chart",
+  "spc_tool": "SPC chart",
+  "driver_diagram": "Driver diagram",
+  "matrix_2x2": "2x2 matrix",
+  "a3_report": "A3 report"
+ }
+}
