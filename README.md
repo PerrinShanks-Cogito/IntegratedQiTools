@@ -199,6 +199,43 @@ bundle exec jekyll serve
 
 Then open <http://localhost:4000>.
 
+## Statistics tests
+
+`tests/stats/` checks the statistical functions in every tool against
+reference answers from SciPy and NumPy: distributions and p-values, critical
+values, quantiles, ranks, descriptive statistics, the Anderson-Darling test,
+one-way and Welch's ANOVA, the one-sample t-test, chi-squared and Fisher's
+exact tests, correlation, least squares regression and power. Each tool keeps
+its own copy of these functions, so every copy is checked: 72 tests, about
+1,550 comparisons.
+
+```sh
+node --test tests/stats/stats.test.js
+```
+
+The deploy workflow runs them first and stops if any fail. Each test reports
+its worst error; most functions agree with SciPy to 10 or more significant
+figures.
+
+- `extract.js` takes each function out of the tool's page exactly as
+  published, with the other top-level functions it calls, and runs it away
+  from the page. The tests check the code the site runs, not a copy.
+- `make_reference.py` holds the inputs (made-up data from fixed random seeds)
+  and works out the expected answers. It writes `reference.json`, which is
+  committed, so the tests need only Node. To add or change a test, edit it and
+  run `pip install numpy scipy && python3 tests/stats/make_reference.py`.
+- Tolerances are tight (about 1 part in 10⁸) except where a tool uses a known
+  approximation, which the test notes: the histogram and power tools' normal
+  distribution (accurate to 1.2 × 10⁻⁷), and the power of a t-test, which uses
+  a normal approximation to the noncentral t distribution and is within 0.01
+  of the exact power.
+
+Not covered yet: the hypothesis test selector's individual tests (two-sample
+and paired t, Mann-Whitney, Kruskal-Wallis and the rest are written inside
+its `RUN` table; their building blocks are covered), the power of tests of
+proportions, SPC and run chart limits and rules, the funnel plot, Gauge R&R,
+attribute agreement, design of experiments and Weibull analysis.
+
 ## Deploy to Azure Static Web Apps
 
 1. In the Azure portal, create a **Static Web App**. For deployment source

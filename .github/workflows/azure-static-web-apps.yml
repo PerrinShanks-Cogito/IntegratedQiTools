@@ -11,8 +11,28 @@ on:
   workflow_dispatch:
 
 jobs:
+  # Checks every tool's statistical functions against reference answers from
+  # SciPy and NumPy (tests/stats). The site is only deployed if they pass.
+  stats_tests:
+    if: github.event_name != 'pull_request' || github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    name: Statistics tests
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Check the statistical functions against SciPy
+        run: node --test tests/stats/stats.test.js
+
   build_and_deploy:
     if: github.event_name != 'pull_request' || github.event.action != 'closed'
+    needs: stats_tests
     runs-on: ubuntu-latest
     name: Build and deploy
     permissions:
