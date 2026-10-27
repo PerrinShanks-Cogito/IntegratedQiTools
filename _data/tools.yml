@@ -1,5 +1,7 @@
 # Tools in this app. Order here is the order on the landing page and in the
 # "QI charting tools" menu. `id` must match the tool's folder name.
+# `hidden: true` leaves a tool off the landing page and menu; its page still
+# works for anyone with the link. A group with only hidden tools isn't shown.
 - id: process_map
   name: Process map
   group: Understand the system
@@ -131,12 +133,14 @@
 - id: demand_capacity
   name: Demand and capacity model
   status: Beta
+  hidden: true
   group: Plan capacity
   description: Compare the capacity your service needs with what it has, and see the waiting list you can sustain, using the NHS demand and capacity core model.
 
 - id: admin_demand_capacity
   name: Admin demand and capacity model
   status: Alpha
+  hidden: true
   group: Plan capacity
   description: Work out the staff time and WTE an admin team needs from its work streams, task times and weekly demand, see which roles are short, and plan how to clear a backlog.
 
