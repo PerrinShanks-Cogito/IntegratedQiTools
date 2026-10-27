@@ -1,5 +1,9 @@
 <link rel="stylesheet" href="{{ '/assets/css/focus-header.css' | relative_url }}">
 {%- if page.tool_id %}
+{%- assign this_tool = site.data.tools | where: "id", page.tool_id | first %}
+{%- if this_tool.hidden %}
+<meta name="robots" content="noindex">
+{%- endif %}
 <link rel="stylesheet" href="{{ '/assets/css/focus-actions.css' | relative_url }}">
 <script src="{{ '/assets/js/focus-actions.js' | relative_url }}"></script>
 <script src="{{ '/assets/js/focus-explain.js' | relative_url }}"></script>

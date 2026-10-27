@@ -8,7 +8,8 @@ layout: default
     <p class="hero-video"><a href="{{ site.links.video }}" target="_blank" rel="noopener"><svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="8.25" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8.25 6.75v6.5L13.5 10z" fill="currentColor"/></svg>Watch the getting started video (opens in a new tab)</a></p>
   </section>
 
-  {%- assign groups = site.data.tools | group_by: "group" %}
+  {%- assign shown = site.data.tools | where_exp: "t", "t.hidden != true" %}
+  {%- assign groups = shown | group_by: "group" %}
   {%- for g in groups %}
   <section class="group" aria-labelledby="g-{{ forloop.index }}">
     <h2 id="g-{{ forloop.index }}">{{ g.name }}</h2>

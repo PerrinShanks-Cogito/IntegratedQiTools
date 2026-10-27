@@ -44,8 +44,8 @@ Improvement's SPC P chart tool (version 3.0)):
 | Design of experiments (2-level factorial) | `/design_of_experiments/` |
 | Hypothesis test selector | `/hypothesis_test_selector/` |
 | Power and sample size | `/power_sample_size/` |
-| Demand and capacity model | `/demand_capacity/` |
-| Admin demand and capacity model | `/admin_demand_capacity/` |
+| Demand and capacity model (hidden) | `/demand_capacity/` |
+| Admin demand and capacity model (hidden) | `/admin_demand_capacity/` |
 | A3 report | `/a3_report/` |
 
 ## How it fits together
@@ -53,6 +53,10 @@ Improvement's SPC P chart tool (version 3.0)):
 - `_data/tools.yml` – the list of tools: name, status, group and the short
   description on the landing page. The landing page and the "QI charting
   tools" menu are both built from this file, so add or rename tools here.
+  `hidden: true` takes a tool off both (and asks search engines not to
+  index it) while its page keeps working for anyone with the link; a group
+  whose tools are all hidden disappears. The demand and capacity model and
+  the admin demand and capacity model (the Plan capacity group) are hidden.
 - `_data/upcoming_tools.yml` – tools in development or ideation, shown in the
   menu without a link.
 - `_includes/focus-header.html` – the shared header: **FOCUS** plus the tool
