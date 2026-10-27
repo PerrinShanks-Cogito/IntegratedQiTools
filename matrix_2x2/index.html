@@ -888,7 +888,7 @@ select:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px var(--ye
       '5. Use the Notes column for owners, actions or the reasons behind a score. Leave a score blank if you are not sure yet.',
       '',
       'Building the matrix',
-      'Select the whole table on the Data sheet, including the headings, copy it and paste it into the 2x2 matrix tool. It picks the matching matrix type from the headings.',
+      'Save this workbook, then in the 2x2 matrix tool choose Data sheet, then Import filled data sheet, and pick this file. Or select the whole table on the Data sheet, including the headings, copy it and paste it into the tool. It picks the matching matrix type from the headings.',
       `Scores of ${mid} or more count as high. You can change where the matrix is split in the tool. The four groups are:`,
       ...ORDER.map(k => `${p.quads[k].name}: ${p.quads[k].desc}.${p.quads[k].advice ? ' ' + p.quads[k].advice : ''}`)
     ];
@@ -933,7 +933,8 @@ select:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px var(--ye
     template: {
       fileName: () => slug(els.preset.value.replace(/_/g, '-')) + '-data-sheet.xlsx',
       title: 'Download a spreadsheet to list your items and score them for this matrix type',
-      sheets: dataSheet
+      sheets: dataSheet,
+      import: [{ sheet: 'Data', into: '#data' }]
     }
   });
 })();

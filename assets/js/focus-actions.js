@@ -21,9 +21,19 @@
      say        optional (message) => void, to show messages the tool's way
      ready      () => true when there is something to export
      exports    [{ type, run, hint? }] where type is one of FORMATS below
-     template   optional { fileName, title?, sheets } for a "Data sheet" button
-                that downloads a blank .xlsx to collect the data in; see xlsx().
-                fileName and sheets can each be a function, called on each click
+     template   optional { fileName, title?, sheets, import? } for a "Data sheet"
+                button that downloads a blank .xlsx to collect the data in; see
+                xlsx(). fileName and sheets can each be a function, called on
+                each click. With import, the button becomes a menu that can also
+                bring a filled-in data sheet back in (and Open accepts .xlsx):
+                  [{ sheet, into, fixed?, label? }]  copies each named sheet
+                    into the field matching the selector `into`, as
+                    tab-separated text like a paste from Excel. fixed = how
+                    many columns on the left the blank sheet fills in for you
+                    (such as a case number), so rows with nothing else in are
+                    left out. Every field is replaced: one whose sheet is
+                    missing is emptied, and the message names it by label.
+                  (book, h) => message  for anything else; see importHelpers()
      explain    optional settings for the "Need further help to understand the
                 analysis?" link to Microsoft 365 Copilot; see focus-explain.js
      load       optional (doc) => void, for tools with their own project files
@@ -224,6 +234,139 @@
     ]);
   }
 
+  /* ---------- reading a filled-in .xlsx back in ----------
+     Resolves { sheets: [{ name, rows: [[text]]] }] }, every cell as text the
+     way it shows in Excel: dates as YYYY-MM-DD (with HH:MM when there is a
+     time), percentages as 20%, numbers without floating point noise,
+     TRUE/FALSE, errors blank. */
+  async function unzip(buf) {
+    const b = new Uint8Array(buf), dv = new DataView(buf);
+    let end = -1;
+    for (let i = b.length - 22; i >= Math.max(0, b.length - 65557); i--) if (dv.getUint32(i, true) === 0x06054b50) { end = i; break; }
+    if (end < 0) throw new Error("notzip");
+    const count = dv.getUint16(end + 10, true), files = {};
+    let p = dv.getUint32(end + 16, true);
+    const dec = new TextDecoder();
+    for (let k = 0; k < count; k++) {
+      if (dv.getUint32(p, true) !== 0x02014b50) throw new Error("notzip");
+      const method = dv.getUint16(p + 10, true), size = dv.getUint32(p + 20, true);
+      const nLen = dv.getUint16(p + 28, true), xLen = dv.getUint16(p + 30, true), cLen = dv.getUint16(p + 32, true);
+      const local = dv.getUint32(p + 42, true), name = dec.decode(b.subarray(p + 46, p + 46 + nLen));
+      const start = local + 30 + dv.getUint16(local + 26, true) + dv.getUint16(local + 28, true);
+      files[name] = { method, data: b.subarray(start, start + size) };
+      p += 46 + nLen + xLen + cLen;
+    }
+    return async name => {
+      const f = files[name]; if (!f) return null;
+      if (f.method === 0) return dec.decode(f.data);
+      if (f.method !== 8) throw new Error("method");
+      if (typeof DecompressionStream !== "function") throw new Error("inflate");
+      const stream = new Blob([f.data]).stream().pipeThrough(new DecompressionStream("deflate-raw"));
+      return dec.decode(await new Response(stream).arrayBuffer());
+    };
+  }
+  const BUILTIN_DATES = new Set([14, 15, 16, 17, 18, 19, 20, 21, 22, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 45, 46, 47, 50, 51, 52, 53, 54, 55, 56, 57, 58]);
+  function isDateFormat(code) {
+    const c = String(code).replace(/"[^"]*"/g, "").replace(/\\./g, "").replace(/\[[^\]]*\]/g, "");
+    return /[dmyhs]/i.test(c) && !/^general$/i.test(c.trim());
+  }
+  function serialText(v) {
+    const days = Math.floor(v), t = Math.round((v - days) * 1440);
+    const d = new Date(Date.UTC(1899, 11, 30) + days * 864e5), pad = n => String(n).padStart(2, "0");
+    const date = d.getUTCFullYear() + "-" + pad(d.getUTCMonth() + 1) + "-" + pad(d.getUTCDate());
+    const time = pad(Math.floor(t / 60) % 24) + ":" + pad(t % 60);
+    return days === 0 && t ? time : t ? date + " " + time : date;
+  }
+  async function readXlsx(buf) {
+    const get = await unzip(buf);
+    const xml = async name => { const t = await get(name); return t == null ? null : new DOMParser().parseFromString(t, "application/xml"); };
+    const els = (node, tag) => node ? [...node.getElementsByTagNameNS("*", tag)] : [];
+    const text = node => els(node, "t").filter(t => !t.closest || !t.closest("rPh")).map(t => t.textContent).join("");
+    const wb = await xml("xl/workbook.xml");
+    if (!wb) throw new Error("notxlsx");
+    const rels = {};
+    els(await xml("xl/_rels/workbook.xml.rels"), "Relationship").forEach(r => { rels[r.getAttribute("Id")] = r.getAttribute("Target"); });
+    const shared = els(await xml("xl/sharedStrings.xml"), "si").map(text);
+    const styles = await xml("xl/styles.xml"), fmts = {};
+    els(styles, "numFmt").forEach(f => { fmts[+f.getAttribute("numFmtId")] = f.getAttribute("formatCode"); });
+    // How each cell style shows a number: as a date, a percentage or plain
+    const xfs = els(els(styles, "cellXfs")[0], "xf").map(x => {
+      const id = +x.getAttribute("numFmtId"), code = fmts[id];
+      if (id === 9 || id === 10 || (code != null && /%/.test(String(code).replace(/"[^"]*"/g, "")))) return "pct";
+      return BUILTIN_DATES.has(id) || (code != null && isDateFormat(code)) ? "date" : "";
+    });
+    const sheets = [];
+    for (const sh of els(wb, "sheet")) {
+      const rid = [...sh.attributes].find(a => a.localName === "id" && a.name !== "sheetId");
+      let target = rid && rels[rid.value];
+      if (!target) continue;
+      target = target.startsWith("/") ? target.slice(1) : "xl/" + target.replace(/^\.\//, "");
+      const doc = await xml(target);
+      const rows = [];
+      let ri = -1;
+      els(doc, "row").forEach(row => {
+        ri = row.getAttribute("r") ? +row.getAttribute("r") - 1 : ri + 1;
+        const out = [];
+        let ci = -1;
+        els(row, "c").forEach(c => {
+          const ref = c.getAttribute("r");
+          ci = ref ? ref.replace(/\d+$/, "").split("").reduce((n, ch) => n * 26 + ch.charCodeAt(0) - 64, 0) - 1 : ci + 1;
+          const type = c.getAttribute("t"), vEl = els(c, "v")[0], v = vEl ? vEl.textContent : "";
+          let val = "";
+          if (type === "s") val = shared[+v] || "";
+          else if (type === "inlineStr") val = text(els(c, "is")[0]);
+          else if (type === "str") val = v;
+          else if (type === "b") val = v === "1" ? "TRUE" : "FALSE";
+          else if (type === "e") val = "";
+          else if (v !== "" && isFinite(+v)) {
+            const kind = xfs[+(c.getAttribute("s") || 0)];
+            val = kind === "date" ? serialText(+v) : kind === "pct" ? String(+(+v * 100).toPrecision(15)) + "%" : String(+(+v).toPrecision(15));
+          }
+          else val = v;
+          out[ci] = val;
+        });
+        for (let j = 0; j < out.length; j++) if (out[j] == null) out[j] = "";
+        rows[ri] = out;
+      });
+      for (let j = 0; j < rows.length; j++) if (!rows[j]) rows[j] = [];
+      rows.forEach(r => { while (r.length && String(r[r.length - 1]).trim() === "") r.pop(); });
+      while (rows.length && !rows[rows.length - 1].length) rows.pop();
+      sheets.push({ name: sh.getAttribute("name") || "", rows });
+    }
+    return { sheets };
+  }
+  // Helpers handed to a tool's own import function.
+  function importHelpers(book) {
+    const blank = v => String(v == null ? "" : v).trim() === "";
+    const rowsIn = (rows, fixed) => (rows || []).filter((r, i) => i === 0 || r.slice(fixed || 0).some(v => !blank(v)));
+    const h = {
+      book,
+      // A sheet's rows by name (any case), or null
+      sheet: name => { const s = book.sheets.find(x => x.name.trim().toLowerCase() === String(name).trim().toLowerCase()); return s ? s.rows : null; },
+      // Rows as tab-separated text, the way Excel copies them: the heading row,
+      // then rows with something in beyond the first `fixed` columns. Cells with
+      // a tab, line break or quote are quoted. "" when there are no data rows.
+      tsv: (rows, fixed) => {
+        const keep = rowsIn(rows, fixed);
+        if (keep.length < 2) return "";
+        const width = Math.max(...keep.map(r => { let n = r.length; while (n && blank(r[n - 1])) n--; return n; }));
+        const cell = v => { v = String(v == null ? "" : v); return /[\t\n\r"]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+        return keep.map(r => Array.from({ length: width }, (_, j) => cell(r[j])).join("\t")).join("\n");
+      },
+      // Put text in a field and let the tool react as if it had been typed
+      put: (sel, value) => {
+        const el = $(sel); if (!el) return false;
+        el.value = value;
+        el.dispatchEvent(new Event("input", { bubbles: true }));
+        el.dispatchEvent(new Event("change", { bubbles: true }));
+        return true;
+      },
+      // How many data rows tsv() keeps
+      count: (rows, fixed) => Math.max(0, rowsIn(rows, fixed).length - 1)
+    };
+    return h;
+  }
+
   /* ---------- charts kept for the A3 report ---------- */
   /* Kept in IndexedDB on this site, so every tool can add to it and the A3
      report tool can read it. Nothing leaves the browser. Each clip is
@@ -308,7 +451,15 @@
     bar.innerHTML =
       '<div class="fa-btns">' +
         '<button type="button" class="fa-btn" data-fa="new">' + ICONS.new + '<span>New</span></button>' +
-        (o.template ? '<button type="button" class="fa-btn" data-fa="template">' + ICONS.sheet + '<span>Data sheet</span></button>' : '') +
+        (o.template && o.template.import ?
+          '<div class="fa-menu">' +
+            '<button type="button" class="fa-btn fa-drop" data-fa="sheetmenu" aria-haspopup="true" aria-expanded="false">' + ICONS.sheet + '<span>Data sheet</span></button>' +
+            '<div class="fa-list" role="menu" aria-label="Data sheet" hidden>' +
+              '<button type="button" role="menuitem" data-fa="template">Download blank data sheet<small>A spreadsheet to collect your data in</small></button>' +
+              '<button type="button" role="menuitem" data-fa="import">Import filled data sheet<small>Bring in a data sheet you’ve filled in (.xlsx)</small></button>' +
+            '</div>' +
+          '</div>' :
+          o.template ? '<button type="button" class="fa-btn" data-fa="template">' + ICONS.sheet + '<span>Data sheet</span></button>' : '') +
         (o.example ? '<button type="button" class="fa-btn" data-fa="example">' + ICONS.example + '<span>Example</span></button>' : '') +
         '<button type="button" class="fa-btn" data-fa="open">' + ICONS.open + '<span>Open</span></button>' +
         '<button type="button" class="fa-btn" data-fa="save">' + ICONS.save + '<span>Save</span></button>' +
@@ -317,7 +468,8 @@
           '<div class="fa-list" role="menu" aria-label="Export" hidden></div>' +
         '</div>' +
       '</div>' +
-      '<input type="file" accept=".json,application/json" class="fa-file" tabindex="-1" aria-hidden="true">' +
+      '<input type="file" accept=".json,application/json' + (o.template && o.template.import ? ',.xlsx,.xlsm' : '') + '" class="fa-file" tabindex="-1" aria-hidden="true">' +
+      (o.template && o.template.import ? '<input type="file" accept=".xlsx,.xlsm,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" class="fa-file fa-xlsx" tabindex="-1" aria-hidden="true">' : '') +
       '<p class="fa-status" role="status" aria-live="polite"></p>' +
       '<dialog class="fa-dialog" aria-labelledby="fa-new-title" aria-describedby="fa-new-text">' +
         '<h2 id="fa-new-title">Start a new analysis?</h2>' +
@@ -334,9 +486,9 @@
     const openBtn = bar.querySelector('[data-fa="open"]');
     const saveBtn = bar.querySelector('[data-fa="save"]');
     const expBtn = bar.querySelector('[data-fa="export"]');
-    const list = bar.querySelector(".fa-list");
+    const list = expBtn.nextElementSibling;
     const fileIn = bar.querySelector(".fa-file");
-    openBtn.title = "Open a project file you saved";
+    openBtn.title = o.template && o.template.import ? "Open a project file you saved, or a filled-in data sheet" : "Open a project file you saved";
     saveBtn.title = "Save a project file to reopen and keep editing later";
 
     list.innerHTML = (o.exports || []).map((e, i) => {
@@ -348,37 +500,47 @@
       return '<button type="button" role="menuitem" data-a3="' + i + '">' + (what ? "Add " + escHtml(what.toLowerCase()) + " to A3 report" : "Add to A3 report") +
         '<small>Place it on an A3 report with the A3 report tool</small></button>';
     }).join(""));
-    const items = [...list.querySelectorAll('[role="menuitem"]')];
-
-    function setOpen(open) {
-      list.hidden = !open;
-      expBtn.setAttribute("aria-expanded", String(open));
-      if (open) {
-        // Keep the menu on screen when the button has wrapped to the left.
-        list.style.right = "";
-        const left = list.getBoundingClientRect().left;
-        if (left < 8) list.style.right = (left - 8) + "px";
-        const ok = !o.ready || o.ready();
-        items.forEach(b => { b.disabled = !ok; });
-        list.dataset.empty = ok ? "" : "Add some data first";
-        const first = items.find(b => !b.disabled);
-        if (first) first.focus();
+    // A drop-down menu: the button toggles it, Escape and clicks outside close
+    // it, and the arrow keys move between its items. ready() (optional)
+    // decides whether the items can be used when it opens. Opening one menu
+    // closes the others.
+    const menus = [];
+    function menu(btn, list, ready) {
+      const items = [...list.querySelectorAll('[role="menuitem"]')], box = list.parentNode;
+      function setOpen(open) {
+        if (open) menus.forEach(m => { if (m !== setOpen) m(false); });
+        list.hidden = !open;
+        btn.setAttribute("aria-expanded", String(open));
+        if (open) {
+          // Keep the menu on screen when the button has wrapped to the left.
+          list.style.right = "";
+          const left = list.getBoundingClientRect().left;
+          if (left < 8) list.style.right = (left - 8) + "px";
+          const ok = !ready || ready();
+          items.forEach(b => { b.disabled = !ok; });
+          list.dataset.empty = ok ? "" : "Add some data first";
+          const first = items.find(b => !b.disabled);
+          if (first) first.focus();
+        }
       }
+      btn.addEventListener("click", e => { e.stopPropagation(); setOpen(list.hidden); });
+      document.addEventListener("click", e => { if (!list.hidden && !box.contains(e.target)) setOpen(false); });
+      box.addEventListener("keydown", e => {
+        if (list.hidden) return;
+        if (e.key === "Escape") { e.preventDefault(); setOpen(false); btn.focus(); return; }
+        if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+          e.preventDefault();
+          const live = items.filter(b => !b.disabled);
+          if (!live.length) return;
+          const at = live.indexOf(document.activeElement);
+          const next = e.key === "ArrowDown" ? (at + 1) % live.length : (at - 1 + live.length) % live.length;
+          live[next].focus();
+        }
+      });
+      menus.push(setOpen);
+      return setOpen;
     }
-    expBtn.addEventListener("click", e => { e.stopPropagation(); setOpen(list.hidden); });
-    document.addEventListener("click", e => { if (!list.hidden && !bar.contains(e.target)) setOpen(false); });
-    bar.addEventListener("keydown", e => {
-      if (list.hidden) return;
-      if (e.key === "Escape") { e.preventDefault(); setOpen(false); expBtn.focus(); return; }
-      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
-        e.preventDefault();
-        const live = items.filter(b => !b.disabled);
-        if (!live.length) return;
-        const at = live.indexOf(document.activeElement);
-        const next = e.key === "ArrowDown" ? (at + 1) % live.length : (at - 1 + live.length) % live.length;
-        live[next].focus();
-      }
-    });
+    const setOpen = menu(expBtn, list, () => !o.ready || o.ready());
     list.addEventListener("click", e => {
       const b = e.target.closest("[data-i],[data-a3]"); if (!b || b.disabled) return;
       setOpen(false); expBtn.focus();
@@ -421,12 +583,66 @@
 
     /* Data sheet */
     const tplBtn = bar.querySelector('[data-fa="template"]');
+    const sheetBtn = bar.querySelector('[data-fa="sheetmenu"]');
+    const closeSheet = sheetBtn ? menu(sheetBtn, sheetBtn.nextElementSibling) : () => {};
+    if (sheetBtn) sheetBtn.title = "Download a blank data sheet, or import one you’ve filled in";
     if (tplBtn) {
       tplBtn.title = o.template.title || "Download a blank spreadsheet to collect your data in";
       tplBtn.addEventListener("click", () => {
+        if (sheetBtn) { closeSheet(false); sheetBtn.focus(); }
         const sheets = typeof o.template.sheets === "function" ? o.template.sheets() : o.template.sheets;
         const name = typeof o.template.fileName === "function" ? o.template.fileName() : o.template.fileName;
-        download(name, xlsx(sheets), undefined, "Saved " + name + ". Fill it in, then copy and paste it here.");
+        download(name, xlsx(sheets), undefined, "Saved " + name + ". Fill it in, then use Data sheet, Import filled data sheet, to bring it back in.");
+      });
+    }
+    const xlsxIn = bar.querySelector(".fa-xlsx");
+    const impBtn = bar.querySelector('[data-fa="import"]');
+    if (impBtn) {
+      impBtn.title = "Bring in a data sheet from this tool that you’ve filled in";
+      impBtn.addEventListener("click", () => { closeSheet(false); sheetBtn.focus(); xlsxIn.click(); });
+      xlsxIn.addEventListener("change", () => { const f = xlsxIn.files && xlsxIn.files[0]; xlsxIn.value = ""; if (f) importSheet(f); });
+    }
+    // Read a filled-in data sheet and hand it to the tool.
+    function importSheet(f) {
+      if (!/\.xls[xm]$/i.test(f.name)) return say(/\.xls$/i.test(f.name) ? "That’s an older Excel file. Save it as an Excel Workbook (.xlsx) and try again." : "Choose a data sheet saved as an Excel Workbook (.xlsx).");
+      f.arrayBuffer().then(readXlsx).then(book => {
+        if (o.hasData && o.hasData() && !confirm("Replace what you've entered with the data sheet?")) return;
+        const h = importHelpers(book), imp = o.template.import;
+        let msg;
+        if (typeof imp === "function") msg = imp(book, h);
+        else {
+          const found = imp.map(spec => {
+            let rows = h.sheet(spec.sheet);
+            // A single-sheet tool also takes the first sheet of a workbook laid out differently
+            if (!rows && imp.length === 1) { const first = book.sheets.find(s => !/^instructions$/i.test(s.name.trim()) && s.rows.length); rows = first ? first.rows : null; }
+            return { spec, rows };
+          });
+          if (!found.some(x => x.rows)) msg = new Error((imp.length === 1 ? "That workbook doesn’t have a " + imp[0].sheet + " sheet."
+            : "That workbook doesn’t have any of this tool’s sheets (" + imp.map(x => x.sheet).join(", ") + "), so nothing was changed.") + " Use a data sheet downloaded from this tool.");
+          else {
+            // Every box is replaced, so nothing is left over from before: a
+            // sheet that is missing (renamed or deleted) empties its box.
+            found.forEach(x => { h.put(x.spec.into, x.rows ? h.tsv(x.rows, x.spec.fixed) : ""); });
+            const got = found.filter(x => x.rows).map(x => [x.spec.sheet, h.count(x.rows, x.spec.fixed)]);
+            const lost = found.filter(x => !x.rows).map(x => x.spec);
+            const rows = n => n + (n === 1 ? " row" : " rows"), filled = got.filter(g => g[1]);
+            const and = a => a.length > 1 ? a.slice(0, -1).join(", ") + " and " + a[a.length - 1] : a[0];
+            msg = !filled.length ? "That data sheet has no rows filled in yet."
+              : got.length === 1 ? "Imported " + rows(got[0][1]) + " from " + f.name + "."
+              : "Imported " + f.name + ": " + filled.map(g => rows(g[1]) + " from " + g[0]).join(", ") + ".";
+            if (lost.length) msg += " No " + and(lost.map(x => x.sheet)).replace(/ and /, " or ") + " sheet found, so " +
+              and(lost.map(x => x.label || "the " + x.sheet + " box")) + (lost.length === 1 ? " is" : " are") +
+              " now empty. Check the tab names match the data sheet.";
+          }
+        }
+        if (msg instanceof Error) return say(msg.message);
+        say(msg || "Imported " + f.name + ".");
+        if (window.trackToolEvent) window.trackToolEvent("data_sheet_imported");
+      }).catch(err => {
+        const m = err && err.message;
+        say(m === "inflate" ? "Your browser can’t read Excel files. Copy the table from Excel and paste it in instead."
+          : m === "notzip" || m === "notxlsx" ? "That file isn’t an Excel workbook (.xlsx) that can be read."
+          : "Sorry, that data sheet couldn’t be imported. Copy the table from Excel and paste it in instead.");
       });
     }
 
@@ -524,6 +740,7 @@
 
     fileIn.addEventListener("change", () => {
       const f = fileIn.files && fileIn.files[0]; if (!f) return;
+      if (o.template && o.template.import && /\.xls[xm]?$/i.test(f.name)) { fileIn.value = ""; return importSheet(f); }
       const r = new FileReader();
       r.onload = () => {
         fileIn.value = "";
@@ -599,5 +816,5 @@
     host.parentNode.insertBefore(note, host.nextSibling);
   }
 
-  window.FocusActions = { mount, say, xlsx, zip, saveFile, FORMATS, clips, addingToA3: () => a3Running };
+  window.FocusActions = { mount, say, xlsx, readXlsx, zip, saveFile, FORMATS, clips, addingToA3: () => a3Running };
 })();

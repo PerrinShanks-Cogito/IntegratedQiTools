@@ -796,7 +796,7 @@ td.poor{color:var(--warn);font-weight:700}
       '4. Write each rating in the shaded box using the same wording every time, such as Yes and No, or the category names. Delete any rows or columns you don’t need, or add more.',
       '',
       'Analysing the results',
-      'Select the whole table on the Data sheet, including the headings, copy it and paste it into the Attribute agreement analysis tool.'
+      'Save this workbook, then in the Attribute agreement analysis tool choose Data sheet, then Import filled data sheet, and pick this file. Or select the whole table on the Data sheet, including the headings, copy it and paste it into the tool.'
     ];
     return [
       { name: 'Data', cols: [8, 14, ...Array(apps.length * trials).fill(20)], rows, freeze: 1 },
@@ -835,7 +835,7 @@ td.poor{color:var(--warn);font-weight:700}
     afterOpen: () => { Object.keys(touched).forEach(k => { touched[k] = true; }); update(); },
     ready: () => !!current,
     exports: trackExports(['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) }))),
-    template: { fileName: 'attribute-agreement-data-sheet.xlsx', sheets: dataSheet }
+    template: { fileName: 'attribute-agreement-data-sheet.xlsx', sheets: dataSheet, import: [{ sheet: 'Data', into: '#data', fixed: 1 }] }
   });
 })();
 </script>

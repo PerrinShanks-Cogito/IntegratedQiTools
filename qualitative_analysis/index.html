@@ -1504,7 +1504,7 @@ details.read summary{cursor:pointer;font-weight:600;color:var(--blue);margin-bot
       '10. To keep track of which codes you use, add =COUNTA(D2:D500) under a code column. Split codes used a lot, and merge or drop ones hardly used. Don’t report these counts as findings.',
       '',
       'Bringing it back to the tool',
-      'Select the whole table on the Coding sheet, including the headings, copy it and paste it into the qualitative survey analysis tool. It reads your codes and marks so you can build your findings there.'
+      'Save this workbook, then in the qualitative survey analysis tool choose Data sheet, then Import filled data sheet, and pick this file. It brings in your comments, codes and marks, and the descriptions on the Codes sheet. Or select the whole table on the Coding sheet, including the headings, copy it and paste it into the tool.'
     ];
     const titles = new Set(['About this sheet', 'Setting it up', 'Coding', 'Bringing it back to the tool']);
     return [
@@ -1512,6 +1512,27 @@ details.read summary{cursor:pointer;font-weight:600;color:var(--blue);margin-bot
       { name: 'Codes', cols: [30, 60, 50], rows: codesSheet, freeze: 1 },
       { name: 'Instructions', cols: [110], rows: notes.map(v => [{ v, s: titles.has(v) ? 'title' : 'wrap' }]) }
     ];
+  }
+
+  // A filled-in coding sheet: comments, coding and marks, then the code descriptions from the Codes sheet
+  function importSheet(book, h) {
+    const first = book.sheets.find(s => !/^(instructions|codes)$/i.test(s.name.trim()) && s.rows.length);
+    const coding = h.sheet('Coding') || (first && first.rows);
+    if (!coding) return new Error('That workbook doesn’t have a Coding sheet. Use a coding sheet downloaded from this tool.');
+    const n = h.count(coding, 1);
+    if (!n) return new Error('That coding sheet has no comments in yet.');
+    els.data.value = h.tsv(coding, 1);
+    headerTouched = false; clearTimeout(timer); update();
+    if (importable()) doImport();
+    (h.sheet('Codes') || []).slice(1).forEach(([name, desc, kw]) => {
+      name = String(name || '').trim();
+      if (!name || /^other$/i.test(name) || (/^code \d+$/i.test(name) && !desc && !kw)) return;
+      const c = codeByName(name);
+      if (!c) addCode(name, desc, kw);
+      else { if (desc) c.desc = desc; if (kw) c.keywords = kw; }
+    });
+    fillFilters(); renderCode();
+    return `Imported ${count(n, RESP)} from the coding sheet.`;
   }
 
   // ---- example ----
@@ -1788,7 +1809,8 @@ details.read summary{cursor:pointer;font-weight:600;color:var(--blue);margin-bot
     template: {
       fileName: () => fileName().replace(/^qualitative-analysis$/, 'qualitative') + '-coding-sheet.xlsx',
       title: 'Download a spreadsheet to code comments in, with a column for each code',
-      sheets: dataSheet
+      sheets: dataSheet,
+      import: importSheet
     }
   });
 })();

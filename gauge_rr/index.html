@@ -899,7 +899,7 @@ td.poor{color:var(--danger);font-weight:700}
       '4. Write each measurement in the shaded box for that appraiser, trial and part. Delete any columns or rows you don’t need, or add more.',
       '',
       'Analysing the results',
-      'Select the whole table on the Data sheet, including the headings, copy it and paste it into the Gauge R&R tool.'
+      'Save this workbook, then in the Gauge R&R tool choose Data sheet, then Import filled data sheet, and pick this file. Or select the whole table on the Data sheet, including the headings, copy it and paste it into the tool.'
     ];
     return [
       { name: 'Data', cols: [16, 8, ...Array(parts).fill(10)], rows, freeze: 1 },
@@ -930,7 +930,7 @@ td.poor{color:var(--danger);font-weight:700}
     afterOpen: () => { headerTouched = true; update(); },
     ready: () => !!current,
     exports: trackExports(['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) }))),
-    template: { fileName: 'gauge-rr-data-sheet.xlsx', sheets: dataSheet }
+    template: { fileName: 'gauge-rr-data-sheet.xlsx', sheets: dataSheet, import: [{ sheet: 'Data', into: '#data', fixed: 2 }] }
   });
 })();
 </script>
