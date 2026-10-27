@@ -91,6 +91,7 @@
 - id: weibull_reliability
   name: Weibull reliability analysis
   status: Beta
+  hidden: true
   group: Explore your data
   description: See how long things last before they fail, such as equipment until its first repair, how likely they are to keep working over time, and whether failures come early, at random or from wearing out.
 

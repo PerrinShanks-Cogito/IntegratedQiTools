@@ -38,7 +38,7 @@ Improvement's SPC P chart tool (version 3.0)):
 | Funnel plot | `/funnel_plot/` |
 | Scatter plot | `/scatter_plot/` |
 | Multiple regression | `/multiple_regression/` |
-| Weibull reliability analysis | `/weibull_reliability/` |
+| Weibull reliability analysis (hidden) | `/weibull_reliability/` |
 | Gauge R&R (measurement system analysis) | `/gauge_rr/` |
 | Attribute agreement analysis | `/attribute_agreement/` |
 | Design of experiments (2-level factorial) | `/design_of_experiments/` |
