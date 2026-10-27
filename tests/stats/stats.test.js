@@ -99,6 +99,41 @@ const CALLS = {
     return { terms: m.terms.map(t => t.name), dropped: m.dropped.map(t => t.name), r2: m.r2, adj: m.adj, s: m.s, F: m.F, pF: m.pF, dw: m.dw,
       coefs: m.coefs.map(c => ({ b: c.b, se: c.se, t: c.t, p: c.p, lo: c.lo, hi: c.hi, vif: c.vif })), stud: m.stud, cook: m.cook };
   },
+  // Gauge R&R: pasted data (headings in the first row) through the tool's
+  // reader, then the ANOVA or X-bar and R method and the table of percentages
+  gauge: tool => (text, method, o) => {
+    const G = load(tool, ["parse", "arrange", "anova", "xbarR", "table"]);
+    const res = (method === "xbarr" ? G.xbarR : G.anova)(G.arrange(G.parse(text, true).obs));
+    const rows = Object.fromEntries(G.table(res, o).map(r => [r.key, { sd: r.sd, contrib: r.contrib, psv: r.psv, ptol: r.ptol, pproc: r.pproc }]));
+    const src = list => list && Object.fromEntries(list.map(r => [r.src, { df: r.df, ss: r.ss, ms: r.ms, F: r.F, p: r.p }]));
+    return { Rbar: res.Rbar, full: src(res.full), reduced: src(res.reduced) || null, interaction: res.interaction, comp: res.comp, rows };
+  },
+  // Attribute agreement: pasted ratings through the tool's reader and analysis.
+  // `cats` are the categories in order (lower case, as the tool keys them).
+  attribute: tool => (text, o, cats, useKendall) => {
+    const A = load(tool, ["split", "parse", "analyse"]);
+    const a = A.analyse(A.parse(A.split(text), o), cats, useKendall);
+    const pick = r => r && { x: r.x, n: r.n, p: r.p, lo: r.lo, hi: r.hi, coef: r.coef };
+    return { within: a.within ? a.within.map(pick) : null, vsStd: a.vsStd ? a.vsStd.map(pick) : null,
+      between: pick(a.between) || null, allStd: pick(a.allStd) || null, disagree: a.disagree || null };
+  },
+  // Design of experiments: the fit of a model in coded units (−1 and +1)
+  doeFit: tool => (obs, terms) => {
+    const m = load(tool, ["fit"]).fit(obs, terms);
+    return { cols: m.cols, coef: m.coef, se: m.se, pv: m.pv, df: m.df, s: m.s, r2: m.r2, r2adj: m.r2adj };
+  },
+  // ...the equation in real units, and fitted means, for a design held in the page's state
+  doeUncoded: tool => (state, obs, terms, fixed) => {
+    const D = load(tool, ["fit", "uncoded", "fittedMean"], { state });
+    const m = D.fit(obs, terms);
+    return { uncoded: D.uncoded(m), means: fixed.map(f => D.fittedMean(m, f)) };
+  },
+  // ...and backward elimination of terms that aren't clear
+  doeReduce: tool => state => {
+    const D = load(tool, ["reduce", "state"], { state });
+    D.reduce();
+    return D.state.terms;
+  },
 };
 
 // Compare got with expect; returns a list of { where, got, expect, err }

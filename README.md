@@ -230,7 +230,14 @@ adjustment, and the multiple regression tool's coefficients, p-values,
 intervals, R², Durbin-Watson, residuals, Cook's distance and VIF, are checked
 against SciPy and statsmodels too.
 
-104 tests, about 1,700 comparisons.
+Gauge R&R (the ANOVA method, with the interaction pooled when it isn't
+clear, and the X-bar and R method), attribute agreement (agreement with
+Clopper-Pearson intervals, Fleiss' kappa, Kendall's W and tau) and design of
+experiments (the fit, the equation in real units, fitted means and backward
+elimination) are checked against statsmodels and SciPy. The d2* constants
+are checked against d2 and d3 worked out by numerical integration.
+
+113 tests, about 1,800 comparisons.
 
 ```sh
 node --test tests/stats/stats.test.js
@@ -249,17 +256,17 @@ figures.
   run `pip install numpy scipy statsmodels pandas && python3 tests/stats/make_reference.py`.
 - Tolerances are tight (about 1 part in 10⁸) except where a tool uses a known
   approximation, which the test notes: the histogram and power tools' normal
-  distribution (accurate to 1.2 × 10⁻⁷), and the power of a t-test, which uses
+  distribution (accurate to 1.2 × 10⁻⁷); the power of a t-test, which uses
   a normal approximation to the noncentral t distribution and is within 0.01
-  of the exact power.
+  of the exact power; the Box-Cox λ, searched in steps of 0.01; and Gauge
+  R&R's X-bar and R constants, tabled to 3 to 5 decimal places as AIAG does.
 - A known difference waiting on a decision can be marked `todo`: it runs
   and reports but doesn't stop a deploy. There are none at the moment.
 - The run chart's table of the expected number of runs is checked row by row
   against Table 1 of Perla, Provost and Murray (2011), the Provost and Murray
   table adapted from Swed and Eisenhart.
 
-Not covered yet: Gauge R&R, attribute agreement, design of experiments,
-Weibull analysis, the power tool's sample size and tests of proportions, the
+Not covered yet: Weibull analysis, the power tool's sample size and tests of proportions, the
 simpler chart calculations (box plot whiskers, histogram bins, Pareto
 percentages) and the demand and capacity models.
 

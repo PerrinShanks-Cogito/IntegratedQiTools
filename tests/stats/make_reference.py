@@ -722,6 +722,334 @@ for name, n, k, cat, collinear in [("3 numeric inputs", 40, 3, False, False), ("
 group("multiple regression: coefficients, tests, fit and diagnostics", "fit", ["multiple_regression"], reg, call="regression", tol=1e-7, abs_tol=1e-10,
       note="statsmodels OLS: coefficients, standard errors, p-values and intervals, R², F, Durbin-Watson, studentised residuals, Cook's distance and VIF")
 
+# ------------------------------------------------------------- Gauge R&R
+# d2 and d3 (the mean and standard deviation of the range of m normal values)
+# by numerical integration, and d2* = √(d2² + d3²/g) (Duncan's approximation,
+# which the AIAG tables list).
+from scipy import integrate
+N_ = stats.norm
+
+
+def d2_of(m):
+    return integrate.quad(lambda x: 1 - N_.cdf(x) ** m - N_.sf(x) ** m, -np.inf, np.inf, epsabs=1e-13)[0]
+
+
+def d3_of(m):
+    # E[R²] = 2 ∫∫ over x < y of P(min < x and max > y)
+    f = lambda y, x: 1 - N_.cdf(y) ** m - N_.sf(x) ** m + max(0.0, N_.cdf(y) - N_.cdf(x)) ** m if y > x else 0.0
+    er2 = 2 * integrate.dblquad(f, -9, 9, lambda x: x, lambda x: 9, epsabs=1e-11)[0]
+    return math.sqrt(er2 - d2_of(m) ** 2)
+
+
+D2X = {m: d2_of(m) for m in range(2, 11)}
+D3X = {m: d3_of(m) for m in range(2, 11)}
+assert abs(D2X[2] - 2 / math.sqrt(math.pi)) < 1e-10 and abs(D3X[2] - 0.8525) < 1e-4 and abs(D2X[5] - 2.326) < 1e-3
+
+
+def d2star_ref(g, m):
+    return D2X[m] if g > 20 else math.sqrt(D2X[m] ** 2 + D3X[m] ** 2 / g)
+
+
+ds = []
+for m in [2, 3, 4]:
+    ds += [{"name": f"g={g}, m={m}", "args": [g, m], "expect": d2star_ref(g, m)} for g in [1, 2, 3, 5, 10, 15, 20]]
+ds += [{"name": f"g=1, m={m}", "args": [1, m], "expect": d2star_ref(1, m)} for m in range(5, 11)]
+group("Gauge R&R: d2* for the X-bar and R method", "d2star", ["gauge_rr"], ds, tol=0, abs_tol=2e-5,
+      note="reference: d2 and d3 by numerical integration, d2* = √(d2² + d3²/g); the tool's AIAG table is to 5 decimal places")
+ds2 = [{"name": f"g={g}, m={m}", "args": [g, m], "expect": d2star_ref(g, m)} for g, m in [(25, 2), (30, 3), (60, 5), (6, 5), (12, 7)]]
+group("Gauge R&R: d2* beyond the table (d2 for more than 20 subgroups)", "d2star", ["gauge_rr"], ds2, tol=0, abs_tol=2e-3,
+      note="beyond the table the tool uses control chart constants to 3 decimal places")
+group("Gauge R&R: grading the % study variation (AIAG: under 10%, 10 to 30%, over 30%)", "grade", ["gauge_rr"],
+      [{"args": [x], "expect": {"text": t}} for x, t in [(0.05, "Excellent"), (0.0999, "Excellent"), (0.1, "Acceptable"), (0.25, "Acceptable"),
+                                                       (0.3, "Acceptable"), (0.3001, "Unacceptable"), (0.8, "Unacceptable")]])
+
+
+def gauge_data(p, o, r, part_sd, op_sd, inter_sd, rep_sd):
+    pe, oe = rng.normal(0, part_sd, p), rng.normal(0, op_sd, o)
+    ie = rng.normal(0, inter_sd, (p, o))
+    rows = [(f"P{i + 1}", f"Op {'ABCDE'[j]}", round(100 + pe[i] + oe[j] + ie[i, j] + float(rng.normal(0, rep_sd)), 2))
+            for i in range(p) for j in range(o) for _ in range(r)]
+    order = rng.permutation(len(rows))
+    return [rows[i] for i in order]
+
+
+def gauge_table(comp, o):
+    out = {}
+    tot = comp["total"]
+    for key, v in comp.items():
+        if v is None:
+            continue
+        sd = math.sqrt(v)
+        out[key] = {"sd": sd, "contrib": v / tot, "psv": sd / math.sqrt(tot), "pproc": sd / o["histSd"],
+                    "ptol": o["k"] * sd / o["tol"]["width"] if o["tol"]["two"] else o["k"] * sd / 2 / o["tol"]["half"]}
+    return out
+
+
+gc, gx = [], []
+OPTS = [{"k": 6, "tol": {"two": True, "width": 40}, "histSd": 15, "appName": "Operator", "partName": "Part"},
+        {"k": 5.15, "tol": {"two": False, "half": 25}, "histSd": 9, "appName": "Operator", "partName": "Part"}]
+for name, (p, o, r, sds), opts in [("interaction", (10, 3, 3, (8, 1.5, 2.5, 1)), OPTS[0]), ("no interaction", (10, 3, 2, (6, 2, 0, 1.2)), OPTS[1]),
+                                   ("one appraiser", (8, 1, 3, (5, 0, 0, 1)), OPTS[0]), ("2 appraisers, 5 parts", (5, 2, 2, (3, 0.5, 0, 0.8)), OPTS[1]),
+                                   ("interaction not clear (p between 0.05 and 0.25)", (10, 3, 2, (6, 1, 0.6, 1)), OPTS[0])]:
+    rows = gauge_data(p, o, r, *sds)
+    if name.startswith("interaction not clear"):
+        # draw until the interaction's p-value falls in the band, so the 0.05 cut-off is tested
+        while not 0.06 < sm.stats.anova_lm(smf.ols("y ~ C(P) * C(O)", data=pd.DataFrame(rows, columns=["P", "O", "y"])).fit(), typ=2).loc["C(P):C(O)", "PR(>F)"] < 0.24:
+            rows = gauge_data(p, o, r, *sds)
+    df = pd.DataFrame(rows, columns=["P", "O", "y"])
+    text = "Part\tOperator\tValue\n" + "\n".join(f"{a}\t{b}\t{c}" for a, b, c in rows)
+    if o > 1:
+        t = sm.stats.anova_lm(smf.ols("y ~ C(P) * C(O)", data=df).fit(), typ=2)
+        ss = {"P": t.loc["C(P)", "sum_sq"], "O": t.loc["C(O)", "sum_sq"], "PO": t.loc["C(P):C(O)", "sum_sq"], "E": t.loc["Residual", "sum_sq"]}
+        dfs = {"P": p - 1, "O": o - 1, "PO": (p - 1) * (o - 1), "E": p * o * (r - 1)}
+        ms = {k: ss[k] / dfs[k] for k in ss}
+        full = {"P": {"df": dfs["P"], "ss": ss["P"], "ms": ms["P"], "F": ms["P"] / ms["PO"], "p": stats.f.sf(ms["P"] / ms["PO"], dfs["P"], dfs["PO"])},
+                "O": {"df": dfs["O"], "ss": ss["O"], "ms": ms["O"], "F": ms["O"] / ms["PO"], "p": stats.f.sf(ms["O"] / ms["PO"], dfs["O"], dfs["PO"])},
+                "PO": {"df": dfs["PO"], "ss": ss["PO"], "ms": ms["PO"], "F": ms["PO"] / ms["E"], "p": stats.f.sf(ms["PO"] / ms["E"], dfs["PO"], dfs["E"])},
+                "E": {"df": dfs["E"], "ss": ss["E"], "ms": ms["E"]}, "T": {"df": p * o * r - 1, "ss": sum(ss.values())}}
+        inter = full["PO"]["p"] < 0.05
+        if inter:
+            comp = {"rep": ms["E"], "op": max(0, (ms["O"] - ms["PO"]) / (p * r)), "po": max(0, (ms["PO"] - ms["E"]) / r),
+                    "part": max(0, (ms["P"] - ms["PO"]) / (o * r))}
+            reduced = None
+        else:
+            dfE = dfs["PO"] + dfs["E"]; msE = (ss["PO"] + ss["E"]) / dfE
+            reduced = {"P": {"F": ms["P"] / msE, "p": stats.f.sf(ms["P"] / msE, dfs["P"], dfE)},
+                       "O": {"F": ms["O"] / msE, "p": stats.f.sf(ms["O"] / msE, dfs["O"], dfE)}, "E": {"df": dfE, "ss": ss["PO"] + ss["E"], "ms": msE}}
+            comp = {"rep": msE, "op": max(0, (ms["O"] - msE) / (p * r)), "part": max(0, (ms["P"] - msE) / (o * r))}
+        comp["repro"] = comp["op"] + comp.get("po", 0)
+    else:
+        t = sm.stats.anova_lm(smf.ols("y ~ C(P)", data=df).fit(), typ=2)
+        ssP, ssE = t.loc["C(P)", "sum_sq"], t.loc["Residual", "sum_sq"]
+        msP, msE = ssP / (p - 1), ssE / (p * (r - 1))
+        full = {"P": {"F": msP / msE, "p": stats.f.sf(msP / msE, p - 1, p * (r - 1))}, "E": {"ss": ssE, "ms": msE}}
+        inter, reduced = None, None
+        comp = {"rep": msE, "part": max(0, (msP - msE) / r)}
+    comp["grr"] = comp["rep"] + comp.get("repro", 0)
+    comp["total"] = comp["grr"] + comp["part"]
+    expect = {"full": full, "comp": comp, "rows": gauge_table(comp, opts)}
+    if o > 1:
+        expect["interaction"] = bool(inter)
+        expect["reduced"] = reduced
+    if name == "interaction":
+        assert inter
+    if name == "no interaction":
+        assert not inter
+    gc.append({"name": name, "args": [text, "anova", opts], "expect": clean(expect)})
+    # X-bar and R: range of each part and appraiser's repeats, with d2* from the integrals above
+    cells = df.groupby(["P", "O"])["y"]
+    Rbar = (cells.max() - cells.min()).mean()
+    ev = Rbar / d2star_ref(p * o, r)
+    om, pm = df.groupby("O")["y"].mean(), df.groupby("P")["y"].mean()
+    av = math.sqrt(max(0, ((om.max() - om.min()) / d2star_ref(1, o)) ** 2 - ev * ev / (p * r))) if o > 1 else None
+    pv = (pm.max() - pm.min()) / d2star_ref(1, p)
+    xc = {"rep": ev * ev, "repro": None if av is None else av * av, "part": pv * pv}
+    xc["grr"] = xc["rep"] + (xc["repro"] or 0); xc["total"] = xc["grr"] + xc["part"]
+    gx.append({"name": name, "args": [text, "xbarr", opts], "expect": clean({"Rbar": Rbar, "comp": xc, "rows": gauge_table(xc, opts)})})
+group("Gauge R&R: ANOVA method", "anova", ["gauge_rr"], gc, call="gauge", tol=1e-9, abs_tol=1e-12,
+      note="sums of squares from statsmodels; parts and appraisers tested against the interaction, which is pooled when p ≥ 0.05 (AIAG); "
+           "variance components from the expected mean squares")
+group("Gauge R&R: X-bar and R method", "xbarR", ["gauge_rr"], gx, call="gauge", tol=1e-3, abs_tol=1e-12,
+      note="AIAG average and range method with d2* from numerical integration; beyond 20 subgroups the tool uses d2 to 3 decimal "
+           "places (as AIAG tables it), which squared in the variances agrees to about 1 part in 10³")
+
+# ------------------------------------------------------------- attribute agreement
+from statsmodels.stats.inter_rater import fleiss_kappa, aggregate_raters
+
+
+def agree_ci(x, n):
+    # Clopper-Pearson; a 100% or 0% result gets a one-sided 95% bound, as Minitab does
+    if x == n:
+        return stats.beta.ppf(0.05, x, 1), 1.0
+    if x == 0:
+        return 0.0, stats.beta.ppf(0.95, 1, n)
+    return proportion_confint(x, n, 0.05, method="beta")
+
+
+def fk(rows, cats):
+    return fleiss_kappa(aggregate_raters(np.array(rows), n_cat=None)[0]) if len({v for r in rows for v in r}) > 1 else float("nan")
+
+
+def kendall_w(cols):
+    m, n = len(cols), len(cols[0])
+    chi = stats.friedmanchisquare(*[[c[i] for c in cols] for i in range(n)]).statistic
+    return chi / (m * (n - 1))
+
+
+def attribute_ref(R, std, kendall):
+    # R[case][appraiser][trial]
+    n, A, T = len(R), len(R[0]), len(R[0][0])
+    def entry(x, c):
+        lo, hi = agree_ci(x, n)
+        return {"x": x, "n": n, "p": x / n, "lo": lo, "hi": hi, "coef": c}
+    out = {}
+    if T >= 2:
+        out["within"] = [entry(sum(len(set(R[i][a])) == 1 for i in range(n)),
+                               kendall_w([[R[i][a][t] for i in range(n)] for t in range(T)]) if kendall else fk([R[i][a] for i in range(n)], None))
+                         for a in range(A)]
+    if std is not None:
+        per = []
+        for a in range(A):
+            if kendall:
+                c = np.mean([stats.kendalltau([R[i][a][t] for i in range(n)], std).statistic for t in range(T)])
+            else:
+                c = np.mean([fk([[R[i][a][t], std[i]] for i in range(n)], None) for t in range(T)])
+            per.append(entry(sum(all(v == std[i] for v in R[i][a]) for i in range(n)), c))
+        out["vsStd"] = per
+    if A >= 2:
+        flat = [[v for a in range(A) for v in R[i][a]] for i in range(n)]
+        out["between"] = entry(sum(len(set(f)) == 1 for f in flat),
+                               kendall_w([[R[i][a][t] for i in range(n)] for a in range(A) for t in range(T)]) if kendall else fk(flat, None))
+    if std is not None:
+        out["allStd"] = entry(sum(all(v == std[i] for a in range(A) for v in R[i][a]) for i in range(n)), float(np.mean([e["coef"] for e in out["vsStd"]])))
+    return out
+
+
+def ratings(n, A, T, k, good):
+    std = rng.integers(1, k + 1, n)
+    R = [[[int(min(k, max(1, s + (0 if rng.uniform() < good[a] else rng.choice([-1, 1]))))) for _ in range(T)] for a in range(A)] for s in std]
+    return std.tolist(), R
+
+
+ac = []
+for name, (n, A, T, k, good), kendall in [("4 ordered categories, kappa", (30, 3, 2, 4, [0.9, 0.8, 0.65]), False),
+                                         ("4 ordered categories, Kendall", (30, 3, 2, 4, [0.9, 0.8, 0.65]), True),
+                                         ("3 trials, 2 appraisers", (25, 2, 3, 3, [0.85, 0.7]), False),
+                                         ("1 trial, 4 appraisers", (40, 4, 1, 5, [0.9, 0.85, 0.8, 0.6]), False)]:
+    std, R = ratings(n, A, T, k, good)
+    head = ["Case", "Standard"] + [f"{'ABCD'[a]} trial {t + 1}" for a in range(A) for t in range(T)]
+    text = "\t".join(head) + "\n" + "\n".join("\t".join([str(i + 1), str(std[i])] + [str(v) for a in range(A) for v in R[i][a]]) for i in range(n))
+    ac.append({"name": name, "args": [text, {"hasHeader": True, "hasId": True, "hasStd": True, "trials": T}, [str(c) for c in range(1, k + 1)], kendall],
+               "expect": clean(attribute_ref(R, std, kendall))})
+# every rating right: the one-sided bound at 100%
+std, R = ratings(12, 2, 2, 3, [1, 1])
+text = "Case\tStandard\tA 1\tA 2\tB 1\tB 2\n" + "\n".join("\t".join([str(i + 1), str(std[i])] + [str(v) for a in range(2) for v in R[i][a]]) for i in range(12))
+ac.append({"name": "every rating right", "args": [text, {"hasHeader": True, "hasId": True, "hasStd": True, "trials": 2}, ["1", "2", "3"], False],
+           "expect": clean(attribute_ref(R, std, False))})
+# two categories as text, with the ways each appraiser gets it wrong
+std, R = ratings(40, 3, 2, 2, [0.92, 0.8, 0.7])
+word = {1: "Fail", 2: "Pass"}
+text = "Item\tStandard\tA 1\tA 2\tB 1\tB 2\tC 1\tC 2\n" + "\n".join("\t".join([str(i + 1), word[std[i]]] + [word[v] for a in range(3) for v in R[i][a]]) for i in range(40))
+exp = attribute_ref(R, std, False)
+n1, n2 = std.count(1), std.count(2)
+exp["disagree"] = []
+for a in range(3):
+    as1 = sum(std[i] == 2 and all(v == 1 for v in R[i][a]) for i in range(40))
+    as2 = sum(std[i] == 1 and all(v == 2 for v in R[i][a]) for i in range(40))
+    mixed = sum(len(set(R[i][a])) > 1 for i in range(40))
+    exp["disagree"].append({"as1": as1, "p1": as1 / n2, "as2": as2, "p2": as2 / n1, "mixed": mixed, "pm": mixed / 40})
+ac.append({"name": "pass or fail, as text", "args": [text, {"hasHeader": True, "hasId": True, "hasStd": True, "trials": 2}, ["fail", "pass"], False],
+           "expect": clean(exp)})
+group("attribute agreement: agreement, confidence intervals, kappa and Kendall", "analyse", ["attribute_agreement"], ac, call="attribute",
+      tol=1e-9, abs_tol=1e-12,
+      note="Clopper-Pearson intervals (one-sided at 0% and 100%, as Minitab); Fleiss' kappa from statsmodels; "
+           "Kendall's W from SciPy's Friedman test (W = χ² / m(n − 1)); Kendall's tau-b from SciPy")
+
+# ------------------------------------------------------------- design of experiments
+LET = "ABCD"
+
+
+def all_terms(k):
+    from itertools import combinations
+    return ["".join(LET[j] for j in c) for size in range(1, k + 1) for c in combinations(range(k), size)]
+
+
+def coded(k, reps):
+    # standard order, factor A changing fastest
+    return [[1 if (i >> j) & 1 else -1 for j in range(k)] for _ in range(reps) for i in range(1 << k)]
+
+
+def design_y(X, effects, sd, gen=None):
+    gen = gen or rng
+    return [round(30 + sum(v * np.prod([x[LET.index(c)] for c in t]) for t, v in effects.items()) + float(gen.normal(0, sd)), 1) for x in X]
+
+
+def doe_ols(X, y, terms):
+    M = np.array([[1.0] + [float(np.prod([x[LET.index(c)] for c in t])) for t in terms] for x in X])
+    return sm.OLS(np.array(y), M).fit()
+
+
+dc = []
+for name, k, reps, terms, effects in [("3 factors, 2 repeats, full model", 3, 2, None, {"A": -4, "B": 1.5, "AC": 2}),
+                                      ("4 factors, main effects and 2-way interactions", 4, 1, "2fi", {"A": 3, "D": -2, "AD": 1.5}),
+                                      ("2 factors, 3 repeats, main effects", 2, 3, ["A", "B"], {"A": 2, "B": 0.5})]:
+    X = coded(k, reps)
+    y = design_y(X, effects, 1.2)
+    terms = all_terms(k) if terms is None else [t for t in all_terms(k) if len(t) <= 2] if terms == "2fi" else terms
+    f = doe_ols(X, y, terms)
+    dc.append({"name": name, "args": [[{"x": x, "y": v} for x, v in zip(X, y)], terms],
+               "expect": clean({"cols": [""] + terms, "coef": f.params, "se": f.bse, "pv": f.pvalues, "df": f.df_resid,
+                                "s": math.sqrt(f.mse_resid), "r2": f.rsquared, "r2adj": max(0, f.rsquared_adj)})})
+# unreplicated with every term: a perfect fit, nothing left to test against
+X = coded(2, 1); y = design_y(X, {"A": 2}, 1)
+dc.append({"name": "2 factors, no repeats, full model", "args": [[{"x": x, "y": v} for x, v in zip(X, y)], all_terms(2)],
+           "expect": clean({"coef": doe_ols(X, y, all_terms(2)).params, "df": 0, "pv": [None] * 4})})
+group("design of experiments: fit in coded units", "fit", ["design_of_experiments"], dc, call="doeFit", tol=1e-9, abs_tol=1e-12,
+      note="statsmodels OLS on the coded design (−1 and +1)")
+
+du = []
+FACT = [{"name": "Nurses", "type": "numeric", "low": "2", "high": "3"}, {"name": "Minutes", "type": "numeric", "low": "10", "high": "30"},
+        {"name": "Kiosk", "type": "text", "low": "Off", "high": "On"}, {"name": "", "type": "text", "low": "", "high": ""}]
+for name, terms in [("all terms", all_terms(3)), ("A, B, C and AB", ["A", "B", "C", "AB"]), ("A, C and AC", ["A", "C", "AC"])]:
+    X = coded(3, 2); y = design_y(X, {"A": -3, "B": 2, "AB": 1.5, "C": -1}, 1)
+    lows, highs = [2, 10], [3, 30]
+    real = [[lows[j] + (x[j] + 1) / 2 * (highs[j] - lows[j]) for j in range(2)] + [x[2]] for x in X]
+    f = doe_ols(real, y, terms)
+    coded_fit = doe_ols(X, y, terms)
+    fixed = [{"0": 1}, {"0": -1}, {"2": 1}, {"0": 1, "1": -1}]
+    means = [float(np.mean([coded_fit.fittedvalues[i] for i, x in enumerate(X) if all(x[int(j)] == v for j, v in fx.items())])) for fx in fixed]
+    if terms == all_terms(3):  # the full model's fitted means are the observed means
+        means_obs = [float(np.mean([y[i] for i, x in enumerate(X) if all(x[int(j)] == v for j, v in fx.items())])) for fx in fixed]
+        assert np.allclose(means, means_obs)
+    du.append({"name": name, "args": [{"k": 3, "factors": FACT}, [{"x": x, "y": v} for x, v in zip(X, y)], terms, fixed],
+               "expect": clean({"uncoded": dict(zip([""] + terms, f.params)), "means": means})})
+group("design of experiments: equation in real units and fitted means", "uncoded", ["design_of_experiments"], du, call="doeUncoded",
+      tol=1e-8, abs_tol=1e-9,
+      note="the equation from refitting in real units with statsmodels (text factors stay −1 and +1); means of the fitted values over the design")
+
+
+def backward(X, y, terms, alpha):
+    # drop the least clear term that no interaction depends on; with nothing to
+    # test against, drop the last of the highest-order removable terms
+    terms = list(terms)
+    sub = lambda a, b: a != b and all(c in b for c in a)
+    for _ in range(20):
+        if not terms:
+            break
+        removable = [t for t in terms if not any(sub(t, u) for u in terms)]
+        M = np.array([[1.0] + [float(np.prod([x[LET.index(c)] for c in t])) for t in terms] for x in X])
+        if len(X) - len(terms) - 1 <= 0 or np.linalg.matrix_rank(M) < M.shape[1]:
+            top = max(map(len, removable))
+            terms.remove([t for t in removable if len(t) == top][-1])
+            continue
+        f = doe_ols(X, y, terms)
+        ps = {t: f.pvalues[1 + terms.index(t)] for t in removable}
+        worst = max(removable, key=lambda t: ps[t])
+        if ps[worst] < alpha:
+            break
+        terms.remove(worst)
+    return terms
+
+
+dr = []
+# each case has its own seed, chosen so some terms are dropped and some kept
+SEEDS = {"3 factors, 2 repeats": 1, "4 factors, 2 repeats, alpha 0.1": 2, "3 factors, no repeats": 3, "4 factors, no repeats, 3 results missing": 4}
+for name, k, reps, effects, alpha, missing in [("3 factors, 2 repeats", 3, 2, {"A": -4, "C": 2.5, "AC": 2}, 0.05, []),
+                                               ("4 factors, 2 repeats, alpha 0.1", 4, 2, {"B": 3, "D": -1.2, "BD": 1}, 0.1, []),
+                                               ("3 factors, no repeats", 3, 1, {"A": 5, "B": -3}, 0.05, []),
+                                               # until the model can be tested, the last of the 3-way interactions is dropped
+                                               # each time, so ABC (a real effect here) stays in
+                                               ("4 factors, no repeats, 3 results missing", 4, 1, {"A": 3, "B": 2, "ABC": 4}, 0.05, [5, 10, 15])]:
+    X = coded(k, reps); y = design_y(X, effects, 0.3 if missing else 1, np.random.default_rng(SEEDS[name]))
+    have = [i for i in range(len(X)) if i + 1 not in missing]
+    keep = backward([X[i] for i in have], [y[i] for i in have], all_terms(k), alpha)
+    state = {"k": k, "reps": reps, "terms": all_terms(k), "alpha": str(alpha), "y": {str(i + 1): y[i] for i in have},
+             "factors": FACT}
+    assert 0 < len(keep) < len(all_terms(k)), (name, keep)
+    dr.append({"name": name, "args": [state], "expect": keep})
+group("design of experiments: backward elimination", "reduce", ["design_of_experiments"], dr, call="doeReduce",
+      note="the same steps written in Python on statsmodels p-values")
+
 with open(OUT, "w") as f:
     json.dump({"generated_by": "tests/stats/make_reference.py", "scipy": scipy.__version__, "numpy": np.__version__,
                "groups": groups}, f, indent=0, separators=(",", ":"))
