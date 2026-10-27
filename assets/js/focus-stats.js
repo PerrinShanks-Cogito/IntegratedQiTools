@@ -2,7 +2,8 @@
 
 /* Shared statistics for the FOCUS tools: the gamma and beta functions, the
    p-values, cumulative probabilities and critical values built on them, and the
-   descriptive statistics and tests several tools use. Every tool that needs one
+   descriptive statistics and tests several tools use, and the reader for pasted
+   tables that most tools share. Every tool that needs one
    takes it from here, so there is one copy to check and correct:
 
      const { ibeta, tP, fP, tCrit } = FocusStats;
@@ -36,6 +37,18 @@
      andersonDarling(a)   normality test: { a2, a, p }, or null with fewer than 3
                           values or none varying
      oneWay(groups)       one-way ANOVA on arrays of values
+
+   Reading pasted data (as copied from Excel, or typed as CSV):
+     splitTable(text)     { recs, delim }: the non-blank lines split into cells
+                          on tabs, or else semicolons, or else commas, with
+                          spaces and surrounding quotes trimmed; null if blank
+     readNumber(raw, d)   a cell as a number, ignoring %, £, $, € and spaces,
+                          and commas that group thousands (1,234 or 1,234.5)
+                          unless the table is comma-separated (d is the
+                          delimiter splitTable found); NaN if not a number
+     isNumberCell(v, d)   whether a cell holds a number
+     numericShare(recs, c, d)  the share of column c's filled cells (after the
+                          first row) that hold numbers
 */
 window.FocusStats = (() => {
   // Lanczos approximation (Numerical Recipes gammln), accurate to about 1e-10
@@ -196,6 +209,30 @@ window.FocusStats = (() => {
     return { k, N, grand, ssb, ssw, sst: ssb + ssw, dfb, dfw, msb, msw, F, p, eta2: ssb + ssw > 0 ? ssb / (ssb + ssw) : 0 };
   }
 
+  // ---- reading pasted data ----
+  function splitTable(text) {
+    const lines = String(text || '').split(/\r?\n/).filter(l => l.trim() !== '');
+    if (!lines.length) return null;
+    let delim = '\t';
+    if (!lines.some(l => l.includes('\t'))) delim = lines.some(l => l.includes(';')) ? ';' : (lines.some(l => l.includes(',')) ? ',' : '\t');
+    return { recs: lines.map(l => l.split(delim).map(x => x.trim().replace(/^"(.*)"$/, '$1').trim())), delim };
+  }
+  // Only commas that group digits in threes are taken as thousands separators.
+  // Any other comma, such as a decimal comma in 1,2, makes the cell not a number,
+  // so it's reported as skipped rather than read as 12.
+  function readNumber(raw, delim) {
+    if (raw === undefined) return NaN;
+    let v = String(raw).replace(/[%£$€\s]/g, '');
+    if (delim !== ',' && /^[-+]?\d{1,3}(,\d{3})+(\.\d*)?$/.test(v)) v = v.replace(/,/g, '');
+    return v === '' || v.includes(',') ? NaN : Number(v);
+  }
+  const isNumberCell = (v, delim) => v !== undefined && v !== '' && isFinite(readNumber(v, delim));
+  function numericShare(recs, c, delim) {
+    const cells = recs.slice(recs.length > 1 ? 1 : 0).map(r => r[c]).filter(v => v !== undefined && v !== '');
+    return cells.length ? cells.filter(v => isNumberCell(v, delim)).length / cells.length : 0;
+  }
+
   return { lgamma, gamma, ibeta, betaInv, gammaQ, tP, tCdf, tInv, tCrit, fP, chiP, zP, normCdf, normInv, zCrit,
-    sum, mean, variance, sd, median, quantile, ranks, tiesT, andersonDarling, oneWay };
+    sum, mean, variance, sd, median, quantile, ranks, tiesT, andersonDarling, oneWay,
+    splitTable, readNumber, isNumberCell, numericShare };
 })();

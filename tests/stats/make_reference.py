@@ -1318,6 +1318,55 @@ for test, n, power in [("t1", 20, 0.8), ("t2", 30, 0.9), ("t2", 100, 0.8)]:
 group("smallest detectable difference: t-tests", "minDiff", ["power_sample_size"], mt, tol=1e-3, abs_tol=0,
       note="exact from statsmodels; the tool's normal approximation to the power puts it within 0.1%")
 
+# ------------------------------------------------------------- reading pasted tables (shared)
+# What the shared reader makes of typical pastes: tab-separated from Excel,
+# semicolons, commas, quotes, blank lines and ragged rows.
+TABLES = [("tabs from Excel", "Ward\tDays\nA\t3\n\nB\t 4 ", {"delim": "\t", "recs": [["Ward", "Days"], ["A", "3"], ["B", "4"]]}),
+          ("semicolons win over commas", "a;1,5\nb;2", {"delim": ";", "recs": [["a", "1,5"], ["b", "2"]]}),
+          ("commas, with quotes", 'name,"value"\n"Ward A", 12', {"delim": ",", "recs": [["name", "value"], ["Ward A", "12"]]}),
+          ("one column", "4\n5\r\n6", {"delim": "\t", "recs": [["4"], ["5"], ["6"]]}),
+          ("ragged rows", "a\tb\tc\n1\t2", {"delim": "\t", "recs": [["a", "b", "c"], ["1", "2"]]}),
+          ("blank", " \n\n", None)]
+group("reading a pasted table", "splitTable", [SHARED], [{"name": n, "args": [t], "expect": e} for n, t, e in TABLES])
+CELLS = [("1,234", "\t", 1234), ("£1,234.50", "\t", 1234.5), ("12%", "\t", 12), (" 7 ", "\t", 7), ("-3.25", "\t", -3.25),
+         ("1.2e3", "\t", 1200), ("$ 40", ";", 40), ("1,234", ",", None), ("abc", "\t", None), ("", "\t", None), ("N/A", "\t", None),
+         # only commas that group thousands are dropped: a decimal comma isn't read as a bigger number
+         ("1,234,567.5", "\t", 1234567.5), ("-1,234", "\t", -1234), ("1,2", "\t", None), ("12,34", ";", None), ("1,2345", "\t", None),
+         ("1234,5", "\t", None), (",5", "\t", None)]
+group("reading a number from a cell", "readNumber", [SHARED],
+      [{"name": f"{c!r} ({'comma' if d == ',' else 'tab' if d == chr(9) else 'semicolon'}-separated)", "args": [c, d], "expect": e}
+       for c, d, e in CELLS], call="number")
+group("share of a column that holds numbers", "numericShare", [SHARED],
+      [{"name": n, "args": [recs, c, d], "expect": e} for n, recs, c, d, e in [
+          ("heading then numbers", [["Days"], ["3"], ["4"], ["x"], [""]], 0, "\t", 2 / 3),
+          ("one row only", [["5"]], 0, "\t", 1.0),
+          ("column missing", [["a"], ["1"]], 1, "\t", 0.0)]])
+
+# The bar chart and design of experiments read numbers with the same shared rule:
+# commas are thousands separators only in groups of three.
+group("bar chart: reading pasted values", "parse", ["bar_chart"], [
+    {"name": "thousands and a decimal comma (tabs)", "args": ["Ward\tAdmissions\nA\t1,234\nB\t1,2\nC\t£2,500.50\nD\tn/a", True],
+     "expect": {"cats": [{"name": "A", "vals": [1234]}, {"name": "C", "vals": [2500.5]}], "skipped": 2, "blanks": 0}},
+    {"name": "comma-separated, with an empty cell", "args": ["Ward,Jan,Feb\nA,12,\nB,7,8", True],
+     "expect": {"cats": [{"name": "A", "vals": [12, 0]}, {"name": "B", "vals": [7, 8]}], "skipped": 0, "blanks": 1}},
+    {"name": "two series, one unreadable cell", "args": ["Ward\tJan\tFeb\nA\t3\t12,5\nB\t4\t6", True],
+     "expect": {"cats": [{"name": "A", "vals": [3, 0]}, {"name": "B", "vals": [4, 6]}], "skipped": 0, "blanks": 1}}],
+      call="barChart", tol=0, abs_tol=0)
+FACT_COMMA = [{"name": "Volume", "type": "numeric", "low": "1,000", "high": "1,500"}, {"name": "Minutes", "type": "numeric", "low": "10", "high": "30"},
+              {"name": "Kiosk", "type": "text", "low": "Off", "high": "On"}, {"name": "", "type": "text", "low": "", "high": ""}]
+X = coded(3, 1); y = design_y(X, {"A": -3, "B": 2}, 1, np.random.default_rng(7))
+real = [[1000 + (x[0] + 1) / 2 * 500, 10 + (x[1] + 1) / 2 * 20, x[2]] for x in X]
+f = doe_ols(real, y, ["A", "B", "C"])
+group("design of experiments: settings with thousands commas", "uncoded", ["design_of_experiments"],
+      [{"name": "low 1,000 and high 1,500", "args": [{"k": 3, "factors": FACT_COMMA}, [{"x": x, "y": v} for x, v in zip(X, y)], ["A", "B", "C"], []],
+        "expect": clean({"uncoded": dict(zip(["", "A", "B", "C"], f.params)), "means": []})}],
+      call="doeUncoded", tol=1e-8, abs_tol=1e-9)
+dr2 = backward(X, y, ["A", "B", "C"], 0.05)
+group("design of experiments: a result with a decimal comma is left out", "reduce", ["design_of_experiments"],
+      [{"name": "run 3 typed as 31,5", "args": [{"k": 3, "reps": 1, "terms": ["A", "B", "C"], "alpha": "0.05",
+                                                  "y": {**{str(i + 1): v for i, v in enumerate(y)}, "3": "31,5"}, "factors": FACT_COMMA}],
+        "expect": backward([X[i] for i in range(8) if i != 2], [y[i] for i in range(8) if i != 2], ["A", "B", "C"], 0.05)}], call="doeReduce")
+
 with open(OUT, "w") as f:
     json.dump({"generated_by": "tests/stats/make_reference.py", "scipy": scipy.__version__, "numpy": np.__version__,
                "groups": groups}, f, indent=0, separators=(",", ":"))

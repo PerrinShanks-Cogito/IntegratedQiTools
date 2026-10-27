@@ -48,7 +48,8 @@ const CALLS = {
       runs: a.runs.runs, lo: a.runs.lo, hi: a.runs.hi, astro: a.astro.map(x => x.i) };
   },
   runsTable: tool => n => load(tool, ["RUNS_TABLE"]).RUNS_TABLE[n],
-  number: tool => raw => { const v = load(tool, ["parseNumber"]).parseNumber(raw); return Number.isNaN(v) ? null : v; },
+  // a number reader, with "not a number" as null (JSON has no NaN)
+  number: (tool, g) => (...args) => { const v = load(tool, [g.fn])[g.fn](...args); return Number.isNaN(v) ? null : v; },
   // Funnel plot: rows as pasted CSV (name, count, population) through the tool's reader
   funnel: tool => (rows, centre) => {
     const F = load(tool, ["analyse", "parse"]);
@@ -106,8 +107,8 @@ const CALLS = {
   // Attribute agreement: pasted ratings through the tool's reader and analysis.
   // `cats` are the categories in order (lower case, as the tool keys them).
   attribute: tool => (text, o, cats, useKendall) => {
-    const A = load(tool, ["split", "parse", "analyse"]);
-    const a = A.analyse(A.parse(A.split(text), o), cats, useKendall);
+    const A = load(tool, ["splitTable", "parse", "analyse"]);
+    const a = A.analyse(A.parse(A.splitTable(text).recs, o), cats, useKendall);
     const pick = r => r && { x: r.x, n: r.n, p: r.p, lo: r.lo, hi: r.hi, coef: r.coef };
     return { within: a.within ? a.within.map(pick) : null, vsStd: a.vsStd ? a.vsStd.map(pick) : null,
       between: pick(a.between) || null, allStd: pick(a.allStd) || null, disagree: a.disagree || null };
@@ -137,6 +138,11 @@ const CALLS = {
     const P = load(tool, ["parse", "compute"]);
     const p = P.parse(text, hasHeader), r = P.compute(p.items, groupAfter, cutoff);
     return { skipped: p.skipped, total: r.total, vital: r.vital, rows: r.rows.map(d => ({ name: d.name, value: d.value, pct: d.pct, cum: d.cum })) };
+  },
+  // Bar chart: pasted text through the tool's reader
+  barChart: tool => (text, hasHeader) => {
+    const d = load(tool, ["parse"]).parse(text, hasHeader);
+    return { cats: d.cats.map(c => ({ name: c.name, vals: c.vals })), skipped: d.skipped, blanks: d.blanks };
   },
   // ...and backward elimination of terms that aren't clear
   doeReduce: tool => state => {

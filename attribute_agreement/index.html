@@ -234,13 +234,6 @@ td.poor{color:var(--warn);font-weight:700}
   const keyOf = v => String(v).trim().toLowerCase().replace(/\s+/g, ' ');
 
   // ---- parsing ----
-  function split(text) {
-    const lines = text.split(/\r?\n/).filter(l => l.trim() !== '');
-    if (!lines.length) return null;
-    let delim = '\t';
-    if (!lines.some(l => l.includes('\t'))) delim = lines.some(l => l.includes(';')) ? ';' : (lines.some(l => l.includes(',')) ? ',' : '\t');
-    return lines.map(l => l.split(delim).map(x => x.trim().replace(/^"(.*)"$/, '$1').trim()));
-  }
   // Guesses for the checkboxes and trials, from the headings and the values.
   function guess(recs) {
     const ncol = Math.max(...recs.map(r => r.length));
@@ -305,6 +298,8 @@ td.poor{color:var(--warn);font-weight:700}
   }
 
   // ---- statistics ----
+  // Shared statistics, from /assets/js/focus-stats.js
+  const { betaInv, ranks, tiesT, splitTable } = FocusStats;
 
   // Percent matched with an exact (Clopper–Pearson) 95% confidence interval.
   function agreement(x, n) {
@@ -323,8 +318,6 @@ td.poor{color:var(--warn);font-weight:700}
     const den = n * m * (m - 1) * cats.reduce((s, c) => { const p = tot[c] / (n * m); return s + p * (1 - p); }, 0);
     return den > 0 ? 1 - num / den : NaN;
   }
-  // Shared statistics, from /assets/js/focus-stats.js
-  const { betaInv, ranks, tiesT } = FocusStats;
 
   // Kendall's coefficient of concordance (W), corrected for ties; columns are raters.
   function kendallW(cols) {
@@ -616,7 +609,7 @@ td.poor{color:var(--warn);font-weight:700}
   function update() {
     current = null;
     const text = els.data.value;
-    const recs = text.trim() ? split(text) : null;
+    const recs = text.trim() ? splitTable(text).recs : null;
     if (!recs) { els.detected.textContent = ''; els.orderBlock.hidden = true; return renderEmpty('Paste your ratings on the left to check agreement.'); }
     const g = guess(recs);
     ['hasHeader', 'hasId', 'hasStd'].forEach(k => { if (!touched[k]) els[k].checked = g[k]; });
