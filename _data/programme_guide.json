@@ -71,7 +71,7 @@
  "docs": [
   {
    "id": "scope",
-   "code": "D",
+   "ref": "D",
    "stage": "find",
    "name": "High level scoping document",
    "kind": "slides",
@@ -97,6 +97,7 @@
     "Put numbers in the benefits box (the baseline and what you expect), not just aims.",
     "List what is out of scope. It saves arguments later."
    ],
+   "code": "F1",
    "example": "initiate-d-high-level-scope-example.pptx",
    "pages": [
     "initiate-d-high-level-scope-1.jpg"
@@ -104,7 +105,7 @@
   },
   {
    "id": "support",
-   "code": "E2",
+   "ref": "E2",
    "stage": "find",
    "name": "Support plan",
    "kind": "slides",
@@ -130,6 +131,7 @@
     "The scope, deliverables and metrics table feeds every highlight report, so word the deliverables as things you can tick off.",
     "Agree the clinical group's commitment (time, people, decisions) as clearly as CITI's."
    ],
+   "code": "F2",
    "example": "initiate-e2-support-plan-example.pptx",
    "pages": [
     "initiate-e2-support-plan-1.jpg",
@@ -145,405 +147,8 @@
    ]
   },
   {
-   "id": "pid",
-   "code": "E1",
-   "stage": "create",
-   "name": "Project initiation document (PID)",
-   "kind": "doc",
-   "template": "initiate-e1-project-initiation-document.dotx",
-   "purpose": "The full case for the project: case for change, SMART objectives, approach, resourcing, timescales, leadership, governance, risks, dependencies, stakeholders, return on investment and KPIs.",
-   "when": "When you create the plan for a larger project, especially one that needs formal approval or a business case.",
-   "owner": "Project or programme manager",
-   "covers": [
-    "Case for change",
-    "Objectives",
-    "Approach and resourcing",
-    "Milestones",
-    "Leadership and governance",
-    "Risks, dependencies and stakeholders",
-    "Return on investment",
-    "KPIs and other benefits"
-   ],
-   "feeds": [
-    "scope",
-    "benefits",
-    "stakeholders"
-   ],
-   "tips": [
-    "Use facts and figures for the case for change: your baseline from a run chart is ideal.",
-    "Write objectives as SMART: a measure, a target and a date."
-   ],
-   "example": "initiate-e1-project-initiation-document-example.docx",
-   "pages": [
-    "initiate-e1-project-initiation-document-1.jpg",
-    "initiate-e1-project-initiation-document-2.jpg",
-    "initiate-e1-project-initiation-document-3.jpg",
-    "initiate-e1-project-initiation-document-4.jpg",
-    "initiate-e1-project-initiation-document-5.jpg",
-    "initiate-e1-project-initiation-document-6.jpg",
-    "initiate-e1-project-initiation-document-7.jpg",
-    "initiate-e1-project-initiation-document-8.jpg"
-   ]
-  },
-  {
-   "id": "resources",
-   "code": "J",
-   "stage": "create",
-   "name": "Resource planner and tracker",
-   "kind": "sheet",
-   "template": "initiate-j-resource-planner.xlsx",
-   "purpose": "The days each person is planned to give the project each week, and the days they actually gave.",
-   "when": "Plan it when you agree resources in the PID or support plan; fill in actual days every week or month.",
-   "owner": "Project manager",
-   "covers": [
-    "Planned days by person and week",
-    "Actual days worked",
-    "Days remaining",
-    "External resources"
-   ],
-   "feeds": [
-    "pid",
-    "support"
-   ],
-   "tips": [
-    "Enter the start date and the weeks fill in by themselves.",
-    "A gap between planned and actual days is an early warning: log it as a risk."
-   ],
-   "example": "initiate-j-resource-planner-example.xlsx",
-   "tables": [
-    {
-     "name": "Planned days",
-     "columns": [
-      "Name",
-      "Role",
-      "Total planned days",
-      "02 Feb",
-      "16 Feb",
-      "02 Mar",
-      "16 Mar",
-      "30 Mar",
-      "13 Apr",
-      "27 Apr",
-      "11 May",
-      "25 May",
-      "08 Jun",
-      "22 Jun",
-      "06 Jul",
-      "20 Jul",
-      "03 Aug",
-      "17 Aug",
-      "31 Aug"
-     ],
-     "rows": [
-      [
-       "James Holloway",
-       "Programme Manager",
-       147,
-       5,
-       5,
-       5,
-       5,
-       5,
-       5,
-       5,
-       5,
-       5,
-       5,
-       5,
-       5,
-       5,
-       5,
-       3,
-       3
-      ],
-      [
-       "Ben Carter",
-       "Improvement Manager",
-       139,
-       3,
-       3,
-       5,
-       5,
-       5,
-       5,
-       5,
-       5,
-       5,
-       5,
-       5,
-       5,
-       5,
-       5,
-       3,
-       3
-      ],
-      [
-       "Hannah Lee",
-       "Improvement Manager",
-       77,
-       1,
-       1,
-       3,
-       3,
-       3,
-       3,
-       3,
-       3,
-       3,
-       3,
-       3,
-       3,
-       3,
-       3,
-       1,
-       1
-      ],
-      [
-       "Chloe Evans",
-       "Project Manager",
-       77,
-       1,
-       1,
-       3,
-       3,
-       3,
-       3,
-       3,
-       3,
-       3,
-       3,
-       3,
-       3,
-       3,
-       3,
-       1,
-       1
-      ],
-      [
-       "Sam Patel",
-       "Improvement Manager",
-       77,
-       1,
-       1,
-       3,
-       3,
-       3,
-       3,
-       3,
-       3,
-       3,
-       3,
-       3,
-       3,
-       3,
-       3,
-       1,
-       1
-      ],
-      [
-       "Omar Siddiqui",
-       "Senior Analyst",
-       54,
-       1,
-       1,
-       2,
-       2,
-       2,
-       2,
-       2,
-       2,
-       2,
-       2,
-       2,
-       2,
-       2,
-       2,
-       1,
-       1
-      ]
-     ],
-     "note": "Every other week shown here; the workbook has every week."
-    },
-    {
-     "name": "Actual days (to 11 May)",
-     "columns": [
-      "Name",
-      "Role",
-      "Planned",
-      "Worked so far",
-      "Remaining"
-     ],
-     "rows": [
-      [
-       "James Holloway",
-       "Programme Manager",
-       147,
-       75,
-       72
-      ],
-      [
-       "Ben Carter",
-       "Improvement Manager",
-       139,
-       62,
-       77
-      ],
-      [
-       "Hannah Lee",
-       "Improvement Manager",
-       77,
-       36,
-       41
-      ],
-      [
-       "Chloe Evans",
-       "Project Manager",
-       77,
-       34,
-       43
-      ],
-      [
-       "Sam Patel",
-       "Improvement Manager",
-       77,
-       36,
-       41
-      ],
-      [
-       "Omar Siddiqui",
-       "Senior Analyst",
-       54,
-       28,
-       26
-      ]
-     ]
-    }
-   ]
-  },
-  {
-   "id": "mobilisation",
-   "code": "",
-   "stage": "create",
-   "name": "Programme mobilisation document",
-   "kind": "slides",
-   "template": "mobilise-programme-mobilisation.potx",
-   "purpose": "An intro manual for each team member and a team charter: what we want to achieve, how we work together and how we support each other.",
-   "when": "At a workshop when the team first comes together, as you create the plan.",
-   "owner": "Programme manager, with the team",
-   "covers": [
-    "Intro manual (one per person)",
-    "Team charter: objectives and success",
-    "Ways of working",
-    "Supporting each other"
-   ],
-   "feeds": [
-    "support",
-    "pid"
-   ],
-   "tips": [
-    "Fill it in together in the room rather than sending it round.",
-    "Revisit the charter when new people join."
-   ],
-   "example": "mobilise-programme-mobilisation-example.pptx",
-   "pages": [
-    "mobilise-programme-mobilisation-1.jpg",
-    "mobilise-programme-mobilisation-2.jpg",
-    "mobilise-programme-mobilisation-3.jpg",
-    "mobilise-programme-mobilisation-4.jpg"
-   ]
-  },
-  {
-   "id": "roles",
-   "code": "N",
-   "stage": "create",
-   "name": "Key programme roles",
-   "kind": "slides",
-   "template": "mobilise-n-key-programme-roles.potx",
-   "purpose": "Who fills each standard programme role (SRO, accountable executive, programme director and manager, leads, PMO, assurance) and what each is responsible for.",
-   "when": "When you create the plan, alongside the organisation chart.",
-   "owner": "Programme director",
-   "covers": [
-    "SRO",
-    "Accountable executive",
-    "Programme director and manager",
-    "Clinical, operational and nursing leads",
-    "PMO and assurance",
-    "Improvement support",
-    "Senior supplier"
-   ],
-   "feeds": [
-    "pid",
-    "support"
-   ],
-   "tips": [
-    "Every role needs a name. A blank role is a risk.",
-    "Use the comments to say how much time each person gives."
-   ],
-   "example": "mobilise-n-key-programme-roles-example.pptx",
-   "pages": [
-    "mobilise-n-key-programme-roles-1.jpg"
-   ]
-  },
-  {
-   "id": "orgchart",
-   "code": "O",
-   "stage": "create",
-   "name": "Organisation chart",
-   "kind": "slides",
-   "template": "mobilise-o-organisation-chart.potx",
-   "purpose": "The programme's structure on a page: the executive team, the programme leadership, and the leads and improvement support for each workstream.",
-   "when": "When you create the plan, once workstreams and leads are agreed.",
-   "owner": "Programme manager",
-   "covers": [
-    "Programme executive team",
-    "Programme leadership",
-    "Core workstreams and their leads",
-    "Enabling workstreams"
-   ],
-   "feeds": [
-    "roles"
-   ],
-   "tips": [
-    "The leads and teams named here go straight into each workstream's highlight report."
-   ],
-   "example": "mobilise-o-organisation-chart-example.pptx",
-   "pages": [
-    "mobilise-o-organisation-chart-1.jpg"
-   ]
-  },
-  {
-   "id": "governance",
-   "code": "P",
-   "stage": "create",
-   "name": "Governance",
-   "kind": "slides",
-   "template": "mobilise-p-governance.potx",
-   "purpose": "How the programme is steered: a chart of the forums it reports to, and a table of each forum's purpose, responsibilities, inputs, outputs and attendees.",
-   "when": "When you create the plan, before the first leadership meeting.",
-   "owner": "Programme director, with the SRO",
-   "covers": [
-    "Governance chart",
-    "Forum purpose and responsibilities",
-    "Inputs (which report goes where)",
-    "Outputs and attendees"
-   ],
-   "feeds": [
-    "roles",
-    "orgchart"
-   ],
-   "tips": [
-    "Use meetings that already exist where you can.",
-    "Say which report each forum gets: highlight reports to the huddle, the leadership report to the leadership meeting."
-   ],
-   "example": "mobilise-p-governance-example.pptx",
-   "pages": [
-    "mobilise-p-governance-1.jpg",
-    "mobilise-p-governance-2.jpg"
-   ]
-  },
-  {
    "id": "benefits",
-   "code": "K",
+   "ref": "K",
    "stage": "observe",
    "name": "Benefits register",
    "kind": "sheet",
@@ -567,6 +172,7 @@
     "Set the baseline from data over time: a run chart or SPC chart shows whether the baseline is stable.",
     "Include a balancing measure as a dis-benefit, so you'd notice if the change caused harm."
    ],
+   "code": "O1",
    "example": "mobilise-k-benefits-register-example.xlsx",
    "tables": [
     {
@@ -682,8 +288,161 @@
    ]
   },
   {
+   "id": "stakeholders",
+   "ref": "I",
+   "stage": "observe",
+   "name": "Stakeholder map and communication plan",
+   "kind": "slides",
+   "template": "plan-i-stakeholder-map-comms-plan.potx",
+   "purpose": "Stakeholders placed by influence and interest (champions, supporters, blockers, sleepers), and a plan of how and how often you will communicate with each.",
+   "when": "While you observe the current state, so you know who is affected; review it when a stakeholder's interest or influence changes.",
+   "owner": "Programme manager, with the comms lead",
+   "covers": [
+    "Stakeholder map",
+    "Key interests and issues",
+    "Communication vehicle, frequency and format",
+    "Content provided"
+   ],
+   "feeds": [
+    "scope",
+    "support"
+   ],
+   "tips": [
+    "The 2x2 matrix tool has a stakeholder grid you can score with your team, then copy into this map."
+   ],
+   "code": "O2",
+   "example": "plan-i-stakeholder-map-comms-plan-example.pptx",
+   "pages": [
+    "plan-i-stakeholder-map-comms-plan-1.jpg",
+    "plan-i-stakeholder-map-comms-plan-2.jpg"
+   ]
+  },
+  {
+   "id": "mobilisation",
+   "ref": "",
+   "stage": "create",
+   "name": "Programme mobilisation document",
+   "kind": "slides",
+   "template": "mobilise-programme-mobilisation.potx",
+   "purpose": "An intro manual for each team member and a team charter: what we want to achieve, how we work together and how we support each other.",
+   "when": "At a workshop when the team first comes together, as you create the plan.",
+   "owner": "Programme manager, with the team",
+   "covers": [
+    "Intro manual (one per person)",
+    "Team charter: objectives and success",
+    "Ways of working",
+    "Supporting each other"
+   ],
+   "feeds": [
+    "support"
+   ],
+   "tips": [
+    "Fill it in together in the room rather than sending it round.",
+    "Revisit the charter when new people join."
+   ],
+   "code": "C1",
+   "example": "mobilise-programme-mobilisation-example.pptx",
+   "pages": [
+    "mobilise-programme-mobilisation-1.jpg",
+    "mobilise-programme-mobilisation-2.jpg",
+    "mobilise-programme-mobilisation-3.jpg",
+    "mobilise-programme-mobilisation-4.jpg"
+   ]
+  },
+  {
+   "id": "roles",
+   "ref": "N",
+   "stage": "create",
+   "name": "Key programme roles",
+   "kind": "slides",
+   "template": "mobilise-n-key-programme-roles.potx",
+   "purpose": "Who fills each standard programme role (SRO, accountable executive, programme director and manager, leads, PMO, assurance) and what each is responsible for.",
+   "when": "When you create the plan, alongside the organisation chart.",
+   "owner": "Programme director",
+   "covers": [
+    "SRO",
+    "Accountable executive",
+    "Programme director and manager",
+    "Clinical, operational and nursing leads",
+    "PMO and assurance",
+    "Improvement support",
+    "Senior supplier"
+   ],
+   "feeds": [
+    "support"
+   ],
+   "tips": [
+    "Every role needs a name. A blank role is a risk.",
+    "Use the comments to say how much time each person gives."
+   ],
+   "code": "C2",
+   "example": "mobilise-n-key-programme-roles-example.pptx",
+   "pages": [
+    "mobilise-n-key-programme-roles-1.jpg"
+   ]
+  },
+  {
+   "id": "orgchart",
+   "ref": "O",
+   "stage": "create",
+   "name": "Organisation chart",
+   "kind": "slides",
+   "template": "mobilise-o-organisation-chart.potx",
+   "purpose": "The programme's structure on a page: the executive team, the programme leadership, and the leads and improvement support for each workstream.",
+   "when": "When you create the plan, once workstreams and leads are agreed.",
+   "owner": "Programme manager",
+   "covers": [
+    "Programme executive team",
+    "Programme leadership",
+    "Core workstreams and their leads",
+    "Enabling workstreams"
+   ],
+   "feeds": [
+    "roles"
+   ],
+   "tips": [
+    "The leads and teams named here go straight into each workstream's highlight report."
+   ],
+   "code": "C3",
+   "example": "mobilise-o-organisation-chart-example.pptx",
+   "pages": [
+    "mobilise-o-organisation-chart-1.jpg"
+   ]
+  },
+  {
+   "id": "governance",
+   "ref": "P",
+   "stage": "create",
+   "name": "Governance",
+   "kind": "slides",
+   "template": "mobilise-p-governance.potx",
+   "purpose": "How the programme is steered: a chart of the forums it reports to, and a table of each forum's purpose, responsibilities, inputs, outputs and attendees.",
+   "when": "When you create the plan, before the first leadership meeting.",
+   "owner": "Programme director, with the SRO",
+   "covers": [
+    "Governance chart",
+    "Forum purpose and responsibilities",
+    "Inputs (which report goes where)",
+    "Outputs and attendees"
+   ],
+   "feeds": [
+    "roles",
+    "orgchart"
+   ],
+   "tips": [
+    "Use meetings that already exist where you can.",
+    "Say which report each forum gets: highlight reports to the huddle, the leadership report to the leadership meeting."
+   ],
+   "code": "C4",
+   "example": "mobilise-p-governance-example.pptx",
+   "pages": [
+    "mobilise-p-governance-1.jpg",
+    "mobilise-p-governance-2.jpg"
+   ]
+  },
+  {
    "id": "plan",
-   "code": "B",
+   "ref": "B",
    "stage": "create",
    "name": "Project plan (detailed)",
    "kind": "sheet",
@@ -701,13 +460,13 @@
    ],
    "feeds": [
     "support",
-    "pid",
     "orgchart"
    ],
    "tips": [
     "Mark the critical path: these are the tasks that delay everything if they slip.",
     "The plan on a page and the leadership report are drawn from this."
    ],
+   "code": "C5",
    "example": "plan-b-project-plan-detailed-example.xlsx",
    "tables": [
     {
@@ -1048,37 +807,8 @@
    ]
   },
   {
-   "id": "stakeholders",
-   "code": "I",
-   "stage": "observe",
-   "name": "Stakeholder map and communication plan",
-   "kind": "slides",
-   "template": "plan-i-stakeholder-map-comms-plan.potx",
-   "purpose": "Stakeholders placed by influence and interest (champions, supporters, blockers, sleepers), and a plan of how and how often you will communicate with each.",
-   "when": "While you observe the current state, so you know who is affected; review it when a stakeholder's interest or influence changes.",
-   "owner": "Programme manager, with the comms lead",
-   "covers": [
-    "Stakeholder map",
-    "Key interests and issues",
-    "Communication vehicle, frequency and format",
-    "Content provided"
-   ],
-   "feeds": [
-    "scope",
-    "support"
-   ],
-   "tips": [
-    "The 2x2 matrix tool has a stakeholder grid you can score with your team, then copy into this map."
-   ],
-   "example": "plan-i-stakeholder-map-comms-plan-example.pptx",
-   "pages": [
-    "plan-i-stakeholder-map-comms-plan-1.jpg",
-    "plan-i-stakeholder-map-comms-plan-2.jpg"
-   ]
-  },
-  {
    "id": "onepage",
-   "code": "A",
+   "ref": "A",
    "stage": "create",
    "name": "Project plan on a page",
    "kind": "slides",
@@ -1098,14 +828,295 @@
    "tips": [
     "Show only what a senior reader needs: about 2 or 3 bars a workstream."
    ],
+   "code": "C6",
    "example": "implement-a-plan-on-a-page-example.pptx",
    "pages": [
     "implement-a-plan-on-a-page-1.jpg"
    ]
   },
   {
+   "id": "resources",
+   "ref": "J",
+   "stage": "create",
+   "name": "Resource planner and tracker",
+   "kind": "sheet",
+   "template": "initiate-j-resource-planner.xlsx",
+   "purpose": "The days each person is planned to give the project each week, and the days they actually gave.",
+   "when": "Plan it when you agree resources in the PID or support plan; fill in actual days every week or month.",
+   "owner": "Project manager",
+   "covers": [
+    "Planned days by person and week",
+    "Actual days worked",
+    "Days remaining",
+    "External resources"
+   ],
+   "feeds": [
+    "support",
+    "plan"
+   ],
+   "tips": [
+    "Enter the start date and the weeks fill in by themselves.",
+    "A gap between planned and actual days is an early warning: log it as a risk."
+   ],
+   "code": "C7",
+   "example": "initiate-j-resource-planner-example.xlsx",
+   "tables": [
+    {
+     "name": "Planned days",
+     "columns": [
+      "Name",
+      "Role",
+      "Total planned days",
+      "02 Feb",
+      "16 Feb",
+      "02 Mar",
+      "16 Mar",
+      "30 Mar",
+      "13 Apr",
+      "27 Apr",
+      "11 May",
+      "25 May",
+      "08 Jun",
+      "22 Jun",
+      "06 Jul",
+      "20 Jul",
+      "03 Aug",
+      "17 Aug",
+      "31 Aug"
+     ],
+     "rows": [
+      [
+       "James Holloway",
+       "Programme Manager",
+       147,
+       5,
+       5,
+       5,
+       5,
+       5,
+       5,
+       5,
+       5,
+       5,
+       5,
+       5,
+       5,
+       5,
+       5,
+       3,
+       3
+      ],
+      [
+       "Ben Carter",
+       "Improvement Manager",
+       139,
+       3,
+       3,
+       5,
+       5,
+       5,
+       5,
+       5,
+       5,
+       5,
+       5,
+       5,
+       5,
+       5,
+       5,
+       3,
+       3
+      ],
+      [
+       "Hannah Lee",
+       "Improvement Manager",
+       77,
+       1,
+       1,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       1,
+       1
+      ],
+      [
+       "Chloe Evans",
+       "Project Manager",
+       77,
+       1,
+       1,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       1,
+       1
+      ],
+      [
+       "Sam Patel",
+       "Improvement Manager",
+       77,
+       1,
+       1,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       3,
+       1,
+       1
+      ],
+      [
+       "Omar Siddiqui",
+       "Senior Analyst",
+       54,
+       1,
+       1,
+       2,
+       2,
+       2,
+       2,
+       2,
+       2,
+       2,
+       2,
+       2,
+       2,
+       2,
+       2,
+       1,
+       1
+      ]
+     ],
+     "note": "Every other week shown here; the workbook has every week."
+    },
+    {
+     "name": "Actual days (to 11 May)",
+     "columns": [
+      "Name",
+      "Role",
+      "Planned",
+      "Worked so far",
+      "Remaining"
+     ],
+     "rows": [
+      [
+       "James Holloway",
+       "Programme Manager",
+       147,
+       75,
+       72
+      ],
+      [
+       "Ben Carter",
+       "Improvement Manager",
+       139,
+       62,
+       77
+      ],
+      [
+       "Hannah Lee",
+       "Improvement Manager",
+       77,
+       36,
+       41
+      ],
+      [
+       "Chloe Evans",
+       "Project Manager",
+       77,
+       34,
+       43
+      ],
+      [
+       "Sam Patel",
+       "Improvement Manager",
+       77,
+       36,
+       41
+      ],
+      [
+       "Omar Siddiqui",
+       "Senior Analyst",
+       54,
+       28,
+       26
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pid",
+   "ref": "E1",
+   "stage": "create",
+   "name": "Project initiation document (PID)",
+   "kind": "doc",
+   "template": "initiate-e1-project-initiation-document.dotx",
+   "purpose": "The full case for the project: case for change, SMART objectives, approach, resourcing, timescales, leadership, governance, risks, dependencies, stakeholders, return on investment and KPIs.",
+   "when": "When you create the plan for a larger project, especially one that needs formal approval or a business case.",
+   "owner": "Project or programme manager",
+   "covers": [
+    "Case for change",
+    "Objectives",
+    "Approach and resourcing",
+    "Milestones",
+    "Leadership and governance",
+    "Risks, dependencies and stakeholders",
+    "Return on investment",
+    "KPIs and other benefits"
+   ],
+   "feeds": [
+    "scope",
+    "benefits",
+    "stakeholders",
+    "plan",
+    "resources"
+   ],
+   "tips": [
+    "Use facts and figures for the case for change: your baseline from a run chart is ideal.",
+    "Write objectives as SMART: a measure, a target and a date."
+   ],
+   "code": "C8",
+   "example": "initiate-e1-project-initiation-document-example.docx",
+   "pages": [
+    "initiate-e1-project-initiation-document-1.jpg",
+    "initiate-e1-project-initiation-document-2.jpg",
+    "initiate-e1-project-initiation-document-3.jpg",
+    "initiate-e1-project-initiation-document-4.jpg",
+    "initiate-e1-project-initiation-document-5.jpg",
+    "initiate-e1-project-initiation-document-6.jpg",
+    "initiate-e1-project-initiation-document-7.jpg",
+    "initiate-e1-project-initiation-document-8.jpg"
+   ]
+  },
+  {
    "id": "raid",
-   "code": "F",
+   "ref": "F",
    "stage": "undertake",
    "name": "RAID log",
    "kind": "sheet",
@@ -1122,13 +1133,13 @@
    ],
    "feeds": [
     "scope",
-    "pid",
     "support"
    ],
    "tips": [
     "A risk might happen; an issue is happening now. When a risk happens, close it and open an issue.",
     "Highlight and leadership reports copy their risks and issues from here."
    ],
+   "code": "U1",
    "example": "implement-f-raid-log-example.xlsx",
    "tables": [
     {
@@ -1474,7 +1485,7 @@
   },
   {
    "id": "actions",
-   "code": "M",
+   "ref": "M",
    "stage": "undertake",
    "name": "Action and decision log",
    "kind": "sheet",
@@ -1491,6 +1502,7 @@
     "Log the decision and who made it at the time. It is hard to piece together later.",
     "Key decisions go into the highlight report."
    ],
+   "code": "U2",
    "example": "implement-m-action-decision-log-example.xlsx",
    "tables": [
     {
@@ -1734,7 +1746,7 @@
   },
   {
    "id": "highlight",
-   "code": "G",
+   "ref": "G",
    "stage": "undertake",
    "name": "Highlight report",
    "kind": "slides",
@@ -1761,6 +1773,7 @@
     "Use the RAG key: red is delayed and needs escalating, amber is at risk, green is on track, blue is complete.",
     "Show your metric as a run chart or SPC chart rather than a single number when you can."
    ],
+   "code": "U3",
    "example": "implement-g-highlight-report-example.pptx",
    "pages": [
     "implement-g-highlight-report-1.jpg",
@@ -1770,7 +1783,7 @@
   },
   {
    "id": "leadership",
-   "code": "L",
+   "ref": "L",
    "stage": "undertake",
    "name": "Leadership report",
    "kind": "slides",
@@ -1795,6 +1808,7 @@
    "tips": [
     "Explain every amber and red in the RAG justification, and say what you need from the leaders."
    ],
+   "code": "U4",
    "example": "implement-l-leadership-report-example.pptx",
    "pages": [
     "implement-l-leadership-report-1.jpg",
@@ -1803,7 +1817,7 @@
   },
   {
    "id": "closure",
-   "code": "",
+   "ref": "",
    "stage": "sustain",
    "name": "Programme closure report",
    "kind": "slides",
@@ -1829,6 +1843,7 @@
     "Show the benefits as SPC charts: a sustained shift is stronger evidence than a before-and-after.",
     "Every open risk and output needs a named handover owner."
    ],
+   "code": "S1",
    "example": "close-programme-closure-report-example.pptx",
    "pages": [
     "close-programme-closure-report-1.jpg",

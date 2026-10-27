@@ -153,6 +153,9 @@ with the link.
   slide and page pictures in `programme_guide/previews/`, and
   `_data/programme_guide.json`, which the page reads (spreadsheet examples
   are shown as tables from it). Commit what it writes.
+- Documents are numbered by FOCUS stage (F1, F2, O1, O2, C1 to C8, U1 to U4,
+  S1) from their stage and their place in `ORDER` in `build.py`; each one's
+  CITI template letter (`ref`) is shown on its page.
 - `?doc=raid` opens a document and `?stage=plan` a stage, for linking from
   elsewhere.
 
