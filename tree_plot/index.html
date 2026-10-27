@@ -683,7 +683,7 @@ tr.group td{font-weight:700;background:var(--bg)}
       '4. You can use fewer levels: delete the Subgroup column, or both Subgroup and Item, if you don’t need them. Add more rows if you need them.',
       '',
       'Building the tree plot',
-      'Select the whole table on the Data sheet, including the headings, copy it and paste it into the Tree plot tool. Check that “First row is column headings” is ticked.'
+      'Save this workbook, then in the Tree plot tool choose Data sheet, then Import filled data sheet, and pick this file. Or select the whole table on the Data sheet, including the headings, copy it and paste it into the tool. Check that “First row is column headings” is ticked.'
     ];
     return [
       { name: 'Data', cols: [28, 28, 32, 14], rows, freeze: 1 },
@@ -712,7 +712,7 @@ tr.group td{font-weight:700;background:var(--bg)}
     afterOpen: () => { headerTouched = true; update(); },
     ready: () => !!current,
     exports: trackExports(['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) }))),
-    template: { fileName: 'tree-plot-data-sheet.xlsx', sheets: dataSheet }
+    template: { fileName: 'tree-plot-data-sheet.xlsx', sheets: dataSheet, import: [{ sheet: 'Data', into: '#data' }] }
   });
 })();
 </script>

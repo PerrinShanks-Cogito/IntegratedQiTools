@@ -1499,7 +1499,7 @@ function showType(){
   $('#dirUp').textContent = isT() ? 'Longer gaps' : 'Up'; $('#dirDown').textContent = isT() ? 'Shorter gaps' : 'Down';
   $('#dirSeg').classList.toggle('three', !isT());
   if (isT() && state.dir === 'none'){ document.querySelector('input[name=dir][value=up]').checked = true; state.dir = 'up'; }
-  $('#data').placeholder = t.placeholder; $('#dataHint').textContent = t.hint + ' Use Data sheet, at the top of the page, to download a spreadsheet with these columns.';
+  $('#data').placeholder = t.placeholder; $('#dataHint').textContent = t.hint + ' Use Data sheet, at the top of the page, to download a spreadsheet with these columns, then import it once it’s filled in.';
   $('#title').placeholder = t.title; $('#dirLabel').textContent = t.dir;
   $('#targetLabel').textContent = isPct() ? 'Target, % (optional)' : isP() ? 'Target, as a proportion (optional)' : isU() ? `Target, ${rateName()} (optional)` : 'Target (optional)';
   $('#target').min = isCount() ? '0' : '';
@@ -1781,13 +1781,28 @@ function dataSheet(){
     ...k.fill.map((t, i) => `${i + 1}. ${t}`),
     '',
     'Building the chart',
-    `Open the SPC chart tool and choose “${k.option}”. Select the rows you have filled in on the Data sheet, including the headings, copy them and paste them into Your data.` + (isU() ? ' Then set Per and Of what, such as per 1,000 bed days.' : '')
+    `Save this workbook, then in the SPC chart tool choose Data sheet, then Import filled data sheet, and pick this file. It picks the ${k.name} from the headings. Or choose “${k.option}”, select the rows you have filled in on the Data sheet, including the headings, copy them and paste them into Your data.` + (isU() ? ' Then set Per and Of what, such as per 1,000 bed days.' : '')
   ];
   const titles = new Set([0, 1, 6, 6 + k.fill.length + 2]);
   return [
     { name: 'Data', cols: k.widths, rows, freeze: 1 },
     { name: 'Instructions', cols: [100], rows: notes.map((v, i) => [{ v, s: titles.has(i) ? 'title' : 'wrap' }]) }
   ];
+}
+
+// A filled-in data sheet: the headings say which chart it was set up for
+function importSheet(book, h){
+  const first = book.sheets.find(s => !/^instructions$/i.test(s.name.trim()) && s.rows.length);
+  const rows = h.sheet('Data') || (first && first.rows);
+  if (!rows) return new Error('That workbook doesn’t have a Data sheet. Use a data sheet downloaded from this tool.');
+  const head = (rows[0] || []).map(v => String(v).trim().toLowerCase());
+  const t = /^date of event/.test(head[0] || '') ? 't' : /^count \(met/.test(head[1] || '') ? 'p' : head[1] === 'events' ? 'u'
+    : head[1] === 'count of events' ? 'c' : head[0] === 'period' && head.length <= 2 ? 'xmr' : '';
+  if (t) setType(t);
+  const n = h.count(rows);
+  if (!n) return new Error('That data sheet has no rows filled in yet.');
+  h.put('#data', h.tsv(rows));
+  return `Imported ${n} ${n === 1 ? 'row' : 'rows'} as ${state.type === 'xmr' ? 'an' : 'a'} ${SHEET[state.type].name}.`;
 }
 
 /* ---------- Shared toolbar (Data sheet, Example, Open, Save, Export) ---------- */
@@ -1810,7 +1825,7 @@ FocusActions.mount({
   afterOpen: () => { clearTimeout(parseTimer); readForm(); readData(); renderAll(); },
   ready: () => !!model,
   exports: trackExports(['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) }))),
-  template: { title: 'Download a spreadsheet to collect your data in, set up for the chart you have chosen', fileName: () => `${state.type}-chart-data-sheet.xlsx`, sheets: dataSheet }
+  template: { title: 'Download a spreadsheet to collect your data in, set up for the chart you have chosen', fileName: () => `${state.type}-chart-data-sheet.xlsx`, sheets: dataSheet, import: importSheet }
 });
 
 let rz; new ResizeObserver(() => { clearTimeout(rz); rz = setTimeout(drawCharts, 80); }).observe(out);

@@ -32,12 +32,12 @@
 .fa-bar .fa-btn.fa-primary:hover{background:var(--fa-blue-dark); border-color:var(--fa-blue-dark)}
 .fa-bar .fa-btn:focus-visible,.fa-list button:focus-visible{outline:3px solid var(--fa-yellow); outline-offset:2px}
 .fa-bar .fa-btn svg{flex:none}
-.fa-bar .fa-primary::after{
+.fa-bar .fa-primary::after,.fa-bar .fa-drop::after{
   content:""; width:.42rem; height:.42rem; margin-left:.15rem;
   border-right:2px solid currentColor; border-bottom:2px solid currentColor;
   transform:translateY(-2px) rotate(45deg); transition:transform .15s;
 }
-.fa-bar .fa-primary[aria-expanded="true"]::after{transform:translateY(2px) rotate(-135deg)}
+.fa-bar .fa-primary[aria-expanded="true"]::after,.fa-bar .fa-drop[aria-expanded="true"]::after{transform:translateY(2px) rotate(-135deg)}
 
 .fa-menu{position:relative}
 .fa-list{
