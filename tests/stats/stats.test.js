@@ -128,6 +128,21 @@ const CALLS = {
     const m = D.fit(obs, terms);
     return { uncoded: D.uncoded(m), means: fixed.map(f => D.fittedMean(m, f)) };
   },
+  // Box plot: one group's quartiles, whiskers and outliers
+  boxPlot: tool => (values, tukey) => load(tool, ["describe"]).describe({ name: "g", values }, tukey),
+  // Histogram: the tool describes the data, then works out the bins
+  histBins: tool => (values, mode, val, start) => {
+    const H = load(tool, ["describe", "makeBins"]);
+    const b = H.makeBins(H.describe(values), mode, val, start);
+    return { width: b.width, start: b.start, bins: b.bins.map(x => ({ lo: x.lo, hi: x.hi, n: x.n, pct: x.pct, cum: x.cum })) };
+  },
+  // Pareto chart: pasted text through the tool's reader, then the sorted rows
+  // with their percentages and the "vital few"
+  pareto: tool => (text, hasHeader, groupAfter, cutoff) => {
+    const P = load(tool, ["parse", "compute"]);
+    const p = P.parse(text, hasHeader), r = P.compute(p.items, groupAfter, cutoff);
+    return { skipped: p.skipped, total: r.total, vital: r.vital, rows: r.rows.map(d => ({ name: d.name, value: d.value, pct: d.pct, cum: d.cum })) };
+  },
   // ...and backward elimination of terms that aren't clear
   doeReduce: tool => state => {
     const D = load(tool, ["reduce", "state"], { state });

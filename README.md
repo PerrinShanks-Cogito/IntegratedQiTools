@@ -237,7 +237,13 @@ experiments (the fit, the equation in real units, fitted means and backward
 elimination) are checked against statsmodels and SciPy. The d2* constants
 are checked against d2 and d3 worked out by numerical integration.
 
-113 tests, about 1,800 comparisons.
+The box plot's quartiles, whiskers and outliers are checked against
+matplotlib, the histogram's bins and counts against NumPy (including its
+automatic width rule), and the Pareto chart's order, percentages and vital
+few against a Python version, with values on the fences, bin edges and
+cut-offs.
+
+116 tests, about 1,800 comparisons.
 
 ```sh
 node --test tests/stats/stats.test.js
@@ -253,7 +259,7 @@ figures.
 - `make_reference.py` holds the inputs (made-up data from fixed random seeds)
   and works out the expected answers. It writes `reference.json`, which is
   committed, so the tests need only Node. To add or change a test, edit it and
-  run `pip install numpy scipy statsmodels pandas && python3 tests/stats/make_reference.py`.
+  run `pip install numpy scipy statsmodels pandas matplotlib && python3 tests/stats/make_reference.py`.
 - Tolerances are tight (about 1 part in 10⁸) except where a tool uses a known
   approximation, which the test notes: the histogram and power tools' normal
   distribution (accurate to 1.2 × 10⁻⁷); the power of a t-test, which uses
@@ -266,9 +272,8 @@ figures.
   against Table 1 of Perla, Provost and Murray (2011), the Provost and Murray
   table adapted from Swed and Eisenhart.
 
-Not covered yet: Weibull analysis, the power tool's sample size and tests of proportions, the
-simpler chart calculations (box plot whiskers, histogram bins, Pareto
-percentages) and the demand and capacity models.
+Not covered yet: Weibull analysis, the power tool's sample size and tests of
+proportions, and the demand and capacity models.
 
 ## Deploy to Azure Static Web Apps
 

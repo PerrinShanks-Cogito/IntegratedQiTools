@@ -7,7 +7,7 @@ functions against these answers.
 Only needed when you add or change a test; the reference file is committed.
 Run from the repository root:
 
-    pip install numpy scipy statsmodels pandas
+    pip install numpy scipy statsmodels pandas matplotlib
     python3 tests/stats/make_reference.py
 
 The datasets are made up and drawn from fixed random seeds, so re-running gives
@@ -1049,6 +1049,116 @@ for name, k, reps, effects, alpha, missing in [("3 factors, 2 repeats", 3, 2, {"
     dr.append({"name": name, "args": [state], "expect": keep})
 group("design of experiments: backward elimination", "reduce", ["design_of_experiments"], dr, call="doeReduce",
       note="the same steps written in Python on statsmodels p-values")
+
+# ------------------------------------------------------------- box plot, histogram and Pareto chart
+from matplotlib.cbook import boxplot_stats
+from numpy.lib import _histograms_impl as npbins
+from collections import Counter
+
+bp = []
+for name, v in [("normal", data("normal", 25)), ("skewed, with outliers", data("skewed", 60, sigma=0.9)),
+                ("ties", data("ties", 30, top=9)), ("outliers both sides", data("normal", 20, sd=2) + [20.0, 21.5, 80.0, 85.0]),
+                ("4 values", [3.0, 3.0, 3.0, 9.0]),
+                # quartiles 10 and 20, so the fences are −5 and 35: 35 is on the fence (not an outlier), 36 and −6 are just past
+                ("values on and just past the fences", [-6.0, 0.0, 10.0, 10.0, 10.0, 15.0, 20.0, 20.0, 20.0, 35.0, 36.0])]:
+    b = boxplot_stats(np.array(v), whis=1.5)[0]
+    for tukey in [True, False]:
+        e = {"n": len(v), "q1": b["q1"], "med": b["med"], "q3": b["q3"], "iqr": b["iqr"], "mean": np.mean(v), "sd": np.std(v, ddof=1),
+             "lo": b["whislo"] if tukey else min(v), "hi": b["whishi"] if tukey else max(v), "outliers": sorted(b["fliers"]) if tukey else []}
+        bp.append({"name": f"{name}{', Tukey' if tukey else ', min to max'}", "args": [v, tukey], "expect": clean(e)})
+group("box plot: quartiles, whiskers and outliers", "describe", ["box_plot"], bp, call="boxPlot",
+      note="matplotlib's boxplot_stats (whiskers at the furthest values within 1.5 × IQR of the box); quartiles by linear interpolation")
+
+
+def nice_near(x):
+    e = math.floor(math.log10(x)); f = x / 10 ** e
+    return min([1, 2, 2.5, 5, 10], key=lambda c: abs(math.log(c / f))) * 10 ** e
+
+
+def hist_ref(v, mode, val, start):
+    v = np.array(v); n, lo_, hi_ = len(v), v.min(), v.max()
+    if mode == "count":
+        start = lo_ if start is None else start
+        count, width = val, (hi_ - start) / val
+        edges = np.linspace(start, hi_, count + 1)
+        inner = edges[1:-1]
+        assert all(np.min(np.abs(v - e)) > 1e-6 for e in inner), "a value sits on an inner edge"
+    else:
+        if mode == "width":
+            width = val
+        else:
+            # numpy's 'auto' rule (the smaller of the Sturges and Freedman-Diaconis widths), rounded to a nice number
+            sturges, fd = npbins._hist_bin_sturges(v, None), npbins._hist_bin_fd(v, None)
+            assert abs(sturges - np.ptp(v) / (math.log2(n) + 1)) < 1e-12
+            width = nice_near(min(fd, sturges) if fd > 0 else sturges)
+            if "Sturges" in CASE[0]:
+                assert sturges < fd and nice_near(np.ptp(v) / (math.log2(n) + 2)) != width
+        start = math.floor(lo_ / width + 1e-9) * width if start is None else start
+        count = math.floor((hi_ - start) / width + 1e-9) + 1
+        edges = np.array([start + i * width for i in range(count + 1)])
+    counts, _ = np.histogram(v, bins=edges)
+    cum = np.cumsum(counts)
+    return {"width": width, "start": start,
+            "bins": [{"lo": edges[i], "hi": edges[i + 1], "n": counts[i], "pct": counts[i] / n * 100, "cum": cum[i] / n * 100} for i in range(count)]}
+
+
+hb = []
+CASE = [""]
+for name, v, mode, val, start in [("automatic, normal", data("normal", 80), "auto", None, None),
+                                  ("automatic, skewed", data("skewed", 200), "auto", None, None),
+                                  ("automatic, small", data("normal", 12, mean=5, sd=1), "auto", None, None),
+                                  # two clusters make the IQR wide, so Sturges' rule gives the narrower width
+                                  ("automatic, two clusters (Sturges)", data("normal", 15, mean=10, sd=1) + data("normal", 15, mean=30, sd=1), "auto", None, None),
+                                  ("automatic, 8 values in two groups (Sturges)", [0.0, 1.0, 2.0, 3.0, 13.0, 14.0, 15.0, 16.0], "auto", None, None),
+                                  ("width 5, values on the edges", [float(x) for x in rng.integers(0, 41, 60)], "width", 5, None),
+                                  ("width 2.5 from 0", data("normal", 50, mean=20, sd=4), "width", 2.5, 0),
+                                  ("8 bins", data("normal", 40, mean=100, sd=15), "count", 8, None)]:
+    CASE[0] = name
+    hb.append({"name": name, "args": [v, mode, val, start], "expect": clean(hist_ref(v, mode, val, start))})
+group("histogram: bins and counts", "makeBins", ["histogram"], hb, call="histBins", tol=1e-9, abs_tol=1e-9,
+      note="counts from numpy.histogram on the same edges (each bin includes its lower edge, the last both); "
+           "the automatic width is numpy's 'auto' rule (smaller of Sturges and Freedman-Diaconis) rounded to 1, 2, 2.5 or 5 × 10ⁿ")
+
+
+def pareto_ref(pairs, group_after, cutoff):
+    # case and spacing don't matter when grouping; the first spelling is kept
+    tot, first = {}, {}
+    for name, val in pairs:
+        key = " ".join(name.lower().split())
+        first.setdefault(key, name); tot[key] = tot.get(key, 0) + val
+    items = [(first[k], tot[k]) for k in tot]
+    main = sorted([d for d in items if d[0].lower() != "other"], key=lambda d: (-d[1], d[0]))
+    other = [d for d in items if d[0].lower() == "other"]
+    if group_after > 0 and len(main) > group_after + 1:
+        rest = main[group_after:]
+        other = [(f"Other ({len(rest) + len(other)} categories)", sum(d[1] for d in rest) + sum(d[1] for d in other))]
+        main = main[:group_after]
+    rows = main + other
+    total = sum(d[1] for d in rows)
+    cum = np.cumsum([d[1] for d in rows]) / total * 100
+    vital = next((i + 1 for i, c in enumerate(cum) if c >= cutoff - 1e-9), len(rows))
+    return {"total": total, "vital": vital, "rows": [{"name": d[0], "value": d[1], "pct": d[1] / total * 100, "cum": c} for d, c in zip(rows, cum)]}
+
+
+REASONS = ["Waiting for bed", "Awaiting transport", "Medication delay", "Awaiting tests", "Social care", "Paperwork",
+           "Family availability", "Equipment", "Other"]
+pc = []
+counts = [int(x) for x in rng.integers(1, 120, len(REASONS))]
+pairs = list(zip(REASONS, counts))
+text = "Reason\tCount\n" + "\n".join(f"{a}\t{b}" for a, b in pairs) + "\nwaiting  FOR bed\t7\nParking\t0\nUnknown\tn/a"
+# 8 categories besides Other: grouping after 7 would leave one on its own, so nothing is grouped
+for ga, cut in [(0, 80), (4, 80), (0, 50), (0, 100), (7, 80), (6, 80)]:
+    e = pareto_ref(pairs + [("waiting  FOR bed", 7)], ga, cut)
+    e["skipped"] = 2
+    pc.append({"name": f"counts, group after {ga}, cut-off {cut}%", "args": [text, True, ga, cut], "expect": clean(e)})
+tally = [REASONS[i] for i in rng.choice(len(REASONS) - 1, 150, p=np.array([30, 20, 15, 10, 8, 7, 6, 4]) / 100)]
+pc.append({"name": "a list to count", "args": ["Reason\n" + "\n".join(tally), True, 0, 80],
+           "expect": clean(dict(pareto_ref(list(Counter(tally).items()), 0, 80), skipped=0))})
+pc.append({"name": "thousands separators, and a tie sorted by name", "args": ["Ward D,980\nWard A,\"1,250\"\nWard B,980\nWard C,2,100.5", False, 0, 80],
+           "expect": clean(dict(pareto_ref([("Ward D", 980), ("Ward A", 1250), ("Ward B", 980), ("Ward C", 2100.5)], 0, 80), skipped=0))})
+group("Pareto chart: order, percentages and the vital few", "compute", ["pareto_chart"], pc, call="pareto", tol=1e-12, abs_tol=1e-12,
+      note="written out in Python: categories matched ignoring case and spacing, sorted largest first with Other last, "
+           "the vital few up to the first category that reaches the cut-off")
 
 with open(OUT, "w") as f:
     json.dump({"generated_by": "tests/stats/make_reference.py", "scipy": scipy.__version__, "numpy": np.__version__,

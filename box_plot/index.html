@@ -359,7 +359,8 @@ td.warn{color:var(--warn);font-weight:600}
     let lo = v[0], hi = v[n - 1], outliers = [];
     if (tukey) {
       const lf = q1 - 1.5 * iqr, uf = q3 + 1.5 * iqr;
-      lo = v.find(x => x >= lf); hi = [...v].reverse().find(x => x <= uf);
+      // whiskers reach the furthest values inside the fences, but never back inside the box
+      lo = Math.min(q1, v.find(x => x >= lf)); hi = Math.max(q3, [...v].reverse().find(x => x <= uf));
       outliers = v.filter(x => x < lf || x > uf);
     }
     return { name: g.name, values: g.values, sorted: v, n, min: v[0], max: v[n - 1], q1, med, q3, iqr, mean, sd, lo, hi, outliers };
