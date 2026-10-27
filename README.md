@@ -241,12 +241,11 @@ figures.
   distribution (accurate to 1.2 × 10⁻⁷), and the power of a t-test, which uses
   a normal approximation to the noncentral t distribution and is within 0.01
   of the exact power.
-- A known difference waiting on a decision is marked `todo`: it runs and
-  reports but doesn't stop a deploy. There is one: the run chart's table of
-  the expected number of runs has upper limits one below the published
-  Provost and Murray table (for example 8 rather than 9 for 10 useful
-  observations), so a chart with exactly the published maximum is called
-  "too many runs".
+- A known difference waiting on a decision can be marked `todo`: it runs
+  and reports but doesn't stop a deploy. There are none at the moment.
+- The run chart's table of the expected number of runs is checked row by row
+  against Table 1 of Perla, Provost and Murray (2011), the Provost and Murray
+  table adapted from Swed and Eisenhart.
 
 Not covered yet: the hypothesis test selector's individual tests (two-sample
 and paired t, Mann-Whitney, Kruskal-Wallis and the rest are written inside

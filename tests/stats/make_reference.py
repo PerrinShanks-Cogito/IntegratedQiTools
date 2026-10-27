@@ -400,12 +400,14 @@ assert R.run_chart(RUN["astronomical point"][0])["astro"] == [9]
 group("run chart: median, shifts, trends, runs and astronomical points", "analyse", ["run_chart"], runc, call="runChart",
       note="reference: the IHI run chart rules (Perla, Provost and Murray 2011) written independently in Python")
 
-# The runs table: the rows confirmed from published copies of the Provost and
-# Murray table (IHI, HQIP, ELFT). N = useful observations: (fewest, most) runs.
-PUBLISHED_RUNS = {10: (3, 9), 11: (3, 10), 12: (3, 11), 20: (6, 16), 30: (11, 21), 40: (15, 27)}
-group("run chart: runs table against the published table", "RUNS_TABLE", ["run_chart"],
+# The runs table: Table 1 of Perla, Provost and Murray (2011), "Checking for too
+# many or too few runs on a run chart", adapted from Swed and Eisenhart. N =
+# useful observations (points not on the median): (fewest, most) runs that
+# aren't a signal.
+PUBLISHED_RUNS = {10: (3, 9), 11: (3, 10), 12: (3, 11), 13: (4, 11), 14: (4, 12), 15: (5, 12), 16: (5, 13), 17: (5, 13), 18: (6, 14), 19: (6, 15), 20: (6, 16), 21: (7, 16), 22: (7, 17), 23: (7, 17), 24: (8, 18), 25: (8, 18), 26: (9, 19), 27: (10, 19), 28: (10, 20), 29: (10, 20), 30: (11, 21), 31: (11, 22), 32: (11, 23), 33: (12, 23), 34: (12, 24), 35: (12, 24), 36: (13, 25), 37: (13, 25), 38: (14, 26), 39: (14, 26), 40: (15, 27), 41: (15, 27), 42: (16, 28), 43: (16, 28), 44: (17, 29), 45: (17, 30), 46: (17, 31), 47: (18, 31), 48: (18, 32), 49: (19, 32), 50: (19, 33), 51: (20, 33), 52: (20, 34), 53: (21, 34), 54: (21, 35), 55: (22, 35), 56: (22, 35), 57: (23, 36), 58: (23, 37), 59: (24, 38), 60: (24, 38)}
+group("run chart: runs table (Perla, Provost and Murray 2011, table 1)", "RUNS_TABLE", ["run_chart"],
       [{"name": f"{n} useful observations", "args": [n], "expect": clean(list(v))} for n, v in PUBLISHED_RUNS.items()],
-      call="runsTable", todo="the tool's upper limits are 1 below the published Provost and Murray table; waiting for a decision on which table to use")
+      call="runsTable")
 
 fc = []
 fe = rng2.integers(80, 2000, 14)

@@ -15797,7 +15797,7 @@
 ]
 },
 {
-"id":"run chart: runs table against the published table",
+"id":"run chart: runs table (Perla, Provost and Murray 2011, table 1)",
 "fn":"RUNS_TABLE",
 "tools":[
 "run_chart"
@@ -15805,7 +15805,6 @@
 "call":"runsTable",
 "tol":1e-09,
 "abs":1e-12,
-"todo":"the tool's upper limits are 1 below the published Provost and Murray table; waiting for a decision on which table to use",
 "cases":[
 {
 "name":"10 useful observations",
@@ -15838,6 +15837,76 @@
 ]
 },
 {
+"name":"13 useful observations",
+"args":[
+13
+],
+"expect":[
+4.0,
+11.0
+]
+},
+{
+"name":"14 useful observations",
+"args":[
+14
+],
+"expect":[
+4.0,
+12.0
+]
+},
+{
+"name":"15 useful observations",
+"args":[
+15
+],
+"expect":[
+5.0,
+12.0
+]
+},
+{
+"name":"16 useful observations",
+"args":[
+16
+],
+"expect":[
+5.0,
+13.0
+]
+},
+{
+"name":"17 useful observations",
+"args":[
+17
+],
+"expect":[
+5.0,
+13.0
+]
+},
+{
+"name":"18 useful observations",
+"args":[
+18
+],
+"expect":[
+6.0,
+14.0
+]
+},
+{
+"name":"19 useful observations",
+"args":[
+19
+],
+"expect":[
+6.0,
+15.0
+]
+},
+{
 "name":"20 useful observations",
 "args":[
 20
@@ -15845,6 +15914,96 @@
 "expect":[
 6.0,
 16.0
+]
+},
+{
+"name":"21 useful observations",
+"args":[
+21
+],
+"expect":[
+7.0,
+16.0
+]
+},
+{
+"name":"22 useful observations",
+"args":[
+22
+],
+"expect":[
+7.0,
+17.0
+]
+},
+{
+"name":"23 useful observations",
+"args":[
+23
+],
+"expect":[
+7.0,
+17.0
+]
+},
+{
+"name":"24 useful observations",
+"args":[
+24
+],
+"expect":[
+8.0,
+18.0
+]
+},
+{
+"name":"25 useful observations",
+"args":[
+25
+],
+"expect":[
+8.0,
+18.0
+]
+},
+{
+"name":"26 useful observations",
+"args":[
+26
+],
+"expect":[
+9.0,
+19.0
+]
+},
+{
+"name":"27 useful observations",
+"args":[
+27
+],
+"expect":[
+10.0,
+19.0
+]
+},
+{
+"name":"28 useful observations",
+"args":[
+28
+],
+"expect":[
+10.0,
+20.0
+]
+},
+{
+"name":"29 useful observations",
+"args":[
+29
+],
+"expect":[
+10.0,
+20.0
 ]
 },
 {
@@ -15858,6 +16017,96 @@
 ]
 },
 {
+"name":"31 useful observations",
+"args":[
+31
+],
+"expect":[
+11.0,
+22.0
+]
+},
+{
+"name":"32 useful observations",
+"args":[
+32
+],
+"expect":[
+11.0,
+23.0
+]
+},
+{
+"name":"33 useful observations",
+"args":[
+33
+],
+"expect":[
+12.0,
+23.0
+]
+},
+{
+"name":"34 useful observations",
+"args":[
+34
+],
+"expect":[
+12.0,
+24.0
+]
+},
+{
+"name":"35 useful observations",
+"args":[
+35
+],
+"expect":[
+12.0,
+24.0
+]
+},
+{
+"name":"36 useful observations",
+"args":[
+36
+],
+"expect":[
+13.0,
+25.0
+]
+},
+{
+"name":"37 useful observations",
+"args":[
+37
+],
+"expect":[
+13.0,
+25.0
+]
+},
+{
+"name":"38 useful observations",
+"args":[
+38
+],
+"expect":[
+14.0,
+26.0
+]
+},
+{
+"name":"39 useful observations",
+"args":[
+39
+],
+"expect":[
+14.0,
+26.0
+]
+},
+{
 "name":"40 useful observations",
 "args":[
 40
@@ -15865,6 +16114,206 @@
 "expect":[
 15.0,
 27.0
+]
+},
+{
+"name":"41 useful observations",
+"args":[
+41
+],
+"expect":[
+15.0,
+27.0
+]
+},
+{
+"name":"42 useful observations",
+"args":[
+42
+],
+"expect":[
+16.0,
+28.0
+]
+},
+{
+"name":"43 useful observations",
+"args":[
+43
+],
+"expect":[
+16.0,
+28.0
+]
+},
+{
+"name":"44 useful observations",
+"args":[
+44
+],
+"expect":[
+17.0,
+29.0
+]
+},
+{
+"name":"45 useful observations",
+"args":[
+45
+],
+"expect":[
+17.0,
+30.0
+]
+},
+{
+"name":"46 useful observations",
+"args":[
+46
+],
+"expect":[
+17.0,
+31.0
+]
+},
+{
+"name":"47 useful observations",
+"args":[
+47
+],
+"expect":[
+18.0,
+31.0
+]
+},
+{
+"name":"48 useful observations",
+"args":[
+48
+],
+"expect":[
+18.0,
+32.0
+]
+},
+{
+"name":"49 useful observations",
+"args":[
+49
+],
+"expect":[
+19.0,
+32.0
+]
+},
+{
+"name":"50 useful observations",
+"args":[
+50
+],
+"expect":[
+19.0,
+33.0
+]
+},
+{
+"name":"51 useful observations",
+"args":[
+51
+],
+"expect":[
+20.0,
+33.0
+]
+},
+{
+"name":"52 useful observations",
+"args":[
+52
+],
+"expect":[
+20.0,
+34.0
+]
+},
+{
+"name":"53 useful observations",
+"args":[
+53
+],
+"expect":[
+21.0,
+34.0
+]
+},
+{
+"name":"54 useful observations",
+"args":[
+54
+],
+"expect":[
+21.0,
+35.0
+]
+},
+{
+"name":"55 useful observations",
+"args":[
+55
+],
+"expect":[
+22.0,
+35.0
+]
+},
+{
+"name":"56 useful observations",
+"args":[
+56
+],
+"expect":[
+22.0,
+35.0
+]
+},
+{
+"name":"57 useful observations",
+"args":[
+57
+],
+"expect":[
+23.0,
+36.0
+]
+},
+{
+"name":"58 useful observations",
+"args":[
+58
+],
+"expect":[
+23.0,
+37.0
+]
+},
+{
+"name":"59 useful observations",
+"args":[
+59
+],
+"expect":[
+24.0,
+38.0
+]
+},
+{
+"name":"60 useful observations",
+"args":[
+60
+],
+"expect":[
+24.0,
+38.0
 ]
 }
 ]
