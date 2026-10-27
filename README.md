@@ -47,6 +47,7 @@ Improvement's SPC P chart tool (version 3.0)):
 | Demand and capacity model (hidden) | `/demand_capacity/` |
 | Admin demand and capacity model (hidden) | `/admin_demand_capacity/` |
 | A3 report | `/a3_report/` |
+| Programme guide (which programme document next, with worked examples) | `/programme_guide/` |
 
 ## How it fits together
 
@@ -122,6 +123,34 @@ Improvement's SPC P chart tool (version 3.0)):
   still open.
 - `staticwebapp.config.json` – Azure Static Web Apps routing (custom 404,
   trailing slashes, security headers).
+
+## Programme guide
+
+`/programme_guide/` is a decision tree that guides people through the five
+stages of a programme (initiate, mobilise, plan, implement, close) to the CITI
+programme template they need next, from the high level scoping document to
+the RAID log, highlight and leadership reports and the closure report. Each
+document has a filled-in worked example (a made-up "Discharge Flow
+Programme", followed from scoping to closure) to view in the page or
+download, and the blank template.
+
+- `programme_guide/templates/` – the blank CITI templates (version October
+  2022), renamed `<stage>-<letter>-<name>`. Pictures over 1600px were
+  shrunk to keep the files small, and the hidden archive sheet (real names
+  from an earlier programme) was removed from the action and decision log.
+- `_programme_guide/build.py` – the single source for the guide: the stages,
+  the document catalogue (purpose, when, owner, what each draws on, tips) and
+  the decision tree. `example.py` holds the worked example's people, aim and
+  measures; `fill_slides.py`, `fill_sheets.py` and `fill_pid.py` fill each
+  template in, keeping its formatting (`officekit.py` edits the files).
+  Run `python3 _programme_guide/build.py` from the repository root (needs
+  python-pptx, python-docx, lxml, LibreOffice and pdftoppm; set `SOFFICE` if
+  LibreOffice isn't `soffice`). It writes `programme_guide/examples/`,
+  slide and page pictures in `programme_guide/previews/`, and
+  `_data/programme_guide.json`, which the page reads (spreadsheet examples
+  are shown as tables from it). Commit what it writes.
+- `?doc=raid` opens a document and `?stage=plan` a stage, for linking from
+  elsewhere.
 
 ## Case studies
 
