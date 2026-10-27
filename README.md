@@ -8,7 +8,10 @@ Tools (copied from [ImprovementTools](https://github.com/PerrinShanks-Cogito/Imp
 fishbone diagram, which was built here following the IHI QI Essentials Toolkit
 instructions for a cause and effect diagram, and the demand and capacity model,
 which was built here from the NHS Improvement and NHS England demand and
-capacity core model (version 4.2) and its user guidance, and the multiple
+capacity core model (version 4.2) and its user guidance, and the admin demand
+and capacity model, which was built here from the same core model and the
+QSIR guide *Demand and capacity – a comprehensive guide*, measuring demand,
+capacity and backlog in staff time by role, and the multiple
 regression tool, tree plot (treemap), box and whisker plot, ANOVA,
 chi-squared test and Weibull reliability analysis, which were all built here, and the design of experiments, attribute agreement analysis and Gauge R&R tools, which were built here from the DOE, Attribute Agreement Analysis and Gauge R&R sheets of the AAS Data Analysis Toolkit, and the power and sample size tool, which was built here from the Power and Sample Size section of the AAS Advanced Analysis Toolkit, and the 2x2 matrix (ease and impact, stakeholder analysis and other 2x2 grids), which was built here, and the A3 report, which was built here from the CITI A3 report template, and the hypothesis test selector, which was built here from the [hypothesis test selection road map](https://perrinshanks.com/hypothesis-test-selection-road-map/) and runs the chosen test on pasted data, and the qualitative survey analysis tool, which was built here from the Making Data Count step 9 session on qualitative data, and the funnel plot, which was
 built here from the NHS Improvement funnel plot tool (version 2.0), and the T
@@ -42,6 +45,7 @@ Improvement's SPC P chart tool (version 3.0)):
 | Hypothesis test selector | `/hypothesis_test_selector/` |
 | Power and sample size | `/power_sample_size/` |
 | Demand and capacity model | `/demand_capacity/` |
+| Admin demand and capacity model | `/admin_demand_capacity/` |
 | A3 report | `/a3_report/` |
 
 ## How it fits together
