@@ -126,7 +126,10 @@ Improvement's SPC P chart tool (version 3.0)):
   load only the site's own files, Google Fonts and the Application Insights
   script, and send data only to the site and Application Insights, so nothing
   a user pastes can be sent anywhere else. Inline scripts and styles are
-  allowed because every tool is a single page with its own inline script. If
+  allowed because every tool is a single page with its own inline script.
+  WebAssembly is allowed (`'wasm-unsafe-eval'`, which doesn't allow `eval`)
+  because the Trust's Imprivata single sign-on extension runs WebAssembly in
+  the page and fails without it. If
   a tool needs a new outside script, font, image or API, add its origin to
   the matching directive, or the browser will block it.
 
