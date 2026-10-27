@@ -9,41 +9,45 @@
  },
  "stages": [
   {
-   "id": "initiate",
-   "name": "Initiate",
-   "question": "Is this worth doing, and what exactly is it?",
-   "text": "Describe the problem, the scope and the benefits on a page, and get a sponsor (SRO) to agree. For bigger work, write a project initiation document or a support plan for CITI, and estimate the people you need.",
+   "id": "find",
+   "letter": "F",
+   "name": "Find the opportunity",
+   "question": "What could be better, and is it worth doing?",
+   "text": "Spot the problem or opportunity, describe it on a page with its scope and the benefits you expect, and get a sponsor (SRO) to agree. If you need CITI's help, agree a support plan with them.",
    "tools": [
-    "process_map",
-    "fishbone_diagram",
     "pareto_chart",
     "run_chart"
    ]
   },
   {
-   "id": "mobilise",
-   "name": "Mobilise",
-   "question": "Who is doing what, and how will we run it?",
-   "text": "Bring the team together, agree roles, workstream leads and the meetings that steer the work, and agree the benefits you will measure, with a baseline for each.",
+   "id": "observe",
+   "letter": "O",
+   "name": "Observe the current state",
+   "question": "How does it work now, and how well?",
+   "text": "See the process as it really works, find the causes of the problem and measure where you are now. Set a baseline for each benefit you want, and map who is affected and who has a say.",
    "tools": [
-    "driver_diagram",
+    "process_map",
+    "fishbone_diagram",
+    "pareto_chart",
     "run_chart",
     "spc_tool"
    ]
   },
   {
-   "id": "plan",
-   "name": "Plan",
-   "question": "What happens when, and who needs to know?",
-   "text": "Break the work into activities with owners and dates, find the critical path, and plan how you will involve and inform your stakeholders.",
+   "id": "create",
+   "letter": "C",
+   "name": "Create the plan",
+   "question": "What will we change, who will do it, and when?",
+   "text": "Decide on the changes, set up the team, its roles and governance, and plan the activities, milestones and people's time. For larger work, write a project initiation document.",
    "tools": [
     "driver_diagram",
     "matrix_2x2"
    ]
   },
   {
-   "id": "implement",
-   "name": "Implement",
+   "id": "undertake",
+   "letter": "U",
+   "name": "Undertake the change",
    "question": "Are we on track, and what is getting in the way?",
    "text": "Test and spread the changes. Keep the RAID log and the action and decision log up to date, and report progress every week to the programme huddle and every fortnight to the leadership meeting.",
    "tools": [
@@ -53,10 +57,11 @@
    ]
   },
   {
-   "id": "close",
-   "name": "Close",
-   "question": "Did it work, and who looks after it now?",
-   "text": "Show the benefits against their baselines, hand over what is left to named owners, pass on open risks and issues, and capture what you learnt.",
+   "id": "sustain",
+   "letter": "S",
+   "name": "Sustain the benefit",
+   "question": "Did it work, will it last, and who looks after it now?",
+   "text": "Show the benefits against their baselines and check they are holding. Hand over to named owners with a plan to keep the gains, pass on open risks and issues, and capture what you learnt.",
    "tools": [
     "spc_tool",
     "a3_report"
@@ -67,7 +72,7 @@
   {
    "id": "scope",
    "code": "D",
-   "stage": "initiate",
+   "stage": "find",
    "name": "High level scoping document",
    "kind": "slides",
    "template": "initiate-d-high-level-scope.potx",
@@ -100,7 +105,7 @@
   {
    "id": "support",
    "code": "E2",
-   "stage": "initiate",
+   "stage": "find",
    "name": "Support plan",
    "kind": "slides",
    "template": "initiate-e2-support-plan.potx",
@@ -142,12 +147,12 @@
   {
    "id": "pid",
    "code": "E1",
-   "stage": "initiate",
+   "stage": "create",
    "name": "Project initiation document (PID)",
    "kind": "doc",
    "template": "initiate-e1-project-initiation-document.dotx",
    "purpose": "The full case for the project: case for change, SMART objectives, approach, resourcing, timescales, leadership, governance, risks, dependencies, stakeholders, return on investment and KPIs.",
-   "when": "For larger projects that need formal approval or a business case. Write it after the scoping document is agreed.",
+   "when": "When you create the plan for a larger project, especially one that needs formal approval or a business case.",
    "owner": "Project or programme manager",
    "covers": [
     "Case for change",
@@ -160,7 +165,9 @@
     "KPIs and other benefits"
    ],
    "feeds": [
-    "scope"
+    "scope",
+    "benefits",
+    "stakeholders"
    ],
    "tips": [
     "Use facts and figures for the case for change: your baseline from a run chart is ideal.",
@@ -181,7 +188,7 @@
   {
    "id": "resources",
    "code": "J",
-   "stage": "initiate",
+   "stage": "create",
    "name": "Resource planner and tracker",
    "kind": "sheet",
    "template": "initiate-j-resource-planner.xlsx",
@@ -416,12 +423,12 @@
   {
    "id": "mobilisation",
    "code": "",
-   "stage": "mobilise",
+   "stage": "create",
    "name": "Programme mobilisation document",
    "kind": "slides",
    "template": "mobilise-programme-mobilisation.potx",
    "purpose": "An intro manual for each team member and a team charter: what we want to achieve, how we work together and how we support each other.",
-   "when": "At a workshop at the start of the programme, with the whole team.",
+   "when": "At a workshop when the team first comes together, as you create the plan.",
    "owner": "Programme manager, with the team",
    "covers": [
     "Intro manual (one per person)",
@@ -448,12 +455,12 @@
   {
    "id": "roles",
    "code": "N",
-   "stage": "mobilise",
+   "stage": "create",
    "name": "Key programme roles",
    "kind": "slides",
    "template": "mobilise-n-key-programme-roles.potx",
    "purpose": "Who fills each standard programme role (SRO, accountable executive, programme director and manager, leads, PMO, assurance) and what each is responsible for.",
-   "when": "During mobilisation, alongside the organisation chart.",
+   "when": "When you create the plan, alongside the organisation chart.",
    "owner": "Programme director",
    "covers": [
     "SRO",
@@ -480,12 +487,12 @@
   {
    "id": "orgchart",
    "code": "O",
-   "stage": "mobilise",
+   "stage": "create",
    "name": "Organisation chart",
    "kind": "slides",
    "template": "mobilise-o-organisation-chart.potx",
    "purpose": "The programme's structure on a page: the executive team, the programme leadership, and the leads and improvement support for each workstream.",
-   "when": "During mobilisation, once workstreams and leads are agreed.",
+   "when": "When you create the plan, once workstreams and leads are agreed.",
    "owner": "Programme manager",
    "covers": [
     "Programme executive team",
@@ -507,12 +514,12 @@
   {
    "id": "governance",
    "code": "P",
-   "stage": "mobilise",
+   "stage": "create",
    "name": "Governance",
    "kind": "slides",
    "template": "mobilise-p-governance.potx",
    "purpose": "How the programme is steered: a chart of the forums it reports to, and a table of each forum's purpose, responsibilities, inputs, outputs and attendees.",
-   "when": "During mobilisation, before the first leadership meeting.",
+   "when": "When you create the plan, before the first leadership meeting.",
    "owner": "Programme director, with the SRO",
    "covers": [
     "Governance chart",
@@ -537,12 +544,12 @@
   {
    "id": "benefits",
    "code": "K",
-   "stage": "mobilise",
+   "stage": "observe",
    "name": "Benefits register",
    "kind": "sheet",
    "template": "mobilise-k-benefits-register.xlsx",
    "purpose": "Each benefit (and dis-benefit) with its measure, baseline, target, dates, data source and owners.",
-   "when": "Agree it during mobilisation and review it monthly. Use it again at closure.",
+   "when": "Set the baselines while you observe the current state, review it monthly, and use it again to show the benefit is sustained.",
    "owner": "Programme manager; each benefit has its own owner",
    "covers": [
     "Objective and beneficiary",
@@ -553,7 +560,7 @@
     "Cash releasing and £ value"
    ],
    "feeds": [
-    "pid",
+    "scope",
     "support"
    ],
    "tips": [
@@ -677,12 +684,12 @@
   {
    "id": "plan",
    "code": "B",
-   "stage": "plan",
+   "stage": "create",
    "name": "Project plan (detailed)",
    "kind": "sheet",
    "template": "plan-b-project-plan-detailed.xlsx",
    "purpose": "Every workstream broken into activities, sub-activities, milestones and meetings, with owners, dates, status, % complete and the critical path, drawn as a Gantt chart.",
-   "when": "Before delivery starts; update it every week.",
+   "when": "When you create the plan, before the changes start; update it every week.",
    "owner": "Project manager, with workstream leads",
    "covers": [
     "Workstreams, activities and milestones",
@@ -1043,12 +1050,12 @@
   {
    "id": "stakeholders",
    "code": "I",
-   "stage": "plan",
+   "stage": "observe",
    "name": "Stakeholder map and communication plan",
    "kind": "slides",
    "template": "plan-i-stakeholder-map-comms-plan.potx",
    "purpose": "Stakeholders placed by influence and interest (champions, supporters, blockers, sleepers), and a plan of how and how often you will communicate with each.",
-   "when": "During planning; review it when a stakeholder's interest or influence changes.",
+   "when": "While you observe the current state, so you know who is affected; review it when a stakeholder's interest or influence changes.",
    "owner": "Programme manager, with the comms lead",
    "covers": [
     "Stakeholder map",
@@ -1058,7 +1065,7 @@
    ],
    "feeds": [
     "scope",
-    "pid"
+    "support"
    ],
    "tips": [
     "The 2x2 matrix tool has a stakeholder grid you can score with your team, then copy into this map."
@@ -1072,7 +1079,7 @@
   {
    "id": "onepage",
    "code": "A",
-   "stage": "implement",
+   "stage": "create",
    "name": "Project plan on a page",
    "kind": "slides",
    "template": "implement-a-plan-on-a-page.potx",
@@ -1099,12 +1106,12 @@
   {
    "id": "raid",
    "code": "F",
-   "stage": "implement",
+   "stage": "undertake",
    "name": "RAID log",
    "kind": "sheet",
    "template": "implement-f-raid-log.xlsx",
    "purpose": "The programme's Risks, Assumptions, Issues and Dependencies, each with an owner, a score or RAG, actions and status.",
-   "when": "Start it in mobilisation; review it at every weekly huddle.",
+   "when": "Start it when you create the plan; review it at every weekly huddle.",
    "owner": "Programme manager; each item has an owner",
    "covers": [
     "Risks: likelihood x impact, before and after mitigation",
@@ -1468,7 +1475,7 @@
   {
    "id": "actions",
    "code": "M",
-   "stage": "implement",
+   "stage": "undertake",
    "name": "Action and decision log",
    "kind": "sheet",
    "template": "implement-m-action-decision-log.xlsx",
@@ -1728,7 +1735,7 @@
   {
    "id": "highlight",
    "code": "G",
-   "stage": "implement",
+   "stage": "undertake",
    "name": "Highlight report",
    "kind": "slides",
    "template": "implement-g-highlight-report.potx",
@@ -1764,7 +1771,7 @@
   {
    "id": "leadership",
    "code": "L",
-   "stage": "implement",
+   "stage": "undertake",
    "name": "Leadership report",
    "kind": "slides",
    "template": "implement-l-leadership-report.potx",
@@ -1797,7 +1804,7 @@
   {
    "id": "closure",
    "code": "",
-   "stage": "close",
+   "stage": "sustain",
    "name": "Programme closure report",
    "kind": "slides",
    "template": "close-programme-closure-report.potx",
@@ -1869,7 +1876,7 @@
     ]
    },
    "agreed": {
-    "q": "Has a sponsor (SRO) agreed the work and its scope?",
+    "q": "Has a sponsor (SRO) agreed the opportunity and its scope?",
     "options": [
      {
       "a": "No, it's still an idea or a problem",
@@ -1877,7 +1884,7 @@
      },
      {
       "a": "Yes",
-      "next": "teamready"
+      "next": "observed"
      }
     ]
    },
@@ -1909,6 +1916,20 @@
      }
     ]
    },
+   "observed": {
+    "q": "Do you understand the current state, with a baseline for each benefit you want?",
+    "hint": "For example, a process map, the main causes of the problem and a run chart of where you are now.",
+    "options": [
+     {
+      "a": "No, not yet",
+      "result": "observe"
+     },
+     {
+      "a": "Yes",
+      "next": "teamready"
+     }
+    ]
+   },
    "teamready": {
     "q": "Is the team set up, with roles, workstream leads and meetings agreed?",
     "options": [
@@ -1918,25 +1939,12 @@
      },
      {
       "a": "Yes",
-      "next": "benefits"
-     }
-    ]
-   },
-   "benefits": {
-    "q": "Have you agreed the benefits you will measure, each with a baseline?",
-    "options": [
-     {
-      "a": "No, not yet",
-      "result": "benefits"
-     },
-     {
-      "a": "Yes",
       "next": "planned"
      }
     ]
    },
    "planned": {
-    "q": "Do you have a plan with owners and dates, and a plan for communicating with stakeholders?",
+    "q": "Do you have a plan with activities, owners and dates?",
     "options": [
      {
       "a": "No, not yet",
@@ -2060,94 +2068,102 @@
   },
   "results": {
    "scope_small": {
-    "stage": "initiate",
+    "stage": "find",
     "title": "Write a high level scoping document",
     "docs": [
      "scope"
     ],
-    "text": "Agree the problem, scope and benefits on one page with your sponsor. For a project in your own service this may be all the paperwork you need to start: then run your tests of change with Plan, Do, Study, Act cycles and keep an action log.",
-    "next": "Once agreed, set a baseline with a run chart and keep track of actions and decisions."
+    "text": "Agree the problem, scope and benefits on one page with your sponsor. For a project in your own service this may be all the paperwork you need: then observe the current state, run your tests of change with Plan, Do, Study, Act cycles and keep an action log.",
+    "next": "Next, observe the current state: map the process and set a baseline with a run chart."
    },
    "support": {
-    "stage": "initiate",
-    "title": "Scope the work and agree a support plan with CITI",
+    "stage": "find",
+    "title": "Scope the opportunity and agree a support plan with CITI",
     "docs": [
      "scope",
-     "support",
-     "resources"
+     "support"
     ],
-    "text": "Start with the one-page scope. Then agree a support plan with CITI setting out the scope, deliverables, metrics, approach and resources, and estimate the days each person will give in the resource planner.",
-    "next": "When the support plan is approved, mobilise the team."
+    "text": "Start with the one-page scope. Then agree a support plan with CITI setting out the scope, deliverables, metrics, approach and resources.",
+    "next": "When the support plan is approved, observe the current state."
    },
    "pid": {
-    "stage": "initiate",
-    "title": "Scope the work and write a PID",
+    "stage": "find",
+    "title": "Scope the opportunity, then write a PID",
     "docs": [
      "scope",
-     "pid",
-     "resources"
+     "pid"
     ],
-    "text": "Start with the one-page scope. Then write a project initiation document with the case for change, SMART objectives, resources, milestones, governance and return on investment, and estimate people's time in the resource planner.",
-    "next": "When the PID is approved, mobilise the team."
+    "text": "Start with the one-page scope and get your sponsor to agree it. Larger work that needs formal approval or a business case then needs a project initiation document, with the case for change, SMART objectives, resources, milestones, governance and return on investment. You'll finish it as you create the plan.",
+    "next": "Once the scope is agreed, observe the current state so the PID's case for change has a baseline."
+   },
+   "observe": {
+    "stage": "observe",
+    "title": "Observe the current state and set baselines",
+    "docs": [
+     "benefits",
+     "stakeholders"
+    ],
+    "text": "Map the process as it really works and find the causes of the problem with the charting tools below. Record each benefit with its measure, baseline, target and owner in the benefits register, including a balancing measure, and plot each baseline over time to check it is stable. Map who is affected and who has a say.",
+    "next": "Next, create the plan."
    },
    "mobilise": {
-    "stage": "mobilise",
-    "title": "Mobilise the team",
+    "stage": "create",
+    "title": "Set up the team",
     "docs": [
      "mobilisation",
      "roles",
      "orgchart",
      "governance"
     ],
-    "text": "Hold a mobilisation workshop to write the team charter and intro manuals. Agree who fills each programme role, draw the organisation chart, and agree the governance: which meetings steer the work and what each one receives.",
-    "next": "Next, agree the benefits and their baselines."
+    "text": "Hold a workshop to write the team charter and intro manuals. Agree who fills each programme role, draw the organisation chart, and agree the governance: which meetings steer the work and what each one receives.",
+    "next": "Then plan the activities, owners and dates."
    },
    "benefits": {
-    "stage": "mobilise",
+    "stage": "observe",
     "title": "Agree the benefits and their baselines",
     "docs": [
      "benefits"
     ],
     "text": "List each benefit with its measure, baseline, target, data source and owner in the benefits register. Include a balancing measure so you would notice harm. Plot the baseline over time to check it is stable before you change anything.",
-    "next": "Next, plan the work and your communications."
+    "next": "Then create the plan."
    },
    "plan": {
-    "stage": "plan",
-    "title": "Plan the work",
+    "stage": "create",
+    "title": "Create the plan",
     "docs": [
      "plan",
      "onepage",
-     "stakeholders"
+     "resources",
+     "pid"
     ],
-    "text": "Break each workstream into activities with owners and dates in the detailed plan, and mark the critical path. Summarise it on the plan on a page, and map your stakeholders and how you will keep each one informed.",
-    "next": "Then start delivering, with a RAID log and regular reports."
+    "text": "Break each workstream into activities with owners and dates in the detailed plan, and mark the critical path. Summarise it on the plan on a page and plan each person's time. For larger work, bring it together in a project initiation document.",
+    "next": "Then undertake the change, with a RAID log and regular reports."
    },
    "implement": {
-    "stage": "implement",
-    "title": "Deliver, track and report",
+    "stage": "undertake",
+    "title": "Undertake the change: deliver, track and report",
     "docs": [
      "raid",
      "actions",
      "highlight",
-     "leadership",
-     "onepage"
+     "leadership"
     ],
     "text": "Review the RAID log and the action and decision log at every huddle. Each workstream writes a weekly highlight report; the programme manager pulls them together into the leadership report for the leadership meeting.",
-    "next": "Keep the plan and benefits register up to date. When the work is ending, write the closure report."
+    "next": "Keep the plan and benefits register up to date. When the work is ending, sustain the benefit."
    },
    "close": {
-    "stage": "close",
-    "title": "Close the programme",
+    "stage": "sustain",
+    "title": "Sustain the benefit and close the programme",
     "docs": [
      "closure",
      "benefits",
      "raid"
     ],
-    "text": "Write the closure report: what was achieved, the benefits against their baselines, who owns each output and open risk from now on, stakeholder feedback and lessons learnt. Update the benefits register and the RAID log first, as the report draws on both.",
-    "next": "Share the case study, and check the benefits are sustained over the following months."
+    "text": "Write the closure report: what was achieved, the benefits against their baselines, the sustainability plan, who owns each output and open risk from now on, stakeholder feedback and lessons learnt. Update the benefits register and the RAID log first, as the report draws on both.",
+    "next": "Keep plotting the measures on SPC charts for the following months to check the benefit is sustained, and share the case study."
    },
    "risk": {
-    "stage": "implement",
+    "stage": "undertake",
     "title": "Log a risk in the RAID log",
     "docs": [
      "raid"
@@ -2157,7 +2173,7 @@
     "next": "If the risk happens, close it and open an issue."
    },
    "issue": {
-    "stage": "implement",
+    "stage": "undertake",
     "title": "Log an issue in the RAID log",
     "docs": [
      "raid"
@@ -2167,7 +2183,7 @@
     "next": "Red issues go into the highlight and leadership reports."
    },
    "assumption": {
-    "stage": "implement",
+    "stage": "undertake",
     "title": "Log an assumption in the RAID log",
     "docs": [
      "raid"
@@ -2177,7 +2193,7 @@
     "next": "Check assumptions at each review. One that proves wrong becomes an issue."
    },
    "dependency": {
-    "stage": "implement",
+    "stage": "undertake",
     "title": "Log a dependency in the RAID log",
     "docs": [
      "raid"
@@ -2187,7 +2203,7 @@
     "next": "Agree the date with the team that delivers it, and review it at each huddle."
    },
    "action": {
-    "stage": "implement",
+    "stage": "undertake",
     "title": "Add it to the action log",
     "docs": [
      "actions"
@@ -2197,7 +2213,7 @@
     "next": "Review open actions at the start of each meeting."
    },
    "decision": {
-    "stage": "implement",
+    "stage": "undertake",
     "title": "Add it to the decisions log",
     "docs": [
      "actions"
@@ -2207,7 +2223,7 @@
     "next": "Key decisions go into the highlight report."
    },
    "highlight": {
-    "stage": "implement",
+    "stage": "undertake",
     "title": "Write a highlight report",
     "docs": [
      "highlight"
@@ -2216,7 +2232,7 @@
     "next": "Highlight reports feed the leadership report."
    },
    "leadership": {
-    "stage": "implement",
+    "stage": "undertake",
     "title": "Write a leadership report",
     "docs": [
      "leadership",
@@ -2226,7 +2242,7 @@
     "next": "Explain every red and amber, and say what you need from the leaders."
    },
    "onepage": {
-    "stage": "implement",
+    "stage": "create",
     "title": "Draw the plan on a page",
     "docs": [
      "onepage",
@@ -2236,16 +2252,16 @@
     "next": "Update it when the detailed plan changes a milestone."
    },
    "resources": {
-    "stage": "initiate",
+    "stage": "create",
     "title": "Plan people's time",
     "docs": [
      "resources"
     ],
     "text": "Enter each person, their role and the days you plan they will give each week. Fill in the actual days as you go to see the burn rate and days remaining.",
-    "next": "Agree the planned days in the PID or support plan."
+    "next": "Agree the planned days in the support plan or PID."
    },
    "stakeholders": {
-    "stage": "plan",
+    "stage": "observe",
     "title": "Map your stakeholders and plan communications",
     "docs": [
      "stakeholders"
@@ -2254,7 +2270,7 @@
     "next": "Champions need to be involved in decisions; blockers need to be kept satisfied."
    },
    "charter": {
-    "stage": "mobilise",
+    "stage": "create",
     "title": "Write a team charter",
     "docs": [
      "mobilisation"
@@ -2263,7 +2279,7 @@
     "next": "Then agree roles and governance."
    },
    "roles": {
-    "stage": "mobilise",
+    "stage": "create",
     "title": "Agree roles and draw the organisation chart",
     "docs": [
      "roles",
@@ -2273,7 +2289,7 @@
     "next": "The organisation chart gives the leads in each highlight report."
    },
    "governance": {
-    "stage": "mobilise",
+    "stage": "create",
     "title": "Agree the governance",
     "docs": [
      "governance"

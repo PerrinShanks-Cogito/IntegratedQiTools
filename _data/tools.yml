@@ -6,7 +6,7 @@
   name: Programme guide
   status: Beta
   group: Run your project
-  description: Answer a few questions to find the programme document you need next, from the high level scoping document to the RAID log, highlight report and closure report, and see each one filled in for a worked example.
+  description: Follow the FOCUS stages, from Find the opportunity to Sustain the benefit, to the programme document you need next, such as the scoping document, RAID log, highlight report or closure report, and see each one filled in for a worked example.
 
 - id: process_map
   name: Process map

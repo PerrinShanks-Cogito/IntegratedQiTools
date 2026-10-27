@@ -10,7 +10,7 @@ permalink: /programme_guide/
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Programme guide</title>
-<meta name="description" content="Answer a few questions to find which programme document you need next, from the high level scoping document to the closure report, and see each one filled in for a worked example.">
+<meta name="description" content="Follow the FOCUS stages (Find the opportunity, Observe the current state, Create the plan, Undertake the change, Sustain the benefit) to the programme document you need next, and see each one filled in for a worked example.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -19,7 +19,7 @@ permalink: /programme_guide/
   --blue:#005EB8; --navy:#003087; --bg:#F0F4F5; --surface:#FFFFFF; --text:#212B32;
   --muted:#4C6272; --line:#D8DDE0; --yellow:#FFB81C; --green:#007F3B; --green-bg:#E3F2E9;
   --blue-bg:#E6F0FA; --danger:#D5281B; --shadow:0 2px 0 #D8DDE0; --warn:#A65300;
-  --s-initiate:#005EB8; --s-mobilise:#330072; --s-plan:#00A499; --s-implement:#007F3B; --s-close:#7C2855;
+  --s-find:#005EB8; --s-observe:#330072; --s-create:#00A499; --s-undertake:#007F3B; --s-sustain:#7C2855;
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
 }
@@ -28,7 +28,7 @@ permalink: /programme_guide/
     --blue:#5AA2EA; --navy:#9CC3EF; --bg:#0E1A24; --surface:#162533; --text:#E8EEF2;
     --muted:#A3B6C3; --line:#2A3E4F; --green:#4CC17E; --green-bg:#143326; --blue-bg:#15314B;
     --danger:#FF7468; --shadow:0 2px 0 #0A131B; --warn:#F0A54A;
-    --s-initiate:#5AA2EA; --s-mobilise:#B79CE0; --s-plan:#3CCFC2; --s-implement:#4CC17E; --s-close:#E07BAE;
+    --s-find:#5AA2EA; --s-observe:#B79CE0; --s-create:#3CCFC2; --s-undertake:#4CC17E; --s-sustain:#E07BAE;
     color-scheme:dark;
   }
 }
@@ -36,7 +36,7 @@ permalink: /programme_guide/
   --blue:#5AA2EA; --navy:#9CC3EF; --bg:#0E1A24; --surface:#162533; --text:#E8EEF2;
   --muted:#A3B6C3; --line:#2A3E4F; --green:#4CC17E; --green-bg:#143326; --blue-bg:#15314B;
   --danger:#FF7468; --shadow:0 2px 0 #0A131B; --warn:#F0A54A;
-  --s-initiate:#5AA2EA; --s-mobilise:#B79CE0; --s-plan:#3CCFC2; --s-implement:#4CC17E; --s-close:#E07BAE;
+  --s-find:#5AA2EA; --s-observe:#B79CE0; --s-create:#3CCFC2; --s-undertake:#4CC17E; --s-sustain:#E07BAE;
   color-scheme:dark;
 }
 *,*::before,*::after{box-sizing:inherit}
@@ -54,10 +54,11 @@ button{font:inherit;color:inherit}
 .stages{padding:0 1.25rem 1rem}
 .stagebar{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.5rem}
 @media (max-width:880px){.stagebar{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}}
-.stagebtn{display:block;width:100%;height:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-top:6px solid var(--sc);border-radius:8px;box-shadow:var(--shadow);padding:.65rem .8rem;cursor:pointer;color:var(--text)}
+.stagebtn{display:flex;flex-direction:column;justify-content:flex-start;width:100%;height:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-top:6px solid var(--sc);border-radius:8px;box-shadow:var(--shadow);padding:.65rem .8rem;cursor:pointer;color:var(--text)}
 .stagebtn:hover,.stagebtn.on{background:var(--blue-bg)}
 .stagebtn .n{display:block;color:var(--sc);font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
-.stagebtn b{display:block;font-size:1.1rem;font-weight:800}
+.stagebtn b{display:block;font-size:1.05rem;font-weight:800;line-height:1.25}
+.stagebtn .fl{color:var(--sc);font-size:1.35em}
 .stagebtn small{display:block;color:var(--muted);font-size:.86rem;line-height:1.35;margin-top:.15rem}
 .codes{display:flex;flex-wrap:wrap;gap:.25rem;margin-top:.45rem}
 .code{display:inline-flex;align-items:center;justify-content:center;min-width:1.7rem;height:1.5rem;padding:0 .3rem;border-radius:4px;background:var(--sc,var(--blue));color:#fff;font-weight:800;font-size:.8rem}
@@ -179,11 +180,11 @@ table.sheet tr.ws td{background:var(--blue-bg);font-weight:700}
 
 <div class="page-head">
   <h1>Programme guide</h1>
-  <p class="meta">Work out which programme document you need next, from the first scoping page to the closure report. Answer a few questions or pick a stage, then see each document filled in for a made-up worked example, and download the example or the blank template.</p>
+  <p class="meta">Follow the five FOCUS stages to the programme document you need next, from the first scoping page to the closure report. Answer a few questions or pick a stage, then see each document filled in for a made-up worked example, and download the example or the blank template.</p>
 </div>
 
 <section class="stages" aria-labelledby="stages-h">
-  <h2 id="stages-h" class="sr">The five stages of a programme</h2>
+  <h2 id="stages-h" class="sr">The five FOCUS stages</h2>
   <ol class="stagebar" id="stagebar"></ol>
 </section>
 
@@ -214,7 +215,7 @@ table.sheet tr.ws td{background:var(--blue-bg);font-weight:700}
 </section>
 
 <section class="notes" aria-label="About the programme guide">
-  <p><b>The stages:</b> work goes through five stages: <i>initiate</i> (is it worth doing?), <i>mobilise</i> (set up the team), <i>plan</i>, <i>implement</i> (deliver, track and report) and <i>close</i>. Small projects need fewer documents: a scoping page, a baseline and an action log may be enough. Use the rest as your work grows.</p>
+  <p><b>The FOCUS stages:</b> <i>Find the opportunity</i> (is it worth doing?), <i>Observe the current state</i> (how does it work now, and how well?), <i>Create the plan</i> (what will we change, who will do it, and when?), <i>Undertake the change</i> (deliver, track and report) and <i>Sustain the benefit</i> (keep the gains and hand over). Small projects need fewer documents: a scoping page, a baseline and an action log may be enough. Use the rest as your work grows.</p>
   <p><b>The worked example:</b> every example is filled in for the same made-up programme, <span id="exName"></span>, so you can follow information from one document to the next: the support plan's deliverables become the highlight report's, risks in the RAID log appear in the leadership report, and the benefits register's baselines come back in the closure report. All names, figures and dates are made up.</p>
   <p><b>Measuring improvement:</b> the documents say <i>what</i> you will measure; the FOCUS charting tools help you show it. Use a <a href="{{ '/run_chart/' | relative_url }}">run chart</a> or <a href="{{ '/spc_tool/' | relative_url }}">SPC chart</a> for baselines and progress, a <a href="{{ '/driver_diagram/' | relative_url }}">driver diagram</a> to link your aim to your workstreams, and the <a href="{{ '/a3_report/' | relative_url }}">A3 report</a> to tell the story on a page.</p>
   <p><b>Templates:</b> the blank templates are the CITI programme templates (version October 2022). Download them here or from your CITI team.</p>
@@ -258,7 +259,7 @@ table.sheet tr.ws td{background:var(--blue-bg);font-weight:700}
   $('stagebar').innerHTML = G.stages.map((s, i) => {
     const docs = G.docs.filter(d => d.stage === s.id);
     return `<li><button type="button" class="stagebtn" data-stage="${s.id}" style="--sc:var(--s-${s.id})">
-      <span class="n">Stage ${i + 1}</span><b>${esc(s.name)}</b><small>${esc(s.question)}</small>
+      <span class="n">Stage ${i + 1}</span><b><span class="fl">${esc(s.name.charAt(0))}</span>${esc(s.name.slice(1))}</b><small>${esc(s.question)}</small>
       <span class="codes" aria-hidden="true">${docs.map(d => `<span class="code">${esc(d.code || 'doc')}</span>`).join('')}</span>
       <span class="sr">${docs.length} documents</span></button></li>`;
   }).join('');
