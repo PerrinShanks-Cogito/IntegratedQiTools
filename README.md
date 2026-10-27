@@ -122,7 +122,13 @@ Improvement's SPC P chart tool (version 3.0)):
   and exports are shared. Project files saved from the old P chart and T chart tools
   still open.
 - `staticwebapp.config.json` – Azure Static Web Apps routing (custom 404,
-  trailing slashes, security headers).
+  trailing slashes, security headers). The Content Security Policy lets pages
+  load only the site's own files, Google Fonts and the Application Insights
+  script, and send data only to the site and Application Insights, so nothing
+  a user pastes can be sent anywhere else. Inline scripts and styles are
+  allowed because every tool is a single page with its own inline script. If
+  a tool needs a new outside script, font, image or API, add its origin to
+  the matching directive, or the browser will block it.
 
 ## Programme guide
 
