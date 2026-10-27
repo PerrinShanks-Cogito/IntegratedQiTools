@@ -276,14 +276,14 @@ details.values .tablewrap{margin-top:.6rem}
       const t = l.trim();
       let f;
       if (delim === 'ws') { const p = t.split(/\s+/); f = p.length > 2 ? [p.slice(0, -2).join(' '), p[p.length - 2], p[p.length - 1]] : p; }
-      else f = t.split(delim).map(x => x.trim().replace(/^"(.*)"$/, '$1').trim());
+      else f = splitCells(t, delim);
       while (f.length > 1 && f[f.length - 1] === '') f.pop();
       return f;
     });
     return { recs, delim };
   }
   // Shared statistics, from /assets/js/focus-stats.js
-  const { ibeta, mean: avg, ranks: rank, readNumber: num } = FocusStats;
+  const { ibeta, mean: avg, ranks: rank, readNumber: num, splitCells } = FocusStats;
 
   function columns(recs, delim) {
     const ncol = Math.max(...recs.map(r => r.length));

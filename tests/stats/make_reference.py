@@ -1327,9 +1327,17 @@ TABLES = [("tabs from Excel", "Ward\tDays\nA\t3\n\nB\t 4 ", {"delim": "\t", "rec
           ("one column", "4\n5\r\n6", {"delim": "\t", "recs": [["4"], ["5"], ["6"]]}),
           ("ragged rows", "a\tb\tc\n1\t2", {"delim": "\t", "recs": [["a", "b", "c"], ["1", "2"]]}),
           ("blank", " \n\n", None)]
+TABLES += [("CSV with commas and semicolons inside quotes", 'Ward,Days,Note\n"Ward A, North",3,"a; b"\n"Ward ""B""","1,234",x',
+            {"delim": ",", "recs": [["Ward", "Days", "Note"], ["Ward A, North", "3", "a; b"], ['Ward "B"', "1,234", "x"]]}),
+           ("a quote that never closes is an ordinary character", '5" pipe,3\n"open,4', {"delim": ",", "recs": [['5" pipe', "3"], ['"open', "4"]]})]
 group("reading a pasted table", "splitTable", [SHARED], [{"name": n, "args": [t], "expect": e} for n, t, e in TABLES])
+group("splitting one line into cells", "splitCells", [SHARED], [{"name": n, "args": [l, d], "expect": e} for n, l, d, e in [
+    ("tabs, with a quoted tab", 'A\t"x\ty"\t3', "\t", ["A", "x\ty", "3"]),
+    ("semicolons, with a quoted semicolon", '"a;b"; 2 ;""', ";", ["a;b", "2", ""]),
+    ("commas, escaped quotes", '"say ""hi""",1', ",", ['say "hi"', "1"]),
+    ("no quotes at all", " 1 , 2,3 ", ",", ["1", "2", "3"])]])
 CELLS = [("1,234", "\t", 1234), ("£1,234.50", "\t", 1234.5), ("12%", "\t", 12), (" 7 ", "\t", 7), ("-3.25", "\t", -3.25),
-         ("1.2e3", "\t", 1200), ("$ 40", ";", 40), ("1,234", ",", None), ("abc", "\t", None), ("", "\t", None), ("N/A", "\t", None),
+         ("1.2e3", "\t", 1200), ("$ 40", ";", 40), ("1,234", ",", 1234), ("abc", "\t", None), ("", "\t", None), ("N/A", "\t", None),
          # only commas that group thousands are dropped: a decimal comma isn't read as a bigger number
          ("1,234,567.5", "\t", 1234567.5), ("-1,234", "\t", -1234), ("1,2", "\t", None), ("12,34", ";", None), ("1,2345", "\t", None),
          ("1234,5", "\t", None), (",5", "\t", None)]
@@ -1350,7 +1358,9 @@ group("bar chart: reading pasted values", "parse", ["bar_chart"], [
     {"name": "comma-separated, with an empty cell", "args": ["Ward,Jan,Feb\nA,12,\nB,7,8", True],
      "expect": {"cats": [{"name": "A", "vals": [12, 0]}, {"name": "B", "vals": [7, 8]}], "skipped": 0, "blanks": 1}},
     {"name": "two series, one unreadable cell", "args": ["Ward\tJan\tFeb\nA\t3\t12,5\nB\t4\t6", True],
-     "expect": {"cats": [{"name": "A", "vals": [3, 0]}, {"name": "B", "vals": [4, 6]}], "skipped": 0, "blanks": 1}}],
+     "expect": {"cats": [{"name": "A", "vals": [3, 0]}, {"name": "B", "vals": [4, 6]}], "skipped": 0, "blanks": 1}},
+    {"name": "CSV with quoted names and numbers", "args": ['Ward,Admissions\n"Ward A, North",12\n"Ward B","1,234"', True],
+     "expect": {"cats": [{"name": "Ward A, North", "vals": [12]}, {"name": "Ward B", "vals": [1234]}], "skipped": 0, "blanks": 0}}],
       call="barChart", tol=0, abs_tol=0)
 FACT_COMMA = [{"name": "Volume", "type": "numeric", "low": "1,000", "high": "1,500"}, {"name": "Minutes", "type": "numeric", "low": "10", "high": "30"},
               {"name": "Kiosk", "type": "text", "low": "Off", "high": "On"}, {"name": "", "type": "text", "low": "", "high": ""}]

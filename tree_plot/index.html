@@ -262,14 +262,14 @@ tr.group td{font-weight:700;background:var(--bg)}
     let delim = '\t';
     if (!lines.some(l => l.includes('\t'))) delim = lines.some(l => l.includes(';')) ? ';' : ',';
     const recs = lines.map(l => {
-      const f = l.split(delim).map(x => x.trim().replace(/^"(.*)"$/, '$1').trim());
+      const f = splitCells(l, delim);
       while (f.length > 1 && f[f.length - 1] === '') f.pop();
       return f;
     });
     return { recs, delim };
   }
   // Shared statistics, from /assets/js/focus-stats.js
-  const { readNumber: num } = FocusStats;
+  const { readNumber: num, splitCells } = FocusStats;
 
   // The last column holds the values when most of its cells are numbers; otherwise each row counts 1.
   function shape(recs, delim) {
