@@ -3,7 +3,7 @@
 // Checks the statistical functions in every tool against reference answers
 // from SciPy and NumPy (reference.json, written by make_reference.py).
 //
-// Run from the repository root:   node --test tests/stats/
+// Run from the repository root:   node --test tests/stats/stats.test.js
 //
 // Each function is taken from the tool's page as published (extract.js), so
 // every copy of a function in every tool is checked. A check passes when the
@@ -59,6 +59,95 @@ const CALLS = {
     const F = load(tool, ["analyse", "parse"]);
     const a = F.analyse(F.parse(rows.map(r => r.join(",")).join("\n"), false).rows, centre);
     return { p: a.p, poisson: a.poisson, rows: a.rows.map(r => ({ p: r.p, lcl: r.lcl, ucl: r.ucl, lwl: r.lwl, uwl: r.uwl, status: r.status })) };
+  },
+  // Hypothesis test selector: runs one of its tests on pasted data, as the
+  // page does. The page rounds numbers for display, so its formatting is
+  // swapped for one that keeps every digit; the results table then reads
+  // { label: number }, with "a to b" as [a, b], and each table row is keyed
+  // by its first cell.
+  selector: tool => (id, d) => {
+    const S = load(tool, ["RUN"], { fmt: x => x, fp: p => p });
+    const r = S.RUN[id].run(d, { reject: "there is a difference." });
+    if (r.error) return { error: r.error };
+    const read = v => {
+      if (typeof v !== "string") return v;
+      const nums = v.match(/-?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?|-?Infinity/gi) || [];
+      const rest = nums.reduce((s, x) => s.replace(x, ""), v).replace(/%| to | and | percentage points| points/g, "").trim();
+      return rest || !nums.length ? v : nums.length === 1 ? Number(nums[0]) : nums.map(Number);
+    };
+    const out = { sig: r.sig, stats: Object.fromEntries(r.stats.map(([k, v]) => [k, read(v)])) };
+    if (r.table) out.table = Object.fromEntries(r.table.rows.map(row => [row[0], row.map(read)]));
+    return out;
+  },
+  // ANOVA tool: each group's statistics, the equal-spread test, and the
+  // pairwise comparisons with Holm's adjustment
+  anovaPost: tool => (groups, useWelch) => {
+    const A = load(tool, ["describe", "oneWay", "spreadTest", "pairwise"]);
+    const stats = groups.map((values, i) => A.describe({ name: "g" + i, values }));
+    const ow = A.oneWay(groups);
+    return { spread: A.spreadTest(stats),
+      pairs: A.pairwise(stats, useWelch, ow.msw, ow.dfw).map(p => ({ diff: p.diff, se: p.se, df: p.df, p: p.p, padj: p.padj })) };
+  },
+  // Multiple regression tool: pasted data (headings in the first row) through
+  // its reader, using every column but the output as an input
+  regression: tool => (text, yIdx) => {
+    const M = load(tool, ["build", "fit"]);
+    const ncol = text.split("\n")[0].split("\t").length;
+    const d = M.build(text, true, yIdx, new Set(Array.from({ length: ncol }, (_, i) => i)));
+    const m = M.fit(d);
+    if (m.bad) return { bad: m.bad };
+    return { terms: m.terms.map(t => t.name), dropped: m.dropped.map(t => t.name), r2: m.r2, adj: m.adj, s: m.s, F: m.F, pF: m.pF, dw: m.dw,
+      coefs: m.coefs.map(c => ({ b: c.b, se: c.se, t: c.t, p: c.p, lo: c.lo, hi: c.hi, vif: c.vif })), stud: m.stud, cook: m.cook };
+  },
+  // Gauge R&R: pasted data (headings in the first row) through the tool's
+  // reader, then the ANOVA or X-bar and R method and the table of percentages
+  gauge: tool => (text, method, o) => {
+    const G = load(tool, ["parse", "arrange", "anova", "xbarR", "table"]);
+    const res = (method === "xbarr" ? G.xbarR : G.anova)(G.arrange(G.parse(text, true).obs));
+    const rows = Object.fromEntries(G.table(res, o).map(r => [r.key, { sd: r.sd, contrib: r.contrib, psv: r.psv, ptol: r.ptol, pproc: r.pproc }]));
+    const src = list => list && Object.fromEntries(list.map(r => [r.src, { df: r.df, ss: r.ss, ms: r.ms, F: r.F, p: r.p }]));
+    return { Rbar: res.Rbar, full: src(res.full), reduced: src(res.reduced) || null, interaction: res.interaction, comp: res.comp, rows };
+  },
+  // Attribute agreement: pasted ratings through the tool's reader and analysis.
+  // `cats` are the categories in order (lower case, as the tool keys them).
+  attribute: tool => (text, o, cats, useKendall) => {
+    const A = load(tool, ["split", "parse", "analyse"]);
+    const a = A.analyse(A.parse(A.split(text), o), cats, useKendall);
+    const pick = r => r && { x: r.x, n: r.n, p: r.p, lo: r.lo, hi: r.hi, coef: r.coef };
+    return { within: a.within ? a.within.map(pick) : null, vsStd: a.vsStd ? a.vsStd.map(pick) : null,
+      between: pick(a.between) || null, allStd: pick(a.allStd) || null, disagree: a.disagree || null };
+  },
+  // Design of experiments: the fit of a model in coded units (−1 and +1)
+  doeFit: tool => (obs, terms) => {
+    const m = load(tool, ["fit"]).fit(obs, terms);
+    return { cols: m.cols, coef: m.coef, se: m.se, pv: m.pv, df: m.df, s: m.s, r2: m.r2, r2adj: m.r2adj };
+  },
+  // ...the equation in real units, and fitted means, for a design held in the page's state
+  doeUncoded: tool => (state, obs, terms, fixed) => {
+    const D = load(tool, ["fit", "uncoded", "fittedMean"], { state });
+    const m = D.fit(obs, terms);
+    return { uncoded: D.uncoded(m), means: fixed.map(f => D.fittedMean(m, f)) };
+  },
+  // Box plot: one group's quartiles, whiskers and outliers
+  boxPlot: tool => (values, tukey) => load(tool, ["describe"]).describe({ name: "g", values }, tukey),
+  // Histogram: the tool describes the data, then works out the bins
+  histBins: tool => (values, mode, val, start) => {
+    const H = load(tool, ["describe", "makeBins"]);
+    const b = H.makeBins(H.describe(values), mode, val, start);
+    return { width: b.width, start: b.start, bins: b.bins.map(x => ({ lo: x.lo, hi: x.hi, n: x.n, pct: x.pct, cum: x.cum })) };
+  },
+  // Pareto chart: pasted text through the tool's reader, then the sorted rows
+  // with their percentages and the "vital few"
+  pareto: tool => (text, hasHeader, groupAfter, cutoff) => {
+    const P = load(tool, ["parse", "compute"]);
+    const p = P.parse(text, hasHeader), r = P.compute(p.items, groupAfter, cutoff);
+    return { skipped: p.skipped, total: r.total, vital: r.vital, rows: r.rows.map(d => ({ name: d.name, value: d.value, pct: d.pct, cum: d.cum })) };
+  },
+  // ...and backward elimination of terms that aren't clear
+  doeReduce: tool => state => {
+    const D = load(tool, ["reduce", "state"], { state });
+    D.reduce();
+    return D.state.terms;
   },
 };
 

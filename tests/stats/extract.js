@@ -189,13 +189,14 @@ function closure(tool, names, trace) {
 
 // load("anova", ["fP", "tP"]) -> { fP, tP }, run on their own. `globals` sets
 // any free variables the functions read, such as { alpha: 0.05 }, in place of
-// the page's own definition of them.
+// the page's own definition of them; a function given here replaces the page's
+// function of that name.
 function load(tool, names, globals = {}) {
   const used = closure(tool, names).filter(d => {
     const own = d.src.startsWith("function") ? [d.src.match(/^function ([\w$]+)/)[1]] : declared(d.src);
     return !own.some(n => n in globals);
   });
-  const pre = Object.keys(globals).map(k => `let ${k} = ${JSON.stringify(globals[k])};`).join("\n");
+  const pre = Object.keys(globals).map(k => `let ${k} = ${typeof globals[k] === "function" ? String(globals[k]) : JSON.stringify(globals[k])};`).join("\n");
   const body = [pre, ...used.map(d => d.src), `return { ${names.join(", ")} };`].join("\n");
   try {
     return new Function(body)();

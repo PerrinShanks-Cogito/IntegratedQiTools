@@ -219,7 +219,37 @@ through each tool's own reader, so reading the numbers is tested too. Cases
 on each rule's boundary (6 points against 7 for a shift, a repeated value in a
 trend) are checked in Python before they're written.
 
-79 tests, about 1,600 comparisons.
+Every test in the hypothesis test selector is run as the page runs it, on
+pasted data: the t-tests, sign test, F test, ANOVA (one-way and two-way),
+Bartlett's, Levene's, Mann-Whitney, Kruskal-Wallis, Mood's median, the
+proportion tests, chi-squared, the transformations and simple, multiple and
+logistic regression. The page's number formatting is swapped for one that
+keeps every digit, so the results are compared in full against SciPy and
+statsmodels. The ANOVA tool's spread test, pairwise comparisons and Holm
+adjustment, and the multiple regression tool's coefficients, p-values,
+intervals, R², Durbin-Watson, residuals, Cook's distance and VIF, are checked
+against SciPy and statsmodels too.
+
+Gauge R&R (the ANOVA method, with the interaction pooled when it isn't
+clear, and the X-bar and R method), attribute agreement (agreement with
+Clopper-Pearson intervals, Fleiss' kappa, Kendall's W and tau) and design of
+experiments (the fit, the equation in real units, fitted means and backward
+elimination) are checked against statsmodels and SciPy. The d2* constants
+are checked against d2 and d3 worked out by numerical integration.
+
+The box plot's quartiles, whiskers and outliers are checked against
+matplotlib, the histogram's bins and counts against NumPy (including its
+automatic width rule), and the Pareto chart's order, percentages and vital
+few against a Python version, with values on the fences, bin edges and
+cut-offs.
+
+Weibull analysis (the maximum likelihood fit with and without censored
+items, probability plot points, R², the automatic threshold, and the
+survival, density, hazard and percentile functions) is checked against
+SciPy, and the power tool's proportion tests, sample sizes and smallest
+detectable differences against statsmodels and SciPy.
+
+129 tests, about 1,950 comparisons.
 
 ```sh
 node --test tests/stats/stats.test.js
@@ -235,23 +265,21 @@ figures.
 - `make_reference.py` holds the inputs (made-up data from fixed random seeds)
   and works out the expected answers. It writes `reference.json`, which is
   committed, so the tests need only Node. To add or change a test, edit it and
-  run `pip install numpy scipy && python3 tests/stats/make_reference.py`.
+  run `pip install numpy scipy statsmodels pandas matplotlib && python3 tests/stats/make_reference.py`.
 - Tolerances are tight (about 1 part in 10⁸) except where a tool uses a known
   approximation, which the test notes: the histogram and power tools' normal
-  distribution (accurate to 1.2 × 10⁻⁷), and the power of a t-test, which uses
+  distribution (accurate to 1.2 × 10⁻⁷); the power of a t-test, which uses
   a normal approximation to the noncentral t distribution and is within 0.01
-  of the exact power.
+  of the exact power; the Box-Cox λ, searched in steps of 0.01; and Gauge
+  R&R's X-bar and R constants, tabled to 3 to 5 decimal places as AIAG does.
 - A known difference waiting on a decision can be marked `todo`: it runs
   and reports but doesn't stop a deploy. There are none at the moment.
 - The run chart's table of the expected number of runs is checked row by row
   against Table 1 of Perla, Provost and Murray (2011), the Provost and Murray
   table adapted from Swed and Eisenhart.
 
-Not covered yet: the hypothesis test selector's individual tests (two-sample
-and paired t, Mann-Whitney, Kruskal-Wallis and the rest are written inside
-its `RUN` table; their building blocks are covered), the power of tests of
-proportions, Gauge R&R, attribute agreement, design of experiments and
-Weibull analysis.
+Not covered yet: the demand and capacity models, and most tools' date and
+number readers.
 
 ## Deploy to Azure Static Web Apps
 

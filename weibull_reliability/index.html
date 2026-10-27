@@ -321,9 +321,15 @@ details.adv summary{cursor:pointer;font-weight:600;color:var(--blue);margin-bott
     const alpha = top * Math.pow(s0 / r, 1 / beta);
     return { beta, alpha };
   }
-  // Points for the probability plot: median (Hazen) ranks of the failures out of all items
+  // Points for the probability plot: median ranks of the failures out of all items, by
+  // Benard's approximation, (i − 0.3) / (N + 0.4) for the i-th failure (counting from 1).
+  // Median ranks are the standard for Weibull plots (Abernethy, The New Weibull Handbook)
+  // and Minitab's default, so the plot, its R² and the automatic threshold (chosen to
+  // make the plot straightest) agree with Minitab. They don't affect the fitted shape and
+  // scale, which come from maximum likelihood. Items still working at the censor time come
+  // after every failure, so they only add to N.
   function probPoints(y, N) {
-    return y.map((v, i) => { const F = (i + 0.5) / N; return { t: v, F, x: Math.log(v), y: Math.log(-Math.log(1 - F)) }; });
+    return y.map((v, i) => { const F = (i + 1 - 0.3) / (N + 0.4); return { t: v, F, x: Math.log(v), y: Math.log(-Math.log(1 - F)) }; });
   }
   function rsq(pts) {
     const n = pts.length, mx = avg(pts.map(p => p.x)), my = avg(pts.map(p => p.y));
