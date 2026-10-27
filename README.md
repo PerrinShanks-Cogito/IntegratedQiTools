@@ -212,7 +212,9 @@ The statistics several tools need are in one shared file,
 - the gamma and beta functions, and the t, F, chi-squared and normal p-values,
   cumulative probabilities and critical values;
 - sum, mean, variance, standard deviation, median, quantiles and ranks;
-- the Anderson-Darling normality test and one-way ANOVA.
+- the Anderson-Darling normality test and one-way ANOVA;
+- the reader for pasted tables (tab, semicolon or comma separated) and for
+  numbers in their cells, which most tools share.
 
 A tool takes what it uses with `const { tP, fP } = FocusStats;`. The shared
 file is tested once, and each tool's results are tested through it. Other
@@ -259,7 +261,7 @@ survival, density, hazard and percentile functions) is checked against
 SciPy, and the power tool's proportion tests, sample sizes and smallest
 detectable differences against statsmodels and SciPy.
 
-97 tests, about 980 comparisons.
+100 tests, about 1,000 comparisons.
 
 ```sh
 node --test tests/stats/stats.test.js

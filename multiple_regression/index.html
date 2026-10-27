@@ -303,12 +303,9 @@ td.sig{font-weight:700}
     });
     return { recs, delim };
   }
-  function num(raw, delim) {
-    if (raw === undefined) return NaN;
-    let v = String(raw).replace(/[%£$€\s]/g, '');
-    if (delim !== ',') v = v.replace(/,/g, '');
-    return v === '' ? NaN : Number(v);
-  }
+  // Shared statistics, from /assets/js/focus-stats.js
+  const { tP, tCrit, fP, mean: avg, sd, readNumber: num } = FocusStats;
+
   // Each column is numeric, a category (a few repeated text values) or a label (anything else)
   function classify(recs, delim, hasHeader) {
     const ncol = Math.max(...recs.map(r => r.length));
@@ -334,8 +331,6 @@ td.sig{font-weight:700}
   }
 
   // ---- linear algebra and distributions ----
-  // Shared statistics, from /assets/js/focus-stats.js
-  const { tP, tCrit, fP, mean: avg, sd } = FocusStats;
 
 
   // Least squares by modified Gram-Schmidt QR. Columns that add nothing new

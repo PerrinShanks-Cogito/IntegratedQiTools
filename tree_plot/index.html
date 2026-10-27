@@ -268,12 +268,9 @@ tr.group td{font-weight:700;background:var(--bg)}
     });
     return { recs, delim };
   }
-  function num(raw, delim) {
-    if (raw === undefined) return NaN;
-    let v = String(raw).replace(/[%£$€\s]/g, '');
-    if (delim !== ',') v = v.replace(/,/g, '');
-    return v === '' ? NaN : Number(v);
-  }
+  // Shared statistics, from /assets/js/focus-stats.js
+  const { readNumber: num } = FocusStats;
+
   // The last column holds the values when most of its cells are numbers; otherwise each row counts 1.
   function shape(recs, delim) {
     const ncol = Math.max(...recs.map(r => r.length));

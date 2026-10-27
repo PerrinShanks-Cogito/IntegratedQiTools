@@ -282,12 +282,9 @@ details.values .tablewrap{margin-top:.6rem}
     });
     return { recs, delim };
   }
-  function num(raw, delim) {
-    if (raw === undefined) return NaN;
-    let v = String(raw).replace(/[%£$€\s]/g, '');
-    if (delim !== ',') v = v.replace(/,/g, '');
-    return v === '' ? NaN : Number(v);
-  }
+  // Shared statistics, from /assets/js/focus-stats.js
+  const { ibeta, mean: avg, ranks: rank, readNumber: num } = FocusStats;
+
   function columns(recs, delim) {
     const ncol = Math.max(...recs.map(r => r.length));
     const body = recs.length > 1 ? recs.slice(1) : recs;
@@ -331,8 +328,6 @@ details.values .tablewrap{margin-top:.6rem}
   }
 
   // ---- statistics ----
-  // Shared statistics, from /assets/js/focus-stats.js
-  const { ibeta, mean: avg, ranks: rank } = FocusStats;
 
 
   function stats(pts) {

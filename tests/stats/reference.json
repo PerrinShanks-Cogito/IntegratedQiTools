@@ -27857,6 +27857,290 @@ false,
 }
 }
 ]
+},
+{
+"id":"reading a pasted table",
+"fn":"splitTable",
+"tools":[
+"assets/js/focus-stats.js"
+],
+"tol":1e-09,
+"abs":1e-12,
+"cases":[
+{
+"name":"tabs from Excel",
+"args":[
+"Ward\tDays\nA\t3\n\nB\t 4 "
+],
+"expect":{
+"delim":"\t",
+"recs":[
+[
+"Ward",
+"Days"
+],
+[
+"A",
+"3"
+],
+[
+"B",
+"4"
+]
+]
+}
+},
+{
+"name":"semicolons win over commas",
+"args":[
+"a;1,5\nb;2"
+],
+"expect":{
+"delim":";",
+"recs":[
+[
+"a",
+"1,5"
+],
+[
+"b",
+"2"
+]
+]
+}
+},
+{
+"name":"commas, with quotes",
+"args":[
+"name,\"value\"\n\"Ward A\", 12"
+],
+"expect":{
+"delim":",",
+"recs":[
+[
+"name",
+"value"
+],
+[
+"Ward A",
+"12"
+]
+]
+}
+},
+{
+"name":"one column",
+"args":[
+"4\n5\r\n6"
+],
+"expect":{
+"delim":"\t",
+"recs":[
+[
+"4"
+],
+[
+"5"
+],
+[
+"6"
+]
+]
+}
+},
+{
+"name":"ragged rows",
+"args":[
+"a\tb\tc\n1\t2"
+],
+"expect":{
+"delim":"\t",
+"recs":[
+[
+"a",
+"b",
+"c"
+],
+[
+"1",
+"2"
+]
+]
+}
+},
+{
+"name":"blank",
+"args":[
+" \n\n"
+],
+"expect":null
+}
+]
+},
+{
+"id":"reading a number from a cell",
+"fn":"readNumber",
+"tools":[
+"assets/js/focus-stats.js"
+],
+"call":"number",
+"tol":1e-09,
+"abs":1e-12,
+"cases":[
+{
+"name":"'1,234' (tab-separated)",
+"args":[
+"1,234",
+"\t"
+],
+"expect":1234
+},
+{
+"name":"'\u00a31,234.50' (tab-separated)",
+"args":[
+"\u00a31,234.50",
+"\t"
+],
+"expect":1234.5
+},
+{
+"name":"'12%' (tab-separated)",
+"args":[
+"12%",
+"\t"
+],
+"expect":12
+},
+{
+"name":"' 7 ' (tab-separated)",
+"args":[
+" 7 ",
+"\t"
+],
+"expect":7
+},
+{
+"name":"'-3.25' (tab-separated)",
+"args":[
+"-3.25",
+"\t"
+],
+"expect":-3.25
+},
+{
+"name":"'1.2e3' (tab-separated)",
+"args":[
+"1.2e3",
+"\t"
+],
+"expect":1200
+},
+{
+"name":"'$ 40' (semicolon-separated)",
+"args":[
+"$ 40",
+";"
+],
+"expect":40
+},
+{
+"name":"'1,234' (comma-separated)",
+"args":[
+"1,234",
+","
+],
+"expect":null
+},
+{
+"name":"'abc' (tab-separated)",
+"args":[
+"abc",
+"\t"
+],
+"expect":null
+},
+{
+"name":"'' (tab-separated)",
+"args":[
+"",
+"\t"
+],
+"expect":null
+},
+{
+"name":"'N/A' (tab-separated)",
+"args":[
+"N/A",
+"\t"
+],
+"expect":null
+}
+]
+},
+{
+"id":"share of a column that holds numbers",
+"fn":"numericShare",
+"tools":[
+"assets/js/focus-stats.js"
+],
+"tol":1e-09,
+"abs":1e-12,
+"cases":[
+{
+"name":"heading then numbers",
+"args":[
+[
+[
+"Days"
+],
+[
+"3"
+],
+[
+"4"
+],
+[
+"x"
+],
+[
+""
+]
+],
+0,
+"\t"
+],
+"expect":0.6666666666666666
+},
+{
+"name":"one row only",
+"args":[
+[
+[
+"5"
+]
+],
+0,
+"\t"
+],
+"expect":1.0
+},
+{
+"name":"column missing",
+"args":[
+[
+[
+"a"
+],
+[
+"1"
+]
+],
+1,
+"\t"
+],
+"expect":0.0
+}
+]
 }
 ]
 }

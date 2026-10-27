@@ -247,27 +247,11 @@ td.poor{color:var(--danger);font-weight:700}
   const list = a => a.length > 1 ? a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1] : (a[0] || '');
   const pc = x => isFinite(x) ? (Math.round(x * 1000) / 10).toFixed(1) + '%' : '–';
   const pf = p => p == null || !isFinite(p) ? '–' : p < 0.001 ? '< 0.001' : p.toFixed(3);
-  // Shared statistics, from /assets/js/focus-stats.js
-  const { fP, sum, mean: avg } = FocusStats;
 
   const byName = (a, b) => String(a).localeCompare(String(b), 'en-GB', { numeric: true });
   const lower = s => /^[A-Z][a-z]/.test(s) && !/^[A-Z][a-z]*[A-Z]/.test(s) && !/[A-Z]{2}/.test(s) ? s.charAt(0).toLowerCase() + s.slice(1) : s;
 
   // ---- parsing ----
-  function split(text) {
-    const lines = text.split(/\r?\n/).filter(l => l.trim() !== '');
-    if (!lines.length) return null;
-    let delim = '\t';
-    if (!lines.some(l => l.includes('\t'))) delim = lines.some(l => l.includes(';')) ? ';' : (lines.some(l => l.includes(',')) ? ',' : '\t');
-    return { recs: lines.map(l => l.split(delim).map(x => x.trim().replace(/^"(.*)"$/, '$1').trim())), delim };
-  }
-  function num(raw, delim) {
-    if (raw === undefined) return NaN;
-    let v = String(raw).replace(/[%£$€\s]/g, '');
-    if (delim !== ',') v = v.replace(/,/g, '');
-    return v === '' ? NaN : Number(v);
-  }
-  const isNum = (v, delim) => v !== undefined && v !== '' && isFinite(num(v, delim));
   // "long": part, appraiser, measurement. "table": appraiser, trial, then one column per part.
   function shape(recs, delim) {
     const ncol = Math.max(...recs.map(r => r.length));
@@ -323,6 +307,8 @@ td.poor{color:var(--danger);font-weight:700}
   }
 
   // ---- statistics ----
+  // Shared statistics, from /assets/js/focus-stats.js
+  const { fP, sum, mean: avg, splitTable: split, readNumber: num, isNumberCell: isNum } = FocusStats;
 
   // Control chart constants for subgroups of 2 to 25.
   const D2 = [0, 0, 1.128, 1.693, 2.059, 2.326, 2.534, 2.704, 2.847, 2.970, 3.078, 3.173, 3.258, 3.336, 3.407, 3.472, 3.532, 3.588, 3.640, 3.689, 3.735, 3.778, 3.819, 3.858, 3.895, 3.931];

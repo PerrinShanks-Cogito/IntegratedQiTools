@@ -1318,6 +1318,27 @@ for test, n, power in [("t1", 20, 0.8), ("t2", 30, 0.9), ("t2", 100, 0.8)]:
 group("smallest detectable difference: t-tests", "minDiff", ["power_sample_size"], mt, tol=1e-3, abs_tol=0,
       note="exact from statsmodels; the tool's normal approximation to the power puts it within 0.1%")
 
+# ------------------------------------------------------------- reading pasted tables (shared)
+# What the shared reader makes of typical pastes: tab-separated from Excel,
+# semicolons, commas, quotes, blank lines and ragged rows.
+TABLES = [("tabs from Excel", "Ward\tDays\nA\t3\n\nB\t 4 ", {"delim": "\t", "recs": [["Ward", "Days"], ["A", "3"], ["B", "4"]]}),
+          ("semicolons win over commas", "a;1,5\nb;2", {"delim": ";", "recs": [["a", "1,5"], ["b", "2"]]}),
+          ("commas, with quotes", 'name,"value"\n"Ward A", 12', {"delim": ",", "recs": [["name", "value"], ["Ward A", "12"]]}),
+          ("one column", "4\n5\r\n6", {"delim": "\t", "recs": [["4"], ["5"], ["6"]]}),
+          ("ragged rows", "a\tb\tc\n1\t2", {"delim": "\t", "recs": [["a", "b", "c"], ["1", "2"]]}),
+          ("blank", " \n\n", None)]
+group("reading a pasted table", "splitTable", [SHARED], [{"name": n, "args": [t], "expect": e} for n, t, e in TABLES])
+CELLS = [("1,234", "\t", 1234), ("£1,234.50", "\t", 1234.5), ("12%", "\t", 12), (" 7 ", "\t", 7), ("-3.25", "\t", -3.25),
+         ("1.2e3", "\t", 1200), ("$ 40", ";", 40), ("1,234", ",", None), ("abc", "\t", None), ("", "\t", None), ("N/A", "\t", None)]
+group("reading a number from a cell", "readNumber", [SHARED],
+      [{"name": f"{c!r} ({'comma' if d == ',' else 'tab' if d == chr(9) else 'semicolon'}-separated)", "args": [c, d], "expect": e}
+       for c, d, e in CELLS], call="number")
+group("share of a column that holds numbers", "numericShare", [SHARED],
+      [{"name": n, "args": [recs, c, d], "expect": e} for n, recs, c, d, e in [
+          ("heading then numbers", [["Days"], ["3"], ["4"], ["x"], [""]], 0, "\t", 2 / 3),
+          ("one row only", [["5"]], 0, "\t", 1.0),
+          ("column missing", [["a"], ["1"]], 1, "\t", 0.0)]])
+
 with open(OUT, "w") as f:
     json.dump({"generated_by": "tests/stats/make_reference.py", "scipy": scipy.__version__, "numpy": np.__version__,
                "groups": groups}, f, indent=0, separators=(",", ":"))
