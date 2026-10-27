@@ -332,31 +332,9 @@ details.values .tablewrap{margin-top:.6rem}
 
   // ---- statistics ----
   const avg = a => a.reduce((s, v) => s + v, 0) / a.length;
-  function lgamma(z) {
-    const c = [76.18009172947146, -86.50532032941677, 24.01409824083091, -1.231739572450155, 0.1208650973866179e-2, -0.5395239384953e-5];
-    let x = z, y = z, t = x + 5.5; t -= (x + 0.5) * Math.log(t);
-    let s = 1.000000000190015; for (const k of c) s += k / ++y;
-    return -t + Math.log(2.5066282746310005 * s / x);
-  }
-  function betacf(a, b, x) {
-    const FPMIN = 1e-300;
-    let qab = a + b, qap = a + 1, qam = a - 1, c = 1, d = 1 - qab * x / qap;
-    if (Math.abs(d) < FPMIN) d = FPMIN; d = 1 / d; let h = d;
-    for (let m = 1; m <= 200; m++) {
-      const m2 = 2 * m;
-      let aa = m * (b - m) * x / ((qam + m2) * (a + m2));
-      d = 1 + aa * d; if (Math.abs(d) < FPMIN) d = FPMIN; c = 1 + aa / c; if (Math.abs(c) < FPMIN) c = FPMIN; d = 1 / d; h *= d * c;
-      aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
-      d = 1 + aa * d; if (Math.abs(d) < FPMIN) d = FPMIN; c = 1 + aa / c; if (Math.abs(c) < FPMIN) c = FPMIN; d = 1 / d;
-      const del = d * c; h *= del; if (Math.abs(del - 1) < 3e-14) break;
-    }
-    return h;
-  }
-  function ibeta(x, a, b) {
-    if (x <= 0) return 0; if (x >= 1) return 1;
-    const bt = Math.exp(lgamma(a + b) - lgamma(a) - lgamma(b) + a * Math.log(x) + b * Math.log(1 - x));
-    return x < (a + 1) / (a + b + 2) ? bt * betacf(a, b, x) / a : 1 - bt * betacf(b, a, 1 - x) / b;
-  }
+  // Shared distributions, from /assets/js/focus-stats.js
+  const { ibeta } = FocusStats;
+
   function rank(a) {
     const idx = a.map((v, i) => [v, i]).sort((u, w) => u[0] - w[0]); const rk = new Array(a.length); let i = 0;
     while (i < idx.length) { let j = i; while (j + 1 < idx.length && idx[j + 1][0] === idx[i][0]) j++; const rr = (i + j) / 2 + 1; for (let k = i; k <= j; k++) rk[idx[k][1]] = rr; i = j + 1; }

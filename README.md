@@ -205,8 +205,15 @@ Then open <http://localhost:4000>.
 reference answers from SciPy and NumPy: distributions and p-values, critical
 values, quantiles, ranks, descriptive statistics, the Anderson-Darling test,
 one-way and Welch's ANOVA, the one-sample t-test, chi-squared and Fisher's
-exact tests, correlation, least squares regression and power. Each tool keeps
-its own copy of these functions, so every copy is checked.
+exact tests, correlation, least squares regression and power.
+
+The distributions every tool needs (the gamma and beta functions, and the t,
+F, chi-squared and normal p-values, cumulative probabilities and critical
+values) are in one shared file, `assets/js/focus-stats.js`, which every tool
+page loads. A tool takes what it uses with
+`const { tP, fP } = FocusStats;`. The shared file is tested once, and each
+tool's results are tested through it. Other calculations are still written
+in each tool, and every copy is checked.
 
 It also checks the SPC chart (XmR, P, U, C and T charts, including Laney's P'
 and U', breaks, a fixed baseline, screened moving ranges and every signal
@@ -249,7 +256,7 @@ survival, density, hazard and percentile functions) is checked against
 SciPy, and the power tool's proportion tests, sample sizes and smallest
 detectable differences against statsmodels and SciPy.
 
-129 tests, about 1,950 comparisons.
+101 tests, about 1,050 comparisons.
 
 ```sh
 node --test tests/stats/stats.test.js
@@ -260,15 +267,15 @@ its worst error; most functions agree with SciPy to 10 or more significant
 figures.
 
 - `extract.js` takes each function out of the tool's page exactly as
-  published, with the other top-level functions it calls, and runs it away
-  from the page. The tests check the code the site runs, not a copy.
+  published, with the other top-level functions it calls and the shared
+  distributions it takes from `FocusStats`, and runs it away from the page.
+  The tests check the code the site runs, not a copy.
 - `make_reference.py` holds the inputs (made-up data from fixed random seeds)
   and works out the expected answers. It writes `reference.json`, which is
   committed, so the tests need only Node. To add or change a test, edit it and
   run `pip install numpy scipy statsmodels pandas matplotlib && python3 tests/stats/make_reference.py`.
 - Tolerances are tight (about 1 part in 10⁸) except where a tool uses a known
-  approximation, which the test notes: the histogram and power tools' normal
-  distribution (accurate to 1.2 × 10⁻⁷); the power of a t-test, which uses
+  approximation, which the test notes: the power of a t-test, which uses
   a normal approximation to the noncentral t distribution and is within 0.01
   of the exact power; the Box-Cox λ, searched in steps of 0.01; and Gauge
   R&R's X-bar and R constants, tabled to 3 to 5 decimal places as AIAG does.

@@ -181,7 +181,8 @@ for (const g of ref.groups) {
       // the rest the largest relative error
       const absolute = g.tol === 0;
       for (const c of g.cases) {
-        const got = fn(...JSON.parse(JSON.stringify(c.args)));
+        // JSON has no infinity, so the reference writes it as text
+        const got = fn(...JSON.parse(JSON.stringify(c.args), (k, v) => v === "Infinity" ? Infinity : v === "-Infinity" ? -Infinity : v));
         const bad = compare(got, c.expect, g).filter(res => {
           if (res.ok) worst = Math.max(worst, absolute ? res.diff : res.err);
           return !res.ok;

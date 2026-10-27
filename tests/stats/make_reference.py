@@ -49,54 +49,56 @@ def group(id, fn, tools, cases, tol=1e-9, abs_tol=1e-12, call=None, globals=None
 
 
 SEL = "hypothesis_test_selector"
-LGAMMA_TOOLS = ["anova", "attribute_agreement", "chi_squared", "design_of_experiments", "gauge_rr",
-                SEL, "multiple_regression", "power_sample_size", "scatter_plot", "weibull_reliability"]
-IBETA_TOOLS = ["anova", "attribute_agreement", "design_of_experiments", "gauge_rr", SEL,
-               "multiple_regression", "power_sample_size", "scatter_plot"]
+# The distributions every tool shares (assets/js/focus-stats.js), tested once
+# here; each tool's own results below run through these same shared copies.
+SHARED = "assets/js/focus-stats.js"
 
 # ---------------------------------------------------------------- distributions
-group("lgamma", "lgamma", LGAMMA_TOOLS,
+group("lgamma", "lgamma", [SHARED],
       [{"args": [x], "expect": r(special.gammaln(x))} for x in [0.5, 1, 1.5, 2, 3.7, 10, 50.5, 171, 1000]],
       tol=1e-9, abs_tol=1e-9)
+group("gamma function", "gamma", [SHARED],
+      [{"args": [x], "expect": r(special.gamma(x))} for x in [0.5, 1, 1.5, 2.25, 3.7, 10, 30.5]], tol=1e-9)
 
 ib = []
 for x in [0.001, 0.1, 0.3, 0.5, 0.7, 0.9, 0.999]:
     for a, b in [(0.5, 0.5), (1, 3), (2.5, 7), (10, 0.5), (50, 50), (0.5, 2500), (2500, 0.5)]:
         ib.append({"args": [x, a, b], "expect": r(special.betainc(a, b, x))})
-group("ibeta", "ibeta", IBETA_TOOLS, ib, tol=1e-8, abs_tol=1e-14)
+group("ibeta", "ibeta", [SHARED], ib, tol=1e-8, abs_tol=1e-14)
+group("inverse of the incomplete beta function", "betaInv", [SHARED],
+      [{"args": [p, a, b], "expect": r(stats.beta.ppf(p, a, b))}
+       for p in [0.001, 0.025, 0.5, 0.95, 0.999] for a, b in [(0.5, 0.5), (1, 20), (12, 3), (40, 41)]], tol=1e-9, abs_tol=1e-14)
 
 tps = [{"args": [t, df], "expect": r(2 * stats.t.sf(t, df))}
        for t in [0.2, 1, 1.96, 3, 6, 12] for df in [1, 2, 5, 30, 200, 5000, 100000]]
-group("t p-value (two-sided)", "tP", ["anova", "design_of_experiments", SEL, "multiple_regression"], tps, tol=1e-8, abs_tol=1e-15)
+group("t p-value (two-sided)", "tP", [SHARED], tps, tol=1e-8, abs_tol=1e-15)
 
 fps = [{"args": [F, d1, d2], "expect": r(stats.f.sf(F, d1, d2))}
        for F in [0.3, 1, 2.5, 6, 30] for d1 in [1, 2, 4, 12] for d2 in [3, 20, 200, 20000]]
-group("F p-value (upper tail)", "fP", ["anova", "gauge_rr", "multiple_regression"], fps, tol=1e-8, abs_tol=1e-15)
-group("F p-value (upper tail)", "fUp", [SEL], fps, tol=1e-8, abs_tol=1e-15)
+fps += [{"name": "F = 0", "args": [0, 3, 20], "expect": 1.0}, {"name": "F infinite", "args": ["Infinity", 3, 20], "expect": 0.0}]
+group("F p-value (upper tail)", "fP", [SHARED], fps, tol=1e-8, abs_tol=1e-15)
 
 chis = [{"args": [x, df], "expect": r(stats.chi2.sf(x, df))}
         for x in [0.1, 1, 3.84, 10, 40, 150] for df in [1, 2, 4, 10, 50, 200]]
-group("chi-squared p-value", "chiP", ["chi_squared", SEL], chis, tol=1e-8, abs_tol=1e-15)
+group("chi-squared p-value", "chiP", [SHARED], chis, tol=1e-8, abs_tol=1e-15)
 
 gq = [{"args": [a, x], "expect": r(special.gammaincc(a, x))}
       for a in [0.5, 1, 2.5, 10, 100] for x in [0.05, 0.5, 2, 9, 30, 120]]
-group("upper incomplete gamma", "gammaQ", ["chi_squared", SEL], gq, tol=1e-8, abs_tol=1e-15)
+group("upper incomplete gamma", "gammaQ", [SHARED], gq, tol=1e-8, abs_tol=1e-15)
 
 zs = [-8, -5, -3, -1.96, -1, -0.3, 0, 0.3, 1, 1.96, 3, 5, 8]
-group("z p-value (two-sided)", "zP", ["chi_squared", SEL],
+group("z p-value (two-sided)", "zP", [SHARED],
       [{"args": [z], "expect": r(2 * stats.norm.sf(abs(z)))} for z in zs], tol=1e-8, abs_tol=1e-15)
-group("normal CDF", "normCdf", [SEL], [{"args": [z], "expect": r(stats.norm.cdf(z))} for z in zs],
+group("normal CDF", "normCdf", [SHARED], [{"args": [z], "expect": r(stats.norm.cdf(z))} for z in zs]
+      + [{"name": "−∞", "args": ["-Infinity"], "expect": 0.0}, {"name": "+∞", "args": ["Infinity"], "expect": 1.0}],
       tol=1e-8, abs_tol=1e-15)
-group("normal CDF (polynomial approximation)", "normCdf", ["histogram", "power_sample_size"],
-      [{"args": [z], "expect": r(stats.norm.cdf(z))} for z in zs], tol=2e-7, abs_tol=1e-15,
-      note="erfc approximation (Numerical Recipes erfcc), accurate to about 1.2e-7 relative")
-group("inverse normal", "normInv", ["power_sample_size"],
+group("inverse normal", "normInv", [SHARED],
       [{"args": [p], "expect": r(stats.norm.ppf(p))} for p in [1e-10, 1e-5, 0.001, 0.025, 0.2, 0.6, 0.9, 0.975, 0.999, 1 - 1e-7]],
-      tol=1e-7, abs_tol=1e-7)
-group("t CDF", "tCdf", ["power_sample_size"],
+      tol=1e-9, abs_tol=1e-9)
+group("t CDF", "tCdf", [SHARED],
       [{"args": [t, df], "expect": r(stats.t.cdf(t, df))} for t in [-4, -1.5, 0.5, 2.2, 6] for df in [2, 9, 60, 1000]],
       tol=1e-8, abs_tol=1e-15)
-group("inverse t", "tInv", ["power_sample_size"],
+group("inverse t", "tInv", [SHARED],
       [{"args": [p, df], "expect": r(stats.t.ppf(p, df))} for p in [0.6, 0.9, 0.975, 0.995, 0.9995] for df in [2, 9, 60, 1000]],
       tol=1e-7)
 group("beta quantile for the F critical value", "fCritU", ["power_sample_size"],
@@ -104,10 +106,10 @@ group("beta quantile for the F critical value", "fCritU", ["power_sample_size"],
        for a in [0.01, 0.05, 0.1] for d1 in [1, 3, 8] for d2 in [6, 40, 400]], tol=1e-7)
 
 tc = [{"args": [df, a], "expect": r(stats.t.ppf(1 - a / 2, df))} for df in [1, 3, 10, 40, 1000] for a in [0.01, 0.05, 0.1]]
-group("t critical value (two-sided)", "tCrit", ["anova", "design_of_experiments", SEL], tc, tol=1e-7)
-group("t critical value (two-sided, 95%)", "tCrit", ["multiple_regression"],
+group("t critical value (two-sided)", "tCrit", [SHARED], tc, tol=1e-7)
+group("t critical value (two-sided, 95% when no alpha is given)", "tCrit", [SHARED],
       [{"args": [df], "expect": r(stats.t.ppf(0.975, df))} for df in [1, 3, 10, 40, 1000]], tol=1e-7)
-group("z critical value (two-sided)", "zCrit", ["chi_squared", SEL],
+group("z critical value (two-sided)", "zCrit", [SHARED],
       [{"args": [a], "expect": r(stats.norm.ppf(1 - a / 2))} for a in [0.001, 0.01, 0.05, 0.1, 0.2]], tol=1e-7)
 
 # ------------------------------------------------------------- descriptive
@@ -161,9 +163,8 @@ for v in [data("normal", 12), data("normal", 60), data("skewed", 30), data("skew
     a2 = stats.anderson(v, dist="norm", method="interpolate").statistic
     a = a2 * (1 + 0.75 / n + 2.25 / n ** 2)
     ad.append({"args": [v], "expect": {"a2": r(a2), "a": r(a), "p": r(min(1, max(0, ad_p(a))))}})
-group("Anderson-Darling normality test", "andersonDarling", ["histogram"], ad, call="adHistogram", tol=2e-6, abs_tol=1e-8,
-      note="statistic from SciPy; p-value from D'Agostino and Stephens (1986), as Minitab uses; "
-           "the histogram's normal CDF approximation (1.2e-7) carries through to about 1e-6")
+group("Anderson-Darling normality test", "andersonDarling", ["histogram"], ad, call="adHistogram", tol=1e-7, abs_tol=1e-12,
+      note="statistic from SciPy; p-value from D'Agostino and Stephens (1986), as Minitab uses")
 group("Anderson-Darling normality test", "andersonDarling", [SEL],
       [{"args": c["args"], "expect": {"A": c["expect"]["a"], "p": c["expect"]["p"]}} for c in ad], tol=1e-7, abs_tol=1e-12,
       note="statistic from SciPy; p-value from D'Agostino and Stephens (1986), as Minitab uses")
@@ -1263,9 +1264,8 @@ for test, base, comp in [("p1", 0.4, 0.5), ("p1", 0.9, 0.95), ("p1", 0.3, 0.2), 
         for n in [20, 100, 400]:
             f = p1_power if test == "p1" else p2_power
             pw.append({"args": [{"test": test, "sides": sides, "alpha": 0.05, "sd": base}, n, comp], "expect": clean(f(base, comp, n, 0.05, sides))})
-group("power of a proportions test", "powerAt", ["power_sample_size"], pw, tol=5e-7, abs_tol=1e-12,
-      note="normal approximation, as Minitab; 2 proportions against statsmodels power_proportions_2indep, 1 proportion written out; "
-           "the tool's normal distribution is accurate to about 1.2e-7")
+group("power of a proportions test", "powerAt", ["power_sample_size"], pw, tol=1e-9, abs_tol=1e-12,
+      note="normal approximation, as Minitab; 2 proportions against statsmodels power_proportions_2indep, 1 proportion written out")
 
 ss = []
 for test, base, comp, power, sides in [("p1", 0.4, 0.5, 0.8, 2), ("p1", 0.9, 0.95, 0.9, 1), ("p1", 0.3, 0.2, 0.8, 2),

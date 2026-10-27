@@ -345,14 +345,8 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
     return { sorted: s, n, mean, sd, skew, min: s[0], max: s[n - 1], median: quantile(s, 0.5), q1: quantile(s, 0.25), q3: quantile(s, 0.75) };
   }
 
-  // Complementary error function (Numerical Recipes erfcc, relative error < 1.2e-7, accurate in the tails)
-  function erfc(x) {
-    const z = Math.abs(x), t = 1 / (1 + 0.5 * z);
-    const r = t * Math.exp(-z * z - 1.26551223 + t * (1.00002368 + t * (0.37409196 + t * (0.09678418 + t * (-0.18628806 +
-      t * (0.27886807 + t * (-1.13520398 + t * (1.48851587 + t * (-0.82215223 + t * 0.17087277)))))))));
-    return x >= 0 ? r : 2 - r;
-  }
-  function normCdf(z) { return 0.5 * erfc(-z / Math.SQRT2); }
+  // Shared distributions, from /assets/js/focus-stats.js
+  const { normCdf } = FocusStats;
 
   // Anderson–Darling test for normality, mean and SD estimated from the data.
   // A*² uses the small-sample adjustment; p-value from D'Agostino & Stephens (1986), as used by Minitab.
