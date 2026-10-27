@@ -7,7 +7,7 @@ functions against these answers.
 Only needed when you add or change a test; the reference file is committed.
 Run from the repository root:
 
-    pip install numpy scipy
+    pip install numpy scipy statsmodels pandas
     python3 tests/stats/make_reference.py
 
 The datasets are made up and drawn from fixed random seeds, so re-running gives
@@ -286,7 +286,7 @@ rng2 = np.random.default_rng(1620)
 def clean(o):
     if isinstance(o, dict):
         return {k: clean(v) for k, v in o.items()}
-    if isinstance(o, (list, tuple)):
+    if isinstance(o, (list, tuple, np.ndarray)):
         return [clean(v) for v in o]
     if isinstance(o, (bool, np.bool_)):
         return bool(o)
@@ -428,6 +428,299 @@ NUMBERS = {"1,200": 1200, "£1,234.50": 1234.5, "12%": 12, "(5)": -5, " 7 ": 7, 
            "abc": None, "1,2": None, "": None, "N/A": None, "<5": None}
 group("run chart: reading pasted numbers", "parseNumber", ["run_chart"],
       [{"name": repr(k), "args": [k], "expect": clean(v)} for k, v in NUMBERS.items()], call="number")
+
+# ------------------------------------------------------------- hypothesis test selector: each test
+# Each test runs on pasted text, as the page does, and is checked against SciPy
+# or statsmodels. Labels are the page's own, at a 5% significance level.
+import statsmodels.api as sm
+import statsmodels.formula.api as smf
+from statsmodels.stats.proportion import proportions_ztest, proportion_confint, confint_proportions_2indep
+from statsmodels.stats.multitest import multipletests
+import pandas as pd
+
+
+def column(name, v):
+    return name + "\n" + "\n".join(str(x) for x in v)
+
+
+def wide(names, cols):
+    rows = ["\t".join(names)]
+    for i in range(max(len(c) for c in cols)):
+        rows.append("\t".join(str(c[i]) if i < len(c) else "" for c in cols))
+    return "\n".join(rows)
+
+
+def ad_of(v):
+    n = len(v)
+    a = stats.anderson(v, dist="norm", method="interpolate").statistic * (1 + 0.75 / n + 2.25 / n ** 2)
+    return min(1, max(0, ad_p(a)))
+
+
+sel = {}  # test id -> cases
+
+
+def sel_case(id, name, d, expect):
+    sel.setdefault(id, []).append({"name": name, "args": [id, d], "expect": clean(expect)})
+
+
+CI = "95% confidence interval"
+
+for name, v, mu in [("small", data("normal", 8, mean=20, sd=4), 18), ("30 values", data("normal", 30, mean=12, sd=3), 12.5),
+                    ("skewed", data("skewed", 45), 6)]:
+    res = stats.ttest_1samp(v, mu); ci = res.confidence_interval(0.95)
+    sel_case("t1", name, {"data": column("Value", v), "target": str(mu)},
+             {"sig": bool(res.pvalue < 0.05), "stats": {"Values": len(v), "Mean": np.mean(v), "Standard deviation": np.std(v, ddof=1),
+              "t": res.statistic, "Degrees of freedom": res.df, CI + " for the mean": [ci.low, ci.high], "p-value": res.pvalue}})
+
+for name, v, m0 in [("some equal to the target", data("ties", 30, top=9), 4), ("skewed", data("skewed", 25), 5), ("all above", [3, 5, 6, 8, 9, 12], 2)]:
+    above, below = sum(x > m0 for x in v), sum(x < m0 for x in v)
+    p = stats.binomtest(min(above, below), above + below, 0.5).pvalue
+    sel_case("sign", name, {"data": column("Value", v), "target": str(m0)},
+             {"sig": bool(p < 0.05), "stats": {"Above the target": above, "Below the target": below, "p-value (exact)": p}})
+
+for name, a, b in [("similar spread", data("normal", 12, mean=50, sd=6), data("normal", 15, mean=55, sd=6)),
+                   ("different spread", data("normal", 25, mean=20, sd=2), data("normal", 9, mean=23, sd=7))]:
+    for method in ["welch", "pooled"]:
+        res = stats.ttest_ind(a, b, equal_var=method == "pooled"); ci = res.confidence_interval(0.95)
+        sel_case("t2", f"{name}, {method}", {"data": wide(["A", "B"], [a, b]), "method": method},
+                 {"sig": bool(res.pvalue < 0.05), "stats": {"Difference in means (A − B)": np.mean(a) - np.mean(b), CI + " for the difference": [ci.low, ci.high],
+                  "t": res.statistic, "Degrees of freedom": res.df, "p-value": res.pvalue}})
+
+for name, n, shift in [("10 pairs", 10, -1.5), ("40 pairs", 40, 0.4)]:
+    before = data("normal", n, mean=30, sd=5)
+    after = [round(x + shift + float(e), 2) for x, e in zip(before, rng.normal(0, 2, n))]
+    res = stats.ttest_rel(after, before); ci = res.confidence_interval(0.95)
+    sel_case("tPaired", name, {"data": wide(["Before", "After"], [before, after])},
+             {"sig": bool(res.pvalue < 0.05), "stats": {"Pairs": n, "Mean difference (After − Before)": np.mean(np.subtract(after, before)),
+              CI + " for the difference": [ci.low, ci.high], "t": res.statistic, "Degrees of freedom": res.df, "p-value": res.pvalue}})
+
+for name, a, b in [("A less spread", data("normal", 20, sd=4), data("normal", 16, sd=9)), ("A more spread", data("normal", 11, sd=12), data("normal", 30, sd=8))]:
+    F = np.var(a, ddof=1) / np.var(b, ddof=1); d1, d2 = len(a) - 1, len(b) - 1
+    p = min(1, 2 * min(stats.f.sf(F, d1, d2), stats.f.cdf(F, d1, d2)))
+    sel_case("var2", name, {"data": wide(["A", "B"], [a, b])},
+             {"sig": bool(p < 0.05), "stats": {"Ratio of variances (A ÷ B)": F, "Degrees of freedom": [d1, d2], "p-value": p}})
+
+many = [("3 groups", [data("normal", 8, mean=50), data("normal", 10, mean=56), data("normal", 9, mean=52)]),
+        ("4 skewed groups", [data("skewed", 15), data("skewed", 20, mu=2.4), data("skewed", 12, mu=1.8), data("skewed", 18)]),
+        ("2 groups with ties", [data("ties", 20, top=8), data("ties", 24, top=10)])]
+for name, g in many:
+    names = [f"G{i + 1}" for i in range(len(g))]
+    text = wide(names, g)
+    N = sum(map(len, g))
+    res = stats.f_oneway(*g)
+    allv = np.concatenate(g); ssb = sum(len(x) * (np.mean(x) - allv.mean()) ** 2 for x in g); sst = ((allv - allv.mean()) ** 2).sum()
+    sel_case("anova1", name, {"data": text}, {"sig": bool(res.pvalue < 0.05), "stats": {"Groups": len(g), "Values": N, "F": res.statistic,
+             "Degrees of freedom": [len(g) - 1, N - len(g)], "Share of the variation explained by the groups (η²)": ssb / sst * 100, "p-value": res.pvalue}})
+    res = stats.bartlett(*g)
+    sel_case("bartlett", name, {"data": text}, {"sig": bool(res.pvalue < 0.05), "stats": {"Chi-squared": res.statistic, "Degrees of freedom": len(g) - 1, "p-value": res.pvalue}})
+    res = stats.levene(*g, center="median")
+    sel_case("levene", name, {"data": text}, {"sig": bool(res.pvalue < 0.05), "stats": {"W (Levene’s statistic, using medians)": res.statistic,
+             "Degrees of freedom": [len(g) - 1, N - len(g)], "p-value": res.pvalue}})
+    res = stats.kruskal(*g)
+    sel_case("kruskal", name, {"data": text}, {"sig": bool(res.pvalue < 0.05), "stats": {"Values": N, "H (adjusted for ties)": res.statistic,
+             "Degrees of freedom": len(g) - 1, "p-value": res.pvalue}})
+    X2, p, M, _ = stats.median_test(*g, ties="below", correction=False)
+    sel_case("mood", name, {"data": text}, {"sig": bool(p < 0.05), "stats": {"Overall median": M, "Chi-squared": X2, "Degrees of freedom": len(g) - 1, "p-value": p}})
+    if len(g) == 2:
+        res = stats.mannwhitneyu(*g, use_continuity=True, alternative="two-sided", method="asymptotic")
+        sel_case("mann", name, {"data": text}, {"sig": bool(res.pvalue < 0.05), "stats": {"Difference in medians (G1 − G2)": np.median(g[0]) - np.median(g[1]),
+                 "U": res.statistic, "p-value": res.pvalue}})
+for name, a, b in [("small groups", data("skewed", 9), data("skewed", 11, mu=2.5)), ("larger groups", data("normal", 30, mean=40), data("normal", 26, mean=44))]:
+    res = stats.mannwhitneyu(a, b, use_continuity=True, alternative="two-sided", method="asymptotic")
+    sel_case("mann", name, {"data": wide(["G1", "G2"], [a, b])}, {"sig": bool(res.pvalue < 0.05), "stats": {"Difference in medians (G1 − G2)": np.median(a) - np.median(b),
+             "U": res.statistic, "p-value": res.pvalue}})
+
+# Two-way ANOVA, type III sums of squares with sum-to-zero coding (as Minitab's adjusted SS)
+for name, per in [("balanced", [[4] * 3, [4] * 3]), ("unbalanced", [[3, 5, 4], [6, 2, 4]])]:
+    rows = []
+    for j, day in enumerate(["Weekday", "Weekend"]):
+        for i, ward in enumerate(["A", "B", "C"]):
+            for v in data("normal", per[j][i], mean=5 + 0.6 * i + 0.8 * j, sd=1.2):
+                rows.append((f"Ward {ward}", day, v))
+    df = pd.DataFrame(rows, columns=["W", "D", "y"])
+    fitted = smf.ols("y ~ C(W, Sum) * C(D, Sum)", data=df).fit()
+    t = sm.stats.anova_lm(fitted, typ=3)
+    def row(key):
+        ss, d = t.loc[key, "sum_sq"], t.loc[key, "df"]
+        return {"1": d, "2": ss, "3": ss / d, "4": t.loc[key, "F"], "5": t.loc[key, "PR(>F)"]}
+    sse, dfe = t.loc["Residual", "sum_sq"], t.loc["Residual", "df"]
+    sel_case("anova2", name, {"data": "Ward\tDay\tStay\n" + "\n".join(f"{a}\t{b}\t{c}" for a, b, c in rows)},
+             {"table": {"Ward": row("C(W, Sum)"), "Day": row("C(D, Sum)"), "Ward × Day interaction": row("C(W, Sum):C(D, Sum)"),
+                        "Error": {"1": dfe, "2": sse, "3": sse / dfe}}})
+
+# Box-Cox: SciPy's maximum likelihood λ; the tool searches a grid in steps of 0.01
+for name, v in [("log-normal", data("skewed", 40)), ("square of normal", [round(x * x / 10, 2) for x in data("normal", 50, mean=30, sd=6)]),
+                ("reciprocal of normal", [round(1000 / x, 2) for x in data("normal", 35, mean=40, sd=5)])]:
+    lam = stats.boxcox_normmax(v, method="mle")
+    used = max(-2, min(2, round(lam * 2) / 2))
+    assert abs(lam * 2 - round(lam * 2)) > 0.05, "λ too near a rounding boundary for the grid"
+    tv = np.log(v) if used == 0 else np.power(v, used)
+    sel_case("boxcox", name, {"data": column("Value", v)}, {"stats": {"Best λ (lambda)": lam, "Rounded λ used": used,
+             "Anderson-Darling p before": ad_of(v), "Anderson-Darling p after": ad_of(tv)}})
+for name, v, shift, base in [("natural log", data("skewed", 40, mu=4), "", "ln"), ("log 10 with a constant", [round(x - 3, 2) for x in data("skewed", 30)], "5", "log10")]:
+    tv = (np.log10 if base == "log10" else np.log)(np.add(v, float(shift or 0)))
+    sel_case("logT", name, {"data": column("Value", v), "shift": shift, "base": base},
+             {"stats": {"Anderson-Darling p before": ad_of(np.add(v, float(shift or 0))), "Anderson-Darling p after": ad_of(tv)}})
+cnt = rng.poisson(4, 40).tolist()
+sel_case("sqrtT", "counts", {"data": column("Incidents", cnt)}, {"stats": {"Anderson-Darling p before": ad_of(cnt), "Anderson-Darling p after": ad_of(np.sqrt(cnt))}})
+
+for name, x, n, p0 in [("below target", 1858, 2000, 95), ("small sample", 9, 12, 60), ("target as a fraction", 41, 50, 0.7)]:
+    pp = p0 / 100 if p0 > 1 else p0
+    z, p = proportions_ztest(x, n, pp, prop_var=pp)
+    lo, hi = proportion_confint(x, n, 0.05, method="normal")
+    sel_case("prop1", name, {"x": str(x), "n": str(n), "p0": str(p0)},
+             {"sig": bool(p < 0.05), "stats": {"Proportion": x / n * 100, CI: [max(0, lo) * 100, min(1, hi) * 100], "z": z, "p-value": p}})
+for name, x1, n1, x2, n2 in [("example", 18, 120, 9, 130), ("large", 412, 1500, 371, 1480)]:
+    z, p = proportions_ztest([x1, x2], [n1, n2])
+    lo, hi = confint_proportions_2indep(x1, n1, x2, n2, method="wald", compare="diff")
+    sel_case("prop2", name, {"x1": str(x1), "n1": str(n1), "x2": str(x2), "n2": str(n2)},
+             {"sig": bool(p < 0.05), "stats": {"Difference (1 − 2)": (x1 / n1 - x2 / n2) * 100, CI + " for the difference": [lo * 100, hi * 100], "z": z, "p-value": p}})
+
+for name, tab in [("2 × 2", [[12, 5], [7, 14]]), ("4 × 2", [[86, 14], [71, 29], [90, 12], [64, 31]]), ("3 × 4", [[8, 3, 6, 9], [4, 11, 5, 7], [9, 6, 12, 3]])]:
+    c2, p, df, E = stats.chi2_contingency(tab, correction=False)
+    text = "\t" + "\t".join(f"C{j + 1}" for j in range(len(tab[0]))) + "\n" + "\n".join(f"R{i + 1}\t" + "\t".join(map(str, r)) for i, r in enumerate(tab))
+    sel_case("chi", name, {"data": text}, {"sig": bool(p < 0.05), "stats": {"Total count": int(np.sum(tab)), "Chi-squared": c2, "Degrees of freedom": df,
+             "Smallest expected count": E.min(), "p-value": p}})
+
+for name, n, slope in [("12 points", 12, 0.8), ("60 points, weak", 60, 0.05)]:
+    x = data("normal", n, mean=30, sd=6)
+    y = [round(slope * a + float(e), 2) for a, e in zip(x, rng.normal(0, 4, n))]
+    lr = stats.linregress(x, y); tc = stats.t.ppf(0.975, n - 2)
+    sel_case("slr", name, {"data": wide(["X", "Y"], [x, y])}, {"sig": bool(lr.pvalue < 0.05), "stats": {"Slope": lr.slope,
+             CI + " for the slope": [lr.slope - tc * lr.stderr, lr.slope + tc * lr.stderr], "R² (share of the variation explained)": lr.rvalue ** 2 * 100,
+             "t": lr.slope / lr.stderr, "Degrees of freedom": n - 2, "p-value for the slope": lr.pvalue}})
+
+def mlr_data(n, k, scale=1.5):
+    X = rng.normal(10, 3, (n, k)).round(2)
+    y = (X @ rng.normal(0, 1, k) + 5 + rng.normal(0, scale, n)).round(2)
+    return X, y
+
+
+for name, n, k in [("2 inputs", 30, 2), ("4 inputs", 45, 4)]:
+    X, y = mlr_data(n, k)
+    names = [f"X{j + 1}" for j in range(k)]
+    f = sm.OLS(y, sm.add_constant(X)).fit()
+    table = {"Constant": {"1": f.params[0], "2": f.bse[0]}}
+    for j, nm in enumerate(names):
+        table[nm] = {"1": f.params[j + 1], "2": f.bse[j + 1], "3": f.tvalues[j + 1], "4": f.pvalues[j + 1], "5": "Yes" if f.pvalues[j + 1] < 0.05 else "No"}
+    sel_case("mlr", name, {"data": wide(names + ["Y"], [X[:, j].tolist() for j in range(k)] + [y.tolist()])},
+             {"sig": bool(f.f_pvalue < 0.05), "stats": {"Observations": n, "R²": f.rsquared * 100, "Adjusted R²": f.rsquared_adj * 100,
+              "F for the whole model": f.fvalue, "Degrees of freedom": [k, n - k - 1], "p-value for the whole model": f.f_pvalue}, "table": table})
+
+for name, n, coef in [("2 inputs", 150, [-5, 0.045, 0.15]), ("1 input", 80, [-1, 0.03])]:
+    k = len(coef) - 1
+    X = np.column_stack([rng.uniform(20, 90, n).round(0)] + [rng.uniform(1, 14, n).round(0) for _ in range(k - 1)])
+    pr = 1 / (1 + np.exp(-(coef[0] + X @ np.array(coef[1:]))))
+    yes = rng.uniform(size=n) < pr
+    f = sm.Logit(yes.astype(float), sm.add_constant(X)).fit(disp=0, tol=1e-12, maxiter=100)
+    names = ["Age", "Stay"][:k]
+    zc = stats.norm.ppf(0.975)
+    table = {"Constant": {"1": f.params[0], "2": f.bse[0]}}
+    for j, nm in enumerate(names):
+        b, se = f.params[j + 1], f.bse[j + 1]
+        table[nm] = {"1": b, "2": se, "3": b / se, "4": f.pvalues[j + 1], "5": math.exp(b), "6": [math.exp(b - zc * se), math.exp(b + zc * se)]}
+    text = "\t".join(names + ["Readmitted"]) + "\n" + "\n".join("\t".join([str(v) for v in X[i].tolist()] + ["Yes" if yes[i] else "No"]) for i in range(n))
+    sel_case("logistic", name, {"data": text}, {"sig": bool(f.llr_pvalue < 0.05), "stats": {"Observations": n, "Likelihood ratio chi-squared": f.llr,
+             "Degrees of freedom": k, "p-value for the model": f.llr_pvalue}, "table": table})
+
+SEL_NAMES = {"t1": "1-sample t-test", "sign": "1-sample sign test", "t2": "2-sample t-test (Welch and pooled)", "tPaired": "paired t-test",
+             "var2": "F test for two variances", "anova1": "one-way ANOVA", "bartlett": "Bartlett's test", "anova2": "two-way ANOVA (type III)",
+             "boxcox": "Box-Cox transformation", "logT": "log transformation", "sqrtT": "square root transformation", "mann": "Mann-Whitney test",
+             "levene": "Levene's test (medians)", "kruskal": "Kruskal-Wallis test", "mood": "Mood's median test", "prop1": "1-proportion z-test",
+             "prop2": "2-proportion z-test", "chi": "chi-squared test of a table", "slr": "simple regression", "mlr": "multiple regression",
+             "logistic": "binary logistic regression"}
+SEL_NOTES = {"boxcox": "the tool searches λ in steps of 0.01, so its best λ is within 0.005 of SciPy's maximum likelihood value",
+             "mood": "SciPy median_test with values equal to the median counted below and no continuity correction",
+             "anova2": "statsmodels, type III sums of squares with sum-to-zero coding",
+             "logistic": "statsmodels Logit; the tool stops when every step is below 1e-8",
+             "mann": "SciPy, normal approximation with the continuity and ties corrections"}
+for id, cases in sel.items():
+    tol, abs_tol = (1e-6, 1e-9) if id == "logistic" else (1e-7, 1e-10)
+    if id == "boxcox":
+        # the best λ is checked to the grid's step; everything else exactly
+        group(f"selector: {SEL_NAMES[id]}, best λ", "RUN." + id, [SEL],
+              [dict(c, expect={"stats": {"Best λ (lambda)": c["expect"]["stats"].pop("Best λ (lambda)")}}) for c in cases],
+              call="selector", tol=0, abs_tol=0.0051, note=SEL_NOTES[id])
+    group(f"selector: {SEL_NAMES[id]}", "RUN." + id, [SEL], cases, call="selector", tol=tol, abs_tol=abs_tol, note=SEL_NOTES.get(id))
+
+# ------------------------------------------------------------- ANOVA tool: equal spread, pairwise comparisons, Holm
+group("Holm's adjustment", "holm", ["anova"],
+      [{"args": [ps], "expect": r(multipletests(ps, method="holm")[1])}
+       for ps in [[0.01, 0.04, 0.03, 0.005], [0.2, 0.5, 0.001], [0.04, 0.04, 0.04], [0.3, 0.6, 0.9, 0.0001, 0.02, 0.011]]])
+post = []
+for name, g in many:
+    k = len(g); N = sum(map(len, g))
+    msw = sum(((np.array(x) - np.mean(x)) ** 2).sum() for x in g) / (N - k)
+    for welch in [False, True]:
+        pairs = []
+        for i in range(k):
+            for j in range(i + 1, k):
+                a, b = g[i], g[j]
+                if welch:
+                    res = stats.ttest_ind(a, b, equal_var=False)
+                    se = math.sqrt(np.var(a, ddof=1) / len(a) + np.var(b, ddof=1) / len(b)); df, p = res.df, res.pvalue
+                else:
+                    se = math.sqrt(msw * (1 / len(a) + 1 / len(b))); df = N - k
+                    p = 2 * stats.t.sf(abs((np.mean(a) - np.mean(b)) / se), df)
+                pairs.append({"diff": np.mean(a) - np.mean(b), "se": se, "df": df, "p": p})
+        for pr_, adj in zip(pairs, multipletests([x["p"] for x in pairs], method="holm")[1]):
+            pr_["padj"] = adj
+        lev = stats.levene(*g, center="median")
+        post.append({"name": f"{name}, {'Welch' if welch else 'pooled'}", "args": [g, welch],
+                     "expect": clean({"spread": {"F": lev.statistic, "df1": k - 1, "df2": N - k, "p": lev.pvalue}, "pairs": pairs})})
+group("ANOVA: Brown-Forsythe spread test and pairwise comparisons (Holm)", "pairwise", ["anova"], post, call="anovaPost", tol=1e-8, abs_tol=1e-12,
+      note="spread test against SciPy levene(center='median'); pairwise t-tests (pooled or Welch) with statsmodels' Holm adjustment")
+
+# ------------------------------------------------------------- multiple regression tool
+reg = []
+for name, n, k, cat, collinear in [("3 numeric inputs", 40, 3, False, False), ("numeric and a category", 50, 2, True, False),
+                                   ("an input that copies another", 30, 2, False, True)]:
+    X, y = mlr_data(n, k, scale=2)
+    cols = {f"X{j + 1}": X[:, j] for j in range(k)}
+    if collinear:
+        cols["X3"] = (2 * X[:, 0] - X[:, 1]).round(2)
+    if cat:
+        site = rng.choice(["North", "South", "East"], n, p=[0.5, 0.3, 0.2])
+        y = (y + np.where(site == "South", 3, 0) + np.where(site == "East", -2, 0)).round(2)
+        # start with the least common site, so the reference level (the most
+        # common) isn't simply the first one seen
+        first = int(np.flatnonzero(site == "East")[0])
+        for c in list(cols) + ["y"]:
+            a = cols[c] if c != "y" else y
+            a[[0, first]] = a[[first, 0]]
+        site[[0, first]] = site[[first, 0]]
+        cols["Site"] = site
+    cols["Y"] = y
+    df = pd.DataFrame(cols)
+    terms = [c for c in cols if c.startswith("X")]
+    if collinear:
+        terms = terms[:-1]
+    design = df[terms].astype(float)
+    tnames = list(terms)
+    if cat:
+        ref = df["Site"].value_counts().idxmax()
+        for lvl in pd.unique(df["Site"]):
+            if lvl != ref:
+                design[f"Site: {lvl}"] = (df["Site"] == lvl).astype(float); tnames.append(f"Site: {lvl}")
+    Xd = sm.add_constant(design)
+    f = sm.OLS(y, Xd).fit()
+    infl = f.get_influence()
+    ci = f.conf_int(0.05)
+    from statsmodels.stats.outliers_influence import variance_inflation_factor
+    from statsmodels.stats.stattools import durbin_watson
+    coefs = []
+    for j in range(Xd.shape[1]):
+        c = {"b": f.params.iloc[j], "se": f.bse.iloc[j], "t": f.tvalues.iloc[j], "p": f.pvalues.iloc[j], "lo": ci.iloc[j, 0], "hi": ci.iloc[j, 1]}
+        if j:
+            c["vif"] = variance_inflation_factor(Xd.values, j)
+        coefs.append(c)
+    text = "\t".join(cols) + "\n" + "\n".join("\t".join(str(df[c].iloc[i]) for c in cols) for i in range(n))
+    reg.append({"name": name, "args": [text, len(cols) - 1], "expect": clean({
+        "terms": tnames, "dropped": ["X3"] if collinear else [], "r2": f.rsquared, "adj": f.rsquared_adj, "s": math.sqrt(f.mse_resid),
+        "F": f.fvalue, "pF": f.f_pvalue, "dw": durbin_watson(f.resid), "coefs": coefs,
+        "stud": infl.resid_studentized_internal, "cook": infl.cooks_distance[0]})})
+group("multiple regression: coefficients, tests, fit and diagnostics", "fit", ["multiple_regression"], reg, call="regression", tol=1e-7, abs_tol=1e-10,
+      note="statsmodels OLS: coefficients, standard errors, p-values and intervals, R², F, Durbin-Watson, studentised residuals, Cook's distance and VIF")
 
 with open(OUT, "w") as f:
     json.dump({"generated_by": "tests/stats/make_reference.py", "scipy": scipy.__version__, "numpy": np.__version__,

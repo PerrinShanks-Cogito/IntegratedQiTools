@@ -3,7 +3,7 @@
 // Checks the statistical functions in every tool against reference answers
 // from SciPy and NumPy (reference.json, written by make_reference.py).
 //
-// Run from the repository root:   node --test tests/stats/
+// Run from the repository root:   node --test tests/stats/stats.test.js
 //
 // Each function is taken from the tool's page as published (extract.js), so
 // every copy of a function in every tool is checked. A check passes when the
@@ -59,6 +59,45 @@ const CALLS = {
     const F = load(tool, ["analyse", "parse"]);
     const a = F.analyse(F.parse(rows.map(r => r.join(",")).join("\n"), false).rows, centre);
     return { p: a.p, poisson: a.poisson, rows: a.rows.map(r => ({ p: r.p, lcl: r.lcl, ucl: r.ucl, lwl: r.lwl, uwl: r.uwl, status: r.status })) };
+  },
+  // Hypothesis test selector: runs one of its tests on pasted data, as the
+  // page does. The page rounds numbers for display, so its formatting is
+  // swapped for one that keeps every digit; the results table then reads
+  // { label: number }, with "a to b" as [a, b], and each table row is keyed
+  // by its first cell.
+  selector: tool => (id, d) => {
+    const S = load(tool, ["RUN"], { fmt: x => x, fp: p => p });
+    const r = S.RUN[id].run(d, { reject: "there is a difference." });
+    if (r.error) return { error: r.error };
+    const read = v => {
+      if (typeof v !== "string") return v;
+      const nums = v.match(/-?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?|-?Infinity/gi) || [];
+      const rest = nums.reduce((s, x) => s.replace(x, ""), v).replace(/%| to | and | percentage points| points/g, "").trim();
+      return rest || !nums.length ? v : nums.length === 1 ? Number(nums[0]) : nums.map(Number);
+    };
+    const out = { sig: r.sig, stats: Object.fromEntries(r.stats.map(([k, v]) => [k, read(v)])) };
+    if (r.table) out.table = Object.fromEntries(r.table.rows.map(row => [row[0], row.map(read)]));
+    return out;
+  },
+  // ANOVA tool: each group's statistics, the equal-spread test, and the
+  // pairwise comparisons with Holm's adjustment
+  anovaPost: tool => (groups, useWelch) => {
+    const A = load(tool, ["describe", "oneWay", "spreadTest", "pairwise"]);
+    const stats = groups.map((values, i) => A.describe({ name: "g" + i, values }));
+    const ow = A.oneWay(groups);
+    return { spread: A.spreadTest(stats),
+      pairs: A.pairwise(stats, useWelch, ow.msw, ow.dfw).map(p => ({ diff: p.diff, se: p.se, df: p.df, p: p.p, padj: p.padj })) };
+  },
+  // Multiple regression tool: pasted data (headings in the first row) through
+  // its reader, using every column but the output as an input
+  regression: tool => (text, yIdx) => {
+    const M = load(tool, ["build", "fit"]);
+    const ncol = text.split("\n")[0].split("\t").length;
+    const d = M.build(text, true, yIdx, new Set(Array.from({ length: ncol }, (_, i) => i)));
+    const m = M.fit(d);
+    if (m.bad) return { bad: m.bad };
+    return { terms: m.terms.map(t => t.name), dropped: m.dropped.map(t => t.name), r2: m.r2, adj: m.adj, s: m.s, F: m.F, pF: m.pF, dw: m.dw,
+      coefs: m.coefs.map(c => ({ b: c.b, se: c.se, t: c.t, p: c.p, lo: c.lo, hi: c.hi, vif: c.vif })), stud: m.stud, cook: m.cook };
   },
 };
 

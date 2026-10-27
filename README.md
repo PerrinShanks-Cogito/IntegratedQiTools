@@ -219,7 +219,18 @@ through each tool's own reader, so reading the numbers is tested too. Cases
 on each rule's boundary (6 points against 7 for a shift, a repeated value in a
 trend) are checked in Python before they're written.
 
-79 tests, about 1,600 comparisons.
+Every test in the hypothesis test selector is run as the page runs it, on
+pasted data: the t-tests, sign test, F test, ANOVA (one-way and two-way),
+Bartlett's, Levene's, Mann-Whitney, Kruskal-Wallis, Mood's median, the
+proportion tests, chi-squared, the transformations and simple, multiple and
+logistic regression. The page's number formatting is swapped for one that
+keeps every digit, so the results are compared in full against SciPy and
+statsmodels. The ANOVA tool's spread test, pairwise comparisons and Holm
+adjustment, and the multiple regression tool's coefficients, p-values,
+intervals, R², Durbin-Watson, residuals, Cook's distance and VIF, are checked
+against SciPy and statsmodels too.
+
+104 tests, about 1,700 comparisons.
 
 ```sh
 node --test tests/stats/stats.test.js
@@ -235,7 +246,7 @@ figures.
 - `make_reference.py` holds the inputs (made-up data from fixed random seeds)
   and works out the expected answers. It writes `reference.json`, which is
   committed, so the tests need only Node. To add or change a test, edit it and
-  run `pip install numpy scipy && python3 tests/stats/make_reference.py`.
+  run `pip install numpy scipy statsmodels pandas && python3 tests/stats/make_reference.py`.
 - Tolerances are tight (about 1 part in 10⁸) except where a tool uses a known
   approximation, which the test notes: the histogram and power tools' normal
   distribution (accurate to 1.2 × 10⁻⁷), and the power of a t-test, which uses
@@ -247,11 +258,10 @@ figures.
   against Table 1 of Perla, Provost and Murray (2011), the Provost and Murray
   table adapted from Swed and Eisenhart.
 
-Not covered yet: the hypothesis test selector's individual tests (two-sample
-and paired t, Mann-Whitney, Kruskal-Wallis and the rest are written inside
-its `RUN` table; their building blocks are covered), the power of tests of
-proportions, Gauge R&R, attribute agreement, design of experiments and
-Weibull analysis.
+Not covered yet: Gauge R&R, attribute agreement, design of experiments,
+Weibull analysis, the power tool's sample size and tests of proportions, the
+simpler chart calculations (box plot whiskers, histogram bins, Pareto
+percentages) and the demand and capacity models.
 
 ## Deploy to Azure Static Web Apps
 
