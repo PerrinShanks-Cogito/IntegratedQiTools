@@ -134,6 +134,12 @@
   group: Plan capacity
   description: Compare the capacity your service needs with what it has, and see the waiting list you can sustain, using the NHS demand and capacity core model.
 
+- id: admin_demand_capacity
+  name: Admin demand and capacity model
+  status: Alpha
+  group: Plan capacity
+  description: Work out the staff time and WTE an admin team needs from its work streams, task times and weekly demand, see which roles are short, and plan how to clear a backlog.
+
 - id: a3_report
   name: A3 report
   status: Alpha
