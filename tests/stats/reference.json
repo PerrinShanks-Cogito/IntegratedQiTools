@@ -28074,6 +28074,62 @@ false,
 "\t"
 ],
 "expect":null
+},
+{
+"name":"'1,234,567.5' (tab-separated)",
+"args":[
+"1,234,567.5",
+"\t"
+],
+"expect":1234567.5
+},
+{
+"name":"'-1,234' (tab-separated)",
+"args":[
+"-1,234",
+"\t"
+],
+"expect":-1234
+},
+{
+"name":"'1,2' (tab-separated)",
+"args":[
+"1,2",
+"\t"
+],
+"expect":null
+},
+{
+"name":"'12,34' (semicolon-separated)",
+"args":[
+"12,34",
+";"
+],
+"expect":null
+},
+{
+"name":"'1,2345' (tab-separated)",
+"args":[
+"1,2345",
+"\t"
+],
+"expect":null
+},
+{
+"name":"'1234,5' (tab-separated)",
+"args":[
+"1234,5",
+"\t"
+],
+"expect":null
+},
+{
+"name":"',5' (tab-separated)",
+"args":[
+",5",
+"\t"
+],
+"expect":null
 }
 ]
 },

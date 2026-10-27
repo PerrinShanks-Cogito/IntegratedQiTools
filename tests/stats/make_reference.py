@@ -1329,7 +1329,10 @@ TABLES = [("tabs from Excel", "Ward\tDays\nA\t3\n\nB\t 4 ", {"delim": "\t", "rec
           ("blank", " \n\n", None)]
 group("reading a pasted table", "splitTable", [SHARED], [{"name": n, "args": [t], "expect": e} for n, t, e in TABLES])
 CELLS = [("1,234", "\t", 1234), ("£1,234.50", "\t", 1234.5), ("12%", "\t", 12), (" 7 ", "\t", 7), ("-3.25", "\t", -3.25),
-         ("1.2e3", "\t", 1200), ("$ 40", ";", 40), ("1,234", ",", None), ("abc", "\t", None), ("", "\t", None), ("N/A", "\t", None)]
+         ("1.2e3", "\t", 1200), ("$ 40", ";", 40), ("1,234", ",", None), ("abc", "\t", None), ("", "\t", None), ("N/A", "\t", None),
+         # only commas that group thousands are dropped: a decimal comma isn't read as a bigger number
+         ("1,234,567.5", "\t", 1234567.5), ("-1,234", "\t", -1234), ("1,2", "\t", None), ("12,34", ";", None), ("1,2345", "\t", None),
+         ("1234,5", "\t", None), (",5", "\t", None)]
 group("reading a number from a cell", "readNumber", [SHARED],
       [{"name": f"{c!r} ({'comma' if d == ',' else 'tab' if d == chr(9) else 'semicolon'}-separated)", "args": [c, d], "expect": e}
        for c, d, e in CELLS], call="number")

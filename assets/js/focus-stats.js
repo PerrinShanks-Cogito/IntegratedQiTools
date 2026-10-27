@@ -43,8 +43,9 @@
                           on tabs, or else semicolons, or else commas, with
                           spaces and surrounding quotes trimmed; null if blank
      readNumber(raw, d)   a cell as a number, ignoring %, £, $, € and spaces,
-                          and commas unless the table is comma-separated (d is
-                          the delimiter splitTable found); NaN if not a number
+                          and commas that group thousands (1,234 or 1,234.5)
+                          unless the table is comma-separated (d is the
+                          delimiter splitTable found); NaN if not a number
      isNumberCell(v, d)   whether a cell holds a number
      numericShare(recs, c, d)  the share of column c's filled cells (after the
                           first row) that hold numbers
@@ -216,11 +217,14 @@ window.FocusStats = (() => {
     if (!lines.some(l => l.includes('\t'))) delim = lines.some(l => l.includes(';')) ? ';' : (lines.some(l => l.includes(',')) ? ',' : '\t');
     return { recs: lines.map(l => l.split(delim).map(x => x.trim().replace(/^"(.*)"$/, '$1').trim())), delim };
   }
+  // Only commas that group digits in threes are taken as thousands separators.
+  // Any other comma, such as a decimal comma in 1,2, makes the cell not a number,
+  // so it's reported as skipped rather than read as 12.
   function readNumber(raw, delim) {
     if (raw === undefined) return NaN;
     let v = String(raw).replace(/[%£$€\s]/g, '');
-    if (delim !== ',') v = v.replace(/,/g, '');
-    return v === '' ? NaN : Number(v);
+    if (delim !== ',' && /^[-+]?\d{1,3}(,\d{3})+(\.\d*)?$/.test(v)) v = v.replace(/,/g, '');
+    return v === '' || v.includes(',') ? NaN : Number(v);
   }
   const isNumberCell = (v, delim) => v !== undefined && v !== '' && isFinite(readNumber(v, delim));
   function numericShare(recs, c, delim) {
