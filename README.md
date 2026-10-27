@@ -243,7 +243,13 @@ automatic width rule), and the Pareto chart's order, percentages and vital
 few against a Python version, with values on the fences, bin edges and
 cut-offs.
 
-116 tests, about 1,800 comparisons.
+Weibull analysis (the maximum likelihood fit with and without censored
+items, probability plot points, R², the automatic threshold, and the
+survival, density, hazard and percentile functions) is checked against
+SciPy, and the power tool's proportion tests, sample sizes and smallest
+detectable differences against statsmodels and SciPy.
+
+129 tests, about 1,950 comparisons.
 
 ```sh
 node --test tests/stats/stats.test.js
@@ -272,8 +278,8 @@ figures.
   against Table 1 of Perla, Provost and Murray (2011), the Provost and Murray
   table adapted from Swed and Eisenhart.
 
-Not covered yet: Weibull analysis, the power tool's sample size and tests of
-proportions, and the demand and capacity models.
+Not covered yet: the demand and capacity models, and most tools' date and
+number readers.
 
 ## Deploy to Azure Static Web Apps
 

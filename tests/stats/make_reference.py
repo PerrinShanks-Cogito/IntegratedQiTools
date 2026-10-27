@@ -1160,6 +1160,162 @@ group("Pareto chart: order, percentages and the vital few", "compute", ["pareto_
       note="written out in Python: categories matched ignoring case and spacing, sorted largest first with Other last, "
            "the vital few up to the first category that reaches the cut-off")
 
+# ------------------------------------------------------------- Weibull reliability
+from scipy import optimize
+from scipy.stats import weibull_min, CensoredData
+
+
+def weibull_mle(y, m, c):
+    """Maximum likelihood shape and scale, with m items still working at c: the likelihood equations
+    (the log-likelihood's derivatives set to zero) written out and solved by SciPy."""
+    y = np.array(y, float); r_ = len(y)
+    def score(q):
+        b, a = q
+        z = y / a
+        zc = c / a if m else 1.0
+        db = r_ / b + np.sum(np.log(z)) - np.sum(z ** b * np.log(z)) - (m * zc ** b * np.log(zc) if m else 0)
+        da = (b / a) * (np.sum(z ** b) + (m * zc ** b if m else 0) - r_)
+        return [db, da]
+    start = weibull_min.fit(CensoredData(uncensored=y, right=[c] * m) if m else y, floc=0)
+    sol = optimize.root(score, [start[0], start[2]], method="hybr", options={"xtol": 1e-14})
+    b, a = sol.x
+    assert max(abs(v) for v in score(sol.x)) < 1e-8 * r_, sol
+    assert abs(start[0] / b - 1) < 1e-4 and abs(start[2] / a - 1) < 1e-4  # SciPy's own fit, to its tolerance
+    return b, a
+
+
+wf = []
+for name, n, shape, scale, cens in [("shape 1.5, 40 items", 40, 1.5, 100, None), ("shape 0.8, 25 items", 25, 0.8, 30, None),
+                                    ("shape 3, 60 items", 60, 3.0, 500, None), ("censored at 80, 50 items", 50, 2.0, 90, 80),
+                                    ("censored at 20, 30 items", 30, 1.2, 25, 20)]:
+    t = np.sort(np.round(weibull_min.rvs(shape, scale=scale, size=n, random_state=rng), 2))
+    fails = t[t < cens] if cens else t
+    m = n - len(fails)
+    b, a = weibull_mle(fails, m, cens or 0)
+    wf.append({"name": name, "args": [fails.tolist(), m, cens or 0], "expect": {"beta": clean(b), "alpha": clean(a)}})
+group("Weibull: maximum likelihood fit", "mleFit", ["weibull_reliability"], wf, tol=1e-7, abs_tol=1e-12,
+      note="the likelihood equations (with right-censored items) solved by SciPy; SciPy's weibull_min.fit agrees to its own tolerance")
+
+pp, rq = [], []
+for n, N in [(10, 10), (25, 25), (18, 30)]:
+    y = np.sort(np.round(weibull_min.rvs(1.7, scale=50, size=n, random_state=rng), 2)).tolist()
+    F = [(i - 0.5) / N for i in range(1, n + 1)]  # Hazen plotting positions
+    pts = [{"t": v, "F": f, "x": math.log(v), "y": math.log(-math.log(1 - f))} for v, f in zip(y, F)]
+    pp.append({"name": f"{n} failures of {N}", "args": [y, N], "expect": clean(pts)})
+    rq.append({"name": f"{n} failures of {N}", "args": [pts], "expect": clean(stats.linregress([p_["x"] for p_ in pts], [p_["y"] for p_ in pts]).rvalue ** 2)})
+group("Weibull: probability plot points (Hazen plotting positions, (i − 0.5) / N)", "probPoints", ["weibull_reliability"], pp, tol=1e-12, abs_tol=1e-15)
+group("Weibull: R² of the probability plot", "rsq", ["weibull_reliability"], rq, tol=1e-10)
+
+bt = []
+for name, shape, scale, theta in [("threshold 40", 1.6, 60, 40), ("threshold 200", 2.2, 300, 200), ("threshold 5", 1.1, 10, 5),
+                                  ("negative times, threshold −50", 1.8, 30, -50)]:
+    y = np.sort(np.round(theta + weibull_min.rvs(shape, scale=scale, size=40, random_state=rng), 2))
+    N = len(y)
+    def neg_r2(th):
+        v = y - th
+        F = (np.arange(1, N + 1) - 0.5) / N
+        return -stats.linregress(np.log(v), np.log(-np.log(1 - F))).rvalue ** 2
+    # search from 20 times the shortest time below it (not below 0 when every time is positive) up to just under it
+    span = y[0] if y[0] > 0 else abs(y[0]) or 1
+    lo, hi = y[0] - 20 * span, y[0] - span * 1e-6
+    if lo < 0 and y[0] > 0:
+        lo = 0
+    grid = np.linspace(lo, hi, 201)
+    g0 = grid[np.argmin([neg_r2(g) for g in grid])]
+    step = (hi - lo) / 200
+    best = optimize.minimize_scalar(neg_r2, bounds=(max(lo, g0 - step), min(hi, g0 + step)), method="bounded", options={"xatol": 1e-10}).x
+    bt.append({"name": name, "args": [y.tolist(), N], "expect": clean(best)})
+group("Weibull: threshold that makes the probability plot straightest", "bestThreshold", ["weibull_reliability"], bt, tol=1e-4, abs_tol=1e-6,
+      note="SciPy's bounded search for the highest R², around the best of the same 201-point grid; the tool rounds to 5 significant figures")
+
+wm = [("2-parameter", {"beta": 1.8, "alpha": 120, "theta": 0}), ("3-parameter", {"beta": 0.7, "alpha": 40, "theta": 15}),
+      ("shape 1 (exponential)", {"beta": 1, "alpha": 10, "theta": 0})]
+for fn, ref in [("surv", lambda d, t: weibull_min.sf(t, d["beta"], loc=d["theta"], scale=d["alpha"])),
+                ("pdf", lambda d, t: weibull_min.pdf(t, d["beta"], loc=d["theta"], scale=d["alpha"])),
+                ("hazard", lambda d, t: weibull_min.pdf(t, d["beta"], loc=d["theta"], scale=d["alpha"]) / weibull_min.sf(t, d["beta"], loc=d["theta"], scale=d["alpha"]))]:
+    group(f"Weibull: {dict(surv='survival', pdf='density', hazard='hazard (failure rate)')[fn]}", fn, ["weibull_reliability"],
+          [{"name": f"{nm}, t={t}", "args": [d, t], "expect": clean(ref(d, t))} for nm, d in wm for t in [d["theta"] + 0.5, 20, 60, 150, 400] if t > d["theta"]],
+          tol=1e-10, abs_tol=1e-300)
+group("Weibull: time by which a given share is still working", "timeAtSurv", ["weibull_reliability"],
+      [{"name": f"{nm}, {p_:.0%} working", "args": [d, p_], "expect": clean(weibull_min.isf(p_, d["beta"], loc=d["theta"], scale=d["alpha"]))}
+       for nm, d in wm for p_ in [0.99, 0.9, 0.5, 0.1, 0.01]], tol=1e-10)
+
+# ------------------------------------------------------------- power and sample size: proportions, sample size, smallest difference
+from statsmodels.stats.proportion import power_proportions_2indep, samplesize_proportions_2indep_onetail
+from statsmodels.stats.power import TTestPower, TTestIndPower
+
+
+def p1_power(p0, p1, n, alpha, sides):
+    # normal approximation: the null's standard error for the critical value, the alternative's for the power
+    z = stats.norm.ppf(1 - alpha / sides); se0, se1 = math.sqrt(p0 * (1 - p0) / n), math.sqrt(p1 * (1 - p1) / n)
+    hi = stats.norm.sf((p0 + z * se0 - p1) / se1)
+    lo = stats.norm.cdf((p0 - z * se0 - p1) / se1)
+    return (hi if p1 > p0 else lo) if sides == 1 else hi + lo
+
+
+def p2_power(p2, p1, n, alpha, sides):
+    return power_proportions_2indep(p1 - p2, p2, n, alpha=alpha, alternative="two-sided" if sides == 2 else ("larger" if p1 > p2 else "smaller")).power
+
+
+pw = []
+for test, base, comp in [("p1", 0.4, 0.5), ("p1", 0.9, 0.95), ("p1", 0.3, 0.2), ("p2", 0.4, 0.5), ("p2", 0.1, 0.05), ("p2", 0.6, 0.75)]:
+    for sides in [1, 2]:
+        for n in [20, 100, 400]:
+            f = p1_power if test == "p1" else p2_power
+            pw.append({"args": [{"test": test, "sides": sides, "alpha": 0.05, "sd": base}, n, comp], "expect": clean(f(base, comp, n, 0.05, sides))})
+group("power of a proportions test", "powerAt", ["power_sample_size"], pw, tol=5e-7, abs_tol=1e-12,
+      note="normal approximation, as Minitab; 2 proportions against statsmodels power_proportions_2indep, 1 proportion written out; "
+           "the tool's normal distribution is accurate to about 1.2e-7")
+
+ss = []
+for test, base, comp, power, sides in [("p1", 0.4, 0.5, 0.8, 2), ("p1", 0.9, 0.95, 0.9, 1), ("p1", 0.3, 0.2, 0.8, 2),
+                                       ("p2", 0.4, 0.5, 0.8, 2), ("p2", 0.1, 0.05, 0.9, 2), ("p2", 0.6, 0.75, 0.8, 1)]:
+    if test == "p2":
+        n = samplesize_proportions_2indep_onetail(comp - base, base, power, alpha=0.05 if sides == 1 else 0.05,
+                                                  alternative="two-sided" if sides == 2 else "larger")
+    else:
+        z, zb = stats.norm.ppf(1 - 0.05 / sides), stats.norm.ppf(power)
+        n = ((z * math.sqrt(base * (1 - base)) + zb * math.sqrt(comp * (1 - comp))) / (comp - base)) ** 2
+    ss.append({"name": f"{test} {base:.0%} to {comp:.0%}, power {power:.0%}, {sides}-sided", "args": [{"test": test, "sides": sides, "alpha": 0.05, "sd": base}, comp, power],
+               "expect": max(2, math.ceil(n - 1e-9))})
+for levels, d, power in [(3, 1, 0.8), (4, 0.5, 0.9), (5, 2, 0.8)]:
+    d1 = levels - 1
+    n = next(n for n in range(2, 10000) if stats.ncf.sf(stats.f.ppf(0.95, d1, levels * (n - 1)), d1, levels * (n - 1), n * d * d / 2) >= power)
+    ss.append({"name": f"ANOVA, {levels} levels, difference {d} SD, power {power:.0%}", "args": [{"test": "anova", "levels": levels, "sides": 2, "alpha": 0.05, "sd": 1}, d, power], "expect": n})
+group("sample size: proportions (normal approximation) and one-way ANOVA (exact)", "sampleSize", ["power_sample_size"], ss, tol=0, abs_tol=0,
+      note="2 proportions from statsmodels samplesize_proportions_2indep_onetail, rounded up; ANOVA the smallest n with SciPy's noncentral F power at the target")
+
+st = []
+for test, d, power, sides in [("t1", 0.5, 0.8, 2), ("t1", 1, 0.9, 1), ("t2", 0.5, 0.8, 2), ("t2", 0.8, 0.9, 2), ("t2", 0.3, 0.8, 1), ("t1", 0.2, 0.8, 2)]:
+    an = TTestPower() if test == "t1" else TTestIndPower()
+    n = math.ceil(an.solve_power(effect_size=d, alpha=0.05, power=power, alternative="two-sided" if sides == 2 else "larger") - 1e-9)
+    st.append({"name": f"{test}, {d} SD, power {power:.0%}, {sides}-sided", "args": [{"test": test, "sides": sides, "alpha": 0.05, "sd": 1}, d, power], "expect": max(2, n)})
+group("sample size: t-tests", "sampleSize", ["power_sample_size"], st, tol=0, abs_tol=0,
+      note="exact sample size from statsmodels (noncentral t); the tool's normal approximation to the power gives the same n in these cases")
+
+md = []
+for test, base, n, power in [("p1", 0.4, 100, 0.8), ("p1", 0.95, 200, 0.8), ("p2", 0.4, 150, 0.8), ("p2", 0.05, 300, 0.9), ("p1", 0.5, 8, 0.99)]:
+    f = (lambda p_: p1_power(base, p_, n, 0.05, 2)) if test == "p1" else (lambda p_: p2_power(base, p_, n, 0.05, 2))
+    eps = 1e-9
+    up = optimize.brentq(lambda p_: f(p_) - power, base + 1e-12, 1 - eps, xtol=1e-14) if f(1 - eps) >= power else None
+    down = optimize.brentq(lambda p_: f(p_) - power, eps, base - 1e-12, xtol=1e-14) if f(eps) >= power else None
+    md.append({"name": f"{test} from {base:.0%}, n {n}, power {power:.0%}", "args": [{"test": test, "sides": 2, "alpha": 0.05, "sd": base}, n, power],
+               "expect": {"up": up, "down": down}})
+for levels, n, power in [(3, 10, 0.8), (5, 25, 0.9)]:
+    d1 = levels - 1
+    pw_ = lambda d: stats.ncf.sf(stats.f.ppf(0.95, d1, levels * (n - 1)), d1, levels * (n - 1), n * d * d / 2)
+    md.append({"name": f"ANOVA, {levels} levels, n {n}", "args": [{"test": "anova", "levels": levels, "sides": 2, "alpha": 0.05, "sd": 2}, n, power],
+               "expect": {"d": 2 * optimize.brentq(lambda d: pw_(d) - power, 1e-6, 50, xtol=1e-14)}})
+group("smallest detectable difference: proportions and one-way ANOVA", "minDiff", ["power_sample_size"], md, tol=1e-7, abs_tol=1e-9,
+      note="the difference at which the reference power above reaches the target (SciPy brentq)")
+mt = []
+for test, n, power in [("t1", 20, 0.8), ("t2", 30, 0.9), ("t2", 100, 0.8)]:
+    an = TTestPower() if test == "t1" else TTestIndPower()
+    mt.append({"name": f"{test}, n {n}, power {power:.0%}", "args": [{"test": test, "sides": 2, "alpha": 0.05, "sd": 3}, n, power],
+               "expect": {"d": 3 * an.solve_power(nobs1=n, alpha=0.05, power=power) if test == "t2" else 3 * an.solve_power(nobs=n, alpha=0.05, power=power)}})
+group("smallest detectable difference: t-tests", "minDiff", ["power_sample_size"], mt, tol=1e-3, abs_tol=0,
+      note="exact from statsmodels; the tool's normal approximation to the power puts it within 0.1%")
+
 with open(OUT, "w") as f:
     json.dump({"generated_by": "tests/stats/make_reference.py", "scipy": scipy.__version__, "numpy": np.__version__,
                "groups": groups}, f, indent=0, separators=(",", ":"))
