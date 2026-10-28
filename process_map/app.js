@@ -17,65 +17,61 @@ const PATH="#005EB8"; // arrows and outlines for steps on a decision's new path
 const VALUES={"":"Not classified",va:"Value-adding",nnva:"Necessary (NNVA)",nva:"Non-value-adding"};
 const VSHORT={va:"VA",nnva:"NNVA",nva:"NVA"};
 const VCOL={va:{fill:"#E3F2E9",ink:"#007F3B"},nnva:{fill:"#FFF4DB",ink:"#8A5A00"},nva:{fill:"#FBE7E5",ink:"#B3261E"},"":{fill:"#FFFFFF",ink:"#768692"}};
-const UNITS={min:"minutes",h:"hours",d:"days"};
-const UNITF={min:1,h:60,d:1440};
 
 /* ---------- model ---------- */
 function L(name,patient){return {id:nid(),name:name,patient:!!patient};}
 /* The patient's lane is found from its name, so there's nothing to tick */
 const isPat=l=>/patient|service user|carer/i.test((l&&l.name)||"");
-function S(lane,type,text,value,time,x){return Object.assign({id:nid(),lane:lane.id||lane,type:type,text:text||"",value:value||"",time:time===undefined||time===null?"":time,issue:"",bottleneck:false,noTo:"",thenTo:"",depth:0,yesLabel:"Yes",noLabel:"No"},x||{});}
+function S(lane,type,text,value,x){return Object.assign({id:nid(),lane:lane.id||lane,type:type,text:text||"",value:value||"",issue:"",noTo:"",thenTo:"",depth:0,yesLabel:"Yes",noLabel:"No"},x||{});}
 function blankMap(){
   /* a new map starts with one lane; add more for each role or team */
   const p=L("Lane 1");
   return {lanes:[p],steps:[S(p,"terminator",""),S(p,"step",""),S(p,"terminator","")]};
 }
-function blank(){return {title:"",scope:{start:"",end:"",who:""},unit:"min",active:"current",maps:{current:blankMap(),future:null},view:{issues:true}};}
+function blank(){return {title:"",scope:{start:"",end:"",who:""},active:"current",maps:{current:blankMap(),future:null},view:{issues:true}};}
 
 function example(){
   const pt=L("Patient",true),rc=L("Reception"),ph=L("Phlebotomist"),po=L("Porter"),lab=L("Laboratory"),cl=L("Clinician");
-  const c4=S(rc,"step","Prints labels and a paper request form","nnva",3,{issue:"Same details written out twice"});
+  const c4=S(rc,"step","Prints labels and a paper request form","nnva",{issue:"Same details written out twice"});
   const cur={lanes:[pt,rc,ph,po,lab,cl],steps:[
-    S(pt,"terminator","Patient arrives for blood test","",0),
-    S(pt,"wait","Takes a ticket and waits to check in","nva",10),
-    S(rc,"step","Checks identity and finds the request","nnva",4,{issue:"Request is on the EPR but gets re-keyed"}),
+    S(pt,"terminator","Patient arrives for blood test",""),
+    S(pt,"wait","Takes a ticket and waits to check in","nva"),
+    S(rc,"step","Checks identity and finds the request","nnva",{issue:"Request is on the EPR but gets re-keyed"}),
     c4,
-    S(pt,"wait","Waits to be called","nva",35,{bottleneck:true,issue:"Queue peaks 08:30 to 10:00"}),
-    S(ph,"step","Takes blood sample","va",6),
-    S(ph,"decision","Labels match the patient?","nnva",1,{noTo:c4.id,noLabel:"No, relabel"}),
-    S(po,"wait","Sample waits in tray for porter round","nva",45,{issue:"Porter round only hourly"}),
-    S(po,"step","Carries samples to the lab","nnva",15),
-    S(lab,"wait","Sample waits to be booked in","nva",30),
-    S(lab,"step","Books in and analyses sample","va",50),
-    S(cl,"wait","Result waits in inbox","nva",240,{issue:"Only reviewed at end of clinic"}),
-    S(cl,"step","Reviews result and decides action","va",5),
-    S(pt,"terminator","Patient told the result","",0)
+    S(pt,"wait","Waits to be called","nva",{issue:"Queue peaks 08:30 to 10:00"}),
+    S(ph,"step","Takes blood sample","va"),
+    S(ph,"decision","Labels match the patient?","nnva",{noTo:c4.id,noLabel:"No, relabel"}),
+    S(po,"wait","Sample waits in tray for porter round","nva",{issue:"Porter round only hourly"}),
+    S(po,"step","Carries samples to the lab","nnva"),
+    S(lab,"wait","Sample waits to be booked in","nva"),
+    S(lab,"step","Books in and analyses sample","va"),
+    S(cl,"wait","Result waits in inbox","nva",{issue:"Only reviewed at end of clinic"}),
+    S(cl,"step","Reviews result and decides action","va"),
+    S(pt,"terminator","Patient told the result","")
   ]};
   const fp=L("Patient",true),fph=L("Phlebotomist"),flab=L("Laboratory"),fcl=L("Clinician");
   const fut={lanes:[fp,fph,flab,fcl],steps:[
-    S(fp,"terminator","Patient arrives at booked slot","",0),
-    S(fp,"step","Checks in at the kiosk","nnva",2),
-    S(fp,"wait","Waits to be called","nva",10,{issue:"Booked slots spread the morning peak"}),
-    S(fph,"step","Prints labels at the chair from the e-request","nnva",2),
-    S(fph,"step","Takes and labels sample at the chair","va",6),
-    S(fph,"step","Sends sample by air tube","nnva",3),
-    S(flab,"wait","Sample waits to be booked in","nva",10),
-    S(flab,"step","Books in and analyses sample","va",50),
-    S(fcl,"wait","Result flagged and waits for review","nva",60),
-    S(fcl,"step","Reviews result and decides action","va",5),
-    S(fp,"terminator","Patient told the result in the app","",0)
+    S(fp,"terminator","Patient arrives at booked slot",""),
+    S(fp,"step","Checks in at the kiosk","nnva"),
+    S(fp,"wait","Waits to be called","nva",{issue:"Booked slots spread the morning peak"}),
+    S(fph,"step","Prints labels at the chair from the e-request","nnva"),
+    S(fph,"step","Takes and labels sample at the chair","va"),
+    S(fph,"step","Sends sample by air tube","nnva"),
+    S(flab,"wait","Sample waits to be booked in","nva"),
+    S(flab,"step","Books in and analyses sample","va"),
+    S(fcl,"wait","Result flagged and waits for review","nva"),
+    S(fcl,"step","Reviews result and decides action","va"),
+    S(fp,"terminator","Patient told the result in the app","")
   ]};
   return {title:"Outpatient blood test, arrival to result",scope:{start:"Patient arrives for a blood test",end:"Patient is told the result",who:"Adult outpatients with a routine blood test request"},
-    unit:"min",active:"current",maps:{current:cur,future:fut},view:{issues:true}};
+    active:"current",maps:{current:cur,future:fut},view:{issues:true}};
 }
 
 /* ---------- persistence ---------- */
-/* Work in progress is kept in sessionStorage, so it survives a refresh but is cleared when the tab
-   closes and isn't left on a shared computer. Work an older version kept in localStorage moves across once. */
-function load(){try{const old=localStorage.getItem(KEY);if(old!==null){localStorage.removeItem(KEY);if(sessionStorage.getItem(KEY)===null)sessionStorage.setItem(KEY,old);}}catch(e){}
-  try{const raw=sessionStorage.getItem(KEY);if(!raw)return null;return normalise(JSON.parse(raw));}catch(e){return null;}}
-let saveTimer=null;
-function persist(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>{try{sessionStorage.setItem(KEY,JSON.stringify(state));}catch(e){}},250);}
+/* The tool always opens on a fresh one-lane map rather than restoring the last map in this
+   tab. Work is kept by saving a project file. Anything older versions kept in the browser is cleared. */
+try{sessionStorage.removeItem(KEY);localStorage.removeItem(KEY);}catch(e){}
+function persist(){}
 function normMap(m){
   if(!m||typeof m!=="object") return null;
   const idmap={};
@@ -85,8 +81,7 @@ function normMap(m){
     s=s||{};
     const legacy=s.type==="branch"; // older maps had a New path step type
     const n=S(idmap["L"+s.lane]||lanes[0].id,legacy?"step":TYPES[s.type]?s.type:"step",String(s.text||""),VALUES[s.value]!==undefined?s.value:"",
-      (s.time===""||s.time===null||s.time===undefined||isNaN(+s.time))?"":Math.max(0,+s.time),
-      {issue:String(s.issue||""),bottleneck:!!s.bottleneck,yesLabel:String(s.yesLabel||"Yes"),noLabel:String(s.noLabel||"No"),
+      {issue:String(s.issue||""),yesLabel:String(s.yesLabel||"Yes"),noLabel:String(s.noLabel||"No"),
        depth:legacy?Math.max(1,Math.floor(+s.depth||1)):Math.max(0,Math.floor(+s.depth||0))});
     idmap["S"+s.id]=n.id; n._old=s.noTo; n._then=s.thenTo; return n;
   });
@@ -103,7 +98,6 @@ function normalise(o){
   const s=blank();
   s.title=String(o.title||"");
   const sc=o.scope||{}; s.scope={start:String(sc.start||""),end:String(sc.end||""),who:String(sc.who||"")};
-  s.unit=UNITS[o.unit]?o.unit:"min";
   s.maps.current=normMap(o.maps.current)||blankMap();
   s.maps.future=o.maps.future?normMap(o.maps.future):null;
   s.active=o.active==="future"&&s.maps.future?"future":"current";
@@ -112,19 +106,11 @@ function normalise(o){
 }
 function cloneMap(m){return normMap(JSON.parse(JSON.stringify(m)));}
 
-let state=load()||blank(); // start empty unless there is saved work
+let state=blank();
 let selected=null, zoom=1, autoFit=true;
 const map=()=>state.maps[state.active];
 const laneOf=(m,id)=>m.lanes.find(l=>l.id===id)||m.lanes[0];
 
-/* ---------- time ---------- */
-const r1=v=>String(Math.round(v*10)/10);
-function fmtT(v,unit){
-  unit=unit||state.unit; v=+v||0;
-  if(unit==="min"){ if(v<60) return r1(v)+" min"; const h=Math.floor(v/60),m=Math.round(v-h*60); return h+" h"+(m?" "+m+" min":""); }
-  if(unit==="h"){ if(v<24) return r1(v)+" h"; const d=Math.floor(v/24),h=Math.round((v-d*24)*10)/10; return d+" d"+(h?" "+r1(h)+" h":""); }
-  return r1(v)+(v===1?" day":" days");
-}
 
 /* ---------- flow ----------
    Steps run in list order, and each has a path level: 0 is the usual path.
@@ -191,7 +177,7 @@ function flow(m){
 
 /* ---------- metrics ---------- */
 function metrics(m){
-  const r={steps:0,patient:0,handoffs:0,decisions:0,waits:0,va:0,nnva:0,nva:0,unc:0,loops:0,paths:0,pathTime:0,bottlenecks:0,issues:0,lead:0,vaTime:0,waitTime:0,untimed:0,hasPatient:m.lanes.some(isPat)};
+  const r={steps:0,patient:0,handoffs:0,decisions:0,waits:0,va:0,nnva:0,nva:0,unc:0,loops:0,paths:0,issues:0,hasPatient:m.lanes.some(isPat)};
   const pl={}; m.lanes.forEach(l=>pl[l.id]=isPat(l));
   const F=flow(m), idx=F.idx;
   /* a path that loops back is rework, so like a rework loop it isn't counted as a hand-off */
@@ -199,22 +185,13 @@ function metrics(m){
   r.paths=Object.keys(F.runs).length;
   m.steps.forEach((s,i)=>{
     if(s.issue&&s.issue.trim()) r.issues++;
-    if(s.bottleneck) r.bottlenecks++;
     if(s.type==="terminator") return;
     r.steps++;
     if(pl[s.lane]) r.patient++;
     if(s.type==="decision"){r.decisions++; if(!F.runs[i]&&s.noTo&&idx[s.noTo]!==undefined&&idx[s.noTo]<i) r.loops++;}
     if(s.type==="wait") r.waits++;
     if(s.value) r[s.value]++; else r.unc++;
-    const t=+s.time||0;
-    if(s.time===""&&s.type!=="decision") r.untimed++;
-    /* Only some cases go down a new path, so its time is kept out of the lead time */
-    if(F.dep[i]>0){r.pathTime+=t;return;}
-    r.lead+=t;
-    if(s.type==="wait") r.waitTime+=t;
-    else if(s.value==="va") r.vaTime+=t;
   });
-  r.vaPct=r.lead>0?r.vaTime/r.lead*100:0;
   return r;
 }
 
@@ -238,8 +215,10 @@ function wrap(text,maxW,font,maxLines){
 function layout(m,o){
   o=o||{};
   const v=state.view, ex=!!o.export;
-  const LHW=150, COLW=172, BW=138, X0=LHW+14, TOP=70;
   const steps=m.steps, lanes=m.lanes, n=steps.length;
+  /* with only one lane there's nothing to tell apart, so the lane label column is left out */
+  const one=lanes.length===1;
+  const LHW=one?0:150, COLW=172, BW=138, X0=LHW+14, TOP=70;
   const li={}; lanes.forEach((l,i)=>li[l.id]=i);
   const F=flow(m), idx=F.idx;
   const G=steps.map((s,i)=>{
@@ -281,11 +260,13 @@ function layout(m,o){
   /* lanes */
   lanes.forEach((l,i)=>{
     const d=LN[i], h=d.bottom-d.top;
-    p.push('<rect x="0" y="'+d.top+'" width="'+W+'" height="'+h+'" fill="'+(isPat(l)?"#F2F7FC":(i%2?"#F7F9FA":"#FFFFFF"))+'"/>');
+    p.push('<rect x="0" y="'+d.top+'" width="'+W+'" height="'+h+'" fill="'+(!one&&isPat(l)?"#F2F7FC":(i%2?"#F7F9FA":"#FFFFFF"))+'"/>');
+    if(!one){
     p.push('<rect x="0" y="'+d.top+'" width="'+LHW+'" height="'+h+'" fill="'+(isPat(l)?"#003087":"#E6F0FA")+'"/>');
     const nl=wrap(l.name||"Lane",LHW-24,"700 13.5px "+FF,4);
     const ty=d.top+h/2-(nl.length-1)*8+5;
     nl.forEach((t,k)=>p.push('<text x="14" y="'+(ty+k*16)+'" font-family="'+FF+'" font-size="13.5" font-weight="700" fill="'+(isPat(l)?"#FFFFFF":"#003087")+'">'+esc(t)+'</text>'));
+    }
     p.push('<line x1="0" y1="'+d.bottom+'" x2="'+W+'" y2="'+d.bottom+'" stroke="#D8DDE0"/>');
   });
   p.push('<line x1="0" y1="'+TOP+'" x2="'+W+'" y2="'+TOP+'" stroke="#D8DDE0"/>');
@@ -351,7 +332,7 @@ function layout(m,o){
   G.forEach(g=>{
     const s=g.s, x=g.cx-BW/2, top=g.cy-g.h/2, c=VCOL[s.value||""];
     const fill=s.type==="terminator"?"#FFFFFF":c.fill;
-    const stroke=s.bottleneck?"#D5281B":g.dep>0?PATH:"#425563", sw=s.bottleneck?3:g.dep>0?2:1.5;
+    const stroke=g.dep>0?PATH:"#425563", sw=g.dep>0?2:1.5;
     let shape;
     if(s.type==="decision") shape='<path d="M'+g.cx+","+top+"L"+(x+BW)+","+g.cy+"L"+g.cx+","+(top+g.h)+"L"+x+","+g.cy+'Z"';
     else if(s.type==="terminator") shape='<rect x="'+x+'" y="'+top+'" width="'+BW+'" height="'+g.h+'" rx="'+Math.min(22,g.h/2)+'"';
@@ -370,10 +351,6 @@ function layout(m,o){
     if(s.value&&s.type!=="terminator"){
       const vx=s.type==="decision"?g.cx:x+BW-(s.type==="wait"?14:6), vy=s.type==="decision"?top+g.h-16:top+g.h-6;
       p.push('<text x="'+vx+'" y="'+vy+'" text-anchor="'+(s.type==="decision"?"middle":"end")+'" font-family="'+FF+'" font-size="9.5" font-weight="800" fill="'+c.ink+'">'+VSHORT[s.value]+'</text>');
-    }
-    if(s.bottleneck){
-      const tx=s.type==="decision"?g.cx+14:x+BW-72, tyy=s.type==="decision"?top+4:top-9;
-      p.push('<rect x="'+tx+'" y="'+tyy+'" width="70" height="17" rx="8.5" fill="#D5281B"/><text x="'+(tx+35)+'" y="'+(tyy+12.5)+'" text-anchor="middle" font-family="'+FF+'" font-size="10" font-weight="800" fill="#fff">Bottleneck</text>');
     }
     p.push('</g>');
   });
@@ -577,11 +554,10 @@ function stepCard(m,s,i,F){
     '<button class="btn icon ghost" data-act="down" type="button" aria-label="Move step '+F.labels[i]+' down">↓</button>'+
     '<button class="btn icon ghost danger" data-act="del" type="button" aria-label="Remove step '+F.labels[i]+'">✕</button></div>'+
     '<textarea class="field t" rows="1" aria-label="Step '+F.labels[i]+' description" placeholder="'+(isT?(i===0?"Where the process starts":"Where the process ends"):isD?"A yes or no question":s.type==="wait"?"Who or what is waiting, and where":d?"What happens on this path? Start with a verb":"What happens? Start with a verb")+'"></textarea>'+
-    (isT?"":'<div class="row2"><label>Value<select class="field sm va">'+Object.keys(VALUES).map(k=>'<option value="'+k+'"'+(k===(s.value||"")?" selected":"")+'>'+VALUES[k]+'</option>').join("")+'</select></label>'+
-      '<label>'+(s.type==="wait"?"Waiting time":"Time taken")+'<span class="timefield"><input class="field sm tm" type="number" min="0" step="any" inputmode="decimal"><span>'+UNITS[state.unit]+'</span></span></label></div>')+
+    (isT?"":'<div class="row1"><label>Value<select class="field sm va">'+Object.keys(VALUES).map(k=>'<option value="'+k+'"'+(k===(s.value||"")?" selected":"")+'>'+VALUES[k]+'</option>').join("")+'</select></label></div>')+
     noRow+pathRow+
     '<input class="field measure issue is" type="text" aria-label="Issue for step '+F.labels[i]+'" placeholder="Issue or frustration (optional)">'+
-    '<div class="step-foot">'+(isT?"<span></span>":'<label class="chk"><input type="checkbox" class="bn"'+(s.bottleneck?" checked":"")+'> Bottleneck</label>')+
+    '<div class="step-foot"><span></span>'+
     '<span class="foot-btns">'+moves+(isD?'<button class="btn small" data-act="path" type="button">'+(run?"Add step to new path":"Add new path")+'</button>':"")+
     '<button class="btn small" data-act="ins" type="button">'+(d?"Add path step below":"Add step below")+'</button></span></div></div>';
 }
@@ -597,8 +573,9 @@ function renderEditor(){
     h+='<div class="lane-row" data-id="'+l.id+'"><input class="field ln" type="text" aria-label="Lane '+(i+1)+' name" placeholder="Role or team">'+
       '<button class="btn icon ghost" data-act="up" type="button" aria-label="Move lane up">↑</button><button class="btn icon ghost" data-act="down" type="button" aria-label="Move lane down">↓</button><button class="btn icon ghost danger" data-act="del" type="button" aria-label="Remove lane">✕</button></div>';
   });
-  h+='</div><p class="hint">One lane per role or team, plus the patient. Call the patient\'s lane Patient (or service user or carer) so the steps they go through are counted. Map supporting work, such as samples or notes, in its own lane.</p>';
-  h+='<div class="section-h"><h2>Steps</h2><span class="unit-sel"><label for="unitSel">Times in</label><select class="field sm" id="unitSel">'+Object.keys(UNITS).map(k=>'<option value="'+k+'"'+(k===state.unit?" selected":"")+'>'+UNITS[k]+'</option>').join("")+'</select></span></div>';
+  /* with one lane, explain that swimlanes are what make hand-offs visible and countable */
+  h+='</div><p class="hint">'+(m.lanes.length===1?'<b>With one lane the map is a simple flowchart.</b> To track hand-offs, turn it into a swimlane map. ':'Hand-offs are counted each time the work moves from one lane to another. ')+'Give each person, role, team or organisation involved its own lane, including patients, service users, carers and families. Where work passes between different governance structures, such as another directorate, trust, provider, contractor or the local authority, give each its own lane, even if the same kind of staff do the work, so changes of accountability show up. Name the lane for the people the service is for Patient, Service user or Carer so the steps they go through are counted. Supporting work, such as samples, notes or IT systems, can have its own lane too.</p>';
+  h+='<div class="section-h"><h2>Steps</h2></div>';
   const F=flow(m);
   h+='<div id="steps">'+m.steps.map((s,i)=>stepCard(m,s,i,F)).join("")+'</div>';
   h+='<div style="margin-top:.6rem"><button class="btn small" id="addStep" type="button">Add step at the end</button></div>';
@@ -608,7 +585,6 @@ function renderEditor(){
   host.querySelectorAll(".step").forEach(c=>{
     const s=m.steps.find(x=>x.id===c.dataset.id);
     const t=c.querySelector(".t"); t.value=s.text; autosize(t);
-    const tm=c.querySelector(".tm"); if(tm) tm.value=s.time;
     c.querySelector(".is").value=s.issue||"";
     const nl=c.querySelector(".nl"); if(nl) nl.value=s.noLabel||"No";
   });
@@ -629,7 +605,6 @@ ed.addEventListener("input",e=>{
   const s=m.steps.find(x=>x.id===c.dataset.id); if(!s) return;
   const cl=e.target.classList;
   if(cl.contains("t")){s.text=e.target.value;autosize(e.target);refreshNames(s);}
-  else if(cl.contains("tm")){const v=e.target.value;s.time=v===""?"":Math.max(0,+v||0);}
   else if(cl.contains("is")) s.issue=e.target.value;
   else if(cl.contains("nl")) s.noLabel=e.target.value;
   else return;
@@ -637,11 +612,6 @@ ed.addEventListener("input",e=>{
 });
 ed.addEventListener("change",e=>{
   const m=map(); if(!m) return;
-  if(e.target.id==="unitSel"){
-    const from=state.unit,to=e.target.value,f=UNITF[from]/UNITF[to];
-    ["current","future"].forEach(k=>{const mm=state.maps[k]; if(mm) mm.steps.forEach(s=>{if(s.time!=="") s.time=Math.round(s.time*f*100)/100;});});
-    state.unit=to; changed(true); toast("Times converted to "+UNITS[to]); return;
-  }
   const lr=e.target.closest(".lane-row");
   const c=e.target.closest(".step"); if(!c) return;
   const s=m.steps.find(x=>x.id===c.dataset.id); if(!s) return;
@@ -651,7 +621,7 @@ ed.addEventListener("change",e=>{
     if(s.type==="wait"&&!s.value) s.value="nva";
     const hadPath=!!flow(m).runs[m.steps.indexOf(s)];
     if(s.type!=="decision") s.noTo="";
-    if(s.type==="terminator"){s.value="";s.bottleneck=false;}
+    if(s.type==="terminator") s.value="";
     changed(true); focusCard(s.id,".ty");
     if(hadPath&&s.type!=="decision") toast("Its new path's steps moved onto the path above.");
     return;
@@ -660,7 +630,6 @@ ed.addEventListener("change",e=>{
   if(cl.contains("va")){s.value=e.target.value;c.className=c.className.replace(/\sv-\w+/g,"")+(s.value?" v-"+s.value:"");changed();return;}
   if(cl.contains("nt")){s.noTo=e.target.value;changed();return;}
   if(cl.contains("th")){s.thenTo=e.target.value;changed();return;}
-  if(cl.contains("bn")){s.bottleneck=e.target.checked;changed();return;}
 });
 ed.addEventListener("focusin",e=>{
   const c=e.target.closest(".step"); if(!c||selected===c.dataset.id) return;
@@ -763,20 +732,19 @@ function renderAnalysis(){
   const rows=[
     ["Steps","steps",-1,0],["Steps the patient goes through","patient",-1,0,!cur.hasPatient&&!(fut&&fut.hasPatient)],["Hand-offs","handoffs",-1,0],
     ["Decisions","decisions",-1,0],["Waits and queues","waits",-1,0],["Non-value-adding steps","nva",-1,0],["Necessary non-value-adding steps","nnva",-1,0],
-    ["Value-adding steps","va",0,0],["Rework loops","loops",-1,0],["New paths from decisions","paths",0,0,!cur.paths&&!(fut&&fut.paths)],["Bottlenecks","bottlenecks",-1,0],
-    ["Lead time","lead",-1,1],["Waiting time","waitTime",-1,1],["Value-adding time","vaTime",0,1],["Value-adding share of lead time","vaPct",1,2]
+    ["Value-adding steps","va",0,0],["Rework loops","loops",-1,0],["New paths from decisions","paths",0,0,!cur.paths&&!(fut&&fut.paths)]
   ];
-  const f=(v,k)=>k===1?fmtT(v):k===2?Math.round(v)+"%":String(v);
+  const f=v=>String(v);
   let h='<h2 style="font-size:1.05rem;margin:0">Current versus redesign</h2><table class="metrics"><thead><tr><th>Measure</th><th>Current</th><th>Redesign</th>'+(fut?'<th>Change</th>':"")+'</tr></thead><tbody>';
   rows.forEach(([lab,key,dir,kind,hide])=>{
     if(hide) return;
     let ch="";
     if(fut){
       const d=fut[key]-cur[key], better=dir===0||d===0?"":(dir<0?d<0:d>0)?"better":"worse";
-      const ds=d===0?"–":(d>0?"+":"−")+(kind===1?fmtT(Math.abs(d)):kind===2?Math.round(Math.abs(d))+" pts":Math.abs(d));
+      const ds=d===0?"–":(d>0?"+":"−")+Math.abs(d);
       ch='<td class="'+better+'">'+ds+'</td>';
     }
-    h+='<tr'+(key==="lead"||key==="nva"||key==="handoffs"?' class="key"':"")+'><td>'+lab+'</td><td>'+f(cur[key],kind)+'</td><td>'+(fut?f(fut[key],kind):"–")+'</td>'+ch+'</tr>';
+    h+='<tr'+(key==="nva"||key==="handoffs"?' class="key"':"")+'><td>'+lab+'</td><td>'+f(cur[key],kind)+'</td><td>'+(fut?f(fut[key],kind):"–")+'</td>'+ch+'</tr>';
   });
   h+='</tbody></table>';
   if(!fut) h+='<p class="hint">Start a redesign from the map view to compare the two.</p>';
@@ -792,10 +760,8 @@ function renderAnalysis(){
   const P=[];
   if(a.steps&&a.nva) P.push(a.nva+" of "+a.steps+" steps add no value for the patient. Which could you stop doing altogether?");
   if(a.handoffs>=3) P.push("The patient or the work changes hands "+a.handoffs+" times. Could one person or team do more of the journey?");
-  const waits=am.steps.filter(s=>s.type==="wait"&&+s.time>0).sort((x,y)=>y.time-x.time).slice(0,3);
-  if(waits.length) P.push("Longest wait"+(waits.length>1?"s":"")+": "+waits.map(s=>nameOf(s)+" ("+fmtT(s.time)+")").join("; ")+". What is the work waiting for?");
-  if(a.lead>0&&a.vaPct<25) P.push("Only "+Math.round(a.vaPct)+"% of the lead time adds value. Shortening waits will usually do more than speeding up the work itself.");
-  am.steps.filter(s=>s.bottleneck).forEach(s=>P.push('"'+nameOf(s)+'" is marked as a bottleneck. Protect its capacity: make sure it never waits for work, and move tasks away from it that others could do.'));
+  const waits=am.steps.filter(s=>s.type==="wait");
+  if(waits.length) P.push("There "+(waits.length>1?"are "+waits.length+" waits or queues":"is 1 wait or queue")+" on the map. What is the work waiting for"+(waits.length>1?" at each one?":"?"));
   if(a.loops) P.push(a.loops+" rework loop"+(a.loops>1?"s send":" sends")+" work back. Fix the cause at source rather than checking for it later.");
   if(a.paths) P.push(a.paths+" decision"+(a.paths>1?"s send":" sends")+" some cases down a new path. How often does each path happen, and what would make it unnecessary?");
   if(a.nnva) P.push("Necessary steps can still be simplified or done at the same time as something else. Look at the "+a.nnva+" amber step"+(a.nnva>1?"s":"")+".");
@@ -803,7 +769,7 @@ function renderAnalysis(){
   P.push("Could any steps happen in parallel instead of one after another?");
   P.push("Is anything done twice, by different people, or written down in more than one place?");
   h+='<div class="section-h"><h2>Questions for redesign</h2></div><ul class="prompts">'+P.map(t=>"<li>"+esc(t)+"</li>").join("")+'</ul>';
-  h+='<div class="notice">Test redesigned steps with small PDSA cycles, and track lead time on a <a href="{{ '/run_chart/' | relative_url }}">run chart</a> to see whether the change is an improvement.</div>';
+  h+='<div class="notice">Test redesigned steps with small PDSA cycles, and track a measure on a <a href="{{ '/run_chart/' | relative_url }}">run chart</a> to see whether the change is an improvement.</div>';
   $("#analysis").innerHTML=h;
 }
 
@@ -824,8 +790,6 @@ function renderChecks(){
     else if(st.length) add("pass","Every step is described","");
     if(M.unc) add("warn",M.unc+" step"+(M.unc>1?"s aren't":" isn't")+" classified","For each one ask: would the patient value this? Mark it value-adding, necessary or non-value-adding.");
     else if(M.steps) add("pass","Every step is classified for value","");
-    if(M.untimed) add("info",M.untimed+" step"+(M.untimed>1?"s have":" has")+" no time","Rough times are fine. They give you lead time and show where the waits are.");
-    else if(M.steps) add("pass","Times recorded","Lead time is "+fmtT(M.lead)+".");
     const F=flow(m);
     const openD=st.filter((s,i)=>s.type==="decision"&&!s.noTo&&!F.runs[i]);
     if(openD.length) add("info",openD.length+" decision"+(openD.length>1?"s have":" has")+" no 'no' route","If a 'no' sends work back to an earlier step, link it so the rework loop shows. If it goes a different way, add a new path.");
@@ -838,13 +802,12 @@ function renderChecks(){
     if(idle.length) add("info","Lane"+(idle.length>1?"s":"")+" with no steps",idle.map(l=>l.name||"Unnamed").join(", ")+". Remove "+(idle.length>1?"them":"it")+" or add the steps that happen there.");
     if(usedL.size<2&&M.steps) add("info","Only one lane in use","Give each role its own lane so hand-offs show up.");
     if(!M.hasPatient) add("info","No patient lane","Call the patient's lane Patient (or service user or carer) to count the steps they go through.");
-    if(!M.bottlenecks&&M.steps>4) add("info","No bottleneck marked","Where does work pile up? Mark that step as the bottleneck.");
   }
   if(state.maps.future){
     const a=metrics(state.maps.current), b=metrics(state.maps.future);
-    const dl=a.lead-b.lead, dn=a.nva-b.nva, dh=a.handoffs-b.handoffs;
-    if(dl>0||dn>0||dh>0) add("pass","Redesign improves the process",[dn>0?dn+" fewer non-value-adding step"+(dn>1?"s":""):"",dh>0?dh+" fewer hand-off"+(dh>1?"s":""):"",dl>0?"lead time down by "+fmtT(dl):""].filter(Boolean).join(", ")+". Now test it with PDSA cycles.");
-    else add("warn","Redesign isn't better yet","It doesn't reduce lead time, waste or hand-offs compared with the current map.");
+    const ds=a.steps-b.steps, dn=a.nva-b.nva, dh=a.handoffs-b.handoffs;
+    if(ds>0||dn>0||dh>0) add("pass","Redesign improves the process",[ds>0?ds+" fewer step"+(ds>1?"s":""):"",dn>0?dn+" fewer non-value-adding step"+(dn>1?"s":""):"",dh>0?dh+" fewer hand-off"+(dh>1?"s":""):""].filter(Boolean).join(", ")+". Now test it with PDSA cycles.");
+    else add("warn","Redesign isn't better yet","It doesn't reduce steps, waste or hand-offs compared with the current map.");
   } else add("info","No redesign yet","Once you have analysed the current map, start a redesign to compare the two.");
   const warns=C.filter(c=>c.s==="warn").length, b=$("#checkBadge");
   b.textContent=warns; b.classList.toggle("zero",!warns);
@@ -859,36 +822,47 @@ function showTab(name){
 document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{showTab(t.dataset.tab);if(t.dataset.tab==="build")document.querySelectorAll("#pane-build textarea").forEach(autosize);}));
 
 /* ---------- table dialog ---------- */
-/* Columns: Lane, Step, Type, Value, Time, Issue, If no go to, Bottleneck, Path level
+/* Columns: Lane, Step, Type, Value, Issue, If no go to, Path level
    (blank or 0 for the usual path), At path end (for the last step on a path: a step name or End) */
+const COLS=["Lane","Step","Type","Value","Issue","If no go to","Path level","At path end"];
+/* Column order for a pasted table: from its header row when it has one, so tables from older
+   versions (with Time and Bottleneck columns) still load; otherwise the order above */
+function colMap(head){
+  const keys={lane:/^lane/,step:/^step/,type:/^type/,value:/^value/,issue:/^issue/,go:/^if no/,level:/^path level/,then:/^at path end/};
+  const at={}; Object.keys(keys).forEach(k=>at[k]=-1);
+  if(head) head.forEach((h,i)=>{const t=h.toLowerCase().trim(); Object.keys(keys).forEach(k=>{if(at[k]<0&&keys[k].test(t)) at[k]=i;});});
+  else ["lane","step","type","value","issue","go","level","then"].forEach((k,i)=>at[k]=i);
+  return at;
+}
 function toTable(m){
   const byId={}, F=flow(m); m.steps.forEach(s=>byId[s.id]=s);
   const nm=id=>byId[id]?String(byId[id].text||"").replace(/[\t\n]/g," ").trim():"";
   const tn={terminator:"Start/end",step:"Activity",decision:"Decision",wait:"Wait"};
-  const out=[["Lane","Step","Type","Value","Time ("+UNITS[state.unit]+")","Issue","If no go to","Bottleneck","Path level","At path end"].join("\t")];
-  m.steps.forEach((s,i)=>out.push([laneOf(m,s.lane).name,s.text,tn[s.type],VSHORT[s.value]||"",s.time,s.issue,
-    s.type==="decision"&&s.noTo?nm(s.noTo):"",s.bottleneck?"Yes":"",F.dep[i]||"",
+  const out=[COLS.join("\t")];
+  m.steps.forEach((s,i)=>out.push([laneOf(m,s.lane).name,s.text,tn[s.type],VSHORT[s.value]||"",s.issue,
+    s.type==="decision"&&s.noTo?nm(s.noTo):"",F.dep[i]||"",
     F.last[i]?(s.thenTo==="end"?"End":s.thenTo?nm(s.thenTo):""):""].map(c=>String(c==null?"":c).replace(/[\t\n]/g," ")).join("\t")));
   return out.join("\n");
 }
 function fromTable(src,old){
   const lines=src.split(/\r?\n/).filter(l=>l.trim());
-  if(lines.length&&/^\s*lane\b/i.test(lines[0])) lines.shift();
+  const split=line=>(line.indexOf("\t")>=0?line.split("\t"):line.split("|")).map(x=>x.trim());
+  const at=colMap(lines.length&&/^\s*lane\b/i.test(lines[0])?split(lines.shift()):null), col=(c,k)=>at[k]>=0?c[at[k]]||"":"";
   const m={lanes:[],steps:[]}, byName={}, gotos=[], thens=[];
   let prev=null;
   lines.forEach(line=>{
-    const c=(line.indexOf("\t")>=0?line.split("\t"):line.split("|")).map(x=>x.trim());
-    const ln=c[0]||"Lane", key=ln.toLowerCase();
+    const c=split(line);
+    const ln=col(c,"lane")||"Lane", key=ln.toLowerCase();
     if(!byName[key]){const l=L(ln);byName[key]=l;m.lanes.push(l);}
-    const ty=(c[2]||"").toLowerCase(), va=(c[3]||"").toLowerCase().replace(/[^a-z]/g,"");
+    const ty=col(c,"type").toLowerCase(), va=col(c,"value").toLowerCase().replace(/[^a-z]/g,"");
     /* older tables had a "New path" type: an activity one level below the step before it */
     const legacy=/new path|branch|altern/.test(ty);
     const type=legacy?"step":/start|end|termin/.test(ty)?"terminator":/decis|question|\?/.test(ty)?"decision":/wait|queue|delay/.test(ty)?"wait":"step";
     const value=type==="terminator"?"":va==="nnva"||/necess|amber/.test(va)?"nnva":va==="nva"||/^non|waste|red/.test(va)?"nva":va==="va"||/^value|green/.test(va)?"va":"";
-    const t=c[4]===undefined||c[4]===""||isNaN(+c[4])?"":Math.max(0,+c[4]);
-    const lv=/^\d+$/.test(c[8]||"")?+c[8]:legacy?(prev?prev.depth+(prev.type==="decision"?1:0):0)||1:0;
-    const s=S(byName[key],type,c[1]||"",value,t,{issue:c[5]||"",bottleneck:/^(y|yes|true|x|1)$/i.test(c[7]||""),depth:lv});
-    gotos.push(legacy&&!c[9]?"":c[6]||""); thens.push(c[9]||(legacy?c[6]||"":""));
+    const lvRaw=col(c,"level"), go=col(c,"go"), th=col(c,"then");
+    const lv=/^\d+$/.test(lvRaw)?+lvRaw:legacy?(prev?prev.depth+(prev.type==="decision"?1:0):0)||1:0;
+    const s=S(byName[key],type,col(c,"step"),value,{issue:col(c,"issue"),depth:lv});
+    gotos.push(legacy&&!th?"":go); thens.push(th||(legacy?go:""));
     m.steps.push(s); prev=s;
   });
   /* "If no go to" and "At path end" name the step (a step number from older tables still works) */
@@ -908,7 +882,7 @@ function fromTable(src,old){
   return m;
 }
 const dlg=$("#tableDlg");
-$("#btnTable").addEventListener("click",()=>{const m=map();$("#tableText").value=m?toTable(m):"Lane\tStep\tType\tValue\tTime\tIssue\tIf no go to\tBottleneck\n";dlg.showModal();});
+$("#btnTable").addEventListener("click",()=>{const m=map();$("#tableText").value=m?toTable(m):COLS.join("\t")+"\n";dlg.showModal();});
 $("#tableForm").addEventListener("submit",e=>{
   if(e.submitter&&e.submitter.value==="apply"){
     const m=fromTable($("#tableText").value,map());
@@ -945,7 +919,7 @@ FocusActions.mount({
     })}
   ])
 });
-trackSettings({issues:"vIssues",timeUnit:"unitSel"});
+trackSettings({issues:"vIssues"});
 function slug(){return (state.title||"process-map").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,60)||"process-map";}
 function suffix(){return state.active==="future"?"-redesign":"-current";}
 function exportPng(m){
@@ -988,6 +962,9 @@ async function saveFile(name,data,mime){
 }
 let tt;
 function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("show"),2600);}
+
+/* Nothing is kept when the page closes, so ask before leaving a map with work on it */
+window.addEventListener("beforeunload",e=>{if(hasContent()){e.preventDefault();e.returnValue="";}});
 
 /* ---------- render all ---------- */
 function renderAll(){

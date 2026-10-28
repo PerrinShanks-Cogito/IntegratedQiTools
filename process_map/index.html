@@ -161,11 +161,8 @@ select.field{overflow:visible;cursor:pointer}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:.45rem;margin-top:.45rem;align-items:end}
 .row2 label{display:block;font-size:.8rem;font-weight:700;color:var(--muted)}
 .row2 label .field{margin-top:.15rem;width:100%}
-.timefield{display:flex;align-items:center;gap:.3rem}
-.timefield span{font-size:.85rem;color:var(--muted);white-space:nowrap}
 .step .issue{border-left:4px solid var(--yellow)}
 .step-foot{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-top:.45rem;flex-wrap:wrap}
-.unit-sel{display:flex;align-items:center;gap:.35rem;font-size:.88rem;color:var(--muted);font-weight:600}
 .seg{display:inline-flex;border:2px solid var(--blue);border-radius:4px;overflow:hidden}
 .seg button{border:0;background:var(--surface);color:var(--blue);font-weight:700;padding:.3rem .7rem;cursor:pointer;font-size:.9rem;white-space:nowrap}
 .seg button+button{border-left:2px solid var(--blue)}
@@ -245,7 +242,7 @@ select.field{overflow:visible;cursor:pointer}
         <span class="sw" style="background:#fff"></span><span><b>Activity</b>: something someone does. Start it with a verb.</span>
         <span class="sw" style="background:#fff;transform:rotate(45deg) scale(.8)"></span><span><b>Decision</b>: a question with a yes and a no route. Link the no route if it sends work back, or add a new path if it goes a different way.</span>
         <span class="sw" style="background:#fff;border:2px solid #425563"></span><span><b>Usual path</b>: the route most cases follow, taking the "yes" at each decision. Its steps are numbered 1, 2, 3 and so on.</span>
-        <span class="sw" style="background:#fff;border:2px solid #005EB8"></span><span><b>New path</b>: the steps on a decision's "no" route, shown indented. They sit below the path the decision is on, and the "yes" route skips them. Any kind of step can go on a path, including another decision with its own new path. At the end, the path rejoins the path it came from, goes to a later step, loops back to an earlier step (rework) or ends. Its time isn't counted in the lead time.</span>
+        <span class="sw" style="background:#fff;border:2px solid #005EB8"></span><span><b>New path</b>: the steps on a decision's "no" route, shown indented. They sit below the path the decision is on, and the "yes" route skips them. Any kind of step can go on a path, including another decision with its own new path. At the end, the path rejoins the path it came from, goes to a later step, loops back to an earlier step (rework) or ends.</span>
         <span class="sw" style="background:#fff;border-radius:2px 8px 8px 2px"></span><span><b>Wait or queue</b>: time where nothing happens to the patient or the work.</span>
         <span class="sw" style="background:#E3F2E9;border-color:#007F3B"></span><span><b>Value-adding</b>: changes things for the patient in a way they would want.</span>
         <span class="sw" style="background:#FFF4DB;border-color:#FFB81C"></span><span><b>Necessary, non-value-adding</b>: needed for safety, law or the system, but the patient wouldn't miss it.</span>
@@ -272,7 +269,7 @@ select.field{overflow:visible;cursor:pointer}
       <h3>Analyse it</h3>
       <ul>
         <li>Count the steps, the steps the patient goes through, the hand-offs and the steps that add no value. The Analyse tab does this for you.</li>
-        <li>Look for delays and queues, bottlenecks, duplication, loops where work is sent back, and steps that only exist to check or chase.</li>
+        <li>Look for delays and queues, duplication, loops where work is sent back, and steps that only exist to check or chase.</li>
         <li>Ask of every step: would the patient value this? Classify it as value-adding, necessary or waste.</li>
         <li>Focus on the process, not the people in it.</li>
       </ul>
@@ -281,16 +278,12 @@ select.field{overflow:visible;cursor:pointer}
         <li>Remove steps that add no value, then simplify the ones that are necessary.</li>
         <li>Cut hand-offs: can one person do more of the journey?</li>
         <li>Do things in parallel rather than one after another, and move steps so they happen once, at the right time.</li>
-        <li>Find the bottleneck and protect it. Time lost there is lost for the whole process.</li>
         <li>Design for the common route and handle the exceptions separately.</li>
       </ul>
       <h3>Test the changes</h3>
-      <p>Use the Model for Improvement: what are we trying to accomplish, how will we know a change is an improvement, and what change can we make? Test the redesign in small PDSA cycles rather than switching it on everywhere at once, and track measures such as lead time, number of steps and hand-offs over time on a run chart.</p>
+      <p>Use the Model for Improvement: what are we trying to accomplish, how will we know a change is an improvement, and what change can we make? Test the redesign in small PDSA cycles rather than switching it on everywhere at once, and track measures such as the number of steps and hand-offs over time on a run chart.</p>
       <h3>Terms</h3>
       <ul>
-        <li><b>Lead time</b>: total time from the start to the end of the process, waits included.</li>
-        <li><b>Value-adding time</b>: the part of the lead time spent on value-adding steps.</li>
-        <li><b>Bottleneck</b>: the step with the least capacity, where work queues.</li>
         <li><b>Hand-off</b>: a point where the patient or the work moves from one person or team to another.</li>
       </ul>
       <p class="hint">Source: NHS Institute for Innovation and Improvement, Improvement Leaders' Guide 1.2, Process mapping, analysis and redesign (NHS England Improvement Hub). Value colours follow the QSIR value stream mapping convention.</p>
@@ -320,7 +313,7 @@ select.field{overflow:visible;cursor:pointer}
 <dialog id="tableDlg">
   <form method="dialog" class="dlg" id="tableForm">
     <h2>Edit as table</h2>
-    <p class="hint" style="margin:0">One step per line, in order. Paste straight from Excel, or separate columns with |. Columns: Lane, Step, Type (start/end, activity, decision, wait), Value (VA, NNVA, NVA), Time, Issue, If no go to (a decision's rework step, by name), Bottleneck (yes), Path level (blank for the usual path, 1 for a decision's new path, 2 for a path from a decision on that path), At path end (for the last step on a path: a step name or End). Only Lane and Step are needed. This replaces the map you're viewing.</p>
+    <p class="hint" style="margin:0">One step per line, in order. Paste straight from Excel, or separate columns with |. Columns: Lane, Step, Type (start/end, activity, decision, wait), Value (VA, NNVA, NVA), Issue, If no go to (a decision's rework step, by name), Path level (blank for the usual path, 1 for a decision's new path, 2 for a path from a decision on that path), At path end (for the last step on a path: a step name or End). Only Lane and Step are needed. This replaces the map you're viewing.</p>
     <textarea id="tableText" spellcheck="false" aria-label="Step table"></textarea>
     <div class="row">
       <button class="btn" value="cancel" type="submit">Cancel</button>
