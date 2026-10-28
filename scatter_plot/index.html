@@ -286,12 +286,15 @@ details.values .tablewrap{margin-top:.6rem}
     return [lo, hi];
   }
   function renderSVG(p, m, o) {
-    const W = drawW, ML = 80, MR = 30, plotH = 440;
+    // IHI QI Essentials Toolkit: make the axes roughly the same length, so the plotting area is
+    // close to square (a stretched plot flattens the pattern). On a wider chart it's centred.
+    const W = drawW, plotH = 440, plotW = Math.min(W - 110, Math.round(plotH * 1.25));
+    const ML = Math.round((W - plotW) / 2 + 25), MR = W - ML - plotW;
     const useG = o.byGroup && m.groups.length > 1;
     const legend = useG ? m.groups.map((g, i) => ({ c: GROUP[i % GROUP.length], t: trunc(g, 26), k: 'dot' })) : [{ c: COLORS.point, t: 'One pair of values', k: 'dot' }];
     if (o.showTrend && m.all.ok) legend.push({ c: useG ? COLORS.muted : COLORS.trend, t: useG ? 'Trend line (one per group)' : 'Trend line', k: 'line' });
     if (o.flagOdd && m.odd.some(Boolean)) legend.push({ c: COLORS.flag, t: 'Far from the trend', k: 'ring' });
-    const MT = (o.title ? 58 : 18) + 30, MB = 66, H = MT + plotH + MB, plotW = W - ML - MR, base = MT + plotH;
+    const MT = (o.title ? 58 : 18) + 30, MB = 66, H = MT + plotH + MB, base = MT + plotH;
     const xs = p.rows.map(r => r.x), ys = p.rows.map(r => r.y);
     const lines = !o.showTrend ? [] : useG ? m.gStats.map((g, i) => ({ st: g.st, c: GROUP[i % GROUP.length] })) : [{ st: m.all, c: COLORS.trend }];
     const fitY = [];
@@ -346,7 +349,7 @@ details.values .tablewrap{margin-top:.6rem}
     s.push(`<line x1="${ML}" y1="${MT}" x2="${ML}" y2="${base}" stroke="${COLORS.ink}" stroke-width="1.5"/>`);
     s.push(`<line x1="${ML}" y1="${base}" x2="${ML + plotW}" y2="${base}" stroke="${COLORS.ink}" stroke-width="1.5"/>`);
     // axis titles
-    s.push(`<text transform="translate(22 ${MT + plotH / 2}) rotate(-90)" font-size="13" font-weight="700" text-anchor="middle" fill="${COLORS.ink}">${esc(trunc(o.yLabel, 60))}</text>`);
+    s.push(`<text transform="translate(${ML - 58} ${MT + plotH / 2}) rotate(-90)" font-size="13" font-weight="700" text-anchor="middle" fill="${COLORS.ink}">${esc(trunc(o.yLabel, 60))}</text>`);
     s.push(`<text x="${ML + plotW / 2}" y="${H - 16}" font-size="13" font-weight="700" text-anchor="middle" fill="${COLORS.ink}">${esc(trunc(o.xLabel, 90))}</text>`);
     s.push('</svg>');
     return s.join('');
