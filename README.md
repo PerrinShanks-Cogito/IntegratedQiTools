@@ -149,9 +149,15 @@ Improvement's SPC P chart tool (version 3.0)):
   trailing slashes, security headers). The Content Security Policy lets pages
   load only the site's own files, Google Fonts and the Application Insights
   script, and send data only to the site and Application Insights, so nothing
-  a user pastes can be sent anywhere else. Inline scripts and styles are
-  allowed because every tool is a single page with its own inline script.
-  WebAssembly is allowed (`'wasm-unsafe-eval'`, which doesn't allow `eval`)
+  a user pastes can be sent anywhere else. Inline scripts are not allowed, so
+  an injected script can't run: each tool's script is in its own file,
+  `<tool>/app.js`, loaded by the page (files that use Liquid start with empty
+  front matter so Jekyll fills it in). Keep new scripts in files too; an inline
+  `<script>` or `onclick=` attribute will be blocked. Inline styles are allowed.
+  The Application Insights SDK is served from `assets/js/vendor`, pinned to one
+  version and checked against Microsoft's published hash (see
+  `assets/js/analytics.js`). Strict-Transport-Security makes browsers use
+  HTTPS only. WebAssembly is allowed (`'wasm-unsafe-eval'`, which doesn't allow `eval`)
   because the Trust's Imprivata single sign-on extension runs WebAssembly in
   the page and fails without it. If
   a tool needs a new outside script, font, image or API, add its origin to
