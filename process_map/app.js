@@ -766,7 +766,7 @@ function renderAnalysis(){
   P.push("Could any steps happen in parallel instead of one after another?");
   P.push("Is anything done twice, by different people, or written down in more than one place?");
   h+='<div class="section-h"><h2>Questions for redesign</h2></div><ul class="prompts">'+P.map(t=>"<li>"+esc(t)+"</li>").join("")+'</ul>';
-  h+='<div class="notice">Test redesigned steps with small PDSA cycles, and track lead time on a <a href="{{ '/run_chart/' | relative_url }}">run chart</a> to see whether the change is an improvement.</div>';
+  h+='<div class="notice">Test redesigned steps with small PDSA cycles, and track a measure on a <a href="{{ '/run_chart/' | relative_url }}">run chart</a> to see whether the change is an improvement.</div>';
   $("#analysis").innerHTML=h;
 }
 
