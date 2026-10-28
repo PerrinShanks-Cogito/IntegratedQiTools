@@ -27,7 +27,7 @@ function blankMap(){
   const p=L("Patient",true), s=L("Staff");
   return {lanes:[p,s],steps:[S(p,"terminator",""),S(s,"step",""),S(p,"terminator","")]};
 }
-function blank(){return {title:"",scope:{start:"",end:"",who:""},unit:"min",active:"current",maps:{current:blankMap(),future:null},view:{issues:true,handoffs:true}};}
+function blank(){return {title:"",scope:{start:"",end:"",who:""},unit:"min",active:"current",maps:{current:blankMap(),future:null},view:{issues:true}};}
 
 function example(){
   const pt=L("Patient",true),rc=L("Reception"),ph=L("Phlebotomist"),po=L("Porter"),lab=L("Laboratory"),cl=L("Clinician");
@@ -63,7 +63,7 @@ function example(){
     S(fp,"terminator","Patient told the result in the app","",0)
   ]};
   return {title:"Outpatient blood test, arrival to result",scope:{start:"Patient arrives for a blood test",end:"Patient is told the result",who:"Adult outpatients with a routine blood test request"},
-    unit:"min",active:"current",maps:{current:cur,future:fut},view:{issues:true,handoffs:true}};
+    unit:"min",active:"current",maps:{current:cur,future:fut},view:{issues:true}};
 }
 
 /* ---------- persistence ---------- */
@@ -101,7 +101,7 @@ function normalise(o){
   s.maps.current=normMap(o.maps.current)||blankMap();
   s.maps.future=o.maps.future?normMap(o.maps.future):null;
   s.active=o.active==="future"&&s.maps.future?"future":"current";
-  const v=o.view||{}; s.view={issues:v.issues!==false,handoffs:v.handoffs!==false};
+  const v=o.view||{}; s.view={issues:v.issues!==false};
   return s;
 }
 function cloneMap(m){return normMap(JSON.parse(JSON.stringify(m)));}
@@ -257,7 +257,7 @@ function layout(m,o){
   });
   p.push('<line x1="0" y1="'+TOP+'" x2="'+W+'" y2="'+TOP+'" stroke="#D8DDE0"/>');
   /* sequence arrows, including a decision's yes and new path routes */
-  const hand=[], GAP=(COLW-BW)/2;
+  const GAP=(COLW-BW)/2;
   F.edges.forEach(e=>{
     const a=G[e.a], b=G[e.b], bx=b.cx-BW/2;
     if(e.kind==="back"){
@@ -274,7 +274,6 @@ function layout(m,o){
       /* leave from the diamond's bottom (or top) point, then across to the path */
       const down=b.cy>=a.cy, sy=down?a.cy+a.h/2:a.cy-a.h/2;
       d="M"+a.cx+","+sy+"V"+b.cy+"H"+(bx-1);
-      if(a.lane!==b.lane) hand.push([a.cx,(sy+b.cy)/2]);
       p.push('<text x="'+(a.cx+6)+'" y="'+(down?sy+13:sy-5)+'" font-family="'+FF+'" font-size="11" font-weight="700" fill="'+PATH+'">'+esc(a.s.noLabel||"No")+'</text>');
     } else {
       const ax=a.cx+BW/2;
@@ -283,7 +282,6 @@ function layout(m,o){
         /* turn in the gap next to the step that's skipped from (yes) or joined (rejoin), clear of other boxes */
         const mx=e.kind==="rejoin"?bx-GAP:ax+GAP;
         d="M"+ax+","+a.cy+"H"+mx+"V"+b.cy+"H"+(bx-1);
-        if(a.lane!==b.lane) hand.push([mx,(a.cy+b.cy)/2]);
       }
       /* the label goes on the side away from where the arrow turns */
       if(e.kind==="yes") p.push('<text x="'+(ax+3)+'" y="'+(b.cy<a.cy?a.cy+14:a.cy-6)+'" font-family="'+FF+'" font-size="11" font-weight="700" fill="#425563">'+esc(a.s.yesLabel||"Yes")+'</text>');
@@ -346,8 +344,6 @@ function layout(m,o){
     }
     p.push('</g>');
   });
-  /* hand-off markers */
-  if(v.handoffs) hand.forEach(h=>p.push('<circle cx="'+h[0]+'" cy="'+h[1]+'" r="9" fill="#FFB81C" stroke="#212B32" stroke-width="1"/><text x="'+h[0]+'" y="'+(h[1]+4)+'" text-anchor="middle" font-family="'+FF+'" font-size="10.5" font-weight="800" fill="#212B32">H</text>'));
   let y2=lanesBottom;
   const M=metrics(m);
   /* legend */
@@ -356,7 +352,6 @@ function layout(m,o){
   leg((x,y)=>'<rect x="'+x+'" y="'+(y-7)+'" width="16" height="13" rx="2" fill="#E3F2E9" stroke="#007F3B"/>',"Value-adding (VA)");
   leg((x,y)=>'<rect x="'+x+'" y="'+(y-7)+'" width="16" height="13" rx="2" fill="#FFF4DB" stroke="#FFB81C"/>',"Necessary, non-value-adding (NNVA)");
   leg((x,y)=>'<rect x="'+x+'" y="'+(y-7)+'" width="16" height="13" rx="2" fill="#FBE7E5" stroke="#D5281B"/>',"Non-value-adding (NVA)");
-  if(v.handoffs) leg((x,y)=>'<circle cx="'+(x+8)+'" cy="'+y+'" r="7" fill="#FFB81C" stroke="#212B32"/>',"Hand-off ("+M.handoffs+")");
   if(M.paths) leg((x,y)=>'<rect x="'+x+'" y="'+(y-7)+'" width="16" height="13" rx="2" fill="#FFFFFF" stroke="'+PATH+'" stroke-width="2"/>',"New path (decision's no route)");
   if(pathEnds) leg((x,y)=>'<circle cx="'+(x+8)+'" cy="'+y+'" r="7" fill="#fff" stroke="'+PATH+'" stroke-width="1.5"/><circle cx="'+(x+8)+'" cy="'+y+'" r="4" fill="'+PATH+'"/>',"Path ends");
   if(Object.keys(backK).length) leg((x,y)=>'<line x1="'+x+'" y1="'+y+'" x2="'+(x+16)+'" y2="'+y+'" stroke="'+PATH+'" stroke-width="2" stroke-dasharray="4 3"/>',"Path loops back");
@@ -488,7 +483,7 @@ function setFull(on){
 fullBtn.addEventListener("click",()=>setFull(!isFull()));
 document.addEventListener("fullscreenchange",fullChanged);
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&stageEl.classList.contains("full")) setFull(false);});
-["Issues","Handoffs"].forEach(k=>{
+["Issues"].forEach(k=>{
   const el=$("#v"+k), key=k.toLowerCase();
   el.addEventListener("change",()=>{state.view[key]=el.checked;persist();renderCanvas();});
 });
@@ -865,7 +860,7 @@ FocusActions.mount({
     })}
   ])
 });
-trackSettings({issues:"vIssues",handoffs:"vHandoffs",timeUnit:"unitSel"});
+trackSettings({issues:"vIssues",timeUnit:"unitSel"});
 function slug(){return (state.title||"process-map").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,60)||"process-map";}
 function suffix(){return state.active==="future"?"-redesign":"-current";}
 function exportPng(m){
@@ -914,7 +909,7 @@ function renderAll(){
   $("#title").value=state.title; $("#scStart").value=state.scope.start; $("#scEnd").value=state.scope.end; $("#scWho").value=state.scope.who;
   $("#mapCur").setAttribute("aria-pressed",String(state.active==="current"));
   $("#mapFut").setAttribute("aria-pressed",String(state.active==="future"));
-  $("#vIssues").checked=state.view.issues; $("#vHandoffs").checked=state.view.handoffs;
+  $("#vIssues").checked=state.view.issues;
   renderEditor(); renderCanvas(); renderChecks(); renderAnalysis();
 }
 
