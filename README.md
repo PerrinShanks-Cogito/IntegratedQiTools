@@ -94,6 +94,13 @@ Improvement's SPC P chart tool (version 3.0)):
   own export functions; chart tools save and reopen everything in their data
   and settings panel. Styles are in `assets/css/focus-actions.css`, prefixed
   `.fa`.
+- `assets/js/focus-chart-full.js` – a **Full screen** button above every chart
+  on a tool page. It opens a copy of the chart filling the screen, with zoom
+  (buttons, Ctrl + scroll, or + - 0) and drag to move. The buttons are added
+  again whenever a chart redraws, so tools need no changes for it. The
+  process map, driver and fishbone diagrams and the A3 report have their own
+  full screen, with editing. Styles are in `assets/css/focus-tool.css`,
+  prefixed `.fcv`.
 - `assets/js/focus-explain.js` – the **Need further help to understand the
   analysis?** link under every tool's analysis. It builds a prompt for
   Microsoft 365 Copilot Chat from the analysis on the page, removes anything
