@@ -22,10 +22,13 @@ const UNITF={min:1,h:60,d:1440};
 
 /* ---------- model ---------- */
 function L(name,patient){return {id:nid(),name:name,patient:!!patient};}
+/* The patient's lane is found from its name, so there's nothing to tick */
+const isPat=l=>/patient|service user|carer/i.test((l&&l.name)||"");
 function S(lane,type,text,value,time,x){return Object.assign({id:nid(),lane:lane.id||lane,type:type,text:text||"",value:value||"",time:time===undefined||time===null?"":time,issue:"",bottleneck:false,noTo:"",thenTo:"",depth:0,yesLabel:"Yes",noLabel:"No"},x||{});}
 function blankMap(){
-  const p=L("Patient",true), s=L("Staff");
-  return {lanes:[p,s],steps:[S(p,"terminator",""),S(s,"step",""),S(p,"terminator","")]};
+  /* a new map starts with one lane; add more for each role or team */
+  const p=L("Lane 1");
+  return {lanes:[p],steps:[S(p,"terminator",""),S(p,"step",""),S(p,"terminator","")]};
 }
 function blank(){return {title:"",scope:{start:"",end:"",who:""},unit:"min",active:"current",maps:{current:blankMap(),future:null},view:{issues:true}};}
 
@@ -124,7 +127,7 @@ function fmtT(v,unit){
 }
 
 /* ---------- flow ----------
-   Steps run in list order, and each has a path level: 0 is the main path.
+   Steps run in list order, and each has a path level: 0 is the usual path.
    Steps one level deeper straight after a decision are its "no" route, a new
    path; the decision's "yes" carries on along its own path. Any kind of step
    can sit on a path, including another decision with a new path of its own.
@@ -173,7 +176,7 @@ function flow(m){
     if(c.to>=0) edges.push({a:i,b:c.to,kind:c.kind==="seq"?(yes?"yes":"seq"):c.kind,yes:yes});
     else if(c.end) ends.push(i);
   }
-  /* Step labels follow the yes route: 1, 2, 3… along the main path. A decision's new
+  /* Step labels follow the yes route: 1, 2, 3… along the usual path. A decision's new
      path takes its number plus a letter (3a, 3b); a path from a decision on that path
      adds a number (3b1, 3b2), then letters again */
   const labels=[], kids={}; let num=0;
@@ -188,8 +191,8 @@ function flow(m){
 
 /* ---------- metrics ---------- */
 function metrics(m){
-  const r={steps:0,patient:0,handoffs:0,decisions:0,waits:0,va:0,nnva:0,nva:0,unc:0,loops:0,paths:0,pathTime:0,bottlenecks:0,issues:0,lead:0,vaTime:0,waitTime:0,untimed:0,hasPatient:m.lanes.some(l=>l.patient)};
-  const pl={}; m.lanes.forEach(l=>pl[l.id]=l.patient);
+  const r={steps:0,patient:0,handoffs:0,decisions:0,waits:0,va:0,nnva:0,nva:0,unc:0,loops:0,paths:0,pathTime:0,bottlenecks:0,issues:0,lead:0,vaTime:0,waitTime:0,untimed:0,hasPatient:m.lanes.some(isPat)};
+  const pl={}; m.lanes.forEach(l=>pl[l.id]=isPat(l));
   const F=flow(m), idx=F.idx;
   /* a path that loops back is rework, so like a rework loop it isn't counted as a hand-off */
   F.edges.forEach(e=>{if(e.kind==="back") r.loops++; else if(m.steps[e.a].lane!==m.steps[e.b].lane) r.handoffs++;});
@@ -278,11 +281,11 @@ function layout(m,o){
   /* lanes */
   lanes.forEach((l,i)=>{
     const d=LN[i], h=d.bottom-d.top;
-    p.push('<rect x="0" y="'+d.top+'" width="'+W+'" height="'+h+'" fill="'+(l.patient?"#F2F7FC":(i%2?"#F7F9FA":"#FFFFFF"))+'"/>');
-    p.push('<rect x="0" y="'+d.top+'" width="'+LHW+'" height="'+h+'" fill="'+(l.patient?"#003087":"#E6F0FA")+'"/>');
+    p.push('<rect x="0" y="'+d.top+'" width="'+W+'" height="'+h+'" fill="'+(isPat(l)?"#F2F7FC":(i%2?"#F7F9FA":"#FFFFFF"))+'"/>');
+    p.push('<rect x="0" y="'+d.top+'" width="'+LHW+'" height="'+h+'" fill="'+(isPat(l)?"#003087":"#E6F0FA")+'"/>');
     const nl=wrap(l.name||"Lane",LHW-24,"700 13.5px "+FF,4);
     const ty=d.top+h/2-(nl.length-1)*8+5;
-    nl.forEach((t,k)=>p.push('<text x="14" y="'+(ty+k*16)+'" font-family="'+FF+'" font-size="13.5" font-weight="700" fill="'+(l.patient?"#FFFFFF":"#003087")+'">'+esc(t)+'</text>'));
+    nl.forEach((t,k)=>p.push('<text x="14" y="'+(ty+k*16)+'" font-family="'+FF+'" font-size="13.5" font-weight="700" fill="'+(isPat(l)?"#FFFFFF":"#003087")+'">'+esc(t)+'</text>'));
     p.push('<line x1="0" y1="'+d.bottom+'" x2="'+W+'" y2="'+d.bottom+'" stroke="#D8DDE0"/>');
   });
   p.push('<line x1="0" y1="'+TOP+'" x2="'+W+'" y2="'+TOP+'" stroke="#D8DDE0"/>');
@@ -554,11 +557,11 @@ function stepCard(m,s,i,F){
   /* the last step on a path says where the path goes next */
   let pathRow="";
   if(F.last[i]){
-    const r=F.rejoin(i), pre=r.to>=0&&F.dep[r.to]===0?"Rejoin the main path at ":"Rejoin the path above at ";
+    const r=F.rejoin(i), pre=r.to>=0&&F.dep[r.to]===0?"Rejoin the usual path at ":"Rejoin the path above at ";
     const later=m.steps.map((o,k)=>k>i&&k!==r.to?opt(o,o.id===s.thenTo,"Go to "):"").join("");
     const earlier=m.steps.map((o,k)=>k<i?opt(o,o.id===s.thenTo,"Go back to "):"").join("");
     pathRow='<div class="row1"><label>'+(run?"If yes, at the end of this path":"At the end of this path")+'<select class="field sm th">'+
-      (r.to>=0?'<option value=""'+nameAttr(m.steps[r.to],pre)+'>'+esc(pre+nameOf(m.steps[r.to]))+'</option>':'<option value="">'+(r.end?"End, as the path above does":"Rejoin the main path")+'</option>')+
+      (r.to>=0?'<option value=""'+nameAttr(m.steps[r.to],pre)+'>'+esc(pre+nameOf(m.steps[r.to]))+'</option>':'<option value="">'+(r.end?"End, as the path above does":"Rejoin the usual path")+'</option>')+
       '<option value="end"'+(s.thenTo==="end"?" selected":"")+'>End the path here</option>'+
       (later?'<optgroup label="Go on to a later step">'+later+'</optgroup>':"")+
       (earlier?'<optgroup label="Loop back (rework)">'+earlier+'</optgroup>':"")+'</select></label></div>';
@@ -591,10 +594,10 @@ function renderEditor(){
   }
   let h='<div class="section-h"><h2>Lanes</h2><button class="btn small" id="addLane" type="button">Add lane</button></div><div id="lanes">';
   m.lanes.forEach((l,i)=>{
-    h+='<div class="lane-row" data-id="'+l.id+'"><input class="field ln" type="text" aria-label="Lane '+(i+1)+' name" placeholder="Role or team"><label class="chk" title="The patient or service user\'s own lane"><input type="checkbox" class="lp"'+(l.patient?" checked":"")+'> Patient</label>'+
+    h+='<div class="lane-row" data-id="'+l.id+'"><input class="field ln" type="text" aria-label="Lane '+(i+1)+' name" placeholder="Role or team">'+
       '<button class="btn icon ghost" data-act="up" type="button" aria-label="Move lane up">↑</button><button class="btn icon ghost" data-act="down" type="button" aria-label="Move lane down">↓</button><button class="btn icon ghost danger" data-act="del" type="button" aria-label="Remove lane">✕</button></div>';
   });
-  h+='</div><p class="hint">One lane per role or team, plus the patient. Map supporting work, such as samples or notes, in its own lane.</p>';
+  h+='</div><p class="hint">One lane per role or team, plus the patient. Call the patient\'s lane Patient (or service user or carer) so the steps they go through are counted. Map supporting work, such as samples or notes, in its own lane.</p>';
   h+='<div class="section-h"><h2>Steps</h2><span class="unit-sel"><label for="unitSel">Times in</label><select class="field sm" id="unitSel">'+Object.keys(UNITS).map(k=>'<option value="'+k+'"'+(k===state.unit?" selected":"")+'>'+UNITS[k]+'</option>').join("")+'</select></span></div>';
   const F=flow(m);
   h+='<div id="steps">'+m.steps.map((s,i)=>stepCard(m,s,i,F)).join("")+'</div>';
@@ -640,7 +643,6 @@ ed.addEventListener("change",e=>{
     state.unit=to; changed(true); toast("Times converted to "+UNITS[to]); return;
   }
   const lr=e.target.closest(".lane-row");
-  if(lr&&e.target.classList.contains("lp")){laneOf(m,lr.dataset.id).patient=e.target.checked;changed();return;}
   const c=e.target.closest(".step"); if(!c) return;
   const s=m.steps.find(x=>x.id===c.dataset.id); if(!s) return;
   const cl=e.target.classList;
@@ -835,7 +837,7 @@ function renderChecks(){
     const idle=m.lanes.filter(l=>!usedL.has(l.id));
     if(idle.length) add("info","Lane"+(idle.length>1?"s":"")+" with no steps",idle.map(l=>l.name||"Unnamed").join(", ")+". Remove "+(idle.length>1?"them":"it")+" or add the steps that happen there.");
     if(usedL.size<2&&M.steps) add("info","Only one lane in use","Give each role its own lane so hand-offs show up.");
-    if(!M.hasPatient) add("info","No patient lane","Tick Patient on the patient's lane to count the steps they go through.");
+    if(!M.hasPatient) add("info","No patient lane","Call the patient's lane Patient (or service user or carer) to count the steps they go through.");
     if(!M.bottlenecks&&M.steps>4) add("info","No bottleneck marked","Where does work pile up? Mark that step as the bottleneck.");
   }
   if(state.maps.future){
@@ -858,7 +860,7 @@ document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{sho
 
 /* ---------- table dialog ---------- */
 /* Columns: Lane, Step, Type, Value, Time, Issue, If no go to, Bottleneck, Path level
-   (blank or 0 for the main path), At path end (for the last step on a path: a step name or End) */
+   (blank or 0 for the usual path), At path end (for the last step on a path: a step name or End) */
 function toTable(m){
   const byId={}, F=flow(m); m.steps.forEach(s=>byId[s.id]=s);
   const nm=id=>byId[id]?String(byId[id].text||"").replace(/[\t\n]/g," ").trim():"";
@@ -873,12 +875,11 @@ function fromTable(src,old){
   const lines=src.split(/\r?\n/).filter(l=>l.trim());
   if(lines.length&&/^\s*lane\b/i.test(lines[0])) lines.shift();
   const m={lanes:[],steps:[]}, byName={}, gotos=[], thens=[];
-  const oldP={}; if(old) old.lanes.forEach(l=>oldP[l.name.trim().toLowerCase()]=l.patient);
   let prev=null;
   lines.forEach(line=>{
     const c=(line.indexOf("\t")>=0?line.split("\t"):line.split("|")).map(x=>x.trim());
     const ln=c[0]||"Lane", key=ln.toLowerCase();
-    if(!byName[key]){const l=L(ln,oldP[key]!==undefined?oldP[key]:/patient|service user|carer/i.test(ln));byName[key]=l;m.lanes.push(l);}
+    if(!byName[key]){const l=L(ln);byName[key]=l;m.lanes.push(l);}
     const ty=(c[2]||"").toLowerCase(), va=(c[3]||"").toLowerCase().replace(/[^a-z]/g,"");
     /* older tables had a "New path" type: an activity one level below the step before it */
     const legacy=/new path|branch|altern/.test(ty);
