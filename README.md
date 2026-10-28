@@ -99,8 +99,11 @@ Improvement's SPC P chart tool (version 3.0)):
   (buttons, Ctrl + scroll, or + - 0) and drag to move. The buttons are added
   again whenever a chart redraws, so tools need no changes for it. The
   process map, driver and fishbone diagrams and the A3 report have their own
-  full screen, with editing. Styles are in `assets/css/focus-tool.css`,
-  prefixed `.fcv`.
+  full screen, with editing. It also shows hover details for any part of a
+  chart with a `data-tip` attribute (lines separated by newlines, the first
+  as the heading), on the page and in full screen; the scatter plot's points
+  use it. Styles are in `assets/css/focus-tool.css`, prefixed `.fcv` and
+  `.fct`.
 - `assets/js/focus-explain.js` – the **Need further help to understand the
   analysis?** link under every tool's analysis. It builds a prompt for
   Microsoft 365 Copilot Chat from the analysis on the page, removes anything
