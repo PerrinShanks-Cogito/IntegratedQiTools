@@ -144,6 +144,20 @@ const CALLS = {
     const d = load(tool, ["parse"]).parse(text, hasHeader);
     return { cats: d.cats.map(c => ({ name: c.name, vals: c.vals })), skipped: d.skipped, blanks: d.blanks };
   },
+  // A paste through a tool's reader, reduced to the data it found, so the same
+  // data pasted in different ways can be compared
+  pasted: (tool, g) => (text, hasHeader) => {
+    const f = load(tool, [g.fn])[g.fn];
+    if (tool === "histogram") { const H = load(tool, ["analyse", "parse"]), a = H.analyse(text); return H.parse(a, hasHeader, a.autoCol).values; }
+    const r = f(text, hasHeader);
+    if (tool === "box_plot") return r.groups.map(x => [x.name, x.values]);
+    if (tool === "weibull_reliability") return r.xs;
+    if (tool === "bar_chart") return r.cats.map(c => [c.name, c.vals]);
+    if (tool === "scatter_plot") return r.rows.map(x => [x.x, x.y]);
+    if (tool === "funnel_plot") return r.rows.map(x => [x.name, x.e, x.n]);
+    if (tool === "run_chart") return r.points.map(x => [x.label, x.value]);
+    throw new Error("no reader for " + tool);
+  },
   // ...and backward elimination of terms that aren't clear
   doeReduce: tool => state => {
     const D = load(tool, ["reduce", "state"], { state });
