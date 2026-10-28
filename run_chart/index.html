@@ -536,6 +536,8 @@ function buildSVG(data, an, opts, pal, W, H, title){
   o.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" ${font} role="img" aria-label="Run chart of ${n} points with median ${fmt(an.med, an.dp)}">`);
   o.push(`<rect x="0" y="0" width="${W}" height="${H}" fill="${pal.surface}"/>`);
   if (title) o.push(`<text x="${m.l}" y="30" font-size="20" font-weight="700" fill="${pal.ink}">${esc(title)}</text>`);
+  // Number of points plotted, top right (on the title's line when there is one)
+  o.push(`<text x="${m.l + pw}" y="${title ? 30 : m.t - 5}" text-anchor="end" font-size="12" font-weight="600" fill="${pal.muted}">n = ${n}</text>`);
 
   // Grid and y labels
   ticks.forEach(t => {
