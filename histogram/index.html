@@ -34,6 +34,8 @@ textarea:focus,input[type=text]:focus,input[type=number]:focus,select:focus{outl
 .summary{font-size:clamp(1.3rem,2.6vw,1.85rem);line-height:1.25;font-weight:700;letter-spacing:-.01em;margin:0 0 .3rem;max-width:34ch}
 .empty p{margin:0 0 .9rem}
 #status{font-size:.88rem;color:var(--muted)}
+.groups{margin:0 0 .6rem;padding-left:1.25rem}
+.groups li{margin:0 0 .15rem}
 .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.5rem;margin:1.25rem 0 0;padding:0}
 @media (max-width:560px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .stats div{border:1px solid var(--line);border-radius:6px;padding:.45rem .65rem}
@@ -68,7 +70,7 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 
     <div class="block">
       <label for="data">Paste from Excel or a CSV</label>
-      <p class="hint">One number per row, such as waiting times or lengths of stay. If you paste several columns, choose which one to plot.</p>
+      <p class="hint">One number per row of continuous data, such as waiting times, lengths of stay or weights. For counts in categories, use a <a href="{{ '/pareto_chart/' | relative_url }}">Pareto chart</a> or <a href="{{ '/bar_chart/' | relative_url }}">bar chart</a> instead. If you paste several columns, choose which one to plot.</p>
       <textarea id="data" spellcheck="false" placeholder="18&#10;30&#10;25&#10;8&#10;21"></textarea>
       <p id="detected" aria-live="polite"></p>
     </div>
@@ -112,7 +114,7 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
       <label for="binStart">First bin starts at <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
       <input type="number" id="binStart" step="any" aria-describedby="binHint">
     </div>
-    <p class="hint" id="binHint" style="margin-top:-.6rem">Automatic picks a round bin width that suits the amount of data. A value on a bin edge is counted in the bin above it.</p>
+    <p class="hint" id="binHint" style="margin-top:-.6rem">Automatic picks a round bin width that suits the amount of data. If you set your own, aim for about 6 to 12 bins of equal width; narrower bins, or widths that show up gaps, tell you more. A value on a bin edge is counted in the bin above it.</p>
 
     <div class="pair">
       <div class="block">
@@ -145,8 +147,10 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 
 <section class="notes" aria-label="About histograms">
   <p><b>How to read it:</b> each bar covers a range of values, and its height shows how many of your measurements fall in that range. Look at where the tallest bars sit (the typical value), how wide the bars spread (the variation), and whether one side has a long tail. Two separate peaks can mean two different processes are mixed together, such as weekdays and weekends.</p>
+  <p><b>Explain the pattern:</b> the shape is a starting point, not an answer. Ask why values clump or spread where they do, then split the data by a likely cause (shift, site, staff group or type of case) and compare the histograms. A <a href="{{ '/fishbone_diagram/' | relative_url }}">fishbone diagram</a> can help list the causes to check.</p>
   <p><b>Normality test:</b> the Anderson–Darling test checks whether your data could reasonably come from a normal (bell-shaped) distribution. A p-value below 0.05 suggests they do not. Small samples rarely fail the test, and very large samples fail it for tiny departures, so always look at the chart as well.</p>
-  <p>A histogram shows the overall shape but not change over time. To see whether a process is changing, plot the same data in time order on a run chart or SPC chart.</p>
+  <p>A histogram shows the overall shape but not change over time. To see whether a process is changing, plot the same data in time order on a <a href="{{ '/run_chart/' | relative_url }}">run chart</a> or <a href="{{ '/spc_tool/' | relative_url }}">SPC chart</a>.</p>
+  <p><b>Source:</b> Institute for Healthcare Improvement, <a href="https://www.ihi.org/resources/tools/quality-improvement-essentials-toolkit" target="_blank" rel="noopener">QI Essentials Toolkit: Histogram</a> (2017).</p>
   <div class="notice">Want to build your skills? <a href="https://coh.gstt.nhs.uk/course/view.php?id=3199" target="_blank" rel="noopener">Book QI training with the CITI Academy</a>.</div>
 </section>
 
@@ -327,8 +331,70 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
     return { bins, width, start, exact, dec, note };
   }
 
-  function shapeOf(st) {
+  // IHI QI Essentials Toolkit: the histogram shows patterns that an average hides, such as
+  // separate clumps of values or gaps. Peaks in the bins count as separate groups when the dip
+  // between them is deep: down to half the smaller peak or less, and by more than chance alone
+  // usually gives (the drop is at least 2.5 times the square root of peak + dip, as if the two
+  // counts were a coin toss), or empty. Each group must also hold at
+  // least a tenth of the values (and 5 or more), so a few stragglers in a tail don't count.
+  function groupsOf(B, n) {
+    const c = B.bins.map(b => b.n);
+    if (n < 20 || c.length < 3) return [];
+    const deep = (peak, low) => low <= peak / 2 && peak - low >= 2.5 * Math.sqrt(peak + low);
+    const cuts = [];
+    let peak = c[0], low = null, lowAt = -1;
+    for (let i = 1; i < c.length; i++) {
+      if (low === null) { if (c[i] >= peak) peak = c[i]; else { low = c[i]; lowAt = i; } continue; }
+      if (c[i] < low) { low = c[i]; lowAt = i; }
+      else if (low === 0 || deep(Math.min(peak, c[i]), low)) { cuts.push(lowAt); peak = c[i]; low = null; }
+      else if (c[i] > peak) { peak = c[i]; low = null; }
+    }
+    if (!cuts.length) return [];
+    const small = m => m < Math.max(5, n / 10);
+    const sum = (a, z) => { let m = 0; for (let i = a; i <= z; i++) m += c[i]; return m; };
+    // merge the smallest group into a neighbour until every group is big enough
+    for (;;) {
+      const edges = [-1].concat(cuts, c.length);
+      const sizes = cuts.concat(null).map((_, k) => sum(edges[k] + 1, edges[k + 1] - 1));
+      let k = sizes.indexOf(Math.min(...sizes));
+      if (!cuts.length || !small(sizes[k])) break;
+      // drop the cut on the side of the smaller neighbour
+      if (k === sizes.length - 1 || (k > 0 && sizes[k - 1] < sizes[k + 1])) k--;
+      cuts.splice(k, 1);
+    }
+    if (!cuts.length) return [];
+    // each group runs between the dips, leaving out the low bins themselves
+    const groups = [];
+    [-1].concat(cuts).forEach((from, k) => {
+      const to = k < cuts.length ? cuts[k] : c.length;
+      let a = from + 1, z = to - 1;
+      while (a < z && c[a] === 0) a++;
+      while (z > a && c[z] === 0) z--;
+      let m = 0;
+      for (let i = a; i <= z; i++) m += c[i];
+      groups.push({ lo: B.bins[a].lo, hi: B.bins[z].hi, last: B.exact && z === c.length - 1, n: m });
+    });
+    return groups;
+  }
+  // runs of empty bins with plenty of values on both sides (a gap before a few
+  // stragglers in a tail is normal, so it isn't reported)
+  function gapsOf(B, n) {
+    const gaps = [], c = B.bins, enough = Math.max(3, n / 10);
+    let below = 0;
+    for (let i = 1; i < c.length - 1; i++) {
+      below += c[i - 1].n;
+      if (c[i].n || !c[i - 1].n) continue;
+      let j = i;
+      while (j < c.length - 1 && !c[j].n) j++;
+      if (c[j].n && below >= enough && n - below >= enough) gaps.push({ lo: c[i].lo, hi: c[j - 1].hi });
+      i = j - 1;
+    }
+    return gaps;
+  }
+
+  function shapeOf(st, groups) {
     if (st.n < 3 || st.sd === 0) return '';
+    if (groups.length > 1) return `The values fall into ${groups.length} separate groups, so a single average hides how the process behaves. Look for a reason, such as different shifts, sites, staff or types of case, and try plotting each group on its own.${st.n < 50 ? ` With only ${st.n} values, check the pattern with more data.` : ''}`;
     const g = st.skew, a = Math.abs(g);
     let txt;
     if (a < 0.5) txt = 'The shape is roughly symmetrical.';
@@ -384,7 +450,7 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
     const s = [];
     s.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(o.aria)}" font-family="${FONT}">`);
     s.push(`<rect width="${W}" height="${H}" fill="#ffffff"/>`);
-    if (o.title) s.push(`<text x="${ML}" y="34" font-size="22" font-weight="700" fill="${COLORS.ink}">${esc(drawW === BASE_W ? o.title : fitText(o.title, (W - ML - 16) / 12.32))}</text>`);
+    if (o.title) s.push(`<text x="${ML}" y="34" font-size="22" font-weight="700" fill="${COLORS.ink}">${esc(drawW === BASE_W ? o.title : fitText(o.title, (W - ML - 16 - 70 - String(st.n).length * 8) / 12.32))}</text>`);
 
     // legend
     const ly = MT - 22;
@@ -404,6 +470,11 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
       s.push(`<text x="${lx + 22}" y="${ly + 2}" font-size="13" fill="${COLORS.ink}">${esc(txt)}</text>`);
       lx += 22 + txt.length * 7.2 + 26;
     });
+    // IHI: show the total number of values on the chart. Top right, or beside the
+    // axis title if a long legend leaves no room
+    const nTxt = 'n = ' + nf.format(st.n);
+    const nUp = o.title || lx < ML + plotW - nTxt.length * 7.5 - 10;
+    s.push(`<text x="${ML + plotW}" y="${o.title ? 34 : nUp ? ly + 2 : H - 22}" font-size="12" font-weight="600" text-anchor="end" fill="${COLORS.muted}">${nTxt}</text>`);
 
     // grid + y ticks
     for (let v = 0; v <= yMax + 1e-9; v += step) {
@@ -508,8 +579,17 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
     els.xLabel.placeholder = p.label || 'Value';
     const d1 = B.dec + 1;
     const f = v => nf.format(+v.toFixed(d1));
-    const shape = shapeOf(st);
-    const sentence = `${nf.format(st.n)} values with a median of ${f(st.median)}, ranging from ${f(st.min)} to ${f(st.max)}.`;
+    const fmt = v => nf.format(+v.toFixed(B.dec));
+    const rangeOf = r => `${fmt(r.lo)} to ${r.last ? '' : 'under '}${fmt(r.hi)}`;
+    const groups = groupsOf(B, st.n), gaps = gapsOf(B, st.n);
+    const shape = shapeOf(st, groups);
+    let gapTxt = '';
+    if (gaps.length && gaps.length <= 3) gapTxt = `No values fall in ${gaps.map(rangeOf).join(', ').replace(/, ([^,]*)$/, ' or $1')}: a gap like this can point to two processes mixed together, or a problem with how the data were collected.`;
+    else if (gaps.length) gapTxt = `${gaps.length} bins or runs of bins are empty between values. With little data this is common; try wider bins.`;
+    const groupTxt = groups.length > 1 ? `<ul class="groups">${groups.map(g => `<li><strong>${rangeOf(g)}</strong>: ${nf.format(g.n)} value${g.n === 1 ? '' : 's'}</li>`).join('')}</ul>` : '';
+    const sentence = groups.length > 1
+      ? `${nf.format(st.n)} values in ${groups.length} separate groups (${groups.map(rangeOf).join('; ')}), ranging from ${f(st.min)} to ${f(st.max)}.`
+      : `${nf.format(st.n)} values with a median of ${f(st.median)}, ranging from ${f(st.min)} to ${f(st.max)}.`;
 
     let outTxt = '';
     if (lsl !== null || usl !== null) {
@@ -527,12 +607,11 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
       title, xLabel, lsl, usl,
       showMean: els.showMean.checked, showNormal: els.showNormal.checked,
       asPct: els.asPct.checked, showLabels: els.showLabels.checked,
-      aria: (title ? title + '. ' : '') + 'Histogram. ' + sentence + (shape ? ' ' + shape : '')
+      aria: (title ? title + '. ' : '') + 'Histogram. ' + sentence + (shape ? ' ' + shape : '') + (gapTxt ? ' ' + gapTxt : '')
     }));
 
     current = { st, B, title, xLabel };
     const maxN = Math.max(...B.bins.map(b => b.n)) || 1;
-    const fmt = v => nf.format(+v.toFixed(B.dec));
     const rangeTxt = (b, i) => `${fmt(b.lo)} to ${B.exact && i === B.bins.length - 1 ? '' : 'under '}${fmt(b.hi)}`;
     const stats = [['Values', nf.format(st.n)], ['Mean', f(st.mean)], ['Median', f(st.median)], ['Standard deviation', f(st.sd)],
       ['Lowest', f(st.min)], ['Highest', f(st.max)], ['Lower quartile', f(st.q1)], ['Upper quartile', f(st.q3)]];
@@ -541,8 +620,11 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
     const pTxt = ad ? (ad.p < 0.005 ? '< 0.005' : ad.p.toFixed(3)) : '';
 
     els.result.innerHTML = `
-      <p class="summary"><strong>${nf.format(st.n)}</strong> values, typically around <strong>${f(st.median)}</strong>, ranging from ${f(st.min)} to ${f(st.max)}.</p>
-      <p class="focuson">${esc([shape, outTxt].filter(Boolean).join(' '))}</p>
+      <p class="summary">${groups.length > 1
+        ? `<strong>${nf.format(st.n)}</strong> values in <strong>${groups.length} separate groups</strong>, ranging from ${f(st.min)} to ${f(st.max)}.`
+        : `<strong>${nf.format(st.n)}</strong> values, typically around <strong>${f(st.median)}</strong>, ranging from ${f(st.min)} to ${f(st.max)}.`}</p>
+      ${groupTxt}
+      <p class="focuson">${esc([shape, gapTxt, outTxt].filter(Boolean).join(' '))}</p>
       <div class="chartwrap fit" id="chart">${svg}</div>
       <dl class="stats">${stats.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
       <section class="adtest" aria-labelledby="ad-h">
