@@ -17,7 +17,6 @@ const PATH="#005EB8"; // arrows and outlines for a decision's new path
 const VALUES={"":"Not classified",va:"Value-adding",nnva:"Necessary (NNVA)",nva:"Non-value-adding"};
 const VSHORT={va:"VA",nnva:"NNVA",nva:"NVA"};
 const VCOL={va:{fill:"#E3F2E9",ink:"#007F3B"},nnva:{fill:"#FFF4DB",ink:"#8A5A00"},nva:{fill:"#FBE7E5",ink:"#B3261E"},"":{fill:"#FFFFFF",ink:"#768692"}};
-const LINE={va:"#007F3B",nnva:"#FFB81C",nva:"#D5281B","":"#AEB7BD"};
 const UNITS={min:"minutes",h:"hours",d:"days"};
 const UNITF={min:1,h:60,d:1440};
 
@@ -28,7 +27,7 @@ function blankMap(){
   const p=L("Patient",true), s=L("Staff");
   return {lanes:[p,s],steps:[S(p,"terminator",""),S(s,"step",""),S(p,"terminator","")]};
 }
-function blank(){return {title:"",scope:{start:"",end:"",who:""},unit:"min",active:"current",maps:{current:blankMap(),future:null},view:{timeline:true,issues:true,handoffs:true}};}
+function blank(){return {title:"",scope:{start:"",end:"",who:""},unit:"min",active:"current",maps:{current:blankMap(),future:null},view:{issues:true}};}
 
 function example(){
   const pt=L("Patient",true),rc=L("Reception"),ph=L("Phlebotomist"),po=L("Porter"),lab=L("Laboratory"),cl=L("Clinician");
@@ -64,7 +63,7 @@ function example(){
     S(fp,"terminator","Patient told the result in the app","",0)
   ]};
   return {title:"Outpatient blood test, arrival to result",scope:{start:"Patient arrives for a blood test",end:"Patient is told the result",who:"Adult outpatients with a routine blood test request"},
-    unit:"min",active:"current",maps:{current:cur,future:fut},view:{timeline:true,issues:true,handoffs:true}};
+    unit:"min",active:"current",maps:{current:cur,future:fut},view:{issues:true}};
 }
 
 /* ---------- persistence ---------- */
@@ -102,7 +101,7 @@ function normalise(o){
   s.maps.current=normMap(o.maps.current)||blankMap();
   s.maps.future=o.maps.future?normMap(o.maps.future):null;
   s.active=o.active==="future"&&s.maps.future?"future":"current";
-  const v=o.view||{}; s.view={timeline:v.timeline!==false,issues:v.issues!==false,handoffs:v.handoffs!==false};
+  const v=o.view||{}; s.view={issues:v.issues!==false};
   return s;
 }
 function cloneMap(m){return normMap(JSON.parse(JSON.stringify(m)));}
@@ -136,21 +135,31 @@ function flow(m){
       let k=i; while(k+1<n&&st[k+1].type==="branch") k++;
       if(k>i){
         const last=st[k], after=k+1<n?k+1:-1, end=last.thenTo==="end";
-        let target=after;
+        let target=after, back=false;
+        const ti=last.thenTo?idx[last.thenTo]:undefined;
         if(end) target=-1;
-        else if(last.thenTo&&idx[last.thenTo]!==undefined&&idx[last.thenTo]>k) target=idx[last.thenTo];
-        runs[i]={first:i+1,last:k,after:after,target:target,end:end};
+        else if(ti!==undefined&&ti>k) target=ti;
+        else if(ti!==undefined&&ti<=i){target=ti;back=true;} // loops back to an earlier step (or the decision itself)
+        runs[i]={first:i+1,last:k,after:after,target:target,end:end,back:back};
         for(let j=i+1;j<=k;j++) onPath[j]=i;
         edges.push({a:i,b:i+1,kind:"no"});
         for(let j=i+1;j<k;j++) edges.push({a:j,b:j+1,kind:"path"});
-        if(target>=0) edges.push({a:k,b:target,kind:"rejoin"});
+        if(target>=0) edges.push({a:k,b:target,kind:back?"back":"rejoin"});
         if(after>=0) edges.push({a:i,b:after,kind:"yes"});
         i=k; continue;
       }
     }
     if(i<n-1) edges.push({a:i,b:i+1,kind:s.type==="decision"&&s.noTo?"yes":"seq"});
   }
-  return {idx:idx,onPath:onPath,runs:runs,edges:edges};
+  /* Step labels follow the yes route: 1, 2, 3… along the main path, and a decision's
+     new path takes the decision's number plus a letter (3a, 3b…) */
+  const labels=[]; let num=0;
+  const letters=k=>{let t="";k++;while(k>0){k--;t=String.fromCharCode(97+k%26)+t;k=Math.floor(k/26);}return t;};
+  st.forEach((s,i)=>{
+    if(onPath[i]!==undefined){const d=onPath[i]; labels[i]=labels[d]+letters(i-runs[d].first);}
+    else labels[i]=String(++num);
+  });
+  return {idx:idx,onPath:onPath,runs:runs,edges:edges,labels:labels};
 }
 
 /* ---------- metrics ---------- */
@@ -158,7 +167,8 @@ function metrics(m){
   const r={steps:0,patient:0,handoffs:0,decisions:0,waits:0,va:0,nnva:0,nva:0,unc:0,loops:0,paths:0,pathTime:0,bottlenecks:0,issues:0,lead:0,vaTime:0,waitTime:0,untimed:0,hasPatient:m.lanes.some(l=>l.patient)};
   const pl={}; m.lanes.forEach(l=>pl[l.id]=l.patient);
   const F=flow(m), idx=F.idx;
-  F.edges.forEach(e=>{if(m.steps[e.a].lane!==m.steps[e.b].lane) r.handoffs++;});
+  /* a path that loops back is rework, so like a rework loop it isn't counted as a hand-off */
+  F.edges.forEach(e=>{if(e.kind==="back") r.loops++; else if(m.steps[e.a].lane!==m.steps[e.b].lane) r.handoffs++;});
   r.paths=Object.keys(F.runs).length;
   m.steps.forEach((s,i)=>{
     if(s.issue&&s.issue.trim()) r.issues++;
@@ -219,6 +229,9 @@ function layout(m,o){
   G.forEach(g=>{const d=LN[g.lane];if(g.alt)d.altH=Math.max(d.altH,g.h);else d.maxH=Math.max(d.maxH,g.h);if(g.note)d.noteH=Math.max(d.noteH,g.note.h+14);});
   const loopK={};
   G.forEach(g=>{if(g.s.type==="decision"&&!F.runs[g.i]&&g.s.noTo&&idx[g.s.noTo]!==undefined&&idx[g.s.noTo]!==g.i){loopK[g.i]=LN[g.lane].loops++;}});
+  /* a new path that loops back runs along the bottom of its last step's lane, like a rework loop */
+  const backK={};
+  F.edges.forEach(e=>{if(e.kind==="back") backK[e.a]=LN[G[e.a].lane].loops++;});
   let y=TOP;
   LN.forEach(d=>{
     d.top=y; const body=d.maxH||40;
@@ -252,16 +265,23 @@ function layout(m,o){
   });
   p.push('<line x1="0" y1="'+TOP+'" x2="'+W+'" y2="'+TOP+'" stroke="#D8DDE0"/>');
   /* sequence arrows, including a decision's yes and new path routes */
-  const hand=[], GAP=(COLW-BW)/2;
+  const GAP=(COLW-BW)/2;
   F.edges.forEach(e=>{
     const a=G[e.a], b=G[e.b], bx=b.cx-BW/2;
+    if(e.kind==="back"){
+      /* down to the lane's loop channel, back along it, then into the earlier step from below (or above) */
+      const ch=LN[a.lane].bottom-14-backK[e.a]*9, sy=a.cy+a.h/2, isD=b.s.type==="decision", off=isD?14:10;
+      const tx=b.cx-off;
+      const ey=b.lane<=a.lane?(isD?b.cy+b.h/2*(1-off/(BW/2)):b.cy+b.h/2)+1:(isD?b.cy-b.h/2*(1-off/(BW/2)):b.cy-b.h/2)-1;
+      p.push('<path d="M'+a.cx+","+sy+"V"+ch+"H"+tx+"V"+ey+'" fill="none" stroke="'+PATH+'" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#ahp)"/>');
+      return;
+    }
     const onP=e.kind==="no"||e.kind==="path"||e.kind==="rejoin", col=onP?PATH:"#425563";
     let d;
     if(e.kind==="no"){
       /* leave from the diamond's bottom (or top) point, then across to the path */
       const down=b.cy>=a.cy, sy=down?a.cy+a.h/2:a.cy-a.h/2;
       d="M"+a.cx+","+sy+"V"+b.cy+"H"+(bx-1);
-      if(a.lane!==b.lane) hand.push([a.cx,(sy+b.cy)/2]);
       p.push('<text x="'+(a.cx+6)+'" y="'+(down?sy+13:sy-5)+'" font-family="'+FF+'" font-size="11" font-weight="700" fill="'+PATH+'">'+esc(a.s.noLabel||"No")+'</text>');
     } else {
       const ax=a.cx+BW/2;
@@ -270,7 +290,6 @@ function layout(m,o){
         /* turn in the gap next to the step that's skipped from (yes) or joined (rejoin), clear of other boxes */
         const mx=e.kind==="rejoin"?bx-GAP:ax+GAP;
         d="M"+ax+","+a.cy+"H"+mx+"V"+b.cy+"H"+(bx-1);
-        if(a.lane!==b.lane) hand.push([mx,(a.cy+b.cy)/2]);
       }
       /* the label goes on the side away from where the arrow turns */
       if(e.kind==="yes") p.push('<text x="'+(ax+3)+'" y="'+(b.cy<a.cy?a.cy+14:a.cy-6)+'" font-family="'+FF+'" font-size="11" font-weight="700" fill="#425563">'+esc(a.s.yesLabel||"Yes")+'</text>');
@@ -319,9 +338,10 @@ function layout(m,o){
     p.push(shape+' fill="'+fill+'" stroke="'+stroke+'" stroke-width="'+sw+'"'+(s.type==="wait"?' stroke-dasharray="5 3"':"")+'/>');
     const lh=s.type==="decision"?15:16, by=g.cy-(g.lines.length-1)*lh/2+(s.type==="step"||s.type==="wait"||s.type==="branch"?1.5:4.5);
     g.lines.forEach((t,k)=>p.push('<text x="'+g.cx+'" y="'+(by+k*lh)+'" text-anchor="middle" font-family="'+FF+'" font-size="13" font-weight="600" '+(g.empty?'font-style="italic" fill="#768692"':'fill="#212B32"')+'>'+esc(t)+'</text>'));
-    /* number badge */
+    /* step label badge: a circle for 1-digit labels, a pill for longer ones such as 12 or 3a */
+    const lab=F.labels[g.i], bw=Math.max(20,lab.length*6.5+9), bfill=g.alt?PATH:"#003087";
     const bx=s.type==="decision"?g.cx-26:x+2, byy=s.type==="decision"?top+16:top+2;
-    p.push('<circle cx="'+bx+'" cy="'+byy+'" r="10" fill="#003087"/><text x="'+bx+'" y="'+(byy+4)+'" text-anchor="middle" font-family="'+FF+'" font-size="10.5" font-weight="800" fill="#fff">'+(g.i+1)+'</text>');
+    p.push('<rect x="'+(bx-bw/2)+'" y="'+(byy-10)+'" width="'+bw+'" height="20" rx="10" fill="'+bfill+'"/><text x="'+bx+'" y="'+(byy+4)+'" text-anchor="middle" font-family="'+FF+'" font-size="10.5" font-weight="800" fill="#fff">'+esc(lab)+'</text>');
     /* value tag */
     if(s.value&&s.type!=="terminator"){
       const vx=s.type==="decision"?g.cx:x+BW-(s.type==="wait"?14:6), vy=s.type==="decision"?top+g.h-16:top+g.h-6;
@@ -333,39 +353,17 @@ function layout(m,o){
     }
     p.push('</g>');
   });
-  /* hand-off markers */
-  if(v.handoffs) hand.forEach(h=>p.push('<circle cx="'+h[0]+'" cy="'+h[1]+'" r="9" fill="#FFB81C" stroke="#212B32" stroke-width="1"/><text x="'+h[0]+'" y="'+(h[1]+4)+'" text-anchor="middle" font-family="'+FF+'" font-size="10.5" font-weight="800" fill="#212B32">H</text>'));
-  /* timeline */
   let y2=lanesBottom;
   const M=metrics(m);
-  if(v.timeline&&n){
-    const t0=y2+14, up=t0+22, lo=t0+58;
-    p.push('<text x="14" y="'+(up+4)+'" font-family="'+FF+'" font-size="12" font-weight="700" fill="#4C6272">Waiting</text>');
-    p.push('<text x="14" y="'+(lo+4)+'" font-family="'+FF+'" font-size="12" font-weight="700" fill="#4C6272">Doing</text>');
-    let prevY=null;
-    G.forEach(g=>{
-      const s=g.s, x0=X0+g.i*COLW, x1=x0+COLW, yy=s.type==="wait"?up:lo;
-      if(prevY!==null&&prevY!==yy) p.push('<line x1="'+x0+'" y1="'+up+'" x2="'+x0+'" y2="'+lo+'" stroke="#AEB7BD" stroke-width="1.5"/>');
-      const col=s.type==="terminator"?"#D8DDE0":LINE[s.value||""];
-      /* steps on a new path are shown faded and in brackets: they aren't in the lead time */
-      p.push('<line x1="'+(x0+2)+'" y1="'+yy+'" x2="'+(x1-2)+'" y2="'+yy+'" stroke="'+col+'" stroke-width="5" stroke-linecap="round"'+(g.alt?' stroke-dasharray="1 9" opacity=".7"':"")+'/>');
-      if(s.type!=="terminator"&&s.time!=="") p.push('<text x="'+(x0+COLW/2)+'" y="'+(yy-8)+'" text-anchor="middle" font-family="'+FF+'" font-size="11.5" font-weight="700" fill="'+(g.alt?"#4C6272":"#212B32")+'">'+esc(g.alt?"("+fmtT(s.time)+")":fmtT(s.time))+'</text>');
-      prevY=yy;
-    });
-    const tot="Lead time "+fmtT(M.lead)+"     Waiting "+fmtT(M.waitTime)+"     Value-adding time "+fmtT(M.vaTime)+" ("+Math.round(M.vaPct)+"% of lead time)"+
-      (M.paths?"     New paths "+fmtT(M.pathTime)+" (not in lead time)":"");
-    p.push('<text x="14" y="'+(t0+92)+'" font-family="'+FF+'" font-size="13" font-weight="700" fill="#212B32">'+esc(tot)+'</text>');
-    y2=t0+104;
-  }
   /* legend */
   const ly=y2+18; let lx=14;
   const leg=(sw,label)=>{p.push(sw(lx,ly));p.push('<text x="'+(lx+22)+'" y="'+(ly+4)+'" font-family="'+FF+'" font-size="11.5" fill="#4C6272">'+esc(label)+'</text>');mctx.font="11.5px "+FF;lx+=22+mctx.measureText(label).width+18;};
   leg((x,y)=>'<rect x="'+x+'" y="'+(y-7)+'" width="16" height="13" rx="2" fill="#E3F2E9" stroke="#007F3B"/>',"Value-adding (VA)");
   leg((x,y)=>'<rect x="'+x+'" y="'+(y-7)+'" width="16" height="13" rx="2" fill="#FFF4DB" stroke="#FFB81C"/>',"Necessary, non-value-adding (NNVA)");
   leg((x,y)=>'<rect x="'+x+'" y="'+(y-7)+'" width="16" height="13" rx="2" fill="#FBE7E5" stroke="#D5281B"/>',"Non-value-adding (NVA)");
-  if(v.handoffs) leg((x,y)=>'<circle cx="'+(x+8)+'" cy="'+y+'" r="7" fill="#FFB81C" stroke="#212B32"/>',"Hand-off ("+M.handoffs+")");
   if(M.paths) leg((x,y)=>'<rect x="'+x+'" y="'+(y-7)+'" width="16" height="13" rx="2" fill="#FFFFFF" stroke="'+PATH+'" stroke-width="2"/>',"New path (decision's no route)");
   if(pathEnds) leg((x,y)=>'<circle cx="'+(x+8)+'" cy="'+y+'" r="7" fill="#fff" stroke="'+PATH+'" stroke-width="1.5"/><circle cx="'+(x+8)+'" cy="'+y+'" r="4" fill="'+PATH+'"/>',"Path ends");
+  if(Object.keys(backK).length) leg((x,y)=>'<line x1="'+x+'" y1="'+y+'" x2="'+(x+16)+'" y2="'+y+'" stroke="'+PATH+'" stroke-width="2" stroke-dasharray="4 3"/>',"Path loops back");
   if(Object.keys(loopK).length) leg((x,y)=>'<line x1="'+x+'" y1="'+y+'" x2="'+(x+16)+'" y2="'+y+'" stroke="#6A4C93" stroke-width="2" stroke-dasharray="4 3"/>',"Rework loop");
   const H=ly+20;
   const Wf=Math.max(W,lx+10);
@@ -494,7 +492,7 @@ function setFull(on){
 fullBtn.addEventListener("click",()=>setFull(!isFull()));
 document.addEventListener("fullscreenchange",fullChanged);
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&stageEl.classList.contains("full")) setFull(false);});
-["Timeline","Issues","Handoffs"].forEach(k=>{
+["Issues"].forEach(k=>{
   const el=$("#v"+k), key=k.toLowerCase();
   el.addEventListener("change",()=>{state.view[key]=el.checked;persist();renderCanvas();});
 });
@@ -518,36 +516,44 @@ function renderEditing(){
   const d=$("#delFuture"); if(d) d.addEventListener("click",()=>{if(!confirm("Delete the redesign map? The current map is kept."))return;state.maps.future=null;setActive("current");});
   const g=$("#goFuture"); if(g) g.addEventListener("click",()=>setActive("future"));
 }
+/* Steps are referred to by name, not number. Elements that show a step's name carry
+   data-name-of (and data-pre for any leading words) so they update as the name is typed. */
+function nameOf(s){const t=String((s&&s.text)||"").replace(/\s+/g," ").trim();return t?(t.length>45?t.slice(0,44).trim()+"…":t):"(untitled step)";}
+function nameAttr(o,pre){return ' data-name-of="'+o.id+'"'+(pre?' data-pre="'+esc(pre)+'"':"");}
+function refreshNames(s){document.querySelectorAll('[data-name-of="'+s.id+'"]').forEach(el=>{el.textContent=(el.dataset.pre||"")+nameOf(s)+(el.dataset.post||"");});}
 function laneOptions(m,sel){return m.lanes.map(l=>'<option value="'+l.id+'"'+(l.id===sel?" selected":"")+'>'+esc(l.name||"Unnamed lane")+'</option>').join("");}
 function stepCard(m,s,i,F){
   const isT=s.type==="terminator", isD=s.type==="decision", isB=s.type==="branch";
-  const short=(o,k)=>(k+1)+'. '+esc((o.text||"(no text)").slice(0,40));
-  const others=m.steps.map((o,k)=>o.id===s.id?"":'<option value="'+o.id+'"'+(o.id===s.noTo?" selected":"")+'>'+short(o,k)+'</option>').join("");
+  const opt=(o,sel,pre)=>'<option value="'+o.id+'"'+(sel?" selected":"")+nameAttr(o,pre)+'>'+esc((pre||"")+nameOf(o))+'</option>';
+  const others=m.steps.map(o=>o.id===s.id?"":opt(o,o.id===s.noTo,"")).join("");
   const run=isD?F.runs[i]:null, own=isB&&F.onPath[i]!==undefined?F.runs[F.onPath[i]]:null;
   /* where a decision's no route goes: back to an earlier step, or down the new path that follows it */
   const noRow=!isD?"":run?
-    '<div class="row2"><p class="path-note">If no, take the new path: step'+(run.last>run.first?"s "+(run.first+1)+" to "+(run.last+1):" "+(run.first+1))+'</p><label>No label<input class="field sm nl" type="text"></label></div>':
+    '<div class="row2"><p class="path-note">If no, take the new path, starting with <span'+nameAttr(m.steps[run.first])+'>'+esc(nameOf(m.steps[run.first]))+'</span></p><label>No label<input class="field sm nl" type="text"></label></div>':
     '<div class="row2"><label>If no, go to<select class="field sm nt"><option value="">Carry on (no loop)</option>'+others+'</select></label><label>No label<input class="field sm nl" type="text"></label></div>';
   /* the last step on a new path says where the path goes next */
   let pathRow="";
   if(own&&own.last===i){
-    const later=m.steps.map((o,k)=>k>i&&k!==own.after&&F.onPath[k]===undefined?'<option value="'+o.id+'"'+(o.id===s.thenTo?" selected":"")+'>Go to step '+short(o,k)+'</option>':"").join("");
+    const later=m.steps.map((o,k)=>k>i&&k!==own.after&&F.onPath[k]===undefined?opt(o,o.id===s.thenTo,"Go to "):"").join("");
+    const earlier=m.steps.map((o,k)=>k<own.first?opt(o,o.id===s.thenTo,"Go back to "):"").join("");
     pathRow='<div class="row1"><label>At the end of this path<select class="field sm th">'+
-      '<option value="">'+(own.after>=0?"Rejoin the main path at step "+(own.after+1):"Rejoin the main path")+'</option>'+
-      '<option value="end"'+(s.thenTo==="end"?" selected":"")+'>End the path here</option>'+later+'</select></label></div>';
+      (own.after>=0?'<option value=""'+nameAttr(m.steps[own.after],"Rejoin the main path at ")+'>'+esc("Rejoin the main path at "+nameOf(m.steps[own.after]))+'</option>':'<option value="">Rejoin the main path</option>')+
+      '<option value="end"'+(s.thenTo==="end"?" selected":"")+'>End the path here</option>'+
+      (later?'<optgroup label="Rejoin later on">'+later+'</optgroup>':"")+
+      (earlier?'<optgroup label="Loop back (rework)">'+earlier+'</optgroup>':"")+'</select></label></div>';
   } else if(isB&&!own) pathRow='<p class="path-note warn">Put this straight after a decision, or after another new path step, to make it the decision\'s "no" route.</p>';
   return '<div class="step t-'+s.type+(s.value&&!isT?" v-"+s.value:"")+(selected===s.id?" sel":"")+'" data-id="'+s.id+'">'+
-    '<div class="step-head"><span class="num" aria-hidden="true">'+(i+1)+'</span>'+
-    '<select class="field sm ty" aria-label="Step '+(i+1)+' type">'+Object.keys(TYPES).map(k=>'<option value="'+k+'"'+(k===s.type?" selected":"")+'>'+TYPES[k]+'</option>').join("")+'</select>'+
-    '<select class="field sm la" aria-label="Step '+(i+1)+' lane">'+laneOptions(m,s.lane)+'</select>'+
-    '<button class="btn icon ghost" data-act="up" type="button" aria-label="Move step '+(i+1)+' up">↑</button>'+
-    '<button class="btn icon ghost" data-act="down" type="button" aria-label="Move step '+(i+1)+' down">↓</button>'+
-    '<button class="btn icon ghost danger" data-act="del" type="button" aria-label="Remove step '+(i+1)+'">✕</button></div>'+
-    '<textarea class="field t" rows="1" aria-label="Step '+(i+1)+' description" placeholder="'+(isT?(i===0?"Where the process starts":"Where the process ends"):isD?"A yes or no question":s.type==="wait"?"Who or what is waiting, and where":isB?"What happens on the 'no' route? Start with a verb":"What happens? Start with a verb")+'"></textarea>'+
+    '<div class="step-head"><span class="num" aria-hidden="true">'+esc(F.labels[i])+'</span>'+
+    '<select class="field sm ty" aria-label="Step '+F.labels[i]+' type">'+Object.keys(TYPES).map(k=>'<option value="'+k+'"'+(k===s.type?" selected":"")+'>'+TYPES[k]+'</option>').join("")+'</select>'+
+    '<select class="field sm la" aria-label="Step '+F.labels[i]+' lane">'+laneOptions(m,s.lane)+'</select>'+
+    '<button class="btn icon ghost" data-act="up" type="button" aria-label="Move step '+F.labels[i]+' up">↑</button>'+
+    '<button class="btn icon ghost" data-act="down" type="button" aria-label="Move step '+F.labels[i]+' down">↓</button>'+
+    '<button class="btn icon ghost danger" data-act="del" type="button" aria-label="Remove step '+F.labels[i]+'">✕</button></div>'+
+    '<textarea class="field t" rows="1" aria-label="Step '+F.labels[i]+' description" placeholder="'+(isT?(i===0?"Where the process starts":"Where the process ends"):isD?"A yes or no question":s.type==="wait"?"Who or what is waiting, and where":isB?"What happens on the 'no' route? Start with a verb":"What happens? Start with a verb")+'"></textarea>'+
     (isT?"":'<div class="row2"><label>Value<select class="field sm va">'+Object.keys(VALUES).map(k=>'<option value="'+k+'"'+(k===(s.value||"")?" selected":"")+'>'+VALUES[k]+'</option>').join("")+'</select></label>'+
       '<label>'+(s.type==="wait"?"Waiting time":"Time taken")+'<span class="timefield"><input class="field sm tm" type="number" min="0" step="any" inputmode="decimal"><span>'+UNITS[state.unit]+'</span></span></label></div>')+
     noRow+pathRow+
-    '<input class="field measure issue is" type="text" aria-label="Issue for step '+(i+1)+'" placeholder="Issue or frustration (optional)">'+
+    '<input class="field measure issue is" type="text" aria-label="Issue for step '+F.labels[i]+'" placeholder="Issue or frustration (optional)">'+
     '<div class="step-foot">'+(isT?"<span></span>":'<label class="chk"><input type="checkbox" class="bn"'+(s.bottleneck?" checked":"")+'> Bottleneck</label>')+
     '<span class="foot-btns">'+(isD?'<button class="btn small" data-act="path" type="button">'+(run?"Add step to new path":"Add new path")+'</button>':"")+
     '<button class="btn small" data-act="ins" type="button">'+(isB?"Add path step below":"Add step below")+'</button></span></div></div>';
@@ -595,7 +601,7 @@ ed.addEventListener("input",e=>{
   const c=e.target.closest(".step"); if(!c) return;
   const s=m.steps.find(x=>x.id===c.dataset.id); if(!s) return;
   const cl=e.target.classList;
-  if(cl.contains("t")){s.text=e.target.value;autosize(e.target);}
+  if(cl.contains("t")){s.text=e.target.value;autosize(e.target);refreshNames(s);}
   else if(cl.contains("tm")){const v=e.target.value;s.time=v===""?"":Math.max(0,+v||0);}
   else if(cl.contains("is")) s.issue=e.target.value;
   else if(cl.contains("nl")) s.noLabel=e.target.value;
@@ -724,13 +730,12 @@ function renderAnalysis(){
   } else h+='<p class="hint">Add steps to see the value mix.</p>';
   /* prompts */
   const P=[];
-  const num=s=>am.steps.indexOf(s)+1;
   if(a.steps&&a.nva) P.push(a.nva+" of "+a.steps+" steps add no value for the patient. Which could you stop doing altogether?");
   if(a.handoffs>=3) P.push("The patient or the work changes hands "+a.handoffs+" times. Could one person or team do more of the journey?");
   const waits=am.steps.filter(s=>s.type==="wait"&&+s.time>0).sort((x,y)=>y.time-x.time).slice(0,3);
-  if(waits.length) P.push("Longest wait"+(waits.length>1?"s":"")+": "+waits.map(s=>"step "+num(s)+", "+(s.text||"untitled")+" ("+fmtT(s.time)+")").join("; ")+". What is the work waiting for?");
+  if(waits.length) P.push("Longest wait"+(waits.length>1?"s":"")+": "+waits.map(s=>nameOf(s)+" ("+fmtT(s.time)+")").join("; ")+". What is the work waiting for?");
   if(a.lead>0&&a.vaPct<25) P.push("Only "+Math.round(a.vaPct)+"% of the lead time adds value. Shortening waits will usually do more than speeding up the work itself.");
-  am.steps.filter(s=>s.bottleneck).forEach(s=>P.push("Step "+num(s)+" is marked as a bottleneck. Protect its capacity: make sure it never waits for work, and move tasks away from it that others could do."));
+  am.steps.filter(s=>s.bottleneck).forEach(s=>P.push('"'+nameOf(s)+'" is marked as a bottleneck. Protect its capacity: make sure it never waits for work, and move tasks away from it that others could do.'));
   if(a.loops) P.push(a.loops+" rework loop"+(a.loops>1?"s send":" sends")+" work back. Fix the cause at source rather than checking for it later.");
   if(a.paths) P.push(a.paths+" decision"+(a.paths>1?"s send":" sends")+" some cases down a new path. How often does each path happen, and what would make it unnecessary?");
   if(a.nnva) P.push("Necessary steps can still be simplified or done at the same time as something else. Look at the "+a.nnva+" amber step"+(a.nnva>1?"s":"")+".");
@@ -764,11 +769,11 @@ function renderChecks(){
     const F=flow(m);
     const openD=st.filter((s,i)=>s.type==="decision"&&!s.noTo&&!F.runs[i]);
     if(openD.length) add("info",openD.length+" decision"+(openD.length>1?"s have":" has")+" no 'no' route","If a 'no' sends work back to an earlier step, link it so the rework loop shows. If it goes a different way, add a new path.");
-    const lost=st.map((s,i)=>s.type==="branch"&&F.onPath[i]===undefined?i+1:0).filter(Boolean);
+    const lost=st.filter((s,i)=>s.type==="branch"&&F.onPath[i]===undefined).map(s=>'"'+nameOf(s)+'"');
     if(lost.length) add("warn","New path step"+(lost.length>1?"s ":" ")+lost.join(", ")+(lost.length>1?" don't":" doesn't")+" follow a decision","Move "+(lost.length>1?"them":"it")+" to straight after a decision, or change the type to Activity.");
     Object.keys(F.runs).forEach(k=>{
       const r=F.runs[k];
-      if(r.after<0) add("info","Decision "+(+k+1)+" has no 'yes' step","Its new path is at the end of the map. Add the steps that follow a 'yes' after the path.");
+      if(r.after<0) add("info",'Decision "'+nameOf(st[k])+'" has no \'yes\' step',"Its new path is at the end of the map. Add the steps that follow a 'yes' after the path.");
     });
     if(!M.waits&&M.steps) add("info","No waits mapped","Most processes have queues. Add them as Wait / queue steps so they are counted.");
     const usedL=new Set(st.map(s=>s.lane));
@@ -798,11 +803,12 @@ document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{sho
 
 /* ---------- table dialog ---------- */
 function toTable(m){
-  const idx={}; m.steps.forEach((s,i)=>idx[s.id]=i+1);
+  const byId={}; m.steps.forEach(s=>byId[s.id]=s);
+  const nm=id=>byId[id]?String(byId[id].text||"").replace(/[\t\n]/g," ").trim():"";
   const tn={terminator:"Start/end",step:"Activity",decision:"Decision",branch:"New path",wait:"Wait"};
   const out=[["Lane","Step","Type","Value","Time ("+UNITS[state.unit]+")","Issue","If no go to","Bottleneck"].join("\t")];
   /* for a new path step, "If no go to" holds where the path goes next: a step number or End */
-  const go=s=>s.type==="branch"?(s.thenTo==="end"?"End":s.thenTo?idx[s.thenTo]:""):s.noTo?idx[s.noTo]:"";
+  const go=s=>s.type==="branch"?(s.thenTo==="end"?"End":s.thenTo?nm(s.thenTo):""):s.noTo?nm(s.noTo):"";
   m.steps.forEach(s=>out.push([laneOf(m,s.lane).name,s.text,tn[s.type],VSHORT[s.value]||"",s.time,s.issue,go(s),s.bottleneck?"Yes":""].map(c=>String(c==null?"":c).replace(/[\t\n]/g," ")).join("\t")));
   return out.join("\n");
 }
@@ -823,9 +829,14 @@ function fromTable(src,old){
     gotos.push(c[6]||""); m.steps.push(s);
   });
   m.steps.forEach((s,i)=>{
-    const raw=gotos[i].trim(), g=parseInt(raw,10);
-    if(s.type==="decision"&&g>=1&&g<=m.steps.length&&g!==i+1) s.noTo=m.steps[g-1].id;
-    if(s.type==="branch"){ if(/^end/i.test(raw)) s.thenTo="end"; else if(g>i+1&&g<=m.steps.length) s.thenTo=m.steps[g-1].id; }
+    /* "If no go to" names the step (a step number from older tables still works) */
+    const raw=gotos[i].trim(); if(!raw) return;
+    let t=null;
+    if(/^\d+$/.test(raw)){const g=+raw; if(g>=1&&g<=m.steps.length) t=m.steps[g-1];}
+    else{const key=raw.toLowerCase().replace(/\s+/g," "); t=m.steps.find(o=>o!==s&&String(o.text||"").toLowerCase().replace(/\s+/g," ").trim()===key)||null;}
+    if(t===s) t=null;
+    if(s.type==="decision"&&t) s.noTo=t.id;
+    if(s.type==="branch"){ if(/^end$/i.test(raw)&&!t) s.thenTo="end"; else if(t) s.thenTo=t.id; }
   });
   if(!m.lanes.length) m.lanes.push(L("Patient",true));
   return m;
@@ -863,12 +874,12 @@ FocusActions.mount({
     {type:"svg",run:()=>withMap(m=>saveFile(slug()+suffix()+".svg",layout(m,{export:true}).svg,"image/svg+xml"))},
     {type:"csv",label:"Step table (.csv)",run:()=>withMap(m=>{
       const q=v=>{v=String(v==null?"":v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;};
-      const csv=toTable(m).split("\n").map((r,i)=>[i?i:"Step number"].concat(r.split("\t")).map(q).join(",")).join("\n");
+      const csv=toTable(m).split("\n").map(r=>r.split("\t").map(q).join(",")).join("\n");
       saveFile(slug()+suffix()+".csv","\uFEFF"+csv,"text/csv");
     })}
   ])
 });
-trackSettings({timeline:"vTimeline",issues:"vIssues",handoffs:"vHandoffs",timeUnit:"unitSel"});
+trackSettings({issues:"vIssues",timeUnit:"unitSel"});
 function slug(){return (state.title||"process-map").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,60)||"process-map";}
 function suffix(){return state.active==="future"?"-redesign":"-current";}
 function exportPng(m){
@@ -917,7 +928,7 @@ function renderAll(){
   $("#title").value=state.title; $("#scStart").value=state.scope.start; $("#scEnd").value=state.scope.end; $("#scWho").value=state.scope.who;
   $("#mapCur").setAttribute("aria-pressed",String(state.active==="current"));
   $("#mapFut").setAttribute("aria-pressed",String(state.active==="future"));
-  $("#vTimeline").checked=state.view.timeline; $("#vIssues").checked=state.view.issues; $("#vHandoffs").checked=state.view.handoffs;
+  $("#vIssues").checked=state.view.issues;
   renderEditor(); renderCanvas(); renderChecks(); renderAnalysis();
 }
 
