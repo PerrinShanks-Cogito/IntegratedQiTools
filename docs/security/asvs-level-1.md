@@ -6,13 +6,13 @@ Last updated 28 October 2026
 
 ## Purpose and scope
 
-The FOCUS QI tools address the OWASP ASVS 5.0 Level 1 requirements that apply to them, with one change awaiting merge and four accepted risks. Most of ASVS does not apply, because the tools run entirely in the browser with no logins, server or database.
+The FOCUS QI tools address the OWASP ASVS 5.0 Level 1 requirements that apply to them, with four accepted risks. Most of ASVS does not apply, because the tools run entirely in the browser with no logins, server or database.
 
 | Item | Detail |
 | --- | --- |
 | System | FOCUS QI tools: 29 tool and landing pages, built as a static Jekyll site |
 | Hosting | Azure Static Web Apps, production at green-smoke-07bcedf03.3.azurestaticapps.net |
-| Source | [PerrinShanks-Cogito/IntegratedQiTools](https://github.com/PerrinShanks-Cogito/IntegratedQiTools), `main` at commit 35b193f, plus [pull request #92](https://github.com/PerrinShanks-Cogito/IntegratedQiTools/pull/92) |
+| Source | [PerrinShanks-Cogito/IntegratedQiTools](https://github.com/PerrinShanks-Cogito/IntegratedQiTools), `main` at commit 1963d6f |
 | Standard | OWASP Application Security Verification Standard (ASVS) 5.0, Level 1 |
 | Assessed | 28 October 2026 |
 | Assessed by | Code review and testing with Claude Code, checked on the live site by \[name, role\] |
@@ -43,7 +43,7 @@ Azure serves the site's files and receives nothing back. Work in progress is kep
 
 ## Assessment by ASVS chapter
 
-Nine of the 17 chapters apply in full or in part. Of those, seven are met and two are met once pull request #92 (file size limits and error reports) is merged.
+Nine of the 17 chapters apply in full or in part. All nine are met.
 
 | Chapter | Applies | Status | Evidence and notes |
 | --- | --- | --- | --- |
@@ -51,7 +51,7 @@ Nine of the 17 chapters apply in full or in part. Of those, seven are met and tw
 | V2 Validation and Business Logic | In part | Met | Pasted data is checked in the browser, for example a count can't be more than its total. There is no server-side logic to bypass. |
 | V3 Web Frontend Security | Yes | Met | Content Security Policy allows scripts only from the site (`script-src 'self' 'wasm-unsafe-eval'`), with `object-src 'none'`, `base-uri 'none'` and `frame-ancestors 'self'`. Also `X-Content-Type-Options: nosniff`, `X-Frame-Options: SAMEORIGIN` and `Referrer-Policy: strict-origin-when-cross-origin`. No third-party scripts. |
 | V4 API and Web Service | No | Not applicable | Static files only; no APIs. |
-| V5 File Handling | In part | Met once #92 is merged | Project files (.json) and data sheets (.xlsx) are opened in the browser only, never uploaded or stored. Size limits: 50 MB for project files, 10 MB for data sheets, 25 MB for A3 pictures, and 100 MB unzipped for each part of a data sheet (#92). |
+| V5 File Handling | In part | Met | Project files (.json) and data sheets (.xlsx) are opened in the browser only, never uploaded or stored. Size limits: 50 MB for project files, 10 MB for data sheets, 25 MB for A3 pictures, and 100 MB unzipped for each part of a data sheet (#92). |
 | V6 Authentication | No | Not applicable | No accounts or logins. Imprivata single sign-on runs as a browser extension, outside the site. |
 | V7 Session Management | No | Not applicable | No sessions or cookies. |
 | V8 Authorization | No | Not applicable | No users, roles or protected data on the server. |
@@ -62,7 +62,7 @@ Nine of the 17 chapters apply in full or in part. Of those, seven are met and tw
 | V13 Configuration | Yes | Met | Security settings are in `staticwebapp.config.json`, in source control. No secrets in the repository; the Application Insights connection string only allows sending data, so it is public by design. |
 | V14 Data Protection | Yes | Met | Pasted data never leaves the browser. Analytics send counts and fixed settings only, never values, labels or notes. Diagram autosave lasts only while the tab is open. A3 report charts and drafts are cleared after 14 days (#91). |
 | V15 Secure Coding and Architecture | Yes | Met | Third-party parts are listed: the Application Insights SDK 3.4.5, self-hosted and loaded with an integrity hash, and Google Fonts. Build dependencies are pinned in `Gemfile.lock`. |
-| V16 Security Logging and Error Handling | In part | Met once #92 is merged | No server, so no server-side logs beyond the Azure platform's own. Browser error reports carry only the error type and where in the code it happened, never the message (#92). |
+| V16 Security Logging and Error Handling | In part | Met | No server, so no server-side logs beyond the Azure platform's own. Browser error reports carry only the error type and where in the code it happened, never the message (#92). |
 | V17 WebRTC | No | Not applicable | No WebRTC. |
 
 ## Tests carried out
@@ -94,10 +94,10 @@ Four risks are accepted because the fix would cost more than the risk, or would 
 
 ## Open actions, review and sign-off
 
-Merging #92 closes the last gap; after that, the record is reviewed whenever the site changes in a way that touches security.
+Every gap found is now closed. The record is reviewed whenever the site changes in a way that touches security.
 
 - [x] Merge [pull request #91](https://github.com/PerrinShanks-Cogito/IntegratedQiTools/pull/91): clears A3 report charts and drafts after 14 days (V14)
-- [ ] Merge [pull request #92](https://github.com/PerrinShanks-Cogito/IntegratedQiTools/pull/92): size limits of 50 MB for project files, 10 MB for data sheets and 25 MB for A3 pictures (V5), and error reports that send only the error type (V16)
+- [x] Merge [pull request #92](https://github.com/PerrinShanks-Cogito/IntegratedQiTools/pull/92): size limits of 50 MB for project files, 10 MB for data sheets and 25 MB for A3 pictures (V5), and error reports that send only the error type (V16)
 - [ ] Check for Application Insights SDK updates once a year, and update the pinned copy using the steps in `assets/js/analytics.js` (V15)
 
 Review this record when any of these happens, and at least once a year:
