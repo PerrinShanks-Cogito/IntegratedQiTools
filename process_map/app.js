@@ -68,12 +68,10 @@ function example(){
 }
 
 /* ---------- persistence ---------- */
-/* Work in progress is kept in sessionStorage, so it survives a refresh but is cleared when the tab
-   closes and isn't left on a shared computer. Work an older version kept in localStorage moves across once. */
-function load(){try{const old=localStorage.getItem(KEY);if(old!==null){localStorage.removeItem(KEY);if(sessionStorage.getItem(KEY)===null)sessionStorage.setItem(KEY,old);}}catch(e){}
-  try{const raw=sessionStorage.getItem(KEY);if(!raw)return null;return normalise(JSON.parse(raw));}catch(e){return null;}}
-let saveTimer=null;
-function persist(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>{try{sessionStorage.setItem(KEY,JSON.stringify(state));}catch(e){}},250);}
+/* The tool always opens on a fresh one-lane map rather than restoring the last map in this
+   tab. Work is kept by saving a project file. Anything older versions kept in the browser is cleared. */
+try{sessionStorage.removeItem(KEY);localStorage.removeItem(KEY);}catch(e){}
+function persist(){}
 function normMap(m){
   if(!m||typeof m!=="object") return null;
   const idmap={};
@@ -108,7 +106,7 @@ function normalise(o){
 }
 function cloneMap(m){return normMap(JSON.parse(JSON.stringify(m)));}
 
-let state=load()||blank(); // start empty unless there is saved work
+let state=blank();
 let selected=null, zoom=1, autoFit=true;
 const map=()=>state.maps[state.active];
 const laneOf=(m,id)=>m.lanes.find(l=>l.id===id)||m.lanes[0];
@@ -963,6 +961,9 @@ async function saveFile(name,data,mime){
 }
 let tt;
 function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("show"),2600);}
+
+/* Nothing is kept when the page closes, so ask before leaving a map with work on it */
+window.addEventListener("beforeunload",e=>{if(hasContent()){e.preventDefault();e.returnValue="";}});
 
 /* ---------- render all ---------- */
 function renderAll(){
