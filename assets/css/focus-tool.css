@@ -74,6 +74,8 @@ button,input,select,textarea{font:inherit;color:inherit}
 /* Charts are drawn at a fixed size (usually 960 wide) and scale with the
    panel, so cap them on wide screens to keep the text at a readable size */
 :where(.ft-standard) .chartwrap svg{width:100%;min-width:560px;max-width:1150px;height:auto;display:block;margin:0 auto}
+/* Charts drawn at the width they're shown at (class fit) fill the card */
+:where(.ft-standard) .chartwrap.fit svg{max-width:none}
 :where(.ft-standard) .summary strong{color:var(--blue);font-weight:800}
 :where(.ft-standard) .empty{padding:3rem .5rem;text-align:center;color:var(--muted)}
 :where(.ft-standard) .notice{background:var(--blue-bg);color:var(--text);border-left:5px solid var(--blue);border-radius:0 4px 4px 0;padding:.7rem .9rem;max-width:80ch}
