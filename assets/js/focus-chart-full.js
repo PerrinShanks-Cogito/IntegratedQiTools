@@ -1,6 +1,7 @@
 // © Guy’s and St Thomas’ NHS Foundation Trust 2026. All rights reserved.
 
-/* Full screen for every chart on a tool page. A small "Full screen" button
+/* Full screen for every chart on a tool page, and hover details for any part
+   of a chart marked with data-tip (see the end of this file). A small "Full screen" button
    sits above each chart; it opens the chart on its own, filling the screen,
    where it can be zoomed (buttons, Ctrl + scroll, or + - 0) and dragged or
    scrolled around. The full screen view shows a copy of the chart as it is
@@ -153,4 +154,48 @@
     vp.classList.toggle("can-pan", vp.scrollWidth > vp.clientWidth || vp.scrollHeight > vp.clientHeight);
   }
   function setZoom(z, at) { zoom = Math.min(6, Math.max(0.25, z)); apply(at); }
+
+  /* ---------- hover details ----------
+     Any part of a chart with a data-tip attribute shows its details in a box
+     beside the pointer, on the page and in full screen (the copy keeps the
+     attribute). Lines are separated by newlines; the first is the heading.
+     On a touch screen, tap it. */
+  let tip = null, tipOn = null;
+  function showTip(el, x, y) {
+    if (!tip) { tip = document.createElement("div"); tip.className = "fct"; }
+    // In full screen only what's inside the full screen element shows
+    const host = document.fullscreenElement || document.body;
+    if (tip.parentNode !== host) host.appendChild(tip);
+    if (tipOn !== el) {
+      if (tipOn) tipOn.classList.remove("fct-on");
+      tipOn = el; el.classList.add("fct-on");
+      tip.textContent = "";
+      el.getAttribute("data-tip").split("\n").forEach((line, i) => {
+        const d = document.createElement(i ? "span" : "b"); d.textContent = line; tip.appendChild(d);
+      });
+    }
+    tip.hidden = false;
+    const w = tip.offsetWidth, h = tip.offsetHeight;
+    let left = x + 14, top = y + 14;
+    if (left + w > innerWidth - 8) left = x - w - 14;
+    if (top + h > innerHeight - 8) top = y - h - 14;
+    tip.style.left = Math.max(8, left) + "px";
+    tip.style.top = Math.max(8, top) + "px";
+  }
+  function hideTip() {
+    if (tip) tip.hidden = true;
+    if (tipOn) { tipOn.classList.remove("fct-on"); tipOn = null; }
+  }
+  const tipTarget = e => e.target && e.target.closest ? e.target.closest("[data-tip]") : null;
+  document.addEventListener("pointermove", e => {
+    if (e.pointerType === "touch") return;
+    const el = tipTarget(e);
+    if (el && !e.buttons) showTip(el, e.clientX, e.clientY); else hideTip();
+  });
+  document.addEventListener("pointerdown", e => {
+    const el = tipTarget(e);
+    if (e.pointerType === "touch" && el) showTip(el, e.clientX, e.clientY); else hideTip();
+  });
+  window.addEventListener("scroll", hideTip, true);
+  document.addEventListener("fullscreenchange", hideTip);
 })();

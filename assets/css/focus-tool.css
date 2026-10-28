@@ -113,3 +113,10 @@ button,input,select,textarea{font:inherit;color:inherit}
 body.fcv-open{overflow:hidden}
 @media (max-width:640px){.fcv-hint{display:none}}
 @media print{.fcv-row,.fcv{display:none!important}}
+
+/* Hover details on charts (data-tip, in focus-chart-full.js) */
+.fct{position:fixed;z-index:1700;max-width:min(22rem,calc(100vw - 16px));padding:.45rem .65rem;border:1px solid rgba(255,255,255,.18);border-radius:6px;background:#212B32;color:#fff;font:400 .85rem/1.4 var(--font,Figtree,Arial,sans-serif);box-shadow:0 6px 18px rgba(0,20,40,.3);pointer-events:none}
+.fct b,.fct span{display:block}
+.fct b{margin-bottom:.1rem}
+.fct-on .pt{stroke:#212B32;stroke-width:2.5px}
+@media print{.fct{display:none!important}}

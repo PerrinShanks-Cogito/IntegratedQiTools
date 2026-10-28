@@ -333,8 +333,12 @@ details.values .tablewrap{margin-top:.6rem}
     // points
     p.rows.forEach((r, i) => {
       const c = useG ? GROUP[m.groups.indexOf(r.group) % GROUP.length] : COLORS.point;
-      const tip = `${r.label}: ${o.xLabel} ${nf.format(r.x)}, ${o.yLabel} ${nf.format(r.y)}${p.hasGroup ? ' (' + r.group + ')' : ''}${m.odd[i] ? ', far from the trend' : ''}`;
-      s.push(`<g><title>${esc(tip)}</title><circle cx="${X(r.x)}" cy="${Y(r.y)}" r="5.5" fill="${c}" fill-opacity="0.85" stroke="#fff" stroke-width="1.5"/>`);
+      // Hover details (shown by focus-chart-full.js); the values table lists the same for screen readers
+      const tip = [r.label, `${o.xLabel}: ${nf.format(r.x)}`, `${o.yLabel}: ${nf.format(r.y)}`]
+        .concat(p.hasGroup ? [`Group: ${r.group}`] : [])
+        .concat(m.all && m.all.ok ? [`Trend predicts ${nf.format(m.fit[i])}, so ${nf.format(Math.abs(m.res[i]))} ${m.res[i] >= 0 ? 'above' : 'below'} it`] : [])
+        .concat(m.odd[i] ? ['Far from the trend'] : []).join('\n');
+      s.push(`<g data-tip="${esc(tip)}"><circle cx="${X(r.x)}" cy="${Y(r.y)}" r="11" fill="transparent"/><circle class="pt" cx="${X(r.x)}" cy="${Y(r.y)}" r="5.5" fill="${c}" fill-opacity="0.85" stroke="#fff" stroke-width="1.5"/>`);
       if (o.flagOdd && m.odd[i]) s.push(`<circle cx="${X(r.x)}" cy="${Y(r.y)}" r="10" fill="none" stroke="${COLORS.flag}" stroke-width="2.2"/>`);
       s.push('</g>');
     });
