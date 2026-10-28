@@ -449,7 +449,6 @@
     if (!inner) return;
     barHome = bar.parentNode;
     inner.appendChild(bar);
-    inner.parentNode.hidden = false;
     head.classList.add("fh-stick");
     bar.querySelectorAll(".fa-btns .fa-btn").forEach(b => { if (!b.title) b.title = b.textContent.trim(); });
     const top = head.querySelector(".fh-top"), sub = head.querySelector(".fh-sub");

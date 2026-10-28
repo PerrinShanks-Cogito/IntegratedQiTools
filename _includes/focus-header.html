@@ -9,19 +9,6 @@
       <a class="fh-brand" href="{{ '/' | relative_url }}"><b>FOCUS</b>{% if current_tool %}<span>{{ current_tool.name }}</span>{% else %}<span>QI charting tools</span>{% endif %}</a>
       <nav class="fh-nav" aria-label="Main">
         <details class="fh-dd"><summary>Get support</summary><div class="fh-menu"><ul class="fh-list fh-support"><li><a href="https://m365.cloud.microsoft/chat/?titleId=T_9a8ef1bb-12ee-5134-a332-f2a26e2f1bd9&amp;source=embedded-builder" target="_blank" rel="noopener">QI Coach chatbot</a><span class="fh-desc">Talk through your idea or next step</span></li><li><a href="https://nhs.sharepoint.com/:u:/r/sites/msteams_de9171/SitePages/Coaching,-Mentoring-%26-QI-Clinics.aspx?d=w388a701be9e940038a5ed1ab42b9b192&amp;csf=1&amp;web=1&amp;e=6gO0oF" target="_blank" rel="noopener">Book a QI Clinic</a><span class="fh-desc">One-to-one time with an improvement advisor</span></li><li><a href="https://coh.gstt.nhs.uk/course/view.php?id=3199" target="_blank" rel="noopener">Book training</a><span class="fh-desc">QI courses from the CITI Academy</span></li><li><a href="https://teams.microsoft.com/l/channel/19%3AtqDE8DYvOERF7Q7JAJyW4WuaJFD6AmLJ07wypT9dVks1%40thread.tacv2/Improvement%20Community%20Hub?groupId=1bf22369-4401-488f-8994-68e3d2340c12&amp;tenantId=37c354b2-85b0-47f5-b222-07b48d774ee3" target="_blank" rel="noopener">Ask the Improvement Community</a><span class="fh-desc">Post a question in the Teams hub</span></li></ul></div></details>
-        <details class="fh-dd"><summary>QI charting tools</summary><div class="fh-menu">
-          <ul class="fh-list">
-            <li><a href="{{ '/' | relative_url }}"{% unless current_tool %} aria-current="page"{% endunless %}>All tools</a></li>
-            {%- for t in site.data.tools %}
-            {%- if t.hidden and t.id != page.tool_id %}{% continue %}{% endif %}
-            <li>{% if t.id == page.tool_id %}<span class="fh-here" aria-current="page">{{ t.name }}</span><span class="fh-tag fh-tag-here">You are here</span>{% else %}<a href="{{ '/' | append: t.id | append: '/' | relative_url }}">{{ t.name }}</a>{% if t.status %}<span class="fh-tag fh-tag-{{ t.status | downcase }}">{{ t.status }}</span>{% endif %}{% endif %}</li>
-            {%- endfor %}
-            {%- for t in site.data.upcoming_tools %}
-            <li><span class="fh-off">{{ t.name }}</span><span class="fh-tag fh-tag-idea">{{ t.status }}</span></li>
-            {%- endfor %}
-          </ul>
-          <p class="fh-note">Tools still in development or ideation are listed so you know what is coming.</p>
-        </div></details>
         <details class="fh-dd"><summary>Case studies</summary><div class="fh-menu">
           <ul class="fh-list fh-cases">
             <li><a href="{{ '/case_studies/' | relative_url }}"{% if page.url == '/case_studies/' %} aria-current="page"{% endif %}>All case studies</a><span class="fh-desc">Link tools together for a deeper analysis</span></li>
@@ -39,10 +26,24 @@
       </nav>
     </div>
   </div>
-  {%- comment %} The dark blue bar holds a tool's buttons (focus-actions.js docks
-  them here and shows the bar); pages without them don't show it. {% endcomment %}
-  <div class="fh-sub" hidden>
-    <div class="fh-inner"></div>
+  {%- comment %} The dark blue bar: the All QI tools menu first, then on tool
+  pages the tool's buttons on the right (focus-actions.js docks them here). {% endcomment %}
+  <div class="fh-sub">
+    <div class="fh-inner">
+    <details class="fh-dd"><summary>All QI tools</summary><div class="fh-menu">
+      <ul class="fh-list">
+        <li><a href="{{ '/' | relative_url }}"{% unless current_tool %} aria-current="page"{% endunless %}>All tools</a></li>
+        {%- for t in site.data.tools %}
+        {%- if t.hidden and t.id != page.tool_id %}{% continue %}{% endif %}
+        <li>{% if t.id == page.tool_id %}<span class="fh-here" aria-current="page">{{ t.name }}</span><span class="fh-tag fh-tag-here">You are here</span>{% else %}<a href="{{ '/' | append: t.id | append: '/' | relative_url }}">{{ t.name }}</a>{% if t.status %}<span class="fh-tag fh-tag-{{ t.status | downcase }}">{{ t.status }}</span>{% endif %}{% endif %}</li>
+        {%- endfor %}
+        {%- for t in site.data.upcoming_tools %}
+        <li><span class="fh-off">{{ t.name }}</span><span class="fh-tag fh-tag-idea">{{ t.status }}</span></li>
+        {%- endfor %}
+      </ul>
+      <p class="fh-note">Tools still in development or ideation are listed so you know what is coming.</p>
+    </div></details>
+    </div>
   </div>
 </header>
 <script src="{{ '/assets/js/focus-header.js' | relative_url }}" defer></script>
