@@ -37,7 +37,7 @@ img,svg,video{max-width:100%;height:auto}
 
 .group{margin:1.75rem 0 0}
 .group h2{font-size:1.15rem;margin:0 0 .75rem;color:var(--muted);font-weight:700}
-.grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:clamp(1rem,1.5vw,1.5rem)}
+.grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:clamp(1rem,1.5vw,1.5rem)}
 .card{position:relative;display:flex;flex-direction:column;gap:.5rem;background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow);padding:1.1rem 1.25rem 1.25rem;height:100%;transition:border-color .15s, transform .15s}
 .card:hover{border-color:var(--blue);transform:translateY(-2px)}
 .card:focus-within{border-color:var(--blue)}
