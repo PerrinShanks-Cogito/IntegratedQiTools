@@ -736,6 +736,7 @@ FocusActions.mount({
 trackSettings({categorySet:"catSet"});
 $("#fileIn").addEventListener("change",e=>{
   const f=e.target.files&&e.target.files[0]; if(!f) return;
+  const big=FocusActions.tooBig(f,"project"); if(big){e.target.value="";return toast(big);}
   const r=new FileReader();
   r.onload=()=>{
     e.target.value="";

@@ -89,7 +89,11 @@ Improvement's SPC P chart tool (version 3.0)):
   also takes the `.xlsx`. The workbook is read in the browser
   (`FocusActions.readXlsx`), with dates and percentages as Excel shows them,
   and each tool's `template.import` says which sheet fills which box (or runs
-  its own import, as the SPC chart and qualitative analysis tools do). Each
+  its own import, as the SPC chart and qualitative analysis tools do). Files
+  people open have size limits (`FocusActions.LIMITS`): 50 MB for a project
+  file, 10 MB for a data sheet and 25 MB for an A3 picture, and each part of a
+  data sheet may unzip to at most 100 MB, so a small file can't unpack into
+  gigabytes. Each
   tool calls `FocusActions.mount()` with its
   own export functions; chart tools save and reopen everything in their data
   and settings panel. Styles are in `assets/css/focus-actions.css`, prefixed
