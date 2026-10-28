@@ -71,6 +71,15 @@ textarea{min-height:110px;font:inherit}
 .file{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
 .paper{background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25),0 6px 18px rgba(0,0,0,.12);margin:0 auto}
 .paper svg{display:block;width:100%;height:auto}
+.preview-tools{display:flex;justify-content:flex-end;margin:0 0 .6rem}
+/* Full screen: the report fills the screen, the page as big as it will fit.
+   --paper-ar is the page's width over its height (portrait or landscape). */
+.preview:fullscreen,.preview.full{display:flex;flex-direction:column;gap:.6rem;padding:1rem;border:0;border-radius:0;box-shadow:none;background:var(--bg);overflow:auto}
+.preview.full{position:fixed;inset:0;z-index:1500;align-self:stretch;justify-self:stretch}
+.preview:fullscreen .preview-tools,.preview.full .preview-tools{margin:0}
+.preview:fullscreen .paper,.preview.full .paper{max-width:none!important;width:min(100%,calc((100vh - 5rem) * var(--paper-ar,1.414)));margin:auto}
+.preview:fullscreen .fit,.preview:fullscreen #warnings,.preview.full .fit,.preview.full #warnings{display:none}
+body.ft-full{overflow:hidden}
 .fit{font-size:.9rem;color:var(--muted);margin:.75rem 0 0}
 .warn{background:#FFF4DB;color:#6B4A00;border-left:5px solid var(--yellow);padding:.55rem .8rem;border-radius:0 4px 4px 0;margin:.75rem 0 0;font-size:.92rem}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .warn{background:#3A2E10;color:#FFD27A}}
@@ -170,6 +179,7 @@ textarea{min-height:110px;font:inherit}
 
   <section class="panel preview" aria-labelledby="result-h">
     <h2 id="result-h" class="sr">Report preview</h2>
+    <div class="preview-tools"><button type="button" class="sm" id="fullScreen" aria-pressed="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M16 21h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg><span>Full screen</span></button></div>
     <div class="paper" id="paper"></div>
     <p class="fit" id="fit" aria-live="polite"></p>
     <div id="warnings"></div>
@@ -510,6 +520,7 @@ textarea{min-height:110px;font:inherit}
     sv.setAttribute('role', 'img');
     sv.setAttribute('aria-label', 'A3 report preview: ' + lay.title);
     sv.removeAttribute('width'); sv.removeAttribute('height');
+    paper.style.setProperty('--paper-ar', sv.viewBox.baseVal.width / sv.viewBox.baseVal.height);
     $('fit').textContent = 'A3 ' + (lay.portrait ? 'portrait' : 'landscape') + ' · body text ' + (Math.round(lay.f / PT * 2) / 2) + 'pt · ' +
       placed.length + (placed.length === 1 ? ' chart or picture' : ' charts and pictures');
     $('warnings').innerHTML = lay.warnings.map(w => '<p class="warn">' + esc(w) + '</p>').join('');
@@ -957,6 +968,32 @@ textarea{min-height:110px;font:inherit}
   store.getDraft(DRAFT).then(d => {
     if (d && d.fields) { writeAll(d.fields); setExtra(d.extra); }
   }).catch(() => {}).then(() => { restoring = false; render(); });
+  /* ---------- full screen ----------
+     The report preview fills the screen. Where a browser can't put part of a
+     page full screen (iPhone Safari), it fills the browser window instead.
+     Esc leaves either. */
+  const previewEl = document.querySelector('.preview'), fullBtn = $('fullScreen');
+  const isFull = () => document.fullscreenElement === previewEl || previewEl.classList.contains('full');
+  function fullChanged() {
+    const on = isFull();
+    fullBtn.setAttribute('aria-pressed', on);
+    fullBtn.querySelector('span').textContent = on ? 'Exit full screen' : 'Full screen';
+    document.body.classList.toggle('ft-full', previewEl.classList.contains('full'));
+  }
+  function setFull(on) {
+    if (on === isFull()) return;
+    if (!on && previewEl.classList.contains('full')) { previewEl.classList.remove('full'); fullChanged(); return; }
+    if (document.fullscreenEnabled && previewEl.requestFullscreen) {
+      if (on) previewEl.requestFullscreen().catch(() => { previewEl.classList.add('full'); fullChanged(); });
+      else document.exitFullscreen();
+      return;
+    }
+    previewEl.classList.toggle('full', on); fullChanged();
+  }
+  fullBtn.addEventListener('click', () => setFull(!isFull()));
+  document.addEventListener('fullscreenchange', fullChanged);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && previewEl.classList.contains('full')) setFull(false); });
+
   render();
 
   // Exposed for testing
