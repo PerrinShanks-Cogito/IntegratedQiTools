@@ -61,7 +61,7 @@ details.values .tablewrap{margin-top:.6rem}
 <div class="page-head fa-host">
   <div class="fa-head-text">
     <h1>Build a scatter plot</h1>
-    <p class="meta">Paste pairs of measurements and see whether one moves with the other. Everything runs in your browser, so your data is never uploaded.</p>
+    <p class="meta">Paste pairs of measurements and see whether one moves with the other, for example to test whether a cause from your <a href="{{ '/fishbone_diagram/' | relative_url }}">fishbone diagram</a> is related to the effect. Everything runs in your browser, so your data is never uploaded.</p>
   </div>
   <div data-focus-actions></div>
 </div>
@@ -118,6 +118,7 @@ details.values .tablewrap{margin-top:.6rem}
 <section class="notes" aria-label="About scatter plots">
   <p><b>How to read it:</b> each dot is one pair of observations. Put the factor you are trying to change on the horizontal axis and the result you expect to respond on the vertical axis. If the dots rise from left to right, that's a positive correlation; if they fall, it's negative; if they are scattered all over, there's no evidence of a relationship.</p>
   <p><b>Before you act:</b> a correlation can suggest cause and effect, but it doesn't prove it. If an SPC chart shows a shift in either measure, plot the stable and changed periods as separate groups rather than mixing them in one cloud of points.</p>
+  <p><b>Source:</b> Institute for Healthcare Improvement, <a href="https://www.ihi.org/resources/tools/quality-improvement-essentials-toolkit" target="_blank" rel="noopener">QI Essentials Toolkit: Scatter Diagram</a> (2017). Further reading: Provost and Murray, <em>The Health Care Data Guide: Learning from Data for Improvement</em> (Jossey-Bass, 2011).</p>
   <div class="notice">Want to build your skills? <a href="https://coh.gstt.nhs.uk/course/view.php?id=3199" target="_blank" rel="noopener">Book QI training with the CITI Academy</a>.</div>
 </section>
 
@@ -257,7 +258,7 @@ details.values .tablewrap{margin-top:.6rem}
     if (!st.ok) return { none: true, word: 'no clear', dir: '' };
     const a = Math.abs(st.r), dir = st.r >= 0 ? 'positive' : 'negative';
     if (st.p >= 0.05 || a < 0.3) return { none: true, word: 'no clear', dir };
-    return { none: false, word: a >= 0.7 ? 'strong' : 'moderate', dir };
+    return { none: false, word: a >= 0.7 ? 'strong' : 'weak', dir };
   }
   function compute(p) {
     const all = stats(p.rows);
@@ -286,12 +287,15 @@ details.values .tablewrap{margin-top:.6rem}
     return [lo, hi];
   }
   function renderSVG(p, m, o) {
-    const W = drawW, ML = 80, MR = 30, plotH = 440;
+    // IHI QI Essentials Toolkit: make the axes roughly the same length, so the plotting area is
+    // close to square (a stretched plot flattens the pattern). On a wider chart it's centred.
+    const W = drawW, plotH = 440, plotW = Math.min(W - 110, Math.round(plotH * 1.25));
+    const ML = Math.round((W - plotW) / 2 + 25), MR = W - ML - plotW;
     const useG = o.byGroup && m.groups.length > 1;
     const legend = useG ? m.groups.map((g, i) => ({ c: GROUP[i % GROUP.length], t: trunc(g, 26), k: 'dot' })) : [{ c: COLORS.point, t: 'One pair of values', k: 'dot' }];
     if (o.showTrend && m.all.ok) legend.push({ c: useG ? COLORS.muted : COLORS.trend, t: useG ? 'Trend line (one per group)' : 'Trend line', k: 'line' });
     if (o.flagOdd && m.odd.some(Boolean)) legend.push({ c: COLORS.flag, t: 'Far from the trend', k: 'ring' });
-    const MT = (o.title ? 58 : 18) + 30, MB = 66, H = MT + plotH + MB, plotW = W - ML - MR, base = MT + plotH;
+    const MT = (o.title ? 58 : 18) + 30, MB = 66, H = MT + plotH + MB, base = MT + plotH;
     const xs = p.rows.map(r => r.x), ys = p.rows.map(r => r.y);
     const lines = !o.showTrend ? [] : useG ? m.gStats.map((g, i) => ({ st: g.st, c: GROUP[i % GROUP.length] })) : [{ st: m.all, c: COLORS.trend }];
     const fitY = [];
@@ -346,7 +350,7 @@ details.values .tablewrap{margin-top:.6rem}
     s.push(`<line x1="${ML}" y1="${MT}" x2="${ML}" y2="${base}" stroke="${COLORS.ink}" stroke-width="1.5"/>`);
     s.push(`<line x1="${ML}" y1="${base}" x2="${ML + plotW}" y2="${base}" stroke="${COLORS.ink}" stroke-width="1.5"/>`);
     // axis titles
-    s.push(`<text transform="translate(22 ${MT + plotH / 2}) rotate(-90)" font-size="13" font-weight="700" text-anchor="middle" fill="${COLORS.ink}">${esc(trunc(o.yLabel, 60))}</text>`);
+    s.push(`<text transform="translate(${ML - 58} ${MT + plotH / 2}) rotate(-90)" font-size="13" font-weight="700" text-anchor="middle" fill="${COLORS.ink}">${esc(trunc(o.yLabel, 60))}</text>`);
     s.push(`<text x="${ML + plotW / 2}" y="${H - 16}" font-size="13" font-weight="700" text-anchor="middle" fill="${COLORS.ink}">${esc(trunc(o.xLabel, 90))}</text>`);
     s.push('</svg>');
     return s.join('');
