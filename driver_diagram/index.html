@@ -89,14 +89,21 @@ label.f{display:block;font-weight:600;margin:0 0 .35rem}
 .notice{background:var(--blue-bg);border-left:5px solid var(--blue);padding:.7rem 1rem;margin:1.25rem 0 0;border-radius:0 4px 4px 0;font-size:.95rem}
 .legend{display:grid;grid-template-columns:18px 1fr;gap:.4rem .7rem;align-items:center;font-size:.95rem;margin-top:.6rem}
 .sw{width:18px;height:14px;border-radius:3px;border:1px solid rgba(0,0,0,.2)}
-.stage{position:relative;min-height:calc(100vh - 180px);height:auto;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow);overflow:visible}
+.stage{position:sticky;top:1rem;align-self:start;height:calc(100vh - 2rem);height:calc(100dvh - 2rem);display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow);overflow:hidden}
 .stage-tools{display:flex;align-items:center;gap:.4rem;padding:.55rem .9rem;flex-wrap:wrap;border-bottom:1px solid var(--line)}
 .stage-tools .zoom-label{min-width:48px;text-align:center;font-size:.88rem;color:var(--muted);font-weight:600}
 .stage-tools .spacer{flex:1}
-.canvas-wrap{flex:1;min-height:calc(100vh - 240px);height:auto;overflow-x:auto;overflow-y:visible;padding:1rem;background:var(--bg)}
+.canvas-wrap{flex:1;min-height:0;overflow:auto;padding:1rem;background:var(--bg)}
 #canvas{display:inline-block;background:#fff;border:1px solid var(--line);border-radius:4px;line-height:0;box-shadow:var(--shadow)}
-#canvas svg{display:block}
+#canvas svg{display:block;user-select:none;-webkit-user-select:none}
 #canvas g.box{cursor:pointer}
+.canvas-wrap.can-pan,.canvas-wrap.pan,.canvas-wrap.pan #canvas g.box{cursor:grab}
+.canvas-wrap.grabbing,.canvas-wrap.grabbing *{cursor:grabbing!important;user-select:none}
+.stage-tools .btn[aria-pressed="true"]{background:var(--blue);border-color:var(--blue);color:var(--on-accent)}
+.stage:fullscreen{height:100%;border:0;border-radius:0}
+.stage.full{position:fixed;inset:0;height:auto;align-self:stretch;justify-self:stretch;border:0;border-radius:0;z-index:1500}
+body.ft-full{overflow:hidden}
+.stage:fullscreen .fx-wrap,.stage.full .fx-wrap{display:none}
 dialog{border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--text);padding:0;width:min(680px,94vw);max-height:90vh}
 dialog::backdrop{background:rgba(0,20,40,.5)}
 .dlg{padding:1.25rem 1.5rem;display:flex;flex-direction:column;gap:.7rem;max-height:88vh}
@@ -111,12 +118,13 @@ dialog::backdrop{background:rgba(0,20,40,.5)}
   main{grid-template-columns:minmax(0,1fr)}
   aside{overflow:visible}
   .pane{overflow:visible}
-  .canvas-wrap{min-height:60vh}
+  .stage{position:static;height:auto}
+  .canvas-wrap{flex:none;height:70vh}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 @media print{
   header,.page-head,aside,.stage-tools{display:none!important}
-  main{display:block;padding:0} .stage{border:0;box-shadow:none} .canvas-wrap{overflow:visible;padding:0;background:#fff} #canvas{border:0;box-shadow:none}
+  main{display:block;padding:0} .stage{border:0;box-shadow:none;position:static;height:auto} .canvas-wrap{overflow:visible;height:auto;padding:0;background:#fff} #canvas{border:0;box-shadow:none}
 }
 </style>
 {% include focus-head.html %}
@@ -185,6 +193,8 @@ dialog::backdrop{background:rgba(0,20,40,.5)}
         <span class="sw" style="background:#FFF1B8"></span><span><b>Projects</b>: the actual change ideas. They can hang off a driver at any level.</span>
         <span class="sw" style="background:#F3EEF8;border-style:dashed"></span><span><b>Balancing measures</b>: related goals that must not suffer, usually just monitored.</span>
       </div>
+      <h3>Moving around the diagram</h3>
+      <p>The diagram has its own window, which stays in view as you scroll down the page. Drag the diagram to move it around in its window. A click without a drag still opens a box for editing. To move around without opening boxes, turn on <b>Move</b> or hold Space. Once you've clicked the diagram, the arrow keys move it too (hold Shift to move further). Use <b>−</b>, <b>+</b> and <b>Fit to width</b> to zoom, and <b>Full screen</b> to give the diagram the whole screen (Esc leaves it).</p>
       <h3>Building one with your team</h3>
       <ol>
         <li>Agree a clear, measurable goal saying what you want to achieve and by when.</li>
@@ -214,10 +224,12 @@ dialog::backdrop{background:rgba(0,20,40,.5)}
       <span class="zoom-label" id="zoomLabel">100%</span>
       <button class="btn icon" id="zoomIn" type="button" aria-label="Zoom in">+</button>
       <button class="btn small" id="zoomFit" type="button">Fit to width</button>
+      <button class="btn small" id="panMode" type="button" aria-pressed="false" title="Hand tool: drag the diagram to move it in its window without selecting boxes. You can also hold Space."><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 11V6a2 2 0 0 0-4 0v5M14 10V4a2 2 0 0 0-4 0v6M10 10.5V6a2 2 0 0 0-4 0v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>Move</button>
+      <button class="btn small" id="fullScreen" type="button" aria-pressed="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M16 21h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg><span>Full screen</span></button>
       <span class="spacer"></span>
       <span class="hint" style="margin:0">Click a box to edit it</span>
     </div>
-    <div class="canvas-wrap" id="canvasWrap"><div id="canvas"></div></div>
+    <div class="canvas-wrap" id="canvasWrap" tabindex="0" aria-label="Diagram. Drag to move it around, or use the arrow keys."><div id="canvas"></div></div>
   </section>
 </main>
 
@@ -609,6 +621,7 @@ function renderDiagram(){
   }
   $("#canvas").innerHTML=layout(state,{scale:zoom}).svg;
   $("#zoomLabel").textContent=Math.round(zoom*100)+"%";
+  updatePanCursor();
   if(hasContent()) trackChart({points:(function c(a){return a.reduce((n,x)=>n+1+c(x.children||[]),0);})(state.drivers)});
 }
 $("#canvas").addEventListener("click",e=>{
@@ -622,7 +635,93 @@ function setZoom(z){autoFit=false;zoom=Math.min(2,Math.max(0.3,z));renderDiagram
 $("#zoomIn").addEventListener("click",()=>setZoom(zoom+0.1));
 $("#zoomOut").addEventListener("click",()=>setZoom(zoom-0.1));
 $("#zoomFit").addEventListener("click",()=>{autoFit=true;renderDiagram();});
-let rz; window.addEventListener("resize",()=>{clearTimeout(rz);rz=setTimeout(()=>{if(autoFit)renderDiagram();},120);});
+let rz; window.addEventListener("resize",()=>{clearTimeout(rz);rz=setTimeout(()=>{if(autoFit)renderDiagram();else updatePanCursor();},120);});
+
+const wrapEl=$("#canvasWrap"), canvasEl=$("#canvas");
+/* ---------- move around the diagram by dragging ----------
+   The diagram sits in its own window, the height of the browser window, which
+   stays in view as the page scrolls. Drag anywhere in it to move the diagram
+   inside it, sideways and up and down; the page itself doesn't move. A click
+   without a drag still opens a box. Move (or holding Space) is the hand tool:
+   a grab cursor everywhere and clicks don't select anything. Touch screens
+   keep their own swipe scrolling. */
+const panBtn=$("#panMode"), stageEl=wrapEl.closest(".stage"), fullBtn=$("#fullScreen");
+let panMode=false, spaceDown=false, overMap=false, drag=null, dragged=false;
+function handOn(){return panMode||spaceDown;}
+function updatePanCursor(){
+  const big=!!canvasEl.querySelector("svg")&&(wrapEl.scrollWidth>wrapEl.clientWidth||wrapEl.scrollHeight>wrapEl.clientHeight);
+  wrapEl.classList.toggle("can-pan",big);
+  wrapEl.classList.toggle("pan",handOn());
+}
+panBtn.addEventListener("click",()=>{panMode=!panMode;panBtn.setAttribute("aria-pressed",panMode);updatePanCursor();});
+wrapEl.addEventListener("pointerenter",()=>{overMap=true;});
+wrapEl.addEventListener("pointerleave",()=>{overMap=false;});
+document.addEventListener("keydown",e=>{
+  if(e.code!=="Space"||!overMap||e.repeat&&spaceDown) return;
+  if(e.target.closest("input,textarea,select,button,[contenteditable]")) return;
+  e.preventDefault(); if(!spaceDown){spaceDown=true;updatePanCursor();}
+});
+document.addEventListener("keyup",e=>{if(e.code==="Space"&&spaceDown){spaceDown=false;updatePanCursor();}});
+window.addEventListener("blur",()=>{if(spaceDown){spaceDown=false;updatePanCursor();}});
+wrapEl.addEventListener("pointerdown",e=>{
+  if(e.pointerType==="touch"||(e.button!==0&&e.button!==1)) return;
+  if(!canvasEl.querySelector("svg")||e.target.closest("button,a,input")) return;
+  drag={x:e.clientX,y:e.clientY,id:e.pointerId}; dragged=false;
+  e.preventDefault();
+});
+wrapEl.addEventListener("pointermove",e=>{
+  overMap=true;
+  if(!drag||e.pointerId!==drag.id) return;
+  const dx=e.clientX-drag.x, dy=e.clientY-drag.y;
+  if(!dragged&&Math.abs(dx)+Math.abs(dy)<4) return;
+  /* Only take over the pointer once it's a drag, so a plain click still reaches the diagram */
+  if(!dragged){dragged=true; wrapEl.setPointerCapture(e.pointerId); wrapEl.classList.add("grabbing");}
+  drag.x=e.clientX; drag.y=e.clientY;
+  wrapEl.scrollLeft-=dx; wrapEl.scrollTop-=dy;
+});
+function endDrag(e){if(!drag||e.pointerId!==drag.id) return; drag=null; wrapEl.classList.remove("grabbing");}
+wrapEl.addEventListener("pointerup",endDrag);
+wrapEl.addEventListener("pointercancel",endDrag);
+/* Clicking a box opens its editor beside the diagram, so leave full screen first */
+wrapEl.addEventListener("click",e=>{if(isFull()&&!dragged&&!handOn()&&e.target.closest("g.box")) setFull(false);},true);
+/* A drag, or any click with the hand on, should not select anything */
+wrapEl.addEventListener("click",e=>{
+  if(dragged||handOn()&&!e.target.closest("button,a,input")){e.stopPropagation();e.preventDefault();}
+  dragged=false;
+},true);
+/* Arrow keys move the diagram once its window has focus */
+wrapEl.addEventListener("keydown",e=>{
+  if(e.target!==wrapEl) return;
+  const step=e.shiftKey?200:60;
+  const k={ArrowLeft:[-step,0],ArrowRight:[step,0],ArrowUp:[0,-step],ArrowDown:[0,step]}[e.key];
+  if(!k) return;
+  e.preventDefault();
+  wrapEl.scrollLeft+=k[0]; wrapEl.scrollTop+=k[1];
+});
+/* Full screen: the diagram window fills the screen, with the same drag and zoom.
+   Where a browser can't put part of a page full screen (iPhone Safari), the
+   window fills the browser window instead. Esc leaves either. */
+function isFull(){return document.fullscreenElement===stageEl||stageEl.classList.contains("full");}
+function fullChanged(){
+  const on=isFull();
+  fullBtn.setAttribute("aria-pressed",on);
+  fullBtn.querySelector("span").textContent=on?"Exit full screen":"Full screen";
+  document.body.classList.toggle("ft-full",stageEl.classList.contains("full"));
+  requestAnimationFrame(()=>renderDiagram());
+}
+function setFull(on){
+  if(on===isFull()) return;
+  if(!on&&stageEl.classList.contains("full")){stageEl.classList.remove("full");fullChanged();return;}
+  if(document.fullscreenEnabled&&stageEl.requestFullscreen){
+    if(on) stageEl.requestFullscreen().catch(()=>{stageEl.classList.add("full");fullChanged();});
+    else document.exitFullscreen();
+    return;
+  }
+  stageEl.classList.toggle("full",on); fullChanged();
+}
+fullBtn.addEventListener("click",()=>setFull(!isFull()));
+document.addEventListener("fullscreenchange",fullChanged);
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&stageEl.classList.contains("full")) setFull(false);});
 
 /* ---------- checks ---------- */
 const DIR=/\b(improv|increas|decreas|reduc|rais|lower|enhanc|optimi[sz]|minimi[sz]|maximi[sz]|eliminat|prevent|strengthen|expand|shorten|cut|grow|boost|fewer|more|less|better|faster|earlier|develop|establish)\w*/i;
