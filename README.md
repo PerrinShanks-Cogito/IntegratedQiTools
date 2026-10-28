@@ -123,8 +123,10 @@ Improvement's SPC P chart tool (version 3.0)):
   same chart again (same tool, export and title, where the title is one the
   person gave it or the chart comes from the same page load) updates it
   rather than adding a copy. The A3 report marks charts already on the
-  report and offers to remove those, and charts over 3 months old that
-  aren't on it; nothing is removed without asking.
+  report and offers to remove those. Charts are cleared 14 days after they
+  were added, and the A3 report in progress 14 days after it was last
+  changed (`KEEP_DAYS` in `focus-actions.js`), the next time any tool opens,
+  so a shared computer doesn't keep someone's work for good.
 - `a3_report/index.html` – the A3 report, with the sections, questions and
   guidance of the CITI A3 report template. It places charts from the other
   tools and the user's own PNG or JPG pictures, and shares the space between

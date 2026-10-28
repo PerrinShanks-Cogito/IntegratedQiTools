@@ -581,31 +581,21 @@
     if (!cleaned.has(k)) cleaned.set(k, cleanSvg(c.svg));
     return cleaned.get(k);
   }
-  const OLD = 90 * 864e5;
-  let tidyLater = false;
   function markTray() {
     const ul = $('tray'), list = ul._clips || [], box = $('tidy');
     const srcs = new Set(placed.map(p => p.src));
     const on = list.filter(c => srcs.has(cleanOf(c)));
     const onIds = new Set(on.map(c => c.id));
     ul.querySelectorAll('li.clip').forEach(li => { li.querySelector('.on').hidden = !onIds.has(+li.dataset.id); });
-    // Wait for the saved draft, so charts on it don't count as old.
-    const old = restoring || tidyLater ? [] : list.filter(c => !onIds.has(c.id) && Date.now() - new Date(c.added) > OLD);
     const n = k => k + (k === 1 ? ' chart' : ' charts');
-    box.innerHTML =
-      (old.length ? '<p>' + n(old.length) + ' in this list ' + (old.length === 1 ? 'is' : 'are') + ' over 3 months old and not on the report.</p>' +
-        '<div class="btns" style="margin-bottom:.5rem"><button type="button" class="sm" data-act="old">Remove ' + (old.length === 1 ? 'it' : 'them') + '</button><button type="button" class="sm" data-act="later">Not now</button></div>' : '') +
-      (on.length ? '<div class="btns"><button type="button" class="sm" data-act="placed">Remove ' + n(on.length) + ' already on the report</button></div>' : '');
-    box._old = old.map(c => c.id); box._on = on.map(c => c.id);
+    box.innerHTML = on.length ? '<div class="btns"><button type="button" class="sm" data-act="placed">Remove ' + n(on.length) + ' already on the report</button></div>' : '';
+    box._on = on.map(c => c.id);
   }
   $('tidy').addEventListener('click', e => {
     const b = e.target.closest('button[data-act]'), box = $('tidy'); if (!b) return;
-    if (b.dataset.act === 'later') { tidyLater = true; return markTray(); }
-    const ids = b.dataset.act === 'old' ? box._old : box._on;
+    const ids = box._on;
     if (!ids || !ids.length) return;
-    const what = b.dataset.act === 'old' ? 'over 3 months old' : 'already on the report';
-    if (!confirm('Remove ' + ids.length + (ids.length === 1 ? ' chart' : ' charts') + ' ' + what + ' from this list?' +
-      (b.dataset.act === 'placed' ? ' The report keeps its own copy.' : ''))) return;
+    if (!confirm('Remove ' + ids.length + (ids.length === 1 ? ' chart' : ' charts') + ' already on the report from this list? The report keeps its own copy.')) return;
     store.removeMany(ids).then(() => { FocusActions.say('Removed ' + ids.length + (ids.length === 1 ? ' chart' : ' charts') + ' from the list.'); loadTray(); },
       () => FocusActions.say('Sorry, the charts couldn’t be removed.'));
   });
