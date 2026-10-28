@@ -25,7 +25,7 @@ function L(name,patient){return {id:nid(),name:name,patient:!!patient};}
 function S(lane,type,text,value,time,x){return Object.assign({id:nid(),lane:lane.id||lane,type:type,text:text||"",value:value||"",time:time===undefined||time===null?"":time,issue:"",bottleneck:false,noTo:"",thenTo:"",depth:0,yesLabel:"Yes",noLabel:"No"},x||{});}
 function blankMap(){
   /* a new map starts with one lane; add more for each role or team */
-  const p=L("Patient",true);
+  const p=L("Lane 1");
   return {lanes:[p],steps:[S(p,"terminator",""),S(p,"step",""),S(p,"terminator","")]};
 }
 function blank(){return {title:"",scope:{start:"",end:"",who:""},unit:"min",active:"current",maps:{current:blankMap(),future:null},view:{issues:true}};}
