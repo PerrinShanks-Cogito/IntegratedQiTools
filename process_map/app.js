@@ -17,7 +17,6 @@ const PATH="#005EB8"; // arrows and outlines for a decision's new path
 const VALUES={"":"Not classified",va:"Value-adding",nnva:"Necessary (NNVA)",nva:"Non-value-adding"};
 const VSHORT={va:"VA",nnva:"NNVA",nva:"NVA"};
 const VCOL={va:{fill:"#E3F2E9",ink:"#007F3B"},nnva:{fill:"#FFF4DB",ink:"#8A5A00"},nva:{fill:"#FBE7E5",ink:"#B3261E"},"":{fill:"#FFFFFF",ink:"#768692"}};
-const LINE={va:"#007F3B",nnva:"#FFB81C",nva:"#D5281B","":"#AEB7BD"};
 const UNITS={min:"minutes",h:"hours",d:"days"};
 const UNITF={min:1,h:60,d:1440};
 
@@ -28,7 +27,7 @@ function blankMap(){
   const p=L("Patient",true), s=L("Staff");
   return {lanes:[p,s],steps:[S(p,"terminator",""),S(s,"step",""),S(p,"terminator","")]};
 }
-function blank(){return {title:"",scope:{start:"",end:"",who:""},unit:"min",active:"current",maps:{current:blankMap(),future:null},view:{timeline:true,issues:true,handoffs:true}};}
+function blank(){return {title:"",scope:{start:"",end:"",who:""},unit:"min",active:"current",maps:{current:blankMap(),future:null},view:{issues:true,handoffs:true}};}
 
 function example(){
   const pt=L("Patient",true),rc=L("Reception"),ph=L("Phlebotomist"),po=L("Porter"),lab=L("Laboratory"),cl=L("Clinician");
@@ -64,7 +63,7 @@ function example(){
     S(fp,"terminator","Patient told the result in the app","",0)
   ]};
   return {title:"Outpatient blood test, arrival to result",scope:{start:"Patient arrives for a blood test",end:"Patient is told the result",who:"Adult outpatients with a routine blood test request"},
-    unit:"min",active:"current",maps:{current:cur,future:fut},view:{timeline:true,issues:true,handoffs:true}};
+    unit:"min",active:"current",maps:{current:cur,future:fut},view:{issues:true,handoffs:true}};
 }
 
 /* ---------- persistence ---------- */
@@ -102,7 +101,7 @@ function normalise(o){
   s.maps.current=normMap(o.maps.current)||blankMap();
   s.maps.future=o.maps.future?normMap(o.maps.future):null;
   s.active=o.active==="future"&&s.maps.future?"future":"current";
-  const v=o.view||{}; s.view={timeline:v.timeline!==false,issues:v.issues!==false,handoffs:v.handoffs!==false};
+  const v=o.view||{}; s.view={issues:v.issues!==false,handoffs:v.handoffs!==false};
   return s;
 }
 function cloneMap(m){return normMap(JSON.parse(JSON.stringify(m)));}
@@ -349,28 +348,8 @@ function layout(m,o){
   });
   /* hand-off markers */
   if(v.handoffs) hand.forEach(h=>p.push('<circle cx="'+h[0]+'" cy="'+h[1]+'" r="9" fill="#FFB81C" stroke="#212B32" stroke-width="1"/><text x="'+h[0]+'" y="'+(h[1]+4)+'" text-anchor="middle" font-family="'+FF+'" font-size="10.5" font-weight="800" fill="#212B32">H</text>'));
-  /* timeline */
   let y2=lanesBottom;
   const M=metrics(m);
-  if(v.timeline&&n){
-    const t0=y2+14, up=t0+22, lo=t0+58;
-    p.push('<text x="14" y="'+(up+4)+'" font-family="'+FF+'" font-size="12" font-weight="700" fill="#4C6272">Waiting</text>');
-    p.push('<text x="14" y="'+(lo+4)+'" font-family="'+FF+'" font-size="12" font-weight="700" fill="#4C6272">Doing</text>');
-    let prevY=null;
-    G.forEach(g=>{
-      const s=g.s, x0=X0+g.i*COLW, x1=x0+COLW, yy=s.type==="wait"?up:lo;
-      if(prevY!==null&&prevY!==yy) p.push('<line x1="'+x0+'" y1="'+up+'" x2="'+x0+'" y2="'+lo+'" stroke="#AEB7BD" stroke-width="1.5"/>');
-      const col=s.type==="terminator"?"#D8DDE0":LINE[s.value||""];
-      /* steps on a new path are shown faded and in brackets: they aren't in the lead time */
-      p.push('<line x1="'+(x0+2)+'" y1="'+yy+'" x2="'+(x1-2)+'" y2="'+yy+'" stroke="'+col+'" stroke-width="5" stroke-linecap="round"'+(g.alt?' stroke-dasharray="1 9" opacity=".7"':"")+'/>');
-      if(s.type!=="terminator"&&s.time!=="") p.push('<text x="'+(x0+COLW/2)+'" y="'+(yy-8)+'" text-anchor="middle" font-family="'+FF+'" font-size="11.5" font-weight="700" fill="'+(g.alt?"#4C6272":"#212B32")+'">'+esc(g.alt?"("+fmtT(s.time)+")":fmtT(s.time))+'</text>');
-      prevY=yy;
-    });
-    const tot="Lead time "+fmtT(M.lead)+"     Waiting "+fmtT(M.waitTime)+"     Value-adding time "+fmtT(M.vaTime)+" ("+Math.round(M.vaPct)+"% of lead time)"+
-      (M.paths?"     New paths "+fmtT(M.pathTime)+" (not in lead time)":"");
-    p.push('<text x="14" y="'+(t0+92)+'" font-family="'+FF+'" font-size="13" font-weight="700" fill="#212B32">'+esc(tot)+'</text>');
-    y2=t0+104;
-  }
   /* legend */
   const ly=y2+18; let lx=14;
   const leg=(sw,label)=>{p.push(sw(lx,ly));p.push('<text x="'+(lx+22)+'" y="'+(ly+4)+'" font-family="'+FF+'" font-size="11.5" fill="#4C6272">'+esc(label)+'</text>');mctx.font="11.5px "+FF;lx+=22+mctx.measureText(label).width+18;};
@@ -509,7 +488,7 @@ function setFull(on){
 fullBtn.addEventListener("click",()=>setFull(!isFull()));
 document.addEventListener("fullscreenchange",fullChanged);
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&stageEl.classList.contains("full")) setFull(false);});
-["Timeline","Issues","Handoffs"].forEach(k=>{
+["Issues","Handoffs"].forEach(k=>{
   const el=$("#v"+k), key=k.toLowerCase();
   el.addEventListener("change",()=>{state.view[key]=el.checked;persist();renderCanvas();});
 });
@@ -886,7 +865,7 @@ FocusActions.mount({
     })}
   ])
 });
-trackSettings({timeline:"vTimeline",issues:"vIssues",handoffs:"vHandoffs",timeUnit:"unitSel"});
+trackSettings({issues:"vIssues",handoffs:"vHandoffs",timeUnit:"unitSel"});
 function slug(){return (state.title||"process-map").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,60)||"process-map";}
 function suffix(){return state.active==="future"?"-redesign":"-current";}
 function exportPng(m){
@@ -935,7 +914,7 @@ function renderAll(){
   $("#title").value=state.title; $("#scStart").value=state.scope.start; $("#scEnd").value=state.scope.end; $("#scWho").value=state.scope.who;
   $("#mapCur").setAttribute("aria-pressed",String(state.active==="current"));
   $("#mapFut").setAttribute("aria-pressed",String(state.active==="future"));
-  $("#vTimeline").checked=state.view.timeline; $("#vIssues").checked=state.view.issues; $("#vHandoffs").checked=state.view.handoffs;
+  $("#vIssues").checked=state.view.issues; $("#vHandoffs").checked=state.view.handoffs;
   renderEditor(); renderCanvas(); renderChecks(); renderAnalysis();
 }
 
