@@ -301,23 +301,13 @@ fieldset.opts legend{font-weight:600;margin:0 0 .35rem;padding:0}
 
   // ---- parsing ----
   function split(text) {
-    const lines = text.split(/\r?\n/).filter(l => l.trim() !== '');
-    if (!lines.length) return null;
-    let delim = /\t/;
-    if (!lines.some(l => l.includes('\t'))) delim = lines.some(l => l.includes(';')) ? /;/ : lines.some(l => l.includes(',')) ? /,/ : null;
-    const recs = lines.map(l => {
-      let f;
-      if (delim) f = splitCells(l, delim.source === '\\t' ? '\t' : delim.source);
-      else { const m = l.trim().match(/^(.*?)\s+(-?[\d.,]+%?)$/); f = m ? [m[1], m[2]] : [l.trim()]; }
-      while (f.length > 1 && f[f.length - 1] === '') f.pop();
-      return f;
-    });
-    return { recs, comma: delim && delim.source === ',' };
+    // with no delimiter, a line is a label then a number ("Ward A 12")
+    const s = splitTable(text, { space: 'label', trimTrailing: true });
+    return s && { recs: s.recs, comma: s.delim === ',' };
   }
-  // Shared readers, from /assets/js/focus-stats.js: cells split as a spreadsheet's CSV
-  // (a quoted cell can hold the delimiter), and commas in numbers count as thousands
-  // separators only in groups of three (1,234)
-  const { readNumber, splitCells } = FocusStats;
+
+  // Shared readers for pasted data, from /assets/js/focus-stats.js
+  const { readNumber, splitTable } = FocusStats;
   const num = raw => readNumber(raw);
   function headerGuess(text) {
     const s = split(text); if (!s || s.recs.length < 2) return false;

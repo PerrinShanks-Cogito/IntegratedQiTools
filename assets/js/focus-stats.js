@@ -38,17 +38,41 @@
                           values or none varying
      oneWay(groups)       one-way ANOVA on arrays of values
 
-   Reading pasted data (as copied from Excel, or typed as CSV):
-     splitTable(text)     { recs, delim }: the non-blank lines split into cells
-                          on tabs, or else semicolons, or else commas, with
-                          spaces and surrounding quotes trimmed; null if blank
+   Reading pasted data. Every tool reads a paste the same way, whether it was
+   copied from Excel (tab-separated), saved as CSV, or typed:
+     splitTable(text, opts)  { recs, delim }: the rows of the paste split into
+                          cells, or null if it's blank. The delimiter is a tab,
+                          or else a semicolon, or else a comma, looking only at
+                          text outside quotes; a column of numbers like 1,234
+                          isn't taken as comma-separated. Cells in quotes can
+                          hold the delimiter and line breaks, and "" in quotes
+                          is a quote mark. Cells are trimmed and blank lines
+                          left out. With no delimiter at all, opts.space says
+                          what a line becomes:
+                            'numbers' (the default) a line made only of numbers
+                                      separated by spaces gives a cell for each;
+                                      any other line is one cell
+                            'label'   as 'numbers', and a line of text ending in
+                                      a number ("Ward A 12") gives the text and
+                                      the number
+                            'columns' every line is split on spaces
+                            or a function of the line, for a tool with a
+                            layout of its own
+                          A paste that is a single line of three or more numbers
+                          ("12, 15, 9" or "12 15 9") becomes one number per row.
+                          opts.trimTrailing drops empty cells at the end of rows.
+     pickDelimiter(lines) the delimiter splitTable would choose for these lines
+                          (tab, semicolon or comma), or null if there is none
      splitCells(line, d)  one line split into cells on the delimiter d, keeping
                           a delimiter inside double quotes ("Ward A, North")
                           as part of the cell, and reading "" inside quotes as
                           one quote mark; cells are trimmed
-     readNumber(raw)      a cell as a number, ignoring %, £, $, € and spaces,
-                          and commas that group thousands (1,234 or 1,234.5);
-                          NaN if not a number. (Tools may pass the table's
+     readNumber(raw)      a cell as a number. %, £, $ and € are ignored, and so
+                          are spaces around it; a number in brackets, (12), is
+                          negative; commas or spaces count only as thousands
+                          separators, in groups of three (1,234 or 1 234). NaN
+                          for anything else, so 1,2 or "95 66" is not a number
+                          rather than 12 or 9566. (Tools may pass the table's
                           delimiter as a second argument; it isn't needed.)
      isNumberCell(v)      whether a cell holds a number
      numericShare(recs, c)  the share of column c's filled cells (after the
@@ -233,25 +257,80 @@ window.FocusStats = (() => {
     out.push(cell);
     return out.map(x => x.trim());
   }
-  function splitTable(text) {
-    const lines = String(text || '').split(/\r?\n/).filter(l => l.trim() !== '');
+  // A whole paste split on the delimiter, with quoted cells able to hold the
+  // delimiter and line breaks. If a quote opens and never closes, each line is
+  // split on its own instead, with the quote as an ordinary character.
+  function splitQuoted(text, delim) {
+    const recs = []; let rec = [], cell = '', q = false;
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      if (q) {
+        if (c === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else q = false; }
+        else cell += c;
+      } else if (c === '"' && cell.trim() === '') { q = true; cell = ''; }
+      else if (c === delim) { rec.push(cell); cell = ''; }
+      else if (c === '\n' || c === '\r') { if (c === '\r' && text[i + 1] === '\n') i++; rec.push(cell); recs.push(rec); rec = []; cell = ''; }
+      else cell += c;
+    }
+    if (q) return text.split(/\r?\n/).filter(l => l.trim() !== '').map(l => splitCells(l, delim));
+    rec.push(cell); recs.push(rec);
+    return recs.map(r => r.map(x => x.trim())).filter(r => r.length > 1 || r[0] !== '');
+  }
+  // A number written with thousands commas, as Excel copies a formatted cell. Its
+  // commas don't count when choosing the delimiter, so a column of 1,234 and 980
+  // is one column, and "Ward B 1,234" a label and a number. (A paste whose only
+  // commas are in such numbers is read that way even if it was meant as CSV:
+  // 45,120 is 45120, not 45 and 120.)
+  const THOUSANDS = /(?<![\d,.])\d{1,3}(?:,\d{3})+(?:\.\d+)?(?![\d,])/g;
+  const unquote = x => x.trim().replace(/^"(.*)"$/, '$1').trim();
+  // What a line with no tab, semicolon or comma becomes (see splitTable)
+  const SPACES = {
+    numbers: t => { const p = t.split(/\s+/); return p.length > 1 && p.every(isNumberCell) ? p : [unquote(t)]; },
+    label: t => {
+      const p = t.split(/\s+/);
+      if (p.length > 2 && p.every(isNumberCell)) return p;
+      const m = t.match(/^(.*\S)\s+(\S+)$/);
+      return m && isNumberCell(m[2]) ? [unquote(m[1]), m[2]] : [unquote(t)];
+    },
+    columns: t => t.split(/\s+/).map(unquote)
+  };
+  // The delimiter of a paste: a tab, or else a semicolon, or else a comma, looking
+  // only at text outside quotes and outside numbers like 1,234; null if none
+  function pickDelimiter(lines) {
+    const bare = lines.map(l => String(l).replace(/"[^"]*"/g, '').replace(THOUSANDS, '0'));
+    return bare.some(l => l.includes('\t')) ? '\t' : bare.some(l => l.includes(';')) ? ';' : bare.some(l => l.includes(',')) ? ',' : null;
+  }
+  function splitTable(text, opts = {}) {
+    const src = String(text || '');
+    const lines = src.split(/\r?\n/).filter(l => l.trim() !== '');
     if (!lines.length) return null;
     // choose the delimiter from the text outside quotes, so a name like "A; B" doesn't count
-    const bare = lines.map(l => l.replace(/"[^"]*"/g, ''));
-    let delim = '\t';
-    if (!bare.some(l => l.includes('\t'))) delim = bare.some(l => l.includes(';')) ? ';' : (bare.some(l => l.includes(',')) ? ',' : '\t');
-    return { recs: lines.map(l => splitCells(l, delim)), delim };
+    const delim = pickDelimiter(lines);
+    let recs;
+    if (delim) recs = splitQuoted(src, delim);
+    else {
+      const rule = typeof opts.space === 'function' ? opts.space : SPACES[opts.space || 'numbers'];
+      recs = lines.map(l => rule(l.trim()));
+    }
+    if (opts.trimTrailing) recs = recs.map(r => { const f = r.slice(); while (f.length > 1 && f[f.length - 1] === '') f.pop(); return f; });
+    // one line of numbers is a list, one number per row
+    if (recs.length === 1 && recs[0].length > 2 && recs[0].every(isNumberCell)) recs = recs[0].map(x => [x]);
+    return { recs, delim: delim || (opts.space === 'columns' ? 'ws' : '\t') };
   }
-  // Only commas that group digits in threes are taken as thousands separators.
-  // Any other comma, such as a decimal comma in 1,2, makes the cell not a number,
-  // so it's reported as skipped rather than read as 12. This holds in
-  // comma-separated data too: a comma only gets into a cell there inside quotes,
-  // as in "1,234".
+  // Commas and spaces are taken as thousands separators only when they group
+  // digits in threes. Any other comma or space, as in a decimal comma (1,2) or
+  // numbers typed on one line (95 66), makes the cell not a number, so it's
+  // reported as skipped rather than read as 12 or 9566.
   function readNumber(raw) {
-    if (raw === undefined) return NaN;
-    let v = String(raw).replace(/[%£$€\s]/g, '');
-    if (/^[-+]?\d{1,3}(,\d{3})+(\.\d*)?$/.test(v)) v = v.replace(/,/g, '');
-    return v === '' || v.includes(',') ? NaN : Number(v);
+    if (raw === undefined || raw === null) return NaN;
+    let v = String(raw).trim().replace(/^"(.*)"$/, '$1').replace(/[−–]/g, '-').replace(/[£$€%]/g, '').trim();
+    let neg = false;
+    const par = v.match(/^\((.*)\)$/);
+    if (par) { neg = true; v = par[1].trim(); }
+    if (/^[-+]?\d{1,3}([,   ]\d{3})+(\.\d*)?$/.test(v)) v = v.replace(/[,   ]/g, '');
+    if (!/^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?$/i.test(v)) return NaN;
+    const n = Number(v);
+    return neg ? -n : n;
   }
   const isNumberCell = v => v !== undefined && v !== '' && isFinite(readNumber(v));
   function numericShare(recs, c) {
@@ -261,5 +340,5 @@ window.FocusStats = (() => {
 
   return { lgamma, gamma, ibeta, betaInv, gammaQ, tP, tCdf, tInv, tCrit, fP, chiP, zP, normCdf, normInv, zCrit,
     sum, mean, variance, sd, median, quantile, ranks, tiesT, andersonDarling, oneWay,
-    splitCells, splitTable, readNumber, isNumberCell, numericShare };
+    pickDelimiter, splitCells, splitTable, readNumber, isNumberCell, numericShare };
 })();

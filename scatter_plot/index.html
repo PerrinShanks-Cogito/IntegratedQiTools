@@ -266,24 +266,12 @@ details.values .tablewrap{margin-top:.6rem}
 
   // ---- parsing ----
   function split(text) {
-    const lines = text.split(/\r?\n/).filter(l => l.trim() !== '');
-    if (!lines.length) return null;
-    let delim = 'ws';
-    if (lines.some(l => l.includes('\t'))) delim = '\t';
-    else if (lines.some(l => l.includes(';'))) delim = ';';
-    else if (lines.some(l => l.includes(','))) delim = ',';
-    const recs = lines.map(l => {
-      const t = l.trim();
-      let f;
-      if (delim === 'ws') { const p = t.split(/\s+/); f = p.length > 2 ? [p.slice(0, -2).join(' '), p[p.length - 2], p[p.length - 1]] : p; }
-      else f = splitCells(t, delim);
-      while (f.length > 1 && f[f.length - 1] === '') f.pop();
-      return f;
-    });
-    return { recs, delim };
+    // with no delimiter, a line is x and y, or a label then x and y
+    return splitTable(text, { space: t => { const p = t.split(/\s+/); return p.length > 2 ? [p.slice(0, -2).join(' '), p[p.length - 2], p[p.length - 1]] : p; }, trimTrailing: true });
   }
+
   // Shared statistics, from /assets/js/focus-stats.js
-  const { ibeta, mean: avg, ranks: rank, readNumber: num, splitCells } = FocusStats;
+  const { ibeta, mean: avg, ranks: rank, readNumber: num, splitTable } = FocusStats;
 
   function columns(recs, delim) {
     const ncol = Math.max(...recs.map(r => r.length));

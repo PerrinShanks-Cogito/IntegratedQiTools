@@ -28019,6 +28019,184 @@ false,
 ]
 ]
 }
+},
+{
+"name":"a quoted cell with a line break, as Excel copies one",
+"args":[
+"Ward\tNote\nA\t\"two\nlines\"\nB\tx"
+],
+"expect":{
+"delim":"\t",
+"recs":[
+[
+"Ward",
+"Note"
+],
+[
+"A",
+"two\nlines"
+],
+[
+"B",
+"x"
+]
+]
+}
+},
+{
+"name":"a column of thousands from Excel is one column",
+"args":[
+"Cost\n1,234\n980\n2,500"
+],
+"expect":{
+"delim":"\t",
+"recs":[
+[
+"Cost"
+],
+[
+"1,234"
+],
+[
+"980"
+],
+[
+"2,500"
+]
+]
+}
+},
+{
+"name":"CSV still splits on its commas",
+"args":[
+"Ward,Days\nA,3\nB,12"
+],
+"expect":{
+"delim":",",
+"recs":[
+[
+"Ward",
+"Days"
+],
+[
+"A",
+"3"
+],
+[
+"B",
+"12"
+]
+]
+}
+},
+{
+"name":"one line of numbers is a list",
+"args":[
+"12, 15, 9"
+],
+"expect":{
+"delim":",",
+"recs":[
+[
+"12"
+],
+[
+"15"
+],
+[
+"9"
+]
+]
+}
+},
+{
+"name":"numbers separated by spaces",
+"args":[
+"Days to repair\n12 15\n9"
+],
+"expect":{
+"delim":"\t",
+"recs":[
+[
+"Days to repair"
+],
+[
+"12",
+"15"
+],
+[
+"9"
+]
+]
+}
+},
+{
+"name":"label then value",
+"args":[
+"Ward Falls\nWard A 1,234\nWard B n/a",
+{
+"space":"label"
+}
+],
+"expect":{
+"delim":"\t",
+"recs":[
+[
+"Ward Falls"
+],
+[
+"Ward A",
+"1,234"
+],
+[
+"Ward B n/a"
+]
+]
+}
+},
+{
+"name":"every line on spaces",
+"args":[
+"Age LOS\n45 3",
+{
+"space":"columns"
+}
+],
+"expect":{
+"delim":"ws",
+"recs":[
+[
+"Age",
+"LOS"
+],
+[
+"45",
+"3"
+]
+]
+}
+},
+{
+"name":"empty cells at the end dropped",
+"args":[
+"A\t1\t\t\nB\t2",
+{
+"trimTrailing":true
+}
+],
+"expect":{
+"delim":"\t",
+"recs":[
+[
+"A",
+"1"
+],
+[
+"B",
+"2"
+]
+]
+}
 }
 ]
 },
@@ -28233,6 +28411,102 @@ false,
 "\t"
 ],
 "expect":null
+},
+{
+"name":"'1 234' (tab-separated)",
+"args":[
+"1 234",
+"\t"
+],
+"expect":1234
+},
+{
+"name":"'\u00a3 1,234.00' (tab-separated)",
+"args":[
+"\u00a3 1,234.00",
+"\t"
+],
+"expect":1234
+},
+{
+"name":"'(1,234.00)' (tab-separated)",
+"args":[
+"(1,234.00)",
+"\t"
+],
+"expect":-1234
+},
+{
+"name":"'(5)' (tab-separated)",
+"args":[
+"(5)",
+"\t"
+],
+"expect":-5
+},
+{
+"name":"'\u22125' (tab-separated)",
+"args":[
+"\u22125",
+"\t"
+],
+"expect":-5
+},
+{
+"name":"'12.5 %' (tab-separated)",
+"args":[
+"12.5 %",
+"\t"
+],
+"expect":12.5
+},
+{
+"name":"'95 66' (tab-separated)",
+"args":[
+"95 66",
+"\t"
+],
+"expect":null
+},
+{
+"name":"'- 5' (tab-separated)",
+"args":[
+"- 5",
+"\t"
+],
+"expect":null
+},
+{
+"name":"'Infinity' (tab-separated)",
+"args":[
+"Infinity",
+"\t"
+],
+"expect":null
+},
+{
+"name":"'0x10' (tab-separated)",
+"args":[
+"0x10",
+"\t"
+],
+"expect":null
+},
+{
+"name":"'.5' (tab-separated)",
+"args":[
+".5",
+"\t"
+],
+"expect":0.5
+},
+{
+"name":"'5.' (tab-separated)",
+"args":[
+"5.",
+"\t"
+],
+"expect":5
 }
 ]
 },
@@ -28607,6 +28881,886 @@ true
 "expect":[
 "A",
 "B"
+]
+}
+]
+},
+{
+"id":"box plot: one column of values, pasted in different ways",
+"fn":"parse",
+"tools":[
+"box_plot"
+],
+"call":"pasted",
+"tol":0,
+"abs":0,
+"cases":[
+{
+"name":"Excel copy of a formatted column",
+"args":[
+"Cost\n1,234\n980\n2,500\n15.5",
+true
+],
+"expect":[
+[
+"Cost",
+[
+1234.0,
+980.0,
+2500.0,
+15.5
+]
+]
+]
+},
+{
+"name":"Excel copy with currency",
+"args":[
+"Cost\n\u00a31,234.00\n\u00a3980.00\n\u00a32,500.00\n\u00a315.50",
+true
+],
+"expect":[
+[
+"Cost",
+[
+1234.0,
+980.0,
+2500.0,
+15.5
+]
+]
+]
+},
+{
+"name":"plain column",
+"args":[
+"Cost\n1234\n980\n2500\n15.5",
+true
+],
+"expect":[
+[
+"Cost",
+[
+1234.0,
+980.0,
+2500.0,
+15.5
+]
+]
+]
+},
+{
+"name":"CSV column with quoted thousands",
+"args":[
+"Cost\n\"1,234\"\n980\n\"2,500\"\n15.5",
+true
+],
+"expect":[
+[
+"Cost",
+[
+1234.0,
+980.0,
+2500.0,
+15.5
+]
+]
+]
+},
+{
+"name":"one line, commas",
+"args":[
+"1234,980,2500,15.5",
+false
+],
+"expect":[
+[
+"All values",
+[
+1234.0,
+980.0,
+2500.0,
+15.5
+]
+]
+]
+},
+{
+"name":"one line, spaces",
+"args":[
+"1234 980 2500 15.5",
+false
+],
+"expect":[
+[
+"All values",
+[
+1234.0,
+980.0,
+2500.0,
+15.5
+]
+]
+]
+},
+{
+"name":"one line, spaces and thousands",
+"args":[
+"1,234 980 2,500 15.5",
+false
+],
+"expect":[
+[
+"All values",
+[
+1234.0,
+980.0,
+2500.0,
+15.5
+]
+]
+]
+},
+{
+"name":"one line, semicolons",
+"args":[
+"1234; 980; 2500; 15.5",
+false
+],
+"expect":[
+[
+"All values",
+[
+1234.0,
+980.0,
+2500.0,
+15.5
+]
+]
+]
+}
+]
+},
+{
+"id":"weibull reliability: one column of values, pasted in different ways",
+"fn":"parse",
+"tools":[
+"weibull_reliability"
+],
+"call":"pasted",
+"tol":0,
+"abs":0,
+"cases":[
+{
+"name":"Excel copy of a formatted column",
+"args":[
+"Cost\n1,234\n980\n2,500\n15.5",
+true
+],
+"expect":[
+1234.0,
+980.0,
+2500.0,
+15.5
+]
+},
+{
+"name":"Excel copy with currency",
+"args":[
+"Cost\n\u00a31,234.00\n\u00a3980.00\n\u00a32,500.00\n\u00a315.50",
+true
+],
+"expect":[
+1234.0,
+980.0,
+2500.0,
+15.5
+]
+},
+{
+"name":"plain column",
+"args":[
+"Cost\n1234\n980\n2500\n15.5",
+true
+],
+"expect":[
+1234.0,
+980.0,
+2500.0,
+15.5
+]
+},
+{
+"name":"CSV column with quoted thousands",
+"args":[
+"Cost\n\"1,234\"\n980\n\"2,500\"\n15.5",
+true
+],
+"expect":[
+1234.0,
+980.0,
+2500.0,
+15.5
+]
+},
+{
+"name":"one line, commas",
+"args":[
+"1234,980,2500,15.5",
+false
+],
+"expect":[
+1234.0,
+980.0,
+2500.0,
+15.5
+]
+},
+{
+"name":"one line, spaces",
+"args":[
+"1234 980 2500 15.5",
+false
+],
+"expect":[
+1234.0,
+980.0,
+2500.0,
+15.5
+]
+},
+{
+"name":"one line, spaces and thousands",
+"args":[
+"1,234 980 2,500 15.5",
+false
+],
+"expect":[
+1234.0,
+980.0,
+2500.0,
+15.5
+]
+},
+{
+"name":"one line, semicolons",
+"args":[
+"1234; 980; 2500; 15.5",
+false
+],
+"expect":[
+1234.0,
+980.0,
+2500.0,
+15.5
+]
+}
+]
+},
+{
+"id":"histogram: one column of values, pasted in different ways",
+"fn":"parse",
+"tools":[
+"histogram"
+],
+"call":"pasted",
+"tol":0,
+"abs":0,
+"cases":[
+{
+"name":"Excel copy of a formatted column",
+"args":[
+"Cost\n1,234\n980\n2,500\n15.5",
+true
+],
+"expect":[
+1234.0,
+980.0,
+2500.0,
+15.5
+]
+},
+{
+"name":"Excel copy with currency",
+"args":[
+"Cost\n\u00a31,234.00\n\u00a3980.00\n\u00a32,500.00\n\u00a315.50",
+true
+],
+"expect":[
+1234.0,
+980.0,
+2500.0,
+15.5
+]
+},
+{
+"name":"plain column",
+"args":[
+"Cost\n1234\n980\n2500\n15.5",
+true
+],
+"expect":[
+1234.0,
+980.0,
+2500.0,
+15.5
+]
+},
+{
+"name":"CSV column with quoted thousands",
+"args":[
+"Cost\n\"1,234\"\n980\n\"2,500\"\n15.5",
+true
+],
+"expect":[
+1234.0,
+980.0,
+2500.0,
+15.5
+]
+},
+{
+"name":"one line, commas",
+"args":[
+"1234,980,2500,15.5",
+false
+],
+"expect":[
+1234.0,
+980.0,
+2500.0,
+15.5
+]
+},
+{
+"name":"one line, spaces",
+"args":[
+"1234 980 2500 15.5",
+false
+],
+"expect":[
+1234.0,
+980.0,
+2500.0,
+15.5
+]
+},
+{
+"name":"one line, spaces and thousands",
+"args":[
+"1,234 980 2,500 15.5",
+false
+],
+"expect":[
+1234.0,
+980.0,
+2500.0,
+15.5
+]
+},
+{
+"name":"one line, semicolons",
+"args":[
+"1234; 980; 2500; 15.5",
+false
+],
+"expect":[
+1234.0,
+980.0,
+2500.0,
+15.5
+]
+}
+]
+},
+{
+"id":"bar chart: labels and values, pasted in different ways",
+"fn":"parse",
+"tools":[
+"bar_chart"
+],
+"call":"pasted",
+"tol":0,
+"abs":0,
+"cases":[
+{
+"name":"Excel copy",
+"args":[
+"Ward\tFalls\nWard A, North\t1,234\nWard B\t980\nWard C\t15",
+true
+],
+"expect":[
+[
+"Ward A, North",
+[
+1234.0
+]
+],
+[
+"Ward B",
+[
+980.0
+]
+],
+[
+"Ward C",
+[
+15.0
+]
+]
+]
+},
+{
+"name":"CSV with quoted name and number",
+"args":[
+"Ward,Falls\n\"Ward A, North\",\"1,234\"\nWard B,980\nWard C,15",
+true
+],
+"expect":[
+[
+"Ward A, North",
+[
+1234.0
+]
+],
+[
+"Ward B",
+[
+980.0
+]
+],
+[
+"Ward C",
+[
+15.0
+]
+]
+]
+},
+{
+"name":"semicolons",
+"args":[
+"Ward;Falls\nWard A, North;1234\nWard B;980\nWard C;15",
+true
+],
+"expect":[
+[
+"Ward A, North",
+[
+1234.0
+]
+],
+[
+"Ward B",
+[
+980.0
+]
+],
+[
+"Ward C",
+[
+15.0
+]
+]
+]
+},
+{
+"name":"Excel copy (names without commas)",
+"args":[
+"Ward\tFalls\nWard A\t1,234\nWard B\t980\nWard C\t15",
+true
+],
+"expect":[
+[
+"Ward A",
+[
+1234.0
+]
+],
+[
+"Ward B",
+[
+980.0
+]
+],
+[
+"Ward C",
+[
+15.0
+]
+]
+]
+},
+{
+"name":"plain CSV (names without commas)",
+"args":[
+"Ward,Falls\nWard A,1234\nWard B,980\nWard C,15",
+true
+],
+"expect":[
+[
+"Ward A",
+[
+1234.0
+]
+],
+[
+"Ward B",
+[
+980.0
+]
+],
+[
+"Ward C",
+[
+15.0
+]
+]
+]
+},
+{
+"name":"spaces, label then value (names without commas)",
+"args":[
+"Ward Falls\nWard A 1,234\nWard B 980\nWard C 15",
+true
+],
+"expect":[
+[
+"Ward A",
+[
+1234.0
+]
+],
+[
+"Ward B",
+[
+980.0
+]
+],
+[
+"Ward C",
+[
+15.0
+]
+]
+]
+}
+]
+},
+{
+"id":"run chart: labels and values, pasted in different ways",
+"fn":"parseInput",
+"tools":[
+"run_chart"
+],
+"call":"pasted",
+"tol":0,
+"abs":0,
+"cases":[
+{
+"name":"Excel copy",
+"args":[
+"Ward\tFalls\nWard A, North\t1,234\nWard B\t980\nWard C\t15",
+true
+],
+"expect":[
+[
+"Ward A, North",
+1234.0
+],
+[
+"Ward B",
+980.0
+],
+[
+"Ward C",
+15.0
+]
+]
+},
+{
+"name":"CSV with quoted name and number",
+"args":[
+"Ward,Falls\n\"Ward A, North\",\"1,234\"\nWard B,980\nWard C,15",
+true
+],
+"expect":[
+[
+"Ward A, North",
+1234.0
+],
+[
+"Ward B",
+980.0
+],
+[
+"Ward C",
+15.0
+]
+]
+},
+{
+"name":"semicolons",
+"args":[
+"Ward;Falls\nWard A, North;1234\nWard B;980\nWard C;15",
+true
+],
+"expect":[
+[
+"Ward A, North",
+1234.0
+],
+[
+"Ward B",
+980.0
+],
+[
+"Ward C",
+15.0
+]
+]
+},
+{
+"name":"Excel copy (names without commas)",
+"args":[
+"Ward\tFalls\nWard A\t1,234\nWard B\t980\nWard C\t15",
+true
+],
+"expect":[
+[
+"Ward A",
+1234.0
+],
+[
+"Ward B",
+980.0
+],
+[
+"Ward C",
+15.0
+]
+]
+},
+{
+"name":"plain CSV (names without commas)",
+"args":[
+"Ward,Falls\nWard A,1234\nWard B,980\nWard C,15",
+true
+],
+"expect":[
+[
+"Ward A",
+1234.0
+],
+[
+"Ward B",
+980.0
+],
+[
+"Ward C",
+15.0
+]
+]
+},
+{
+"name":"spaces, label then value (names without commas)",
+"args":[
+"Ward Falls\nWard A 1,234\nWard B 980\nWard C 15",
+true
+],
+"expect":[
+[
+"Ward A",
+1234.0
+],
+[
+"Ward B",
+980.0
+],
+[
+"Ward C",
+15.0
+]
+]
+}
+]
+},
+{
+"id":"scatter plot: x and y, pasted in different ways",
+"fn":"parse",
+"tools":[
+"scatter_plot"
+],
+"call":"pasted",
+"tol":0,
+"abs":0,
+"cases":[
+{
+"name":"Excel copy",
+"args":[
+"Dose\tCost\n1.5\t1,234\n2\t980\n3.25\t15",
+true
+],
+"expect":[
+[
+1.5,
+1234.0
+],
+[
+2.0,
+980.0
+],
+[
+3.25,
+15.0
+]
+]
+},
+{
+"name":"CSV with quoted thousands",
+"args":[
+"Dose,Cost\n1.5,\"1,234\"\n2,980\n3.25,15",
+true
+],
+"expect":[
+[
+1.5,
+1234.0
+],
+[
+2.0,
+980.0
+],
+[
+3.25,
+15.0
+]
+]
+},
+{
+"name":"semicolons",
+"args":[
+"Dose;Cost\n1.5;1234\n2;980\n3.25;15",
+true
+],
+"expect":[
+[
+1.5,
+1234.0
+],
+[
+2.0,
+980.0
+],
+[
+3.25,
+15.0
+]
+]
+},
+{
+"name":"spaces",
+"args":[
+"Dose Cost\n1.5 1,234\n2 980\n3.25 15",
+true
+],
+"expect":[
+[
+1.5,
+1234.0
+],
+[
+2.0,
+980.0
+],
+[
+3.25,
+15.0
+]
+]
+}
+]
+},
+{
+"id":"funnel plot: units, events and populations, pasted in different ways",
+"fn":"parse",
+"tools":[
+"funnel_plot"
+],
+"call":"pasted",
+"tol":0,
+"abs":0,
+"cases":[
+{
+"name":"Excel copy",
+"args":[
+"Unit\tEvents\tPopulation\nWard A, North\t3\t1,234\nWard B\t5\t980\nWard C\t1\t150",
+true
+],
+"expect":[
+[
+"Ward A, North",
+3.0,
+1234.0
+],
+[
+"Ward B",
+5.0,
+980.0
+],
+[
+"Ward C",
+1.0,
+150.0
+]
+]
+},
+{
+"name":"CSV with quoted name and number",
+"args":[
+"Unit,Events,Population\n\"Ward A, North\",3,\"1,234\"\nWard B,5,980\nWard C,1,150",
+true
+],
+"expect":[
+[
+"Ward A, North",
+3.0,
+1234.0
+],
+[
+"Ward B",
+5.0,
+980.0
+],
+[
+"Ward C",
+1.0,
+150.0
+]
+]
+},
+{
+"name":"semicolons",
+"args":[
+"Unit;Events;Population\nWard A, North;3;1234\nWard B;5;980\nWard C;1;150",
+true
+],
+"expect":[
+[
+"Ward A, North",
+3.0,
+1234.0
+],
+[
+"Ward B",
+5.0,
+980.0
+],
+[
+"Ward C",
+1.0,
+150.0
+]
 ]
 }
 ]

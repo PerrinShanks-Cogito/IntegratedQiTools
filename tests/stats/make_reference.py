@@ -1329,8 +1329,17 @@ TABLES = [("tabs from Excel", "Ward\tDays\nA\t3\n\nB\t 4 ", {"delim": "\t", "rec
           ("blank", " \n\n", None)]
 TABLES += [("CSV with commas and semicolons inside quotes", 'Ward,Days,Note\n"Ward A, North",3,"a; b"\n"Ward ""B""","1,234",x',
             {"delim": ",", "recs": [["Ward", "Days", "Note"], ["Ward A, North", "3", "a; b"], ['Ward "B"', "1,234", "x"]]}),
-           ("a quote that never closes is an ordinary character", '5" pipe,3\n"open,4', {"delim": ",", "recs": [['5" pipe', "3"], ['"open', "4"]]})]
-group("reading a pasted table", "splitTable", [SHARED], [{"name": n, "args": [t], "expect": e} for n, t, e in TABLES])
+           ("a quote that never closes is an ordinary character", '5" pipe,3\n"open,4', {"delim": ",", "recs": [['5" pipe', "3"], ['"open', "4"]]}),
+           ("a quoted cell with a line break, as Excel copies one", 'Ward\tNote\nA\t"two\nlines"\nB\tx', {"delim": "\t", "recs": [["Ward", "Note"], ["A", "two\nlines"], ["B", "x"]]}),
+           ("a column of thousands from Excel is one column", "Cost\n1,234\n980\n2,500", {"delim": "\t", "recs": [["Cost"], ["1,234"], ["980"], ["2,500"]]}),
+           ("CSV still splits on its commas", "Ward,Days\nA,3\nB,12", {"delim": ",", "recs": [["Ward", "Days"], ["A", "3"], ["B", "12"]]}),
+           ("one line of numbers is a list", "12, 15, 9", {"delim": ",", "recs": [["12"], ["15"], ["9"]]}),
+           ("numbers separated by spaces", "Days to repair\n12 15\n9", {"delim": "\t", "recs": [["Days to repair"], ["12", "15"], ["9"]]})]
+TABLES_OPT = [("label then value", "Ward Falls\nWard A 1,234\nWard B n/a", {"space": "label"}, {"delim": "\t", "recs": [["Ward Falls"], ["Ward A", "1,234"], ["Ward B n/a"]]}),
+              ("every line on spaces", "Age LOS\n45 3", {"space": "columns"}, {"delim": "ws", "recs": [["Age", "LOS"], ["45", "3"]]}),
+              ("empty cells at the end dropped", "A\t1\t\t\nB\t2", {"trimTrailing": True}, {"delim": "\t", "recs": [["A", "1"], ["B", "2"]]})]
+group("reading a pasted table", "splitTable", [SHARED], [{"name": n, "args": [t], "expect": e} for n, t, e in TABLES]
+      + [{"name": n, "args": [t, o], "expect": e} for n, t, o, e in TABLES_OPT])
 group("splitting one line into cells", "splitCells", [SHARED], [{"name": n, "args": [l, d], "expect": e} for n, l, d, e in [
     ("tabs, with a quoted tab", 'A\t"x\ty"\t3', "\t", ["A", "x\ty", "3"]),
     ("semicolons, with a quoted semicolon", '"a;b"; 2 ;""', ";", ["a;b", "2", ""]),
@@ -1340,7 +1349,11 @@ CELLS = [("1,234", "\t", 1234), ("£1,234.50", "\t", 1234.5), ("12%", "\t", 12),
          ("1.2e3", "\t", 1200), ("$ 40", ";", 40), ("1,234", ",", 1234), ("abc", "\t", None), ("", "\t", None), ("N/A", "\t", None),
          # only commas that group thousands are dropped: a decimal comma isn't read as a bigger number
          ("1,234,567.5", "\t", 1234567.5), ("-1,234", "\t", -1234), ("1,2", "\t", None), ("12,34", ";", None), ("1,2345", "\t", None),
-         ("1234,5", "\t", None), (",5", "\t", None)]
+         ("1234,5", "\t", None), (",5", "\t", None),
+         # spaces, brackets and dashes, as Excel and other software write numbers
+         ("1 234", "\t", 1234), ("£ 1,234.00", "\t", 1234), ("(1,234.00)", "\t", -1234), ("(5)", "\t", -5), ("−5", "\t", -5),
+         ("12.5 %", "\t", 12.5), ("95 66", "\t", None), ("- 5", "\t", None), ("Infinity", "\t", None), ("0x10", "\t", None),
+         (".5", "\t", 0.5), ("5.", "\t", 5)]
 group("reading a number from a cell", "readNumber", [SHARED],
       [{"name": f"{c!r} ({'comma' if d == ',' else 'tab' if d == chr(9) else 'semicolon'}-separated)", "args": [c, d], "expect": e}
        for c, d, e in CELLS], call="number")
@@ -1376,6 +1389,53 @@ group("design of experiments: a result with a decimal comma is left out", "reduc
       [{"name": "run 3 typed as 31,5", "args": [{"k": 3, "reps": 1, "terms": ["A", "B", "C"], "alpha": "0.05",
                                                   "y": {**{str(i + 1): v for i, v in enumerate(y)}, "3": "31,5"}, "factors": FACT_COMMA}],
         "expect": backward([X[i] for i in range(8) if i != 2], [y[i] for i in range(8) if i != 2], ["A", "B", "C"], 0.05)}], call="doeReduce")
+
+# ------------------------------------------------------------- the same data, pasted in different ways
+# Every tool reads a paste with the shared reader, so the same data copied from
+# Excel, saved as CSV or typed on one line should give the tool the same values.
+ONE_COLUMN = [1234, 980, 2500, 15.5]
+COLUMN_PASTES = [
+    ("Excel copy of a formatted column", "Cost\n1,234\n980\n2,500\n15.5", True),
+    ("Excel copy with currency", "Cost\n£1,234.00\n£980.00\n£2,500.00\n£15.50", True),
+    ("plain column", "Cost\n1234\n980\n2500\n15.5", True),
+    ("CSV column with quoted thousands", 'Cost\n"1,234"\n980\n"2,500"\n15.5', True),
+    ("one line, commas", "1234,980,2500,15.5", False),
+    ("one line, spaces", "1234 980 2500 15.5", False),
+    ("one line, spaces and thousands", "1,234 980 2,500 15.5", False),
+    ("one line, semicolons", "1234; 980; 2500; 15.5", False)]
+for tool, fn, head in [("box_plot", "parse", lambda h: [["Cost" if h else "All values", ONE_COLUMN]]),
+                       ("weibull_reliability", "parse", lambda h: ONE_COLUMN), ("histogram", "parse", lambda h: ONE_COLUMN)]:
+    group(f"{tool.replace('_', ' ')}: one column of values, pasted in different ways", fn, [tool],
+          [{"name": n, "args": [t, h], "expect": clean(head(h))} for n, t, h in COLUMN_PASTES], call="pasted", tol=0, abs_tol=0)
+
+LABELLED = [["Ward A, North", 1234], ["Ward B", 980], ["Ward C", 15]]
+LABEL_PASTES = [
+    ("Excel copy", "Ward\tFalls\nWard A, North\t1,234\nWard B\t980\nWard C\t15"),
+    ("CSV with quoted name and number", 'Ward,Falls\n"Ward A, North","1,234"\nWard B,980\nWard C,15'),
+    ("semicolons", "Ward;Falls\nWard A, North;1234\nWard B;980\nWard C;15")]
+PLAIN = [["Ward A", 1234], ["Ward B", 980], ["Ward C", 15]]
+PLAIN_PASTES = [("Excel copy", "Ward\tFalls\nWard A\t1,234\nWard B\t980\nWard C\t15"),
+                ("plain CSV", "Ward,Falls\nWard A,1234\nWard B,980\nWard C,15"),
+                ("spaces, label then value", "Ward Falls\nWard A 1,234\nWard B 980\nWard C 15")]
+for tool, fn, shape in [("bar_chart", "parse", lambda rows: [[n, [v]] for n, v in rows]), ("run_chart", "parseInput", lambda rows: rows)]:
+    group(f"{tool.replace('_', ' ')}: labels and values, pasted in different ways", fn, [tool],
+          [{"name": n, "args": [t, True], "expect": clean(shape(LABELLED))} for n, t in LABEL_PASTES]
+          + [{"name": n + " (names without commas)", "args": [t, True], "expect": clean(shape(PLAIN))} for n, t in PLAIN_PASTES],
+          call="pasted", tol=0, abs_tol=0)
+
+XY = [[1.5, 1234], [2, 980], [3.25, 15]]
+group("scatter plot: x and y, pasted in different ways", "parse", ["scatter_plot"],
+      [{"name": n, "args": [t, True], "expect": clean(XY)} for n, t in [
+          ("Excel copy", "Dose\tCost\n1.5\t1,234\n2\t980\n3.25\t15"),
+          ("CSV with quoted thousands", 'Dose,Cost\n1.5,"1,234"\n2,980\n3.25,15'),
+          ("semicolons", "Dose;Cost\n1.5;1234\n2;980\n3.25;15"),
+          ("spaces", "Dose Cost\n1.5 1,234\n2 980\n3.25 15")]], call="pasted", tol=0, abs_tol=0)
+FUN = [["Ward A, North", 3, 1234], ["Ward B", 5, 980], ["Ward C", 1, 150]]
+group("funnel plot: units, events and populations, pasted in different ways", "parse", ["funnel_plot"],
+      [{"name": n, "args": [t, True], "expect": clean(FUN)} for n, t in [
+          ("Excel copy", "Unit\tEvents\tPopulation\nWard A, North\t3\t1,234\nWard B\t5\t980\nWard C\t1\t150"),
+          ("CSV with quoted name and number", 'Unit,Events,Population\n"Ward A, North",3,"1,234"\nWard B,5,980\nWard C,1,150'),
+          ("semicolons", "Unit;Events;Population\nWard A, North;3;1234\nWard B;5;980\nWard C;1;150")]], call="pasted", tol=0, abs_tol=0)
 
 with open(OUT, "w") as f:
     json.dump({"generated_by": "tests/stats/make_reference.py", "scipy": scipy.__version__, "numpy": np.__version__,

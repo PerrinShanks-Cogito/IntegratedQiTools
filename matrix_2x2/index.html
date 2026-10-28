@@ -518,26 +518,15 @@ select:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px var(--ye
 
   // ---- parsing ----
   // Shared statistics, from /assets/js/focus-stats.js
-  const { splitCells } = FocusStats;
+  const { splitTable, readNumber } = FocusStats;
 
   function split(text) {
-    const lines = text.split(/\r?\n/).filter(l => l.trim() !== '');
-    if (!lines.length) return null;
-    let delim = /\t/;
-    if (!lines.some(l => l.includes('\t'))) delim = lines.some(l => l.includes(';')) ? /;/ : lines.some(l => l.includes(',')) ? /,/ : null;
-    const recs = lines.map(l => {
-      let f;
-      if (delim) f = splitCells(l, delim.source === '\\t' ? '\t' : delim.source);
-      else { const m = l.trim().match(/^(.*?)\s+(-?[\d.]+)\s+(-?[\d.]+)$/); f = m ? [m[1], m[2], m[3]] : [l.trim()]; }
-      return f;
-    });
-    return { recs };
+    // with no delimiter, a line is a label then two numbers ("Fix the rota 3 2")
+    const s = splitTable(text, { space: t => { const m = t.match(/^(.*?)\s+(-?[\d.]+)\s+(-?[\d.]+)$/); return m ? [m[1], m[2], m[3]] : [t]; } });
+    return s && { recs: s.recs };
   }
-  function num(raw) {
-    if (raw === undefined) return NaN;
-    const v = String(raw).replace(/\s/g, '');
-    return v === '' ? NaN : Number(v);
-  }
+
+  const num = raw => readNumber(raw);
   function headerGuess(text) {
     const s = split(text); if (!s || s.recs.length < 2) return false;
     const h = s.recs[0];
