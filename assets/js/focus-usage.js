@@ -1,0 +1,52 @@
+---
+# Liquid fills in the feedback link below
+---
+/* © Guy’s and St Thomas’ NHS Foundation Trust 2026. All rights reserved. */
+
+/* Usage analytics helpers for tool pages. Events go to trackToolEvent() in
+   /assets/js/analytics.js, which each tool loads at the end of its page.
+   Only counts, export formats and settings with fixed choices are sent: never
+   data values, labels, titles, notes or anything the user typed or pasted. */
+function trackUsage(name, props) {
+  try { if (window.trackToolEvent) window.trackToolEvent(name, props); } catch (e) { /* analytics must never break a tool */ }
+}
+/* Charts redraw as people type, so only send chart_generated once a chart has
+   settled for a moment, and not again for a redraw of the same size. */
+function trackChart(props) {
+  const key = JSON.stringify(props);
+  if (key === trackChart.key) return;
+  trackChart.key = key;
+  clearTimeout(trackChart.timer);
+  trackChart.timer = setTimeout(() => trackUsage("chart_generated", props), 1500);
+}
+function trackCleared() {
+  clearTimeout(trackChart.timer);
+  trackChart.key = "";
+  trackUsage("data_cleared");
+}
+/* Wraps FocusActions export entries so each successful export is counted.
+   An SVG export run for "Add to A3 report" is counted as format "a3". */
+function trackExports(list) {
+  return list.map(x => Object.assign({}, x, { run: () => {
+    const a3 = window.FocusActions && FocusActions.addingToA3();
+    const r = x.run(); trackUsage("chart_exported", { format: a3 ? "a3" : x.type }); return r;
+  } }));
+}
+/* settings maps an event property to the id of a <select> or checkbox, or the
+   name of a radio group. Only list controls with fixed choices, never a field
+   that holds the user's own text or options built from their data. Changes the
+   tool makes itself (such as opening a saved file) are not counted. */
+function trackSettings(settings) {
+  document.addEventListener("change", e => {
+    const el = e.target;
+    if (!e.isTrusted || !el) return;
+    Object.keys(settings).forEach(key => {
+      if (settings[key] === (el.type === "radio" ? el.name : el.id)) {
+        trackUsage("setting_changed", { [key]: el.type === "checkbox" ? el.checked : el.value });
+      }
+    });
+  });
+}
+document.addEventListener("click", e => {
+  if (e.target.closest && e.target.closest('a[href="{{ site.links.feedback }}"]')) trackUsage("feedback_clicked");
+});
