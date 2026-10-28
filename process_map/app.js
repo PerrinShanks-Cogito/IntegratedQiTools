@@ -12,8 +12,8 @@ let seq=0;
 const nid=()=>"s"+Date.now().toString(36)+(seq++).toString(36);
 const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
-const TYPES={terminator:"Start / end",step:"Activity",decision:"Decision",branch:"New path",wait:"Wait / queue"};
-const PATH="#005EB8"; // arrows and outlines for a decision's new path
+const TYPES={terminator:"Start / end",step:"Activity",decision:"Decision",wait:"Wait / queue"};
+const PATH="#005EB8"; // arrows and outlines for steps on a decision's new path
 const VALUES={"":"Not classified",va:"Value-adding",nnva:"Necessary (NNVA)",nva:"Non-value-adding"};
 const VSHORT={va:"VA",nnva:"NNVA",nva:"NVA"};
 const VCOL={va:{fill:"#E3F2E9",ink:"#007F3B"},nnva:{fill:"#FFF4DB",ink:"#8A5A00"},nva:{fill:"#FBE7E5",ink:"#B3261E"},"":{fill:"#FFFFFF",ink:"#768692"}};
@@ -22,7 +22,7 @@ const UNITF={min:1,h:60,d:1440};
 
 /* ---------- model ---------- */
 function L(name,patient){return {id:nid(),name:name,patient:!!patient};}
-function S(lane,type,text,value,time,x){return Object.assign({id:nid(),lane:lane.id||lane,type:type,text:text||"",value:value||"",time:time===undefined||time===null?"":time,issue:"",bottleneck:false,noTo:"",thenTo:"",yesLabel:"Yes",noLabel:"No"},x||{});}
+function S(lane,type,text,value,time,x){return Object.assign({id:nid(),lane:lane.id||lane,type:type,text:text||"",value:value||"",time:time===undefined||time===null?"":time,issue:"",bottleneck:false,noTo:"",thenTo:"",depth:0,yesLabel:"Yes",noLabel:"No"},x||{});}
 function blankMap(){
   const p=L("Patient",true), s=L("Staff");
   return {lanes:[p,s],steps:[S(p,"terminator",""),S(s,"step",""),S(p,"terminator","")]};
@@ -80,16 +80,19 @@ function normMap(m){
   if(!lanes.length) lanes=[L("Patient",true)];
   const steps=(Array.isArray(m.steps)?m.steps:[]).map(s=>{
     s=s||{};
-    const n=S(idmap["L"+s.lane]||lanes[0].id,TYPES[s.type]?s.type:"step",String(s.text||""),VALUES[s.value]!==undefined?s.value:"",
+    const legacy=s.type==="branch"; // older maps had a New path step type
+    const n=S(idmap["L"+s.lane]||lanes[0].id,legacy?"step":TYPES[s.type]?s.type:"step",String(s.text||""),VALUES[s.value]!==undefined?s.value:"",
       (s.time===""||s.time===null||s.time===undefined||isNaN(+s.time))?"":Math.max(0,+s.time),
-      {issue:String(s.issue||""),bottleneck:!!s.bottleneck,yesLabel:String(s.yesLabel||"Yes"),noLabel:String(s.noLabel||"No")});
+      {issue:String(s.issue||""),bottleneck:!!s.bottleneck,yesLabel:String(s.yesLabel||"Yes"),noLabel:String(s.noLabel||"No"),
+       depth:legacy?Math.max(1,Math.floor(+s.depth||1)):Math.max(0,Math.floor(+s.depth||0))});
     idmap["S"+s.id]=n.id; n._old=s.noTo; n._then=s.thenTo; return n;
   });
   steps.forEach(n=>{
     n.noTo=n._old&&idmap["S"+n._old]?idmap["S"+n._old]:"";
-    n.thenTo=n.type!=="branch"?"":n._then==="end"?"end":n._then&&idmap["S"+n._then]?idmap["S"+n._then]:"";
+    n.thenTo=n._then==="end"?"end":n._then&&idmap["S"+n._then]?idmap["S"+n._then]:"";
     delete n._old; delete n._then;
   });
+  syncDepth(steps);
   return {lanes:lanes,steps:steps};
 }
 function normalise(o){
@@ -121,45 +124,66 @@ function fmtT(v,unit){
 }
 
 /* ---------- flow ----------
-   Steps run in list order. A decision followed by one or more New path steps
-   sends its "no" down that path, and its "yes" skips the path to the next
-   main step. At its end the path rejoins the main flow, goes on to a later
-   step or ends. New path steps that don't follow a decision run in order like
-   activities. */
+   Steps run in list order, and each has a path level: 0 is the main path.
+   Steps one level deeper straight after a decision are its "no" route, a new
+   path; the decision's "yes" carries on along its own path. Any kind of step
+   can sit on a path, including another decision with a new path of its own.
+   At its end a path rejoins the path it came from, goes on to a chosen step,
+   loops back to an earlier one or ends. */
+/* A step can be at most one level deeper than a decision just before it, and
+   no deeper than any other step before it */
+function levels(st){
+  const dep=[];
+  st.forEach((s,i)=>{
+    const want=Math.max(0,Math.floor(+s.depth||0));
+    dep[i]=Math.min(want,i===0?0:dep[i-1]+(st[i-1].type==="decision"?1:0));
+  });
+  return dep;
+}
+function syncDepth(st){const d=levels(st);st.forEach((s,i)=>s.depth=d[i]);}
 function flow(m){
-  const st=m.steps, n=st.length, idx={}, onPath={}, runs={}, edges=[];
+  const st=m.steps, n=st.length, idx={}, edges=[], runs={}, ends=[], owner=[], last=[];
   st.forEach((s,i)=>idx[s.id]=i);
-  for(let i=0;i<n;i++){
+  const dep=levels(st), open=[];
+  st.forEach((s,i)=>{owner[i]=dep[i]>0?open[dep[i]-1]:-1; open[dep[i]]=i;});
+  const next=i=>{for(let j=i+1;j<n;j++) if(dep[j]<=dep[i]) return j; return -1;};
+  /* where the path a step is on carries on after the decision it came from */
+  const rejoin=i=>{const o=owner[i]; if(o<0) return {to:-1}; const c=cont(o); return c.to>=0?{to:c.to,kind:c.kind==="back"?"back":"rejoin"}:c;};
+  function cont(i){
+    const j=next(i);
+    if(j>=0&&dep[j]===dep[i]) return {to:j,kind:"seq"};
+    if(dep[i]===0) return {to:-1};
     const s=st[i];
-    if(s.type==="decision"){
-      let k=i; while(k+1<n&&st[k+1].type==="branch") k++;
-      if(k>i){
-        const last=st[k], after=k+1<n?k+1:-1, end=last.thenTo==="end";
-        let target=after, back=false;
-        const ti=last.thenTo?idx[last.thenTo]:undefined;
-        if(end) target=-1;
-        else if(ti!==undefined&&ti>k) target=ti;
-        else if(ti!==undefined&&ti<=i){target=ti;back=true;} // loops back to an earlier step (or the decision itself)
-        runs[i]={first:i+1,last:k,after:after,target:target,end:end,back:back};
-        for(let j=i+1;j<=k;j++) onPath[j]=i;
-        edges.push({a:i,b:i+1,kind:"no"});
-        for(let j=i+1;j<k;j++) edges.push({a:j,b:j+1,kind:"path"});
-        if(target>=0) edges.push({a:k,b:target,kind:back?"back":"rejoin"});
-        if(after>=0) edges.push({a:i,b:after,kind:"yes"});
-        i=k; continue;
-      }
-    }
-    if(i<n-1) edges.push({a:i,b:i+1,kind:s.type==="decision"&&s.noTo?"yes":"seq"});
+    if(s.thenTo==="end") return {to:-1,end:true};
+    const t=s.thenTo?idx[s.thenTo]:undefined;
+    if(t!==undefined&&t!==i) return {to:t,kind:t<i?"back":"rejoin"};
+    return rejoin(i);
   }
-  /* Step labels follow the yes route: 1, 2, 3… along the main path, and a decision's
-     new path takes the decision's number plus a letter (3a, 3b…) */
-  const labels=[]; let num=0;
+  for(let i=0;i<n;i++){
+    const s=st[i], isD=s.type==="decision", j=next(i), c=cont(i);
+    last[i]=dep[i]>0&&(j<0||dep[j]<dep[i]);
+    if(isD&&i+1<n&&dep[i+1]===dep[i]+1){
+      runs[i]={first:i+1};
+      edges.push({a:i,b:i+1,kind:"no"});
+      if(c.to>=0) edges.push({a:i,b:c.to,kind:c.kind==="seq"?"yes":c.kind,yes:true});
+      else if(c.end) ends.push(i);
+      continue;
+    }
+    const yes=isD&&!!s.noTo;
+    if(c.to>=0) edges.push({a:i,b:c.to,kind:c.kind==="seq"?(yes?"yes":"seq"):c.kind,yes:yes});
+    else if(c.end) ends.push(i);
+  }
+  /* Step labels follow the yes route: 1, 2, 3… along the main path. A decision's new
+     path takes its number plus a letter (3a, 3b); a path from a decision on that path
+     adds a number (3b1, 3b2), then letters again */
+  const labels=[], kids={}; let num=0;
   const letters=k=>{let t="";k++;while(k>0){k--;t=String.fromCharCode(97+k%26)+t;k=Math.floor(k/26);}return t;};
   st.forEach((s,i)=>{
-    if(onPath[i]!==undefined){const d=onPath[i]; labels[i]=labels[d]+letters(i-runs[d].first);}
-    else labels[i]=String(++num);
+    if(dep[i]===0){labels[i]=String(++num);return;}
+    const o=owner[i], k=kids[o]=(kids[o]||0)+1;
+    labels[i]=labels[o]+(dep[i]%2?letters(k-1):String(k));
   });
-  return {idx:idx,onPath:onPath,runs:runs,edges:edges,labels:labels};
+  return {idx:idx,dep:dep,owner:owner,runs:runs,edges:edges,ends:ends,labels:labels,last:last,rejoin:rejoin};
 }
 
 /* ---------- metrics ---------- */
@@ -182,7 +206,7 @@ function metrics(m){
     const t=+s.time||0;
     if(s.time===""&&s.type!=="decision") r.untimed++;
     /* Only some cases go down a new path, so its time is kept out of the lead time */
-    if(F.onPath[i]!==undefined){r.pathTime+=t;return;}
+    if(F.dep[i]>0){r.pathTime+=t;return;}
     r.lead+=t;
     if(s.type==="wait") r.waitTime+=t;
     else if(s.value==="va") r.vaTime+=t;
@@ -222,11 +246,11 @@ function layout(m,o){
     const h=isD?Math.max(92,lines.length*15+58):Math.max(s.type==="terminator"?44:58,lines.length*16+(s.type==="terminator"?22:30));
     let note=null;
     if(v.issues&&s.issue&&s.issue.trim()){const nl=wrap(s.issue,BW-16,"500 11.5px "+FF,4);note={lines:nl,h:nl.length*14+14};}
-    return {s:s,i:i,lines:lines,empty:!s.text.trim(),h:h,lane:li[s.lane]!==undefined?li[s.lane]:0,note:note,cx:X0+i*COLW+COLW/2,alt:F.onPath[i]!==undefined};
+    return {s:s,i:i,lines:lines,empty:!s.text.trim(),h:h,lane:li[s.lane]!==undefined?li[s.lane]:0,note:note,cx:X0+i*COLW+COLW/2,dep:F.dep[i]};
   });
-  /* Each lane has a main row, and a second row below it for steps on a new path */
-  const LN=lanes.map(()=>({maxH:0,altH:0,noteH:0,loops:0}));
-  G.forEach(g=>{const d=LN[g.lane];if(g.alt)d.altH=Math.max(d.altH,g.h);else d.maxH=Math.max(d.maxH,g.h);if(g.note)d.noteH=Math.max(d.noteH,g.note.h+14);});
+  /* Each lane has a main row, then a row below it for each path level used in that lane */
+  const LN=lanes.map(()=>({rowH:{0:0},noteH:0,loops:0}));
+  G.forEach(g=>{const d=LN[g.lane];d.rowH[g.dep]=Math.max(d.rowH[g.dep]||0,g.h);if(g.note)d.noteH=Math.max(d.noteH,g.note.h+14);});
   const loopK={};
   G.forEach(g=>{if(g.s.type==="decision"&&!F.runs[g.i]&&g.s.noTo&&idx[g.s.noTo]!==undefined&&idx[g.s.noTo]!==g.i){loopK[g.i]=LN[g.lane].loops++;}});
   /* a new path that loops back runs along the bottom of its last step's lane, like a rework loop */
@@ -234,14 +258,12 @@ function layout(m,o){
   F.edges.forEach(e=>{if(e.kind==="back") backK[e.a]=LN[G[e.a].lane].loops++;});
   let y=TOP;
   LN.forEach(d=>{
-    d.top=y; const body=d.maxH||40;
-    d.cy=y+d.noteH+24+body/2;
-    let low=d.cy+body/2;
-    if(d.altH){d.acy=low+30+d.altH/2; low=d.acy+d.altH/2;}
-    d.bottom=low+(d.loops?30+d.loops*9:24);
+    d.top=y; d.rowCy={}; let cur=y+d.noteH+24;
+    Object.keys(d.rowH).map(Number).sort((a,b)=>a-b).forEach((k,ix)=>{const h=d.rowH[k]||40; if(ix) cur+=30; d.rowCy[k]=cur+h/2; cur+=h;});
+    d.bottom=cur+(d.loops?30+d.loops*9:24);
     y=d.bottom;
   });
-  G.forEach(g=>{g.cy=g.alt?LN[g.lane].acy:LN[g.lane].cy;});
+  G.forEach(g=>{g.cy=LN[g.lane].rowCy[g.dep];});
   const lanesBottom=y;
   const W=Math.max(X0+n*COLW+24,720);
   let p=[];
@@ -276,7 +298,7 @@ function layout(m,o){
       p.push('<path d="M'+a.cx+","+sy+"V"+ch+"H"+tx+"V"+ey+'" fill="none" stroke="'+PATH+'" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#ahp)"/>');
       return;
     }
-    const onP=e.kind==="no"||e.kind==="path"||e.kind==="rejoin", col=onP?PATH:"#425563";
+    const onP=e.kind==="no"||a.dep>0||e.kind==="rejoin", col=onP?PATH:"#425563";
     let d;
     if(e.kind==="no"){
       /* leave from the diamond's bottom (or top) point, then across to the path */
@@ -292,15 +314,14 @@ function layout(m,o){
         d="M"+ax+","+a.cy+"H"+mx+"V"+b.cy+"H"+(bx-1);
       }
       /* the label goes on the side away from where the arrow turns */
-      if(e.kind==="yes") p.push('<text x="'+(ax+3)+'" y="'+(b.cy<a.cy?a.cy+14:a.cy-6)+'" font-family="'+FF+'" font-size="11" font-weight="700" fill="#425563">'+esc(a.s.yesLabel||"Yes")+'</text>');
+      if(e.yes) p.push('<text x="'+(ax+3)+'" y="'+(b.cy<a.cy?a.cy+14:a.cy-6)+'" font-family="'+FF+'" font-size="11" font-weight="700" fill="'+col+'">'+esc(a.s.yesLabel||"Yes")+'</text>');
     }
     p.push('<path d="'+d+'" fill="none" stroke="'+col+'" stroke-width="1.6" marker-end="url(#'+(onP?"ahp":"ah")+')"/>');
   });
   /* a new path that ends: short arrow to an end point */
-  let pathEnds=false;
-  Object.keys(F.runs).forEach(k=>{
-    const r=F.runs[k]; if(!r.end) return;
-    const g=G[r.last], x=g.cx+BW/2; pathEnds=true;
+  const pathEnds=F.ends.length>0;
+  F.ends.forEach(k=>{
+    const g=G[k], x=g.cx+BW/2;
     p.push('<path d="M'+x+","+g.cy+"H"+(x+10)+'" fill="none" stroke="'+PATH+'" stroke-width="1.6" marker-end="url(#ahp)"/>');
     p.push('<circle cx="'+(x+20)+'" cy="'+g.cy+'" r="8" fill="#fff" stroke="'+PATH+'" stroke-width="1.6"/><circle cx="'+(x+20)+'" cy="'+g.cy+'" r="4.5" fill="'+PATH+'"/>');
   });
@@ -327,7 +348,7 @@ function layout(m,o){
   G.forEach(g=>{
     const s=g.s, x=g.cx-BW/2, top=g.cy-g.h/2, c=VCOL[s.value||""];
     const fill=s.type==="terminator"?"#FFFFFF":c.fill;
-    const stroke=s.bottleneck?"#D5281B":s.type==="branch"?PATH:"#425563", sw=s.bottleneck?3:s.type==="branch"?2:1.5;
+    const stroke=s.bottleneck?"#D5281B":g.dep>0?PATH:"#425563", sw=s.bottleneck?3:g.dep>0?2:1.5;
     let shape;
     if(s.type==="decision") shape='<path d="M'+g.cx+","+top+"L"+(x+BW)+","+g.cy+"L"+g.cx+","+(top+g.h)+"L"+x+","+g.cy+'Z"';
     else if(s.type==="terminator") shape='<rect x="'+x+'" y="'+top+'" width="'+BW+'" height="'+g.h+'" rx="'+Math.min(22,g.h/2)+'"';
@@ -336,10 +357,10 @@ function layout(m,o){
     p.push('<g class="box" data-id="'+s.id+'">');
     if(!ex&&selected===s.id) p.push(shape+' fill="none" stroke="#FFB81C" stroke-width="9" stroke-linejoin="round"/>');
     p.push(shape+' fill="'+fill+'" stroke="'+stroke+'" stroke-width="'+sw+'"'+(s.type==="wait"?' stroke-dasharray="5 3"':"")+'/>');
-    const lh=s.type==="decision"?15:16, by=g.cy-(g.lines.length-1)*lh/2+(s.type==="step"||s.type==="wait"||s.type==="branch"?1.5:4.5);
+    const lh=s.type==="decision"?15:16, by=g.cy-(g.lines.length-1)*lh/2+(s.type==="step"||s.type==="wait"?1.5:4.5);
     g.lines.forEach((t,k)=>p.push('<text x="'+g.cx+'" y="'+(by+k*lh)+'" text-anchor="middle" font-family="'+FF+'" font-size="13" font-weight="600" '+(g.empty?'font-style="italic" fill="#768692"':'fill="#212B32"')+'>'+esc(t)+'</text>'));
     /* step label badge: a circle for 1-digit labels, a pill for longer ones such as 12 or 3a */
-    const lab=F.labels[g.i], bw=Math.max(20,lab.length*6.5+9), bfill=g.alt?PATH:"#003087";
+    const lab=F.labels[g.i], bw=Math.max(20,lab.length*6.5+9), bfill=g.dep>0?PATH:"#003087";
     const bx=s.type==="decision"?g.cx-26:x+2, byy=s.type==="decision"?top+16:top+2;
     p.push('<rect x="'+(bx-bw/2)+'" y="'+(byy-10)+'" width="'+bw+'" height="20" rx="10" fill="'+bfill+'"/><text x="'+bx+'" y="'+(byy+4)+'" text-anchor="middle" font-family="'+FF+'" font-size="10.5" font-weight="800" fill="#fff">'+esc(lab)+'</text>');
     /* value tag */
@@ -523,40 +544,43 @@ function nameAttr(o,pre){return ' data-name-of="'+o.id+'"'+(pre?' data-pre="'+es
 function refreshNames(s){document.querySelectorAll('[data-name-of="'+s.id+'"]').forEach(el=>{el.textContent=(el.dataset.pre||"")+nameOf(s)+(el.dataset.post||"");});}
 function laneOptions(m,sel){return m.lanes.map(l=>'<option value="'+l.id+'"'+(l.id===sel?" selected":"")+'>'+esc(l.name||"Unnamed lane")+'</option>').join("");}
 function stepCard(m,s,i,F){
-  const isT=s.type==="terminator", isD=s.type==="decision", isB=s.type==="branch";
+  const isT=s.type==="terminator", isD=s.type==="decision", d=F.dep[i], run=isD?F.runs[i]:null;
   const opt=(o,sel,pre)=>'<option value="'+o.id+'"'+(sel?" selected":"")+nameAttr(o,pre)+'>'+esc((pre||"")+nameOf(o))+'</option>';
   const others=m.steps.map(o=>o.id===s.id?"":opt(o,o.id===s.noTo,"")).join("");
-  const run=isD?F.runs[i]:null, own=isB&&F.onPath[i]!==undefined?F.runs[F.onPath[i]]:null;
   /* where a decision's no route goes: back to an earlier step, or down the new path that follows it */
   const noRow=!isD?"":run?
     '<div class="row2"><p class="path-note">If no, take the new path, starting with <span'+nameAttr(m.steps[run.first])+'>'+esc(nameOf(m.steps[run.first]))+'</span></p><label>No label<input class="field sm nl" type="text"></label></div>':
     '<div class="row2"><label>If no, go to<select class="field sm nt"><option value="">Carry on (no loop)</option>'+others+'</select></label><label>No label<input class="field sm nl" type="text"></label></div>';
-  /* the last step on a new path says where the path goes next */
+  /* the last step on a path says where the path goes next */
   let pathRow="";
-  if(own&&own.last===i){
-    const later=m.steps.map((o,k)=>k>i&&k!==own.after&&F.onPath[k]===undefined?opt(o,o.id===s.thenTo,"Go to "):"").join("");
-    const earlier=m.steps.map((o,k)=>k<own.first?opt(o,o.id===s.thenTo,"Go back to "):"").join("");
-    pathRow='<div class="row1"><label>At the end of this path<select class="field sm th">'+
-      (own.after>=0?'<option value=""'+nameAttr(m.steps[own.after],"Rejoin the main path at ")+'>'+esc("Rejoin the main path at "+nameOf(m.steps[own.after]))+'</option>':'<option value="">Rejoin the main path</option>')+
+  if(F.last[i]){
+    const r=F.rejoin(i), pre=r.to>=0&&F.dep[r.to]===0?"Rejoin the main path at ":"Rejoin the path above at ";
+    const later=m.steps.map((o,k)=>k>i&&k!==r.to?opt(o,o.id===s.thenTo,"Go to "):"").join("");
+    const earlier=m.steps.map((o,k)=>k<i?opt(o,o.id===s.thenTo,"Go back to "):"").join("");
+    pathRow='<div class="row1"><label>'+(run?"If yes, at the end of this path":"At the end of this path")+'<select class="field sm th">'+
+      (r.to>=0?'<option value=""'+nameAttr(m.steps[r.to],pre)+'>'+esc(pre+nameOf(m.steps[r.to]))+'</option>':'<option value="">'+(r.end?"End, as the path above does":"Rejoin the main path")+'</option>')+
       '<option value="end"'+(s.thenTo==="end"?" selected":"")+'>End the path here</option>'+
-      (later?'<optgroup label="Rejoin later on">'+later+'</optgroup>':"")+
+      (later?'<optgroup label="Go on to a later step">'+later+'</optgroup>':"")+
       (earlier?'<optgroup label="Loop back (rework)">'+earlier+'</optgroup>':"")+'</select></label></div>';
-  } else if(isB&&!own) pathRow='<p class="path-note warn">Put this straight after a decision, or after another new path step, to make it the decision\'s "no" route.</p>';
-  return '<div class="step t-'+s.type+(s.value&&!isT?" v-"+s.value:"")+(selected===s.id?" sel":"")+'" data-id="'+s.id+'">'+
+  }
+  /* moving a step onto or off a path */
+  const canIn=i>0&&F.dep[i-1]+(m.steps[i-1].type==="decision"?1:0)>d;
+  const moves=(d>0?'<button class="btn small ghost" data-act="out" type="button">Move off path</button>':"")+(canIn?'<button class="btn small ghost" data-act="in" type="button">Move onto path</button>':"");
+  return '<div class="step t-'+s.type+(d?" on-path":"")+(s.value&&!isT?" v-"+s.value:"")+(selected===s.id?" sel":"")+'" data-id="'+s.id+'"'+(d?' style="margin-left:'+(d*1.3)+'rem"':"")+'>'+
     '<div class="step-head"><span class="num" aria-hidden="true">'+esc(F.labels[i])+'</span>'+
     '<select class="field sm ty" aria-label="Step '+F.labels[i]+' type">'+Object.keys(TYPES).map(k=>'<option value="'+k+'"'+(k===s.type?" selected":"")+'>'+TYPES[k]+'</option>').join("")+'</select>'+
     '<select class="field sm la" aria-label="Step '+F.labels[i]+' lane">'+laneOptions(m,s.lane)+'</select>'+
     '<button class="btn icon ghost" data-act="up" type="button" aria-label="Move step '+F.labels[i]+' up">↑</button>'+
     '<button class="btn icon ghost" data-act="down" type="button" aria-label="Move step '+F.labels[i]+' down">↓</button>'+
     '<button class="btn icon ghost danger" data-act="del" type="button" aria-label="Remove step '+F.labels[i]+'">✕</button></div>'+
-    '<textarea class="field t" rows="1" aria-label="Step '+F.labels[i]+' description" placeholder="'+(isT?(i===0?"Where the process starts":"Where the process ends"):isD?"A yes or no question":s.type==="wait"?"Who or what is waiting, and where":isB?"What happens on the 'no' route? Start with a verb":"What happens? Start with a verb")+'"></textarea>'+
+    '<textarea class="field t" rows="1" aria-label="Step '+F.labels[i]+' description" placeholder="'+(isT?(i===0?"Where the process starts":"Where the process ends"):isD?"A yes or no question":s.type==="wait"?"Who or what is waiting, and where":d?"What happens on this path? Start with a verb":"What happens? Start with a verb")+'"></textarea>'+
     (isT?"":'<div class="row2"><label>Value<select class="field sm va">'+Object.keys(VALUES).map(k=>'<option value="'+k+'"'+(k===(s.value||"")?" selected":"")+'>'+VALUES[k]+'</option>').join("")+'</select></label>'+
       '<label>'+(s.type==="wait"?"Waiting time":"Time taken")+'<span class="timefield"><input class="field sm tm" type="number" min="0" step="any" inputmode="decimal"><span>'+UNITS[state.unit]+'</span></span></label></div>')+
     noRow+pathRow+
     '<input class="field measure issue is" type="text" aria-label="Issue for step '+F.labels[i]+'" placeholder="Issue or frustration (optional)">'+
     '<div class="step-foot">'+(isT?"<span></span>":'<label class="chk"><input type="checkbox" class="bn"'+(s.bottleneck?" checked":"")+'> Bottleneck</label>')+
-    '<span class="foot-btns">'+(isD?'<button class="btn small" data-act="path" type="button">'+(run?"Add step to new path":"Add new path")+'</button>':"")+
-    '<button class="btn small" data-act="ins" type="button">'+(isB?"Add path step below":"Add step below")+'</button></span></div></div>';
+    '<span class="foot-btns">'+moves+(isD?'<button class="btn small" data-act="path" type="button">'+(run?"Add step to new path":"Add new path")+'</button>':"")+
+    '<button class="btn small" data-act="ins" type="button">'+(d?"Add path step below":"Add step below")+'</button></span></div></div>';
 }
 function renderEditor(){
   renderEditing();
@@ -575,7 +599,7 @@ function renderEditor(){
   const F=flow(m);
   h+='<div id="steps">'+m.steps.map((s,i)=>stepCard(m,s,i,F)).join("")+'</div>';
   h+='<div style="margin-top:.6rem"><button class="btn small" id="addStep" type="button">Add step at the end</button></div>';
-  h+='<p class="hint">Press Enter in a step to add the next one in the same lane. Shift+Enter starts a new line. To give a decision a different "no" route, use <b>Add new path</b> on the decision: the yes route carries on along the main path.</p>';
+  h+='<p class="hint">Press Enter in a step to add the next one in the same lane. Shift+Enter starts a new line. To give a decision a different "no" route, use <b>Add new path</b> on the decision: the yes route carries on along its own path. A path can have its own decisions and new paths.</p>';
   host.innerHTML=h;
   host.querySelectorAll(".lane-row").forEach(r=>{r.querySelector(".ln").value=laneOf(m,r.dataset.id).name;});
   host.querySelectorAll(".step").forEach(c=>{
@@ -587,7 +611,7 @@ function renderEditor(){
   });
 }
 function markSel(){document.querySelectorAll(".step").forEach(c=>c.classList.toggle("sel",c.dataset.id===selected));}
-function changed(full){persist(); if(full) renderEditor(); renderCanvas(); renderChecks(); renderAnalysis();}
+function changed(full){const m=map(); if(m) syncDepth(m.steps); persist(); if(full) renderEditor(); renderCanvas(); renderChecks(); renderAnalysis();}
 
 const ed=$("#mapEditor");
 ed.addEventListener("input",e=>{
@@ -623,10 +647,12 @@ ed.addEventListener("change",e=>{
   if(cl.contains("ty")){
     s.type=e.target.value;
     if(s.type==="wait"&&!s.value) s.value="nva";
+    const hadPath=!!flow(m).runs[m.steps.indexOf(s)];
     if(s.type!=="decision") s.noTo="";
-    if(s.type!=="branch") s.thenTo="";
     if(s.type==="terminator"){s.value="";s.bottleneck=false;}
-    changed(true); focusCard(s.id,".ty"); return;
+    changed(true); focusCard(s.id,".ty");
+    if(hadPath&&s.type!=="decision") toast("Its new path's steps moved onto the path above.");
+    return;
   }
   if(cl.contains("la")){s.lane=e.target.value;changed();return;}
   if(cl.contains("va")){s.value=e.target.value;c.className=c.className.replace(/\sv-\w+/g,"")+(s.value?" v-"+s.value:"");changed();return;}
@@ -644,20 +670,48 @@ ed.addEventListener("keydown",e=>{
   const m=map(), i=m.steps.findIndex(x=>x.id===e.target.closest(".step").dataset.id);
   insertAfter(i);
 });
+/* last step of a step's own new path (and any paths inside it) */
+function blockEnd(F,i){let j=i;while(j+1<F.dep.length&&F.dep[j+1]>F.dep[i]) j++;return j;}
+/* Add a step after this one on the same path, after the step's own new path if it has one */
 function insertAfter(i){
-  const m=map(), ref=m.steps[i];
-  let lane=ref?ref.lane:m.lanes[0].id;
-  const ns=S(lane,"step","");
-  /* below a new path step, the new step carries on the same path and takes over where the path goes next */
-  if(ref&&ref.type==="branch"){ns.type="branch";ns.thenTo=ref.thenTo;ref.thenTo="";}
-  m.steps.splice(i+1,0,ns); selected=ns.id; changed(true); focusCard(ns.id,".t");
+  const m=map(), ref=m.steps[i], F=flow(m);
+  const ns=S(ref?ref.lane:m.lanes[0].id,"step","");
+  let at=i+1;
+  if(ref){
+    ns.depth=F.dep[i]; at=blockEnd(F,i)+1;
+    /* a new last step on a path takes over where the path goes next */
+    if(F.last[i]){ns.thenTo=ref.thenTo; ref.thenTo="";}
+  }
+  m.steps.splice(at,0,ns); selected=ns.id; changed(true); focusCard(ns.id,".t");
 }
 /* Add a step to a decision's new path, starting the path if it hasn't got one */
 function addPathStep(i){
-  const m=map(), F=flow(m), run=F.runs[i];
-  if(run) return insertAfter(run.last);
-  const ns=S(m.steps[i].lane,"branch","");
+  const m=map(), F=flow(m);
+  if(F.runs[i]){let k=i+1; for(let j=i+1;j<=blockEnd(F,i);j++) if(F.dep[j]===F.dep[i]+1) k=j; return insertAfter(k);}
+  const ns=S(m.steps[i].lane,"step",""); ns.depth=F.dep[i]+1;
   m.steps.splice(i+1,0,ns); selected=ns.id; changed(true); focusCard(ns.id,".t");
+}
+/* Move a step, with its own new path, past the step or path next to it */
+function moveStep(i,dir){
+  const st=map().steps, F=flow(map()), dep=F.dep, e=blockEnd(F,i), blk=st.slice(i,e+1);
+  if(dir<0){
+    if(i===0) return false;
+    let p=i-1; while(p>0&&dep[p]>dep[i]) p--;
+    if(dep[p]===dep[i]){const prev=st.slice(p,i); st.splice(p,e+1-p,...blk,...prev);}
+    else{const one=st.splice(i-1,1)[0]; st.splice(e,0,one);}
+  } else {
+    const q=e+1; if(q>=st.length) return false;
+    if(dep[q]===dep[i]){const qe=blockEnd(F,q), nxt=st.slice(q,qe+1); st.splice(i,qe+1-i,...nxt,...blk);}
+    else{const one=st.splice(q,1)[0]; st.splice(i,0,one);}
+  }
+  return true;
+}
+/* Move a step, with its own new path, one level onto or off a path */
+function shiftLevel(i,by){
+  const st=map().steps, F=flow(map()), e=blockEnd(F,i);
+  for(let j=i;j<=e;j++) st[j].depth=Math.max(0,F.dep[j]+by);
+  const after=levels(st);
+  if(by<0&&e+1<st.length&&after[e+1]<F.dep[e+1]&&F.dep[e+1]===F.dep[i]) toast("The steps after it on the path moved off too.");
 }
 function focusCard(id,sel){const c=document.querySelector('.step[data-id="'+id+'"]'); if(c){const t=c.querySelector(sel); if(t) t.focus(); c.scrollIntoView({block:"nearest"});}}
 ed.addEventListener("click",e=>{
@@ -682,13 +736,17 @@ ed.addEventListener("click",e=>{
   }
   const c=b.closest(".step"); if(!c) return;
   const i=m.steps.findIndex(x=>x.id===c.dataset.id);
-  if(act==="up"&&i>0){[m.steps[i-1],m.steps[i]]=[m.steps[i],m.steps[i-1]];changed(true);focusCard(c.dataset.id,'[data-act="up"]');}
-  else if(act==="down"&&i<m.steps.length-1){[m.steps[i+1],m.steps[i]]=[m.steps[i],m.steps[i+1]];changed(true);focusCard(c.dataset.id,'[data-act="down"]');}
+  if(act==="up"||act==="down"){if(moveStep(i,act==="up"?-1:1)){changed(true);focusCard(c.dataset.id,'[data-act="'+act+'"]');}}
+  else if(act==="in"||act==="out"){shiftLevel(i,act==="in"?1:-1);changed(true);focusCard(c.dataset.id,".t");}
   else if(act==="del"){
-    const gone=m.steps[i], id=gone.id, prev=m.steps[i-1];
-    /* removing the last step on a path: the step before it keeps where the path goes next */
-    if(gone.type==="branch"&&gone.thenTo&&prev&&prev.type==="branch"&&!(m.steps[i+1]&&m.steps[i+1].type==="branch")) prev.thenTo=gone.thenTo;
-    m.steps.splice(i,1);m.steps.forEach(s=>{if(s.noTo===id)s.noTo="";if(s.thenTo===id)s.thenTo="";});if(selected===id)selected=null;changed(true);
+    const F=flow(m), gone=m.steps[i], e=F.runs[i]?blockEnd(F,i):i, n=e-i;
+    /* a decision goes with its new path */
+    if(n&&!confirm("Remove this decision and the "+n+" step"+(n>1?"s":"")+" on its new path?")) return;
+    /* removing the last step on a path: the step before it on the path keeps where the path goes next */
+    if(F.last[i]&&gone.thenTo){let p=i-1; while(p>=0&&F.dep[p]>F.dep[i]) p--; if(p>=0&&F.dep[p]===F.dep[i]) m.steps[p].thenTo=gone.thenTo;}
+    const ids=m.steps.splice(i,n+1).map(x=>x.id);
+    m.steps.forEach(s=>{if(ids.includes(s.noTo))s.noTo="";if(ids.includes(s.thenTo))s.thenTo="";});
+    if(ids.includes(selected))selected=null; changed(true);
   }
   else if(act==="ins") insertAfter(i);
   else if(act==="path") addPathStep(i);
@@ -769,11 +827,8 @@ function renderChecks(){
     const F=flow(m);
     const openD=st.filter((s,i)=>s.type==="decision"&&!s.noTo&&!F.runs[i]);
     if(openD.length) add("info",openD.length+" decision"+(openD.length>1?"s have":" has")+" no 'no' route","If a 'no' sends work back to an earlier step, link it so the rework loop shows. If it goes a different way, add a new path.");
-    const lost=st.filter((s,i)=>s.type==="branch"&&F.onPath[i]===undefined).map(s=>'"'+nameOf(s)+'"');
-    if(lost.length) add("warn","New path step"+(lost.length>1?"s ":" ")+lost.join(", ")+(lost.length>1?" don't":" doesn't")+" follow a decision","Move "+(lost.length>1?"them":"it")+" to straight after a decision, or change the type to Activity.");
-    Object.keys(F.runs).forEach(k=>{
-      const r=F.runs[k];
-      if(r.after<0) add("info",'Decision "'+nameOf(st[k])+'" has no \'yes\' step',"Its new path is at the end of the map. Add the steps that follow a 'yes' after the path.");
+    Object.keys(F.runs).map(Number).forEach(k=>{
+      if(F.dep[k]===0&&!F.edges.some(e=>e.a===k&&e.yes)&&!F.ends.includes(k)) add("info",'Decision "'+nameOf(st[k])+'" has no \'yes\' step',"Its new path is at the end of the map. Add the steps that follow a 'yes' after the path.");
     });
     if(!M.waits&&M.steps) add("info","No waits mapped","Most processes have queues. Add them as Wait / queue steps so they are counted.");
     const usedL=new Set(st.map(s=>s.lane));
@@ -802,42 +857,52 @@ function showTab(name){
 document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{showTab(t.dataset.tab);if(t.dataset.tab==="build")document.querySelectorAll("#pane-build textarea").forEach(autosize);}));
 
 /* ---------- table dialog ---------- */
+/* Columns: Lane, Step, Type, Value, Time, Issue, If no go to, Bottleneck, Path level
+   (blank or 0 for the main path), At path end (for the last step on a path: a step name or End) */
 function toTable(m){
-  const byId={}; m.steps.forEach(s=>byId[s.id]=s);
+  const byId={}, F=flow(m); m.steps.forEach(s=>byId[s.id]=s);
   const nm=id=>byId[id]?String(byId[id].text||"").replace(/[\t\n]/g," ").trim():"";
-  const tn={terminator:"Start/end",step:"Activity",decision:"Decision",branch:"New path",wait:"Wait"};
-  const out=[["Lane","Step","Type","Value","Time ("+UNITS[state.unit]+")","Issue","If no go to","Bottleneck"].join("\t")];
-  /* for a new path step, "If no go to" holds where the path goes next: a step number or End */
-  const go=s=>s.type==="branch"?(s.thenTo==="end"?"End":s.thenTo?nm(s.thenTo):""):s.noTo?nm(s.noTo):"";
-  m.steps.forEach(s=>out.push([laneOf(m,s.lane).name,s.text,tn[s.type],VSHORT[s.value]||"",s.time,s.issue,go(s),s.bottleneck?"Yes":""].map(c=>String(c==null?"":c).replace(/[\t\n]/g," ")).join("\t")));
+  const tn={terminator:"Start/end",step:"Activity",decision:"Decision",wait:"Wait"};
+  const out=[["Lane","Step","Type","Value","Time ("+UNITS[state.unit]+")","Issue","If no go to","Bottleneck","Path level","At path end"].join("\t")];
+  m.steps.forEach((s,i)=>out.push([laneOf(m,s.lane).name,s.text,tn[s.type],VSHORT[s.value]||"",s.time,s.issue,
+    s.type==="decision"&&s.noTo?nm(s.noTo):"",s.bottleneck?"Yes":"",F.dep[i]||"",
+    F.last[i]?(s.thenTo==="end"?"End":s.thenTo?nm(s.thenTo):""):""].map(c=>String(c==null?"":c).replace(/[\t\n]/g," ")).join("\t")));
   return out.join("\n");
 }
 function fromTable(src,old){
   const lines=src.split(/\r?\n/).filter(l=>l.trim());
   if(lines.length&&/^\s*lane\b/i.test(lines[0])) lines.shift();
-  const m={lanes:[],steps:[]}, byName={}, gotos=[];
+  const m={lanes:[],steps:[]}, byName={}, gotos=[], thens=[];
   const oldP={}; if(old) old.lanes.forEach(l=>oldP[l.name.trim().toLowerCase()]=l.patient);
+  let prev=null;
   lines.forEach(line=>{
     const c=(line.indexOf("\t")>=0?line.split("\t"):line.split("|")).map(x=>x.trim());
     const ln=c[0]||"Lane", key=ln.toLowerCase();
     if(!byName[key]){const l=L(ln,oldP[key]!==undefined?oldP[key]:/patient|service user|carer/i.test(ln));byName[key]=l;m.lanes.push(l);}
     const ty=(c[2]||"").toLowerCase(), va=(c[3]||"").toLowerCase().replace(/[^a-z]/g,"");
-    const type=/new path|path|branch|altern/.test(ty)?"branch":/start|end|termin/.test(ty)?"terminator":/decis|question|\?/.test(ty)?"decision":/wait|queue|delay/.test(ty)?"wait":"step";
+    /* older tables had a "New path" type: an activity one level below the step before it */
+    const legacy=/new path|branch|altern/.test(ty);
+    const type=legacy?"step":/start|end|termin/.test(ty)?"terminator":/decis|question|\?/.test(ty)?"decision":/wait|queue|delay/.test(ty)?"wait":"step";
     const value=type==="terminator"?"":va==="nnva"||/necess|amber/.test(va)?"nnva":va==="nva"||/^non|waste|red/.test(va)?"nva":va==="va"||/^value|green/.test(va)?"va":"";
     const t=c[4]===undefined||c[4]===""||isNaN(+c[4])?"":Math.max(0,+c[4]);
-    const s=S(byName[key],type,c[1]||"",value,t,{issue:c[5]||"",bottleneck:/^(y|yes|true|x|1)$/i.test(c[7]||"")});
-    gotos.push(c[6]||""); m.steps.push(s);
+    const lv=/^\d+$/.test(c[8]||"")?+c[8]:legacy?(prev?prev.depth+(prev.type==="decision"?1:0):0)||1:0;
+    const s=S(byName[key],type,c[1]||"",value,t,{issue:c[5]||"",bottleneck:/^(y|yes|true|x|1)$/i.test(c[7]||""),depth:lv});
+    gotos.push(legacy&&!c[9]?"":c[6]||""); thens.push(c[9]||(legacy?c[6]||"":""));
+    m.steps.push(s); prev=s;
   });
-  m.steps.forEach((s,i)=>{
-    /* "If no go to" names the step (a step number from older tables still works) */
-    const raw=gotos[i].trim(); if(!raw) return;
+  /* "If no go to" and "At path end" name the step (a step number from older tables still works) */
+  const find=(raw,s)=>{
     let t=null;
     if(/^\d+$/.test(raw)){const g=+raw; if(g>=1&&g<=m.steps.length) t=m.steps[g-1];}
     else{const key=raw.toLowerCase().replace(/\s+/g," "); t=m.steps.find(o=>o!==s&&String(o.text||"").toLowerCase().replace(/\s+/g," ").trim()===key)||null;}
-    if(t===s) t=null;
-    if(s.type==="decision"&&t) s.noTo=t.id;
-    if(s.type==="branch"){ if(/^end$/i.test(raw)&&!t) s.thenTo="end"; else if(t) s.thenTo=t.id; }
+    return t===s?null:t;
+  };
+  m.steps.forEach((s,i)=>{
+    const g=gotos[i].trim(), th=thens[i].trim();
+    if(g&&s.type==="decision"){const t=find(g,s); if(t) s.noTo=t.id;}
+    if(th){const t=find(th,s); if(t) s.thenTo=t.id; else if(/^end$/i.test(th)) s.thenTo="end";}
   });
+  syncDepth(m.steps);
   if(!m.lanes.length) m.lanes.push(L("Patient",true));
   return m;
 }
