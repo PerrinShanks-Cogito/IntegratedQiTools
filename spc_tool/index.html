@@ -227,8 +227,9 @@ td button{font-size:12px;padding:2px 8px}
         <label class="check" data-for="xmr"><input type="checkbox" id="showMR" checked> Show moving range chart</label>
       </section>
 
-      <section data-for="p u c t">
-        <h2 class="sec">Axes</h2>
+      <section>
+        <h2 class="sec" data-for="p u c t">Axes</h2>
+        <h2 class="sec" data-for="xmr">Notes</h2>
         <div data-for="p">
           <label class="f" id="unitLabel">Show values as</label>
           <div class="seg" role="radiogroup" aria-labelledby="unitLabel">
@@ -236,7 +237,7 @@ td button{font-size:12px;padding:2px 8px}
             <label><input type="radio" name="unit" value="prop"><span>Proportion</span></label>
           </div>
         </div>
-        <div class="pair">
+        <div class="pair" data-for="p u c t">
           <div><label class="f" for="yMin">Lowest value</label><input type="number" id="yMin" min="0" step="any" inputmode="decimal" placeholder="Auto"></div>
           <div><label class="f" for="yMax">Highest value</label><input type="number" id="yMax" min="0" step="any" inputmode="decimal" placeholder="Auto"></div>
         </div>
@@ -409,6 +410,9 @@ function parseXmr(text){
     if (cnt >= best){ best = cnt; valCol = c; }
   }
   const labelCol = valCol === 0 ? -1 : 0;
+  // Other columns of numbers are more data; anything else after the value is a note
+  const numCols = [];
+  for (let c = 0; c < maxF; c++) if (c !== valCol && c !== labelCol && recs.filter(r => isFinite(xNum(r.f[c]))).length > recs.length / 2) numCols.push(c);
   recs.forEach(r => {
     const raw = r.f[valCol], v = xNum(raw);
     if (!isFinite(v)){
@@ -419,9 +423,10 @@ function parseXmr(text){
     }
     decimals = Math.max(decimals, decimalsOf(raw));
     const lab = labelCol >= 0 && r.f[labelCol] !== undefined && r.f[labelCol] !== '' ? r.f[labelCol] : String(rows.length + 1);
-    rows.push({ label: lab, value: v, note: '' });
+    const nt = r.f.slice(valCol + 1).filter((x, j) => x && !numCols.includes(valCol + 1 + j)).join(' · ');
+    rows.push({ label: lab, value: v, note: nt.slice(0, 120) });
   });
-  if (maxF > 2){
+  if (numCols.length){
     const name = header && header[valCol] ? `the “${header[valCol]}” column` : `column ${valCol + 1}`;
     note = `Using ${name} for values.`; wide = true;
   }
@@ -867,7 +872,7 @@ const statusColor = (st, p) => st === 'improve' ? p.improve : st === 'concern' ?
 const FONT = "Public Sans, Segoe UI, system-ui, Arial, sans-serif";
 
 /* ---------- Chart rendering ---------- */
-function noteIndex(){ const out = []; if (state.type === 'xmr' || !state.showNotes) return out; state.rows.forEach((r, i) => { if (r.note) out.push(i); }); return out; }
+function noteIndex(){ const out = []; if (!state.showNotes) return out; state.rows.forEach((r, i) => { if (r.note) out.push(i); }); return out; }
 // Labels for the latest limits, at the right of the chart: [text, value, colour]
 function rightLabels(m, kind){
   const L = m.lim[m.n - 1], g = m.segs[m.segs.length - 1], t = [];
@@ -933,7 +938,7 @@ function renderChart(kind, W, H, p, interactive, oy){
   const labels = state.rows.map(r => isT() ? dateAxis(r.t) : r.label), longLabels = labels.some(l => l.length > 6);
   const M = isCount() ? { l: 62, r: rightMargin(m), t: notes.length ? 30 : 14, b: 72 }
     : isT() ? { l: 58, r: rightMargin(m), t: notes.length ? 30 : 14, b: 64 }
-    : { l: 58, r: rightMargin(m), t: 14, b: kind === 'x' ? (longLabels ? 64 : 34) : 30 };
+    : { l: 58, r: rightMargin(m), t: notes.length ? 30 : 14, b: kind === 'x' ? (longLabels ? 64 : 34) : 30 };
   const clipped = isCount() || isT();
   const pw = W - M.l - M.r, ph = H - M.t - M.b;
   const { lo, hi } = yRange(m, kind);
@@ -1333,10 +1338,10 @@ function tableRows(){
   }
   if (!isCount()){
     const n4 = v => isFinite(v) ? String(+v.toFixed(4)) : '';
-    const rows = [['Point', 'Label', 'Value', 'Moving range', 'Mean', 'Lower limit', 'Upper limit', 'Signal']];
+    const rows = [['Point', 'Label', 'Value', 'Moving range', 'Mean', 'Lower limit', 'Upper limit', 'Signal', 'Note']];
     state.rows.forEach((r, i) => {
       const g = model.segOf(i);
-      rows.push([i + 1, r.label, r.value, model.mr[i] === null ? '' : n4(model.mr[i]), n4(g.mean), g.ok ? n4(g.lcl) : '', g.ok ? n4(g.ucl) : '', signalName(model.status[i]) || 'Common cause']);
+      rows.push([i + 1, r.label, r.value, model.mr[i] === null ? '' : n4(model.mr[i]), n4(g.mean), g.ok ? n4(g.lcl) : '', g.ok ? n4(g.ucl) : '', signalName(model.status[i]) || 'Common cause', r.note]);
     });
     return rows;
   }
@@ -1372,13 +1377,13 @@ function tableHTML(){
   const P = isCount();
   const valueHead = isC() ? '' : isU() ? `<th>Exposure</th><th>Rate ${esc(rateName())}</th>` : `<th>Total</th><th>${isPct() ? 'Percentage' : 'Proportion'}</th>`;
   const head = P ? `<th>#</th><th class="l">Label</th><th>Count</th>${valueHead}<th>Mean</th><th>Lower limit</th><th>Upper limit</th><th class="l">Signal</th><th class="l">Note</th>`
-    : `<th>#</th><th class="l">Label</th><th>Value</th><th>Moving range</th><th>Mean</th><th>Lower limit</th><th>Upper limit</th><th class="l">Signal</th>`;
+    : `<th>#</th><th class="l">Label</th><th>Value</th><th>Moving range</th><th>Mean</th><th>Lower limit</th><th>Upper limit</th><th class="l">Signal</th><th class="l">Note</th>`;
   let h = `<details class="values"><summary>Calculated values</summary><div class="tablewrap"><table><thead><tr>${head}<th><span style="position:absolute;left:-9999px">Action</span></th></tr></thead><tbody>`;
   state.rows.forEach((r, i) => {
     const L = model.lim[i];
     const btn = i === 0 ? '' : `<button type="button" data-brk="${i}">${state.breaks.has(i) ? 'Undo recalculation' : 'Recalculate from here'}</button>`;
     const cells = P ? `<td>${fmt(r.num, 2)}</td>${isC() ? '' : `<td>${fmt(r.den, 2)}</td><td>${fv(model.v[i])}</td>`}<td>${fv(L.mean)}</td><td>${model.ok && L.lcl > 0 ? fv(L.lcl) : '–'}</td><td>${model.ok && (!isP() || L.ucl < 1) ? fv(L.ucl) : '–'}</td><td class="l">${signalName(model.status[i])}</td><td class="l wrap">${esc(r.note)}</td>`
-      : `<td>${fmt(r.value, 6)}</td><td>${model.mr[i] === null ? '' : fmt(model.mr[i])}</td><td>${fmt(L.mean)}</td><td>${L.ok ? fmt(L.lcl) : '–'}</td><td>${L.ok ? fmt(L.ucl) : '–'}</td><td class="l">${signalName(model.status[i])}</td>`;
+      : `<td>${fmt(r.value, 6)}</td><td>${model.mr[i] === null ? '' : fmt(model.mr[i])}</td><td>${fmt(L.mean)}</td><td>${L.ok ? fmt(L.lcl) : '–'}</td><td>${L.ok ? fmt(L.ucl) : '–'}</td><td class="l">${signalName(model.status[i])}</td><td class="l wrap">${esc(r.note)}</td>`;
     h += `<tr class="${state.breaks.has(i) ? 'brk' : ''}"><td>${i + 1}</td><td class="l">${esc(r.label)}</td>${cells}<td>${btn}</td></tr>`;
   });
   return h + `</tbody></table></div></details>`;
@@ -1459,8 +1464,8 @@ async function act(a){
 /* ---------- Chart type ---------- */
 const TYPE_TEXT = {
   xmr: {
-    placeholder: 'Paste from Excel, e.g.\nApr 2024\t42\nMay 2024\t39\nJun 2024\t45',
-    hint: 'Paste one value per line, or a label and a value (dates, weeks, anything). A header row is fine.',
+    placeholder: 'Paste from Excel, e.g.\nApr 2024\t42\nMay 2024\t39\nJun 2024\t45\tNew booking system',
+    hint: 'Paste one value per line, or a label and a value (dates, weeks, anything). Anything in a third column is shown as a note on the chart. A header row is fine.',
     title: 'e.g. Days from referral to first appointment', dir: 'Improvement is when the value goes'
   },
   p: {
@@ -1687,7 +1692,7 @@ function loadExample(){
     $('#yMin').value = ''; $('#yMax').value = '';
   } else {
     const vals = [44, 41, 46, 43, 39, 45, 42, 47, 40, 44, 43, 48, 41, 42, 45, 40, 46, 43, 38, 36, 35, 37, 33, 34, 36, 32, 35, 33, 34, 31];
-    $('#data').value = ['Month\tDays to first appointment', ...vals.map((v, i) => `${month(i)}\t${v}`)].join('\n');
+    $('#data').value = ['Month\tDays to first appointment\tNote', ...vals.map((v, i) => `${month(i)}\t${v}${i === 18 ? '\tNew booking system' : ''}`)].join('\n');
     $('#title').value = 'Days from referral to first appointment';
     $('#team').value = ''; $('#yLabel').value = '';
     document.querySelector('input[name=dir][value=down]').checked = true;
@@ -1707,12 +1712,13 @@ trackSettings({ chartType: 'spctype', direction: 'dir', floorAtZero: 'floor', ba
 const SHEET = {
   xmr: {
     name: 'XmR chart', option: 'A value for each period',
-    head: () => ['Period', $('#yLabel').value.trim() || 'Value'], widths: [22, 22], rows: 30,
+    head: () => ['Period', $('#yLabel').value.trim() || 'Value', 'Note'], widths: [22, 22, 40], rows: 30,
     fill: [
       'Fill in one row for each week or month, oldest at the top. Write the period in the first column, such as Apr 2024 or the date the week begins.',
       'Write one value for each period in the second column, such as the average number of days to a first appointment for patients seen that month. To plot individual cases instead, write one row per case in the order they happened.',
       'Rename the Value heading to what you are measuring, such as Days.',
-      'If there is no data for a period, leave that row out rather than writing 0, unless the value really was 0.'
+      'If there is no data for a period, leave that row out rather than writing 0, unless the value really was 0.',
+      'Use the Note column for changes to the process, such as a new booking system. Notes are shown as numbered flags on the chart.'
     ]
   },
   p: {
@@ -1791,7 +1797,7 @@ function importSheet(book, h){
   if (!rows) return new Error('That workbook doesn’t have a Data sheet. Use a data sheet downloaded from this tool.');
   const head = (rows[0] || []).map(v => String(v).trim().toLowerCase());
   const t = /^date of event/.test(head[0] || '') ? 't' : /^count \(met/.test(head[1] || '') ? 'p' : head[1] === 'events' ? 'u'
-    : head[1] === 'count of events' ? 'c' : head[0] === 'period' && head.length <= 2 ? 'xmr' : '';
+    : head[1] === 'count of events' ? 'c' : head[0] === 'period' && (head.length <= 2 || (head.length === 3 && head[2] === 'note')) ? 'xmr' : '';
   if (t) setType(t);
   const n = h.count(rows);
   if (!n) return new Error('That data sheet has no rows filled in yet.');
