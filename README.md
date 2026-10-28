@@ -222,9 +222,13 @@ The statistics several tools need are in one shared file,
   cumulative probabilities and critical values;
 - sum, mean, variance, standard deviation, median, quantiles and ranks;
 - the Anderson-Darling normality test and one-way ANOVA;
-- the reader for pasted tables (tab, semicolon or comma separated, with
-  quoted cells as a spreadsheet writes them to CSV) and for numbers in their
-  cells, which most tools share.
+- the reader for pasted data, which every tool that reads a table uses: it
+  chooses the delimiter (tab, semicolon or comma) the same way, keeps quoted
+  cells whole as a spreadsheet writes them to CSV, reads a column of Excel
+  numbers like 1,234 as one column and a single line of numbers as a list,
+  and reads numbers by one rule (thousands separators only in groups of
+  three, brackets for negatives). Each tool only says what a line with no
+  delimiter means, such as a label then a value.
 
 A tool takes what it uses with `const { tP, fP } = FocusStats;`. The shared
 file is tested once, and each tool's results are tested through it. Other
@@ -271,7 +275,7 @@ survival, density, hazard and percentile functions) is checked against
 SciPy, and the power tool's proportion tests, sample sizes and smallest
 detectable differences against statsmodels and SciPy.
 
-104 tests, about 1,000 comparisons.
+111 tests, about 1,100 comparisons.
 
 ```sh
 node --test tests/stats/stats.test.js

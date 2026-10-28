@@ -312,7 +312,7 @@ const state = { excluded: new Set(), showPct: true, m: null };
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 // Shared statistics, from /assets/js/focus-stats.js
-const { sum, mean, sd, splitCells } = FocusStats;
+const { sum, mean, sd, splitTable } = FocusStats;
 
 function fmt(v, dp){
   if (!isFinite(v)) return '–';
@@ -359,16 +359,10 @@ const key = s => String(s || '').trim().toLowerCase().replace(/\s+/g, ' ');
 const roleName = s => String(s || '').trim().replace(/\s+/g, ' ') || ANY;
 
 /* ---------- Reading the inputs ---------- */
-function pickDelim(lines){
-  if (lines.some(l => l.includes('\t'))) return '\t';
-  if (lines.some(l => l.includes(';'))) return ';';
-  if (lines.some(l => l.includes(','))) return ',';
-  return 'ws';
-}
 function splitLines(text){
-  const lines = text.split(/\r\n|\r|\n/).filter(l => l.trim());
-  const delim = pickDelim(lines);
-  return { delim, rows: lines.map(l => delim === 'ws' ? l.trim().split(/[\s ]+/).map(f => f.trim().replace(/^"(.*)"$/, '$1')) : splitCells(l, delim)) };
+  // with no delimiter, every line is split on spaces
+  const s = splitTable(text, { space: 'columns' });
+  return s ? { delim: s.delim, rows: s.recs } : { delim: 'ws', rows: [] };
 }
 // Work streams: name, minutes, role, turnaround days, failure demand %, waiting now
 function parseStreams(text){

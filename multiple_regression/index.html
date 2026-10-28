@@ -187,21 +187,12 @@ td.sig{font-weight:700}
 
   // ---- parsing ----
   function split(text) {
-    const lines = text.split(/\r?\n/).filter(l => l.trim() !== '');
-    if (!lines.length) return null;
-    let delim = 'ws';
-    if (lines.some(l => l.includes('\t'))) delim = '\t';
-    else if (lines.some(l => l.includes(';'))) delim = ';';
-    else if (lines.some(l => l.includes(','))) delim = ',';
-    const recs = lines.map(l => {
-      const f = delim === 'ws' ? l.trim().split(/\s+/) : splitCells(l, delim);
-      while (f.length > 1 && f[f.length - 1] === '') f.pop();
-      return f;
-    });
-    return { recs, delim };
+    // with no delimiter, every line is split on spaces
+    return splitTable(text, { space: 'columns', trimTrailing: true });
   }
+
   // Shared statistics, from /assets/js/focus-stats.js
-  const { tP, tCrit, fP, mean: avg, sd, readNumber: num, splitCells } = FocusStats;
+  const { tP, tCrit, fP, mean: avg, sd, readNumber: num, splitTable } = FocusStats;
 
   // Each column is numeric, a category (a few repeated text values) or a label (anything else)
   function classify(recs, delim, hasHeader) {
