@@ -44,7 +44,7 @@ body{min-height:100vh;height:auto;margin:0;background:var(--bg);color:var(--text
 .menu-list button:hover{background:var(--blue-bg)}
 .menu-list small{display:block;color:var(--muted);font-size:.82rem;font-weight:400}
 /* Workspace */
-main{flex:1;display:grid;grid-template-columns:minmax(330px,410px) 1fr;gap:1.25rem;padding:0 var(--gutter) 1.25rem;min-height:calc(100vh - 180px);height:auto;align-items:stretch}
+main{flex:1;display:grid;grid-template-columns:minmax(330px,410px) minmax(0,1fr);gap:1.25rem;padding:0 var(--gutter) 1.25rem;min-height:calc(100vh - 180px);height:auto;align-items:stretch}
 aside{background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow);display:flex;flex-direction:column;min-height:0;overflow:hidden}
 .tabs{display:flex;gap:2px;padding:0 .75rem;border-bottom:1px solid var(--line)}
 .tab{border:0;background:transparent;padding:.75rem .8rem .6rem;border-bottom:5px solid transparent;cursor:pointer;color:var(--muted);font-weight:700}
@@ -95,8 +95,11 @@ label.f{display:block;font-weight:600;margin:0 0 .35rem}
 .stage-tools .spacer{flex:1}
 .canvas-wrap{flex:1;min-height:calc(100vh - 240px);height:auto;max-height:none;overflow-x:auto;overflow-y:visible;padding:1rem;background:var(--bg)}
 #canvas{display:inline-block;background:#fff;border:1px solid var(--line);border-radius:4px;line-height:0;box-shadow:var(--shadow)}
-#canvas svg{display:block}
+#canvas svg{display:block;user-select:none;-webkit-user-select:none}
 #canvas g.box{cursor:pointer}
+.canvas-wrap.can-pan,.canvas-wrap.pan,.canvas-wrap.pan #canvas g.box{cursor:grab}
+.canvas-wrap.grabbing,.canvas-wrap.grabbing *{cursor:grabbing!important;user-select:none}
+.stage-tools .btn[aria-pressed="true"]{background:var(--blue);border-color:var(--blue);color:var(--on-accent)}
 dialog{border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--text);padding:0;width:min(680px,94vw);max-height:90vh}
 dialog::backdrop{background:rgba(0,20,40,.5)}
 .dlg{padding:1.25rem 1.5rem;display:flex;flex-direction:column;gap:.7rem;max-height:88vh}
@@ -234,6 +237,8 @@ select.field{overflow:visible;cursor:pointer}
         <span class="sw" style="background:#FFB81C;border-radius:50%;width:16px;height:16px"></span><span><b>H, hand-off</b>: the work or the patient passes to another person or team.</span>
         <span class="sw dash"></span><span><b>Rework loop</b>: a "no" that sends work back to an earlier step.</span>
       </div>
+      <h3>Moving around the map</h3>
+      <p>Drag the map to move around it. A click without a drag still opens a step for editing. To move around without opening steps, turn on <b>Move</b> or hold Space. Once you've clicked the map, the arrow keys move it too (hold Shift to move further). Use <b>−</b>, <b>+</b> and <b>Fit</b> to zoom.</p>
       <h3>Before you map</h3>
       <ol>
         <li>Pick a process that matters to patients and staff, and that you have some ability to change.</li>
@@ -292,8 +297,9 @@ select.field{overflow:visible;cursor:pointer}
       <span class="zoom-label" id="zoomLabel">100%</span>
       <button class="btn icon" id="zoomIn" type="button" aria-label="Zoom in">+</button>
       <button class="btn small" id="zoomFit" type="button">Fit</button>
+      <button class="btn small" id="panMode" type="button" aria-pressed="false" title="Hand tool: drag the map to move around it without selecting steps. You can also hold Space."><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 11V6a2 2 0 0 0-4 0v5M14 10V4a2 2 0 0 0-4 0v6M10 10.5V6a2 2 0 0 0-4 0v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>Move</button>
     </div>
-    <div class="canvas-wrap" id="canvasWrap"><div id="canvas"></div></div>
+    <div class="canvas-wrap" id="canvasWrap" tabindex="0" aria-label="Process map. Drag to move around it, or use the arrow keys."><div id="canvas"></div></div>
   </section>
 </main>
 
@@ -624,6 +630,7 @@ function renderCanvas(){
   const svg=canvasEl.querySelector("svg");
   svg.setAttribute("width",Math.round(Lr.W*zoom)); svg.setAttribute("height",Math.round(Lr.H*zoom));
   $("#zoomLabel").textContent=Math.round(zoom*100)+"%";
+  updatePanCursor();
   if(hasContent()) trackChart({points:m.steps.length,map:state.active});
 }
 canvasEl.addEventListener("click",e=>{
@@ -636,7 +643,68 @@ canvasEl.addEventListener("click",e=>{
 $("#zoomIn").addEventListener("click",()=>{autoFit=false;zoom=Math.min(3,zoom*1.2);renderCanvas();});
 $("#zoomOut").addEventListener("click",()=>{autoFit=false;zoom=Math.max(.2,zoom/1.2);renderCanvas();});
 $("#zoomFit").addEventListener("click",()=>{autoFit=true;renderCanvas();});
-let rz; window.addEventListener("resize",()=>{clearTimeout(rz);rz=setTimeout(()=>{if(autoFit)renderCanvas();},120);});
+let rz; window.addEventListener("resize",()=>{clearTimeout(rz);rz=setTimeout(()=>{if(autoFit)renderCanvas();else updatePanCursor();},120);});
+
+/* ---------- move around the map by dragging ----------
+   Drag anywhere on the map to move it; a click without a drag still opens a
+   step. Move (or holding Space) is the hand tool: a grab cursor everywhere and
+   clicks don't select steps. Sideways the map box scrolls; up and down the
+   page scrolls, as the map box grows with the map. Touch screens keep their
+   own swipe scrolling. */
+const panBtn=$("#panMode");
+let panMode=false, spaceDown=false, overMap=false, drag=null, dragged=false;
+function handOn(){return panMode||spaceDown;}
+function updatePanCursor(){
+  const svg=canvasEl.querySelector("svg");
+  const big=!!svg&&(wrapEl.scrollWidth>wrapEl.clientWidth||svg.getBoundingClientRect().height>innerHeight);
+  wrapEl.classList.toggle("can-pan",big);
+  wrapEl.classList.toggle("pan",handOn());
+}
+panBtn.addEventListener("click",()=>{panMode=!panMode;panBtn.setAttribute("aria-pressed",panMode);updatePanCursor();});
+wrapEl.addEventListener("pointerenter",()=>{overMap=true;});
+wrapEl.addEventListener("pointerleave",()=>{overMap=false;});
+document.addEventListener("keydown",e=>{
+  if(e.code!=="Space"||!overMap||e.repeat&&spaceDown) return;
+  if(e.target.closest("input,textarea,select,button,[contenteditable]")) return;
+  e.preventDefault(); if(!spaceDown){spaceDown=true;updatePanCursor();}
+});
+document.addEventListener("keyup",e=>{if(e.code==="Space"&&spaceDown){spaceDown=false;updatePanCursor();}});
+window.addEventListener("blur",()=>{if(spaceDown){spaceDown=false;updatePanCursor();}});
+wrapEl.addEventListener("pointerdown",e=>{
+  if(e.pointerType==="touch"||(e.button!==0&&e.button!==1)) return;
+  if(!canvasEl.querySelector("svg")||e.target.closest("button,a,input")) return;
+  drag={x:e.clientX,y:e.clientY,id:e.pointerId}; dragged=false;
+  e.preventDefault();
+});
+wrapEl.addEventListener("pointermove",e=>{
+  overMap=true;
+  if(!drag||e.pointerId!==drag.id) return;
+  const dx=e.clientX-drag.x, dy=e.clientY-drag.y;
+  if(!dragged&&Math.abs(dx)+Math.abs(dy)<4) return;
+  /* Only take over the pointer once it's a drag, so a plain click still reaches the step */
+  if(!dragged){dragged=true; wrapEl.setPointerCapture(e.pointerId); wrapEl.classList.add("grabbing");}
+  drag.x=e.clientX; drag.y=e.clientY;
+  wrapEl.scrollLeft-=dx;
+  if(wrapEl.scrollHeight>wrapEl.clientHeight) wrapEl.scrollTop-=dy; else window.scrollBy(0,-dy);
+});
+function endDrag(e){if(!drag||e.pointerId!==drag.id) return; drag=null; wrapEl.classList.remove("grabbing");}
+wrapEl.addEventListener("pointerup",endDrag);
+wrapEl.addEventListener("pointercancel",endDrag);
+/* A drag, or any click with the hand on, should not select a step */
+wrapEl.addEventListener("click",e=>{
+  if(dragged||handOn()&&!e.target.closest("button,a,input")){e.stopPropagation();e.preventDefault();}
+  dragged=false;
+},true);
+/* Arrow keys move the map once it has focus */
+wrapEl.addEventListener("keydown",e=>{
+  if(e.target!==wrapEl) return;
+  const step=e.shiftKey?200:60;
+  const k={ArrowLeft:[-step,0],ArrowRight:[step,0],ArrowUp:[0,-step],ArrowDown:[0,step]}[e.key];
+  if(!k) return;
+  e.preventDefault();
+  wrapEl.scrollLeft+=k[0];
+  if(wrapEl.scrollHeight>wrapEl.clientHeight) wrapEl.scrollTop+=k[1]; else window.scrollBy(0,k[1]);
+});
 ["Timeline","Issues","Handoffs"].forEach(k=>{
   const el=$("#v"+k), key=k.toLowerCase();
   el.addEventListener("change",()=>{state.view[key]=el.checked;persist();renderCanvas();});
