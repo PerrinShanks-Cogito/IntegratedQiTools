@@ -234,6 +234,20 @@
     ]);
   }
 
+  /* ---------- size limits on files people open ----------
+     Everything is read in the browser, so a huge file can only slow the
+     person's own tab, but a limit stops that and is what ASVS asks for. An
+     A3 report's project file carries its pictures, so project files get the
+     most room. UNZIPPED caps each part inside an .xlsx (a zip), so a small
+     file can't unpack into gigabytes. */
+  const MB = 1024 * 1024;
+  const LIMITS = { project: 50 * MB, sheet: 10 * MB, picture: 25 * MB, unzipped: 100 * MB };
+  // A message saying the file is too big, or "" when it is within the limit
+  function tooBig(file, kind) {
+    const max = LIMITS[kind];
+    return file && max && file.size > max ? "That file is over " + Math.round(max / MB) + " MB, which is too big to open here." : "";
+  }
+
   /* ---------- reading a filled-in .xlsx back in ----------
      Resolves { sheets: [{ name, rows: [[text]]] }] }, every cell as text the
      way it shows in Excel: dates as YYYY-MM-DD (with HH:MM when there is a
@@ -261,8 +275,20 @@
       if (f.method === 0) return dec.decode(f.data);
       if (f.method !== 8) throw new Error("method");
       if (typeof DecompressionStream !== "function") throw new Error("inflate");
-      const stream = new Blob([f.data]).stream().pipeThrough(new DecompressionStream("deflate-raw"));
-      return dec.decode(await new Response(stream).arrayBuffer());
+      const reader = new Blob([f.data]).stream().pipeThrough(new DecompressionStream("deflate-raw")).getReader();
+      const parts = [];
+      let total = 0;
+      for (;;) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        total += value.length;
+        if (total > LIMITS.unzipped) { reader.cancel(); throw new Error("toobig"); }
+        parts.push(value);
+      }
+      const out = new Uint8Array(total);
+      let at = 0;
+      parts.forEach(v => { out.set(v, at); at += v.length; });
+      return dec.decode(out);
     };
   }
   const BUILTIN_DATES = new Set([14, 15, 16, 17, 18, 19, 20, 21, 22, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 45, 46, 47, 50, 51, 52, 53, 54, 55, 56, 57, 58]);
@@ -659,6 +685,7 @@
     // Read a filled-in data sheet and hand it to the tool.
     function importSheet(f) {
       if (!/\.xls[xm]$/i.test(f.name)) return say(/\.xls$/i.test(f.name) ? "That’s an older Excel file. Save it as an Excel Workbook (.xlsx) and try again." : "Choose a data sheet saved as an Excel Workbook (.xlsx).");
+      if (tooBig(f, "sheet")) return say(tooBig(f, "sheet"));
       f.arrayBuffer().then(readXlsx).then(book => {
         if (o.hasData && o.hasData() && !confirm("Replace what you've entered with the data sheet?")) return;
         const h = importHelpers(book), imp = o.template.import;
@@ -696,6 +723,7 @@
         const m = err && err.message;
         say(m === "inflate" ? "Your browser can’t read Excel files. Copy the table from Excel and paste it in instead."
           : m === "notzip" || m === "notxlsx" ? "That file isn’t an Excel workbook (.xlsx) that can be read."
+          : m === "toobig" ? "That data sheet holds more than can be opened here. Copy the table from Excel and paste it in instead."
           : "Sorry, that data sheet couldn’t be imported. Copy the table from Excel and paste it in instead.");
       });
     }
@@ -795,6 +823,7 @@
     fileIn.addEventListener("change", () => {
       const f = fileIn.files && fileIn.files[0]; if (!f) return;
       if (o.template && o.template.import && /\.xls[xm]?$/i.test(f.name)) { fileIn.value = ""; return importSheet(f); }
+      if (tooBig(f, "project")) { fileIn.value = ""; return say(tooBig(f, "project")); }
       const r = new FileReader();
       r.onload = () => {
         fileIn.value = "";
@@ -870,5 +899,5 @@
     host.parentNode.insertBefore(note, host.nextSibling);
   }
 
-  window.FocusActions = { mount, say, xlsx, readXlsx, zip, saveFile, FORMATS, clips, addingToA3: () => a3Running };
+  window.FocusActions = { mount, say, xlsx, readXlsx, zip, saveFile, FORMATS, clips, LIMITS, tooBig, addingToA3: () => a3Running };
 })();

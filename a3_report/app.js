@@ -512,6 +512,7 @@
   const MAX_PX = 2400;
   function addPicture(file) {
     if (!file || !/^image\/(png|jpeg)$/.test(file.type)) return FocusActions.say('Choose a PNG or JPG picture.');
+    if (FocusActions.tooBig(file, 'picture')) return FocusActions.say(FocusActions.tooBig(file, 'picture'));
     const r = new FileReader();
     r.onload = () => {
       const img = new Image();
