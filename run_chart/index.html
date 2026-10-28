@@ -93,6 +93,7 @@ main{display:grid;gap:20px;min-width:0}
 #chart svg[data-focus="shift"] .r-shift,
 #chart svg[data-focus="trend"] .r-trend,
 #chart svg[data-focus="astro"] .r-astro,
+#chart svg[data-focus="shift"] .r-early,
 #chart svg[data-focus="runs"] .r-runs{opacity:1}
 @media (prefers-reduced-motion:reduce){#chart svg .pt,#chart svg .ring{transition:none}}
 .tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--surface);font-size:.85rem;line-height:1.35;padding:7px 10px;border-radius:6px;white-space:nowrap;transform:translate(-50%,calc(-100% - 12px));opacity:0;transition:opacity .1s;z-index:2}
@@ -111,7 +112,7 @@ main{display:grid;gap:20px;min-width:0}
 .chip.signal{background:var(--blue);color:var(--on-accent);border-color:var(--blue)}
 .chip.clear{color:var(--muted)}
 .chip.check{color:var(--concern)}
-.chip.na{color:var(--muted);border-style:dashed}
+.chip.na,.chip.early{color:var(--muted);border-style:dashed}
 .rules h4{margin:0 0 2px;font-size:1.05rem}
 .rules .what{margin:0;font-size:.9rem;color:var(--muted)}
 .rules .found{margin:6px 0 0}
@@ -415,11 +416,24 @@ function analyse(data, opts){
     if (!pointKind[i] || pointKind[i] === "neutral") pointKind[i] = kind;
   });
 
+  // When half or more of the (baseline) values sit at the lowest or highest value, the median is that
+  // value itself and the rules that use it (shift and runs) can't be applied (Perla, Provost and Murray 2011).
+  const baseVals = vals.slice(0, baseN);
+  const stuck = baseN >= 2 && (med <= Math.min(...baseVals) + EPS || med >= Math.max(...baseVals) - EPS);
+  const stuckAt = stuck ? (med >= Math.max(...baseVals) - EPS && med > Math.min(...baseVals) + EPS ? "highest" : "lowest") : "";
+  const stuckText = `Half or more of the ${frozen ? "baseline " : ""}values are at the ${stuckAt} value, ${fmt(med, dp)}, so the median is that value itself and this rule can't be applied. ` +
+    "If you're counting events, try plotting the time or the number of cases between them instead.";
+  // Provost and Murray: the shift and runs rules need more than 10 points. With 10 or fewer, a long run on
+  // one side of the median is shown as a possible shift, not a signal.
+  const shiftEarly = n <= 10;
+
   // Rule 1
-  const shifts = findShifts(vals, med).map(s => {
+  const shifts = stuck ? [] : findShifts(vals, med).map(s => {
     const kind = kindFor(s.side, opts.dir);
+    const text = `${s.idx.length} points ${s.side > 0 ? "above" : "below"} the median, ${range(s.idx[0], s.idx[s.idx.length-1])}`;
+    if (shiftEarly) { s.idx.forEach(i => pointRules[i].push("early")); return { kind: "common", idx: s.idx, text: `${text}: a possible shift, but there are too few points yet to call it a signal` }; }
     mark(s.idx, kind, "shift");
-    return { kind, idx: s.idx, text: `${s.idx.length} points ${s.side > 0 ? "above" : "below"} the median, ${range(s.idx[0], s.idx[s.idx.length-1])}` };
+    return { kind, idx: s.idx, text };
   });
   // Rule 2
   const trends = findTrends(vals).map(t => {
@@ -432,7 +446,8 @@ function analyse(data, opts){
   const runs = countRuns(vals.slice(0, baseN), med);
   let runsStatus = "na", runsText = "";
   const scope = frozen ? " in the baseline period" : "";
-  if (runs.lo === null) {
+  if (stuck) runsText = stuckText;
+  else if (runs.lo === null) {
     runsText = `There ${runs.useful === 1 ? "is" : "are"} ${runs.useful} useful observation${runs.useful === 1 ? "" : "s"}${scope} (points not on the median). This rule needs at least 10.`;
   } else {
     const expect = `With ${runs.useful} useful observations${runs.onMedian ? ` (${runs.onMedian} on the median left out)` : ""} we'd expect between ${runs.lo} and ${runs.hi} runs${runs.source === "approx" ? " (normal approximation)" : ""}.`;
@@ -449,26 +464,35 @@ function analyse(data, opts){
   });
 
   const rules = [
-    { key: "shift", name: "Shift", what: "6 or more consecutive points above or below the median. Points on the median are skipped.",
-      status: shifts.length ? "signal" : "clear", items: shifts,
-      none: "No run of 6 or more points on one side of the median." },
+    { key: "shift", name: "Shift", what: "6 or more consecutive points above or below the median. Points on the median are skipped. Needs more than 10 points.",
+      status: stuck ? "na" : shiftEarly ? (shifts.length ? "early" : "na") : shifts.length ? "signal" : "clear", items: shifts,
+      none: stuck ? stuckText : shiftEarly ? `There ${n === 1 ? "is" : "are"} ${n} point${n === 1 ? "" : "s"}. This rule needs more than 10, so it can't be applied yet.` : "No run of 6 or more points on one side of the median." },
     { key: "trend", name: "Trend", what: "5 or more consecutive points all going up or all going down. Repeated equal values are skipped.",
       status: trends.length ? "signal" : "clear", items: trends,
       none: "No run of 5 or more points steadily rising or falling." },
     { key: "runs", name: "Number of runs", what: "A run is one or more points in a row on the same side of the median. Too many or too few runs signals non-random variation.",
       status: runsStatus, items: [], none: runsText },
-    { key: "astro", name: "Astronomical point", what: "A point obviously different from the rest. This rule is a judgement call, so the tool only suggests points worth a look.",
+    { key: "astro", name: "Astronomical point", what: "A point obviously, even blatantly, different from the rest, that everyone studying the chart agrees is unusual. Every chart has a highest and a lowest point; that alone doesn't make a point astronomical. This rule is a judgement call, so the tool only suggests points worth a look.",
       status: astro.length ? "check" : "clear", items: astro,
       none: "No point stands far apart from the rest. Look at the chart too: people who know the process may spot something the numbers don't." }
   ];
 
-  const allSignals = [...shifts, ...trends];
+  const allSignals = [...(shiftEarly ? [] : shifts), ...trends];
   const counts = { improve: 0, concern: 0, neutral: 0 };
   allSignals.forEach(s => counts[s.kind]++);
   if (runsStatus === "signal") counts.neutral++;
 
   const notes = [];
   if (n < 10) notes.push("With fewer than 10 points, there's not much to judge a pattern against. Keep adding data.");
+  if (stuck) notes.push(`Half or more of the ${frozen ? "baseline " : ""}values are at the ${stuckAt} value, so the median can't be used for the shift and runs rules. The trend and astronomical point rules still apply.`);
+  // Provost and Murray: freeze the median only from a baseline with no signals
+  if (frozen && !stuck) {
+    const inBase = [];
+    if (findShifts(baseVals, med).length && baseN > 10) inBase.push("a shift");
+    if (findTrends(baseVals).length) inBase.push("a trend");
+    if (runsStatus === "signal") inBase.push(runs.runs < runs.lo ? "too few runs" : "too many runs");
+    if (inBase.length) notes.push(`The baseline (the first ${baseN} points) itself shows a non-random signal (${inBase.join(", ")}). Provost and Murray advise freezing the median only from a baseline with no signals, so consider a different baseline period.`);
+  }
   if (frozen && baseN < 10) notes.push(`The baseline median uses only ${baseN} point${baseN === 1 ? "" : "s"}. A baseline of 10 to 12 or more gives a steadier median.`);
   const above = shifts.some(s => shifts.length > 1 && s.text.includes("above")), below = shifts.some(s => s.text.includes("below"));
   const stepHint = !frozen && above && below;
@@ -617,15 +641,16 @@ function renderVerdict(){
   const astro = an.astro.length;
   let h, p;
   if (special) {
-    h = "Non-random variation found";
-    p = "The chart shows special cause variation: something beyond the usual workings of the process is affecting the results. The rules below show where.";
+    h = "Non-random signal found";
+    p = "At least one rule shows a non-random signal: the pattern is unlikely to be down to chance alone, so something has affected the process. The rules below show where.";
   } else if (astro) {
-    h = "No non-random patterns, but one thing to check";
-    p = `None of the pattern rules are triggered. ${astro === 1 ? "One point stands" : `${astro} points stand`} well apart from the rest, which may be an astronomical point. That's a judgement call for people who know the process.`;
+    h = `No signals from rules 1 to 3, but ${astro === 1 ? "one point" : `${astro} points`} to check`;
+    p = `${astro === 1 ? "One point stands" : `${astro} points stand`} well apart from the rest, which may be an astronomical point (rule 4). If everyone who knows the process agrees ${astro === 1 ? "it's" : "they're"} obviously different, treat ${astro === 1 ? "it" : "them"} as a non-random signal and find out what happened.`;
   } else {
-    h = "Only random variation found";
-    p = "None of the rules are triggered. The variation looks like common cause variation: the process is stable and predictable at its current level.";
+    h = "No non-random signals";
+    p = "None of the rules are triggered, so there's no evidence of a non-random pattern: the variation looks random. A run chart can only show whether there are non-random signals. To judge the process against control limits, use a Shewhart (control) chart, such as the <a href=\"../spc_tool/\">SPC chart</a>.";
   }
+  if (!special && an.rules[0].status === "early") p += " A possible shift is building up, but there are too few points to call it a signal yet: keep adding data.";
   if (an.n < 10) p += " With so few points, treat this reading with caution.";
   let tally = "";
   if (special) {
@@ -654,12 +679,12 @@ function renderChart(){
   els.chart.insertAdjacentHTML("afterbegin", buildSVG(data, an, opts, palette(false), W, H, ""));
   const legend = [`<span><i class="ln"></i>Median${an.frozen ? " (baseline)" : ""}</span>`];
   if (an.frozen) legend.push(`<span><i class="ln dash"></i>Baseline median extended</span>`);
-  legend.push(`<span><i class="dot" style="background:var(--common)"></i>Common cause</span>`);
-  if (opts.dir === "none") legend.push(`<span><i class="dot" style="background:var(--neutral)"></i>Special cause</span>`);
+  legend.push(`<span><i class="dot" style="background:var(--common)"></i>No signal</span>`);
+  if (opts.dir === "none") { if (an.pointKind.some(Boolean)) legend.push(`<span><i class="dot" style="background:var(--neutral)"></i>Non-random signal</span>`); }
   else {
     const kinds = new Set(an.pointKind.filter(Boolean));
-    if (kinds.has("improve")) legend.push(`<span><i class="dot" style="background:var(--improve)"></i>Special cause: improvement</span>`);
-    if (kinds.has("concern")) legend.push(`<span><i class="dot" style="background:var(--concern)"></i>Special cause: concern</span>`);
+    if (kinds.has("improve")) legend.push(`<span><i class="dot" style="background:var(--improve)"></i>Signal: improvement</span>`);
+    if (kinds.has("concern")) legend.push(`<span><i class="dot" style="background:var(--concern)"></i>Signal: concern</span>`);
   }
   if (an.astro.length) legend.push(`<span><i class="dot" style="background:transparent;border:2px solid var(--muted)"></i>Point to check</span>`);
   els.legend.innerHTML = legend.join("");
@@ -667,13 +692,13 @@ function renderChart(){
 
 function renderRules(){
   const { an, opts } = state;
-  const chipText = { signal: "Signal", clear: "No signal", check: "Check", na: "Not enough data" };
+  const chipText = { signal: "Signal", clear: "No signal", check: "Check", na: "Can't apply", early: "Too early" };
   const dotColour = k => `var(--${opts.dir === "none" ? "neutral" : k})`;
   els.rules.innerHTML = an.rules.map((r, i) => {
     let found;
     if (r.items.length) {
-      found = `<ul>${r.items.map(s => `<li><i class="dot" style="background:${dotColour(s.kind)}"></i><span>${esc(s.text)}${opts.dir !== "none" && r.key !== "astro" ? ` <em>(${an.word(s.kind)})</em>` : ""}</span></li>`).join("")}</ul>`;
-      if (r.key === "astro") found += `<p class="what" style="margin-top:4px">Does this look obviously different to people who know the process? If so, find out what happened that period.</p>`;
+      found = `<ul>${r.items.map(s => `<li><i class="dot" style="background:${dotColour(s.kind)}"></i><span>${esc(s.text)}${opts.dir !== "none" && r.key !== "astro" && an.word(s.kind) ? ` <em>(${an.word(s.kind)})</em>` : ""}</span></li>`).join("")}</ul>`;
+      if (r.key === "astro") found += `<p class="what" style="margin-top:4px">Does everyone who knows the process agree this is obviously different? If so, it's a non-random signal: find out what happened that period.</p>`;
     } else found = esc(r.none);
     return `<li tabindex="0" data-rule="${r.key}" aria-label="Rule ${i+1}: ${r.name}, ${chipText[r.status]}">
       <span class="chip ${r.status}">${chipText[r.status]}</span>
@@ -686,10 +711,10 @@ function renderNext(){
   const special = an.rules.some(r => r.status === "signal");
   const parts = ["<h3>What this means for your work</h3>"];
   if (special) {
-    parts.push("<p>Special cause variation needs a different response from common cause variation. Find out what was going on at the flagged points: a change you made, a change in the patients or demand, or a change in how the data were collected.</p>");
-    parts.push("<p>Don't redesign the whole process on the strength of a special cause until you understand where it came from. If the signal follows a change you tested, it's evidence the change made a difference.</p>");
+    parts.push("<p>A non-random signal needs a different response from random variation. Find out what was going on at the flagged points: a change you made, a change in the patients or demand, or a change in how the data were collected.</p>");
+    parts.push("<p>Don't redesign the whole process on the strength of one signal until you understand where it came from. If the signal follows a change you tested, it's evidence the change made a difference.</p>");
   } else {
-    parts.push("<p>Common cause variation is built into the way the process works. Reacting to individual ups and downs, or asking why one week was worse than the last, tends to add variation rather than reduce it.</p>");
+    parts.push("<p>Random variation comes from the way the process works now. Reacting to individual ups and downs, or asking why one week was worse than the last, tends to add variation rather than reduce it.</p>");
     parts.push("<p>If this level of performance isn't good enough, the way forward is to change the process itself, then keep plotting to see whether the chart picks up the change.</p>");
   }
   if (an.stepHint) parts.push("<p><strong>Tip:</strong> there are long runs on both sides of the median. That often means the process changed level part way through. If you know when a change happened, mark it and set the median from the points before it, so the chart tests the new period against the old one.</p>");
@@ -719,7 +744,7 @@ function showTip(clientX){
   const c = svg.querySelector(`.pt[data-i="${i}"]`);
   c.classList.add("hl"); c.setAttribute("stroke", palette(false).ink);
   const { data, an } = state, p = data.points[i];
-  const ruleNames = { shift: "Shift", trend: "Trend", runs: "Runs", astro: "Point to check" };
+  const ruleNames = { shift: "Shift", trend: "Trend", runs: "Runs", astro: "Point to check", early: "Possible shift (too few points yet)" };
   const rs = [...new Set(an.pointRules[i])].filter(r => r !== "runs").map(r => ruleNames[r]);
   const cr = c.getBoundingClientRect(), hr = els.chart.getBoundingClientRect();
   els.tip.innerHTML = `<b>${esc(data.singleCol ? `Point ${i+1}` : p.label)}</b>: ${fmt(p.value, p.dp)}${rs.length ? `<br>${rs.join(", ")}` : ""}`;
@@ -789,7 +814,7 @@ async function copySummary(){
   lines.push(`${an.n} points. Median ${fmt(an.med, an.dp)}${an.frozen ? ` (from the first ${an.baseN} points, extended)` : ""}.`);
   an.rules.forEach((r, i) => {
     const head = `Rule ${i+1} (${r.name}): `;
-    if (r.items.length) r.items.forEach(s => lines.push(head + s.text + (opts.dir !== "none" && r.key !== "astro" ? ` (${an.word(s.kind)})` : "")));
+    if (r.items.length) r.items.forEach(s => lines.push(head + s.text + (opts.dir !== "none" && r.key !== "astro" && an.word(s.kind) ? ` (${an.word(s.kind)})` : "")));
     else lines.push(head + r.none);
   });
   try { await navigator.clipboard.writeText(lines.join("\n")); FocusActions.say("Summary copied."); }
