@@ -136,14 +136,16 @@ function flow(m){
       let k=i; while(k+1<n&&st[k+1].type==="branch") k++;
       if(k>i){
         const last=st[k], after=k+1<n?k+1:-1, end=last.thenTo==="end";
-        let target=after;
+        let target=after, back=false;
+        const ti=last.thenTo?idx[last.thenTo]:undefined;
         if(end) target=-1;
-        else if(last.thenTo&&idx[last.thenTo]!==undefined&&idx[last.thenTo]>k) target=idx[last.thenTo];
-        runs[i]={first:i+1,last:k,after:after,target:target,end:end};
+        else if(ti!==undefined&&ti>k) target=ti;
+        else if(ti!==undefined&&ti<=i){target=ti;back=true;} // loops back to an earlier step (or the decision itself)
+        runs[i]={first:i+1,last:k,after:after,target:target,end:end,back:back};
         for(let j=i+1;j<=k;j++) onPath[j]=i;
         edges.push({a:i,b:i+1,kind:"no"});
         for(let j=i+1;j<k;j++) edges.push({a:j,b:j+1,kind:"path"});
-        if(target>=0) edges.push({a:k,b:target,kind:"rejoin"});
+        if(target>=0) edges.push({a:k,b:target,kind:back?"back":"rejoin"});
         if(after>=0) edges.push({a:i,b:after,kind:"yes"});
         i=k; continue;
       }
@@ -158,7 +160,8 @@ function metrics(m){
   const r={steps:0,patient:0,handoffs:0,decisions:0,waits:0,va:0,nnva:0,nva:0,unc:0,loops:0,paths:0,pathTime:0,bottlenecks:0,issues:0,lead:0,vaTime:0,waitTime:0,untimed:0,hasPatient:m.lanes.some(l=>l.patient)};
   const pl={}; m.lanes.forEach(l=>pl[l.id]=l.patient);
   const F=flow(m), idx=F.idx;
-  F.edges.forEach(e=>{if(m.steps[e.a].lane!==m.steps[e.b].lane) r.handoffs++;});
+  /* a path that loops back is rework, so like a rework loop it isn't counted as a hand-off */
+  F.edges.forEach(e=>{if(e.kind==="back") r.loops++; else if(m.steps[e.a].lane!==m.steps[e.b].lane) r.handoffs++;});
   r.paths=Object.keys(F.runs).length;
   m.steps.forEach((s,i)=>{
     if(s.issue&&s.issue.trim()) r.issues++;
@@ -219,6 +222,9 @@ function layout(m,o){
   G.forEach(g=>{const d=LN[g.lane];if(g.alt)d.altH=Math.max(d.altH,g.h);else d.maxH=Math.max(d.maxH,g.h);if(g.note)d.noteH=Math.max(d.noteH,g.note.h+14);});
   const loopK={};
   G.forEach(g=>{if(g.s.type==="decision"&&!F.runs[g.i]&&g.s.noTo&&idx[g.s.noTo]!==undefined&&idx[g.s.noTo]!==g.i){loopK[g.i]=LN[g.lane].loops++;}});
+  /* a new path that loops back runs along the bottom of its last step's lane, like a rework loop */
+  const backK={};
+  F.edges.forEach(e=>{if(e.kind==="back") backK[e.a]=LN[G[e.a].lane].loops++;});
   let y=TOP;
   LN.forEach(d=>{
     d.top=y; const body=d.maxH||40;
@@ -255,6 +261,14 @@ function layout(m,o){
   const hand=[], GAP=(COLW-BW)/2;
   F.edges.forEach(e=>{
     const a=G[e.a], b=G[e.b], bx=b.cx-BW/2;
+    if(e.kind==="back"){
+      /* down to the lane's loop channel, back along it, then into the earlier step from below (or above) */
+      const ch=LN[a.lane].bottom-14-backK[e.a]*9, sy=a.cy+a.h/2, isD=b.s.type==="decision", off=isD?14:10;
+      const tx=b.cx-off;
+      const ey=b.lane<=a.lane?(isD?b.cy+b.h/2*(1-off/(BW/2)):b.cy+b.h/2)+1:(isD?b.cy-b.h/2*(1-off/(BW/2)):b.cy-b.h/2)-1;
+      p.push('<path d="M'+a.cx+","+sy+"V"+ch+"H"+tx+"V"+ey+'" fill="none" stroke="'+PATH+'" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#ahp)"/>');
+      return;
+    }
     const onP=e.kind==="no"||e.kind==="path"||e.kind==="rejoin", col=onP?PATH:"#425563";
     let d;
     if(e.kind==="no"){
@@ -366,6 +380,7 @@ function layout(m,o){
   if(v.handoffs) leg((x,y)=>'<circle cx="'+(x+8)+'" cy="'+y+'" r="7" fill="#FFB81C" stroke="#212B32"/>',"Hand-off ("+M.handoffs+")");
   if(M.paths) leg((x,y)=>'<rect x="'+x+'" y="'+(y-7)+'" width="16" height="13" rx="2" fill="#FFFFFF" stroke="'+PATH+'" stroke-width="2"/>',"New path (decision's no route)");
   if(pathEnds) leg((x,y)=>'<circle cx="'+(x+8)+'" cy="'+y+'" r="7" fill="#fff" stroke="'+PATH+'" stroke-width="1.5"/><circle cx="'+(x+8)+'" cy="'+y+'" r="4" fill="'+PATH+'"/>',"Path ends");
+  if(Object.keys(backK).length) leg((x,y)=>'<line x1="'+x+'" y1="'+y+'" x2="'+(x+16)+'" y2="'+y+'" stroke="'+PATH+'" stroke-width="2" stroke-dasharray="4 3"/>',"Path loops back");
   if(Object.keys(loopK).length) leg((x,y)=>'<line x1="'+x+'" y1="'+y+'" x2="'+(x+16)+'" y2="'+y+'" stroke="#6A4C93" stroke-width="2" stroke-dasharray="4 3"/>',"Rework loop");
   const H=ly+20;
   const Wf=Math.max(W,lx+10);
@@ -532,9 +547,12 @@ function stepCard(m,s,i,F){
   let pathRow="";
   if(own&&own.last===i){
     const later=m.steps.map((o,k)=>k>i&&k!==own.after&&F.onPath[k]===undefined?'<option value="'+o.id+'"'+(o.id===s.thenTo?" selected":"")+'>Go to step '+short(o,k)+'</option>':"").join("");
+    const earlier=m.steps.map((o,k)=>k<own.first?'<option value="'+o.id+'"'+(o.id===s.thenTo?" selected":"")+'>Go back to step '+short(o,k)+'</option>':"").join("");
     pathRow='<div class="row1"><label>At the end of this path<select class="field sm th">'+
       '<option value="">'+(own.after>=0?"Rejoin the main path at step "+(own.after+1):"Rejoin the main path")+'</option>'+
-      '<option value="end"'+(s.thenTo==="end"?" selected":"")+'>End the path here</option>'+later+'</select></label></div>';
+      '<option value="end"'+(s.thenTo==="end"?" selected":"")+'>End the path here</option>'+
+      (later?'<optgroup label="Rejoin later on">'+later+'</optgroup>':"")+
+      (earlier?'<optgroup label="Loop back (rework)">'+earlier+'</optgroup>':"")+'</select></label></div>';
   } else if(isB&&!own) pathRow='<p class="path-note warn">Put this straight after a decision, or after another new path step, to make it the decision\'s "no" route.</p>';
   return '<div class="step t-'+s.type+(s.value&&!isT?" v-"+s.value:"")+(selected===s.id?" sel":"")+'" data-id="'+s.id+'">'+
     '<div class="step-head"><span class="num" aria-hidden="true">'+(i+1)+'</span>'+
@@ -825,7 +843,7 @@ function fromTable(src,old){
   m.steps.forEach((s,i)=>{
     const raw=gotos[i].trim(), g=parseInt(raw,10);
     if(s.type==="decision"&&g>=1&&g<=m.steps.length&&g!==i+1) s.noTo=m.steps[g-1].id;
-    if(s.type==="branch"){ if(/^end/i.test(raw)) s.thenTo="end"; else if(g>i+1&&g<=m.steps.length) s.thenTo=m.steps[g-1].id; }
+    if(s.type==="branch"){ if(/^end/i.test(raw)) s.thenTo="end"; else if(g>=1&&g<=m.steps.length&&g!==i+1) s.thenTo=m.steps[g-1].id; }
   });
   if(!m.lanes.length) m.lanes.push(L("Patient",true));
   return m;
