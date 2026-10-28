@@ -217,8 +217,10 @@ function wrap(text,maxW,font,maxLines){
 function layout(m,o){
   o=o||{};
   const v=state.view, ex=!!o.export;
-  const LHW=150, COLW=172, BW=138, X0=LHW+14, TOP=70;
   const steps=m.steps, lanes=m.lanes, n=steps.length;
+  /* with only one lane there's nothing to tell apart, so the lane label column is left out */
+  const one=lanes.length===1;
+  const LHW=one?0:150, COLW=172, BW=138, X0=LHW+14, TOP=70;
   const li={}; lanes.forEach((l,i)=>li[l.id]=i);
   const F=flow(m), idx=F.idx;
   const G=steps.map((s,i)=>{
@@ -260,11 +262,13 @@ function layout(m,o){
   /* lanes */
   lanes.forEach((l,i)=>{
     const d=LN[i], h=d.bottom-d.top;
-    p.push('<rect x="0" y="'+d.top+'" width="'+W+'" height="'+h+'" fill="'+(isPat(l)?"#F2F7FC":(i%2?"#F7F9FA":"#FFFFFF"))+'"/>');
+    p.push('<rect x="0" y="'+d.top+'" width="'+W+'" height="'+h+'" fill="'+(!one&&isPat(l)?"#F2F7FC":(i%2?"#F7F9FA":"#FFFFFF"))+'"/>');
+    if(!one){
     p.push('<rect x="0" y="'+d.top+'" width="'+LHW+'" height="'+h+'" fill="'+(isPat(l)?"#003087":"#E6F0FA")+'"/>');
     const nl=wrap(l.name||"Lane",LHW-24,"700 13.5px "+FF,4);
     const ty=d.top+h/2-(nl.length-1)*8+5;
     nl.forEach((t,k)=>p.push('<text x="14" y="'+(ty+k*16)+'" font-family="'+FF+'" font-size="13.5" font-weight="700" fill="'+(isPat(l)?"#FFFFFF":"#003087")+'">'+esc(t)+'</text>'));
+    }
     p.push('<line x1="0" y1="'+d.bottom+'" x2="'+W+'" y2="'+d.bottom+'" stroke="#D8DDE0"/>');
   });
   p.push('<line x1="0" y1="'+TOP+'" x2="'+W+'" y2="'+TOP+'" stroke="#D8DDE0"/>');
