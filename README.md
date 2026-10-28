@@ -61,8 +61,10 @@ Improvement's SPC P chart tool (version 3.0)):
 - `_data/upcoming_tools.yml` – tools in development or ideation, shown in the
   menu without a link.
 - `_includes/focus-header.html` – the shared header: **FOCUS** plus the tool
-  name, links to the CITI Academy, the feedback form and the QI Coach
-  chatbot, and the "Get support" and "QI charting tools" menus. Its styles
+  name on the left of the blue top bar, and on its right the "Get support",
+  "QI charting tools" and "Case studies" menus and a link to the feedback
+  form. Below it, the dark blue bar holds a tool's buttons; pages without
+  them don't show it. Its styles
   (`assets/css/focus-header.css`) are all prefixed `.fh` so they don't clash
   with each tool's own CSS.
 - `assets/css/focus-tool.css` – the shared base every tool links just before

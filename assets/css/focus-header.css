@@ -34,6 +34,14 @@
 .fh-nav{display:flex;flex-wrap:wrap;gap:.25rem}
 .fh-nav a{color:#fff;text-decoration:none;padding:.4rem .7rem;border-radius:4px;font-weight:600;font-size:.95rem}
 .fh-nav a:hover{background:rgba(255,255,255,.14)}
+/* The menus sit in the top bar with the links, and drop down from the right
+   of the header so they never run off the screen */
+.fh-nav{align-items:center}
+.fh-top .fh-inner{position:relative}
+.fh-top .fh-dd{position:static}
+.fh .fh-top .fh-dd summary{padding:.4rem .7rem;border-radius:4px;font-weight:600;font-size:.95rem;text-decoration:none}
+.fh .fh-top .fh-dd summary:hover,.fh .fh-top .fh-dd[open] summary{background:rgba(255,255,255,.14)}
+.fh-top .fh-menu{left:auto;right:clamp(1rem,2vw,2.5rem);top:calc(100% - .4rem)}
 
 .fh-dd{position:relative}
 .fh .fh-dd summary{font-weight:400;font-size:inherit;cursor:pointer;list-style:none;color:#fff;text-decoration:underline;text-underline-offset:3px;display:inline-flex;align-items:center;gap:.35rem}
