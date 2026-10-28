@@ -151,7 +151,15 @@ function flow(m){
     }
     if(i<n-1) edges.push({a:i,b:i+1,kind:s.type==="decision"&&s.noTo?"yes":"seq"});
   }
-  return {idx:idx,onPath:onPath,runs:runs,edges:edges};
+  /* Step labels follow the yes route: 1, 2, 3… along the main path, and a decision's
+     new path takes the decision's number plus a letter (3a, 3b…) */
+  const labels=[]; let num=0;
+  const letters=k=>{let t="";k++;while(k>0){k--;t=String.fromCharCode(97+k%26)+t;k=Math.floor(k/26);}return t;};
+  st.forEach((s,i)=>{
+    if(onPath[i]!==undefined){const d=onPath[i]; labels[i]=labels[d]+letters(i-runs[d].first);}
+    else labels[i]=String(++num);
+  });
+  return {idx:idx,onPath:onPath,runs:runs,edges:edges,labels:labels};
 }
 
 /* ---------- metrics ---------- */
@@ -330,6 +338,10 @@ function layout(m,o){
     p.push(shape+' fill="'+fill+'" stroke="'+stroke+'" stroke-width="'+sw+'"'+(s.type==="wait"?' stroke-dasharray="5 3"':"")+'/>');
     const lh=s.type==="decision"?15:16, by=g.cy-(g.lines.length-1)*lh/2+(s.type==="step"||s.type==="wait"||s.type==="branch"?1.5:4.5);
     g.lines.forEach((t,k)=>p.push('<text x="'+g.cx+'" y="'+(by+k*lh)+'" text-anchor="middle" font-family="'+FF+'" font-size="13" font-weight="600" '+(g.empty?'font-style="italic" fill="#768692"':'fill="#212B32"')+'>'+esc(t)+'</text>'));
+    /* step label badge: a circle for 1-digit labels, a pill for longer ones such as 12 or 3a */
+    const lab=F.labels[g.i], bw=Math.max(20,lab.length*6.5+9), bfill=g.alt?PATH:"#003087";
+    const bx=s.type==="decision"?g.cx-26:x+2, byy=s.type==="decision"?top+16:top+2;
+    p.push('<rect x="'+(bx-bw/2)+'" y="'+(byy-10)+'" width="'+bw+'" height="20" rx="10" fill="'+bfill+'"/><text x="'+bx+'" y="'+(byy+4)+'" text-anchor="middle" font-family="'+FF+'" font-size="10.5" font-weight="800" fill="#fff">'+esc(lab)+'</text>');
     /* value tag */
     if(s.value&&s.type!=="terminator"){
       const vx=s.type==="decision"?g.cx:x+BW-(s.type==="wait"?14:6), vy=s.type==="decision"?top+g.h-16:top+g.h-6;
@@ -531,17 +543,17 @@ function stepCard(m,s,i,F){
       (earlier?'<optgroup label="Loop back (rework)">'+earlier+'</optgroup>':"")+'</select></label></div>';
   } else if(isB&&!own) pathRow='<p class="path-note warn">Put this straight after a decision, or after another new path step, to make it the decision\'s "no" route.</p>';
   return '<div class="step t-'+s.type+(s.value&&!isT?" v-"+s.value:"")+(selected===s.id?" sel":"")+'" data-id="'+s.id+'">'+
-    '<div class="step-head">'+
-    '<select class="field sm ty" aria-label="Step '+(i+1)+' type">'+Object.keys(TYPES).map(k=>'<option value="'+k+'"'+(k===s.type?" selected":"")+'>'+TYPES[k]+'</option>').join("")+'</select>'+
-    '<select class="field sm la" aria-label="Step '+(i+1)+' lane">'+laneOptions(m,s.lane)+'</select>'+
-    '<button class="btn icon ghost" data-act="up" type="button" aria-label="Move step '+(i+1)+' up">↑</button>'+
-    '<button class="btn icon ghost" data-act="down" type="button" aria-label="Move step '+(i+1)+' down">↓</button>'+
-    '<button class="btn icon ghost danger" data-act="del" type="button" aria-label="Remove step '+(i+1)+'">✕</button></div>'+
-    '<textarea class="field t" rows="1" aria-label="Step '+(i+1)+' description" placeholder="'+(isT?(i===0?"Where the process starts":"Where the process ends"):isD?"A yes or no question":s.type==="wait"?"Who or what is waiting, and where":isB?"What happens on the 'no' route? Start with a verb":"What happens? Start with a verb")+'"></textarea>'+
+    '<div class="step-head"><span class="num" aria-hidden="true">'+esc(F.labels[i])+'</span>'+
+    '<select class="field sm ty" aria-label="Step '+F.labels[i]+' type">'+Object.keys(TYPES).map(k=>'<option value="'+k+'"'+(k===s.type?" selected":"")+'>'+TYPES[k]+'</option>').join("")+'</select>'+
+    '<select class="field sm la" aria-label="Step '+F.labels[i]+' lane">'+laneOptions(m,s.lane)+'</select>'+
+    '<button class="btn icon ghost" data-act="up" type="button" aria-label="Move step '+F.labels[i]+' up">↑</button>'+
+    '<button class="btn icon ghost" data-act="down" type="button" aria-label="Move step '+F.labels[i]+' down">↓</button>'+
+    '<button class="btn icon ghost danger" data-act="del" type="button" aria-label="Remove step '+F.labels[i]+'">✕</button></div>'+
+    '<textarea class="field t" rows="1" aria-label="Step '+F.labels[i]+' description" placeholder="'+(isT?(i===0?"Where the process starts":"Where the process ends"):isD?"A yes or no question":s.type==="wait"?"Who or what is waiting, and where":isB?"What happens on the 'no' route? Start with a verb":"What happens? Start with a verb")+'"></textarea>'+
     (isT?"":'<div class="row2"><label>Value<select class="field sm va">'+Object.keys(VALUES).map(k=>'<option value="'+k+'"'+(k===(s.value||"")?" selected":"")+'>'+VALUES[k]+'</option>').join("")+'</select></label>'+
       '<label>'+(s.type==="wait"?"Waiting time":"Time taken")+'<span class="timefield"><input class="field sm tm" type="number" min="0" step="any" inputmode="decimal"><span>'+UNITS[state.unit]+'</span></span></label></div>')+
     noRow+pathRow+
-    '<input class="field measure issue is" type="text" aria-label="Issue for step '+(i+1)+'" placeholder="Issue or frustration (optional)">'+
+    '<input class="field measure issue is" type="text" aria-label="Issue for step '+F.labels[i]+'" placeholder="Issue or frustration (optional)">'+
     '<div class="step-foot">'+(isT?"<span></span>":'<label class="chk"><input type="checkbox" class="bn"'+(s.bottleneck?" checked":"")+'> Bottleneck</label>')+
     '<span class="foot-btns">'+(isD?'<button class="btn small" data-act="path" type="button">'+(run?"Add step to new path":"Add new path")+'</button>':"")+
     '<button class="btn small" data-act="ins" type="button">'+(isB?"Add path step below":"Add step below")+'</button></span></div></div>';
