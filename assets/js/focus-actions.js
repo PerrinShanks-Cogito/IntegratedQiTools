@@ -370,7 +370,12 @@
   /* ---------- charts kept for the A3 report ---------- */
   /* Kept in IndexedDB on this site, so every tool can add to it and the A3
      report tool can read it. Nothing leaves the browser. Each clip is
-     { id, tool, toolName, title, svg, doc, added, exp, named, page }. */
+     { id, tool, toolName, title, svg, doc, added, exp, named, page }.
+     Clips and A3 drafts are kept for KEEP_DAYS, so a shared computer doesn't
+     hold someone's work for good: a clip counts from when it was added, a
+     draft from when it was last changed. They are cleared the next time any
+     FOCUS tool opens after that (mount() checks on every tool page). */
+  const KEEP_DAYS = 14;
   let capture = null, a3Running = false;
   // Marks clips added from this page load, so adding the same chart again
   // replaces it rather than filling the list with copies.
@@ -385,11 +390,34 @@
           r.result.createObjectStore("clips", { keyPath: "id", autoIncrement: true });
           r.result.createObjectStore("drafts");
         };
-        r.onsuccess = () => resolve(r.result);
+        r.onsuccess = () => expire(r.result).then(resolve);
         r.onerror = () => reject(r.error);
       });
       dbp.catch(() => { dbp = null; });
       return dbp;
+    }
+    // Clears clips and drafts older than KEEP_DAYS. A draft saved before
+    // drafts were dated starts its KEEP_DAYS now. Never fails the open.
+    function expire(d) {
+      return new Promise(resolve => {
+        const cutoff = Date.now() - KEEP_DAYS * 864e5, now = new Date().toISOString();
+        let tx;
+        try { tx = d.transaction(["clips", "drafts"], "readwrite"); } catch (e) { return resolve(d); }
+        tx.objectStore("clips").openCursor().onsuccess = e => {
+          const c = e.target.result; if (!c) return;
+          if (!(Date.parse(c.value.added) >= cutoff)) c.delete();
+          c.continue();
+        };
+        tx.objectStore("drafts").openCursor().onsuccess = e => {
+          const c = e.target.result; if (!c) return;
+          const v = c.value;
+          if (!v || typeof v !== "object") c.delete();
+          else if (!v.saved) c.update(Object.assign({}, v, { saved: now }));
+          else if (!(Date.parse(v.saved) >= cutoff)) c.delete();
+          c.continue();
+        };
+        tx.oncomplete = tx.onerror = tx.onabort = () => resolve(d);
+      });
     }
     function run(store, mode, fn) {
       return db().then(d => new Promise((resolve, reject) => {
@@ -424,8 +452,10 @@
       remove: id => run("clips", "readwrite", st => st.delete(id)),
       removeMany: ids => run("clips", "readwrite", st => { ids.forEach(id => st.delete(id)); }),
       getDraft: key => run("drafts", "readonly", st => st.get(key)),
-      setDraft: (key, val) => run("drafts", "readwrite", st => st.put(val, key)),
-      clearDraft: key => run("drafts", "readwrite", st => st.delete(key))
+      setDraft: (key, val) => run("drafts", "readwrite", st => st.put(Object.assign({}, val, { saved: new Date().toISOString() }), key)),
+      clearDraft: key => run("drafts", "readwrite", st => st.delete(key)),
+      expire: () => db().then(() => {}),
+      KEEP_DAYS
     };
   })();
 
@@ -464,6 +494,7 @@
   function mount(o) {
     const bar = document.querySelector("[data-focus-actions]");
     if (!bar) return;
+    clips.expire().catch(() => {});
     sayFn = o.say || null;
     const fallbackName = (o.tool || "focus").replace(/_/g, "-");
     const baseName = () => safeName(o.fileName ? o.fileName() : "", fallbackName);
