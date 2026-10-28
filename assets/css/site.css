@@ -19,13 +19,15 @@
   color-scheme:dark;
 }
 *,*::before,*::after{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font:400 1rem/1.5 Figtree,"Frutiger","Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+html{width:100%;min-height:100%;overflow-x:hidden}
+body{width:100%;min-height:100vh;margin:0;overflow-x:hidden;background:var(--bg);color:var(--text);font:400 1rem/1.5 Figtree,"Frutiger","Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
 a{color:var(--blue);text-underline-offset:3px}
+img,svg,video{max-width:100%;height:auto}
 :focus-visible{outline:3px solid var(--yellow);outline-offset:2px;border-radius:2px}
 .skip{position:absolute;left:-999px;top:0;background:var(--yellow);color:#212B32;padding:.5rem 1rem;z-index:2000;font-weight:700}
 .skip:focus{left:1rem}
 
-.wrap{max-width:1340px;margin:0 auto;padding:0 1.25rem}
+.wrap{width:100%;max-width:none;margin:0;padding-left:clamp(1rem,2vw,2.5rem);padding-right:clamp(1rem,2vw,2.5rem)}
 .hero{padding:2.5rem 0 1.5rem}
 .hero h1{font-size:clamp(1.75rem,4vw,2.5rem);line-height:1.15;margin:0 0 .6rem;font-weight:800;letter-spacing:-.01em}
 .hero p{font-size:1.1rem;color:var(--muted);max-width:44rem;margin:0}
@@ -35,7 +37,7 @@ a{color:var(--blue);text-underline-offset:3px}
 
 .group{margin:1.75rem 0 0}
 .group h2{font-size:1.15rem;margin:0 0 .75rem;color:var(--muted);font-weight:700}
-.grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,290px),1fr));gap:1rem}
+.grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:clamp(1rem,1.5vw,1.5rem)}
 .card{position:relative;display:flex;flex-direction:column;gap:.5rem;background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow);padding:1.1rem 1.25rem 1.25rem;height:100%;transition:border-color .15s, transform .15s}
 .card:hover{border-color:var(--blue);transform:translateY(-2px)}
 .card:focus-within{border-color:var(--blue)}
