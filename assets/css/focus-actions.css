@@ -89,6 +89,25 @@
 }
 @media print{.fa-bar{display:none!important}}
 
+/* Docked at the right of the dark blue header bar (see dockInHeader) */
+.fh-sub{position:relative}
+.fh-sub .fh-inner > .fa-bar{margin-left:auto}
+.fh-sub .fa-btns{gap:.4rem}
+.fh-sub .fa-btns .fa-btn{min-height:2.25rem; padding:.3rem .75rem; font-size:.92rem;
+  border-color:rgba(255,255,255,.6); background:transparent; color:#fff}
+.fh-sub .fa-btns .fa-btn:hover{background:rgba(255,255,255,.14)}
+.fh-sub .fa-btns .fa-btn.fa-primary{background:#fff; border-color:#fff; color:#003087}
+.fh-sub .fa-btns .fa-btn.fa-primary:hover{background:#E6F0FA; border-color:#E6F0FA}
+/* Messages ("Saved", "PNG downloaded") drop down below the bar */
+.fh-sub .fa-status{position:absolute; right:clamp(1rem,2vw,2.5rem); top:calc(100% + .4rem); max-width:min(28rem,calc(100vw - 2rem));
+  padding:.45rem .8rem; border:1px solid var(--fa-line); border-radius:6px; background:var(--fa-surface); color:var(--fa-ink);
+  box-shadow:0 8px 24px rgba(0,20,40,.2); text-align:left}
+/* Narrower screens: icons only (the name stays for screen readers and as a tooltip) */
+@media (max-width:1200px){
+  .fh-sub .fa-btns .fa-btn{padding:.3rem .55rem}
+  .fh-sub .fa-btns .fa-btn > span{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+}
+
 /* "Sample data" note shown when a case study opens a tool with ?sample= */
 .fa-sample{
   --fa-ink:#212B32; --fa-muted:#4C6272; --fa-bg:#FFF4DB; --fa-edge:#FFB81C; --fa-link:#005EB8;

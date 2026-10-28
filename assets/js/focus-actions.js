@@ -439,6 +439,29 @@
   }
 
   /* ---------- toolbar ---------- */
+  /* The toolbar sits at the right of the dark blue header bar. On tool pages
+     the header scrolls away until that bar reaches the top of the screen, then
+     the bar stays there, so the buttons are always to hand. --fh-stick-h tells
+     the page how tall the bar is, for anything else that sticks below it. */
+  let barHome = null;
+  function dockInHeader(bar) {
+    const head = document.querySelector(".fh"), inner = head && head.querySelector(".fh-sub .fh-inner");
+    if (!inner) return;
+    barHome = bar.parentNode;
+    inner.appendChild(bar);
+    inner.parentNode.hidden = false;
+    head.classList.add("fh-stick");
+    bar.querySelectorAll(".fa-btns .fa-btn").forEach(b => { if (!b.title) b.title = b.textContent.trim(); });
+    const top = head.querySelector(".fh-top"), sub = head.querySelector(".fh-sub");
+    const measure = () => {
+      head.style.setProperty("--fh-top-h", top.offsetHeight + "px");
+      document.documentElement.style.setProperty("--fh-stick-h", sub.offsetHeight + "px");
+    };
+    measure();
+    if (window.ResizeObserver) new ResizeObserver(measure).observe(head);
+    else window.addEventListener("resize", measure);
+  }
+
   function mount(o) {
     const bar = document.querySelector("[data-focus-actions]");
     if (!bar) return;
@@ -482,6 +505,7 @@
         '</div>' +
       '</dialog>';
     statusEl = bar.querySelector(".fa-status");
+    dockInHeader(bar);
 
     const openBtn = bar.querySelector('[data-fa="open"]');
     const saveBtn = bar.querySelector('[data-fa="save"]');
@@ -812,7 +836,7 @@
       const a = document.createElement("a"); a.href = back; a.textContent = "← Back to the case study";
       note.appendChild(a);
     }
-    const host = bar.parentNode;
+    const host = barHome || bar.parentNode;
     host.parentNode.insertBefore(note, host.nextSibling);
   }
 
