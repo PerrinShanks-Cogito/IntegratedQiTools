@@ -287,7 +287,7 @@ function niceTicks(min, max, count){
   return { lo, hi, ticks, dp };
 }
 function palette(forceLight){
-  if (forceLight) return { surface:"#FFFFFF", ink:"#212B32", muted:"#4C6272", line:"#D8DDE0", improve:"#0072CE", concern:"#C9580A", neutral:"#7C2855", common:"#8A9AA5" };
+  if (forceLight) return { surface:"#FFFFFF", ink:"#212B32", muted:"#4C6272", line:"#D8DDE0", improve:"#0072CE", concern:"#C9580A", neutral:"#7C2855", common:"#7E909C" };
   const cs = getComputedStyle(document.documentElement), g = k => cs.getPropertyValue("--" + k).trim();
   return { surface:g("surface"), ink:g("ink"), muted:g("muted"), line:g("line"), improve:g("improve"), concern:g("concern"), neutral:g("neutral"), common:g("common") };
 }

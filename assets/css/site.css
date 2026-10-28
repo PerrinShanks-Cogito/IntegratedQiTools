@@ -3,7 +3,7 @@
 /* Landing page and 404 styles. Tool pages carry their own styles. */
 :root{
   --blue:#005EB8; --navy:#003087; --bg:#F0F4F5; --surface:#FFFFFF; --text:#212B32;
-  --muted:#4C6272; --line:#D8DDE0; --yellow:#FFB81C; --green:#007F3B; --green-bg:#E3F2E9;
+  --muted:#4C6272; --line:#D8DDE0; --yellow:#FFB81C; --green:#007A38; --green-bg:#E3F2E9;
   --shadow:0 2px 0 #D8DDE0;
 }
 @media (prefers-color-scheme: dark){

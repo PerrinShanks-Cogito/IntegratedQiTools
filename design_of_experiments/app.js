@@ -306,8 +306,16 @@
     });
     h += '</tbody></table>';
     els.runs.innerHTML = h;
+    padRuns();
     noteRuns();
   }
+  // The table's header row sticks to the top as it scrolls, so a result field
+  // tabbed to must stop below the header, not underneath it
+  function padRuns() {
+    const head = els.runs.querySelector('thead');
+    els.runs.style.scrollPaddingTop = head ? head.offsetHeight + 'px' : '';
+  }
+  window.addEventListener('resize', padRuns);
   function noteRuns() {
     const N = runsN(), got = observations().length;
     const bad = Object.keys(state.y).filter(s => +s <= N && String(state.y[s]).trim() !== '' && !isFinite(num(state.y[s]))).length;

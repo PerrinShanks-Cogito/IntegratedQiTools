@@ -15,7 +15,7 @@
     green: { dot: '#007F3B', tint: '#E3F2E9', ink: '#00602C' },
     blue:  { dot: '#005EB8', tint: '#E6F0FA', ink: '#003087' },
     amber: { dot: '#ED8B00', tint: '#FFF4DB', ink: '#7A4600', dark: true },
-    grey:  { dot: '#768692', tint: '#EEF1F3', ink: '#4C6272' },
+    grey:  { dot: '#5E6E7A', tint: '#EEF1F3', ink: '#4C6272' },
     red:   { dot: '#D5281B', tint: '#FBE7E5', ink: '#9A1B12' }
   };
   // Quadrants: tr = high across and high up, tl = low across, high up, and so on.

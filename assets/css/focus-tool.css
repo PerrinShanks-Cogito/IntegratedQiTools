@@ -5,7 +5,7 @@
    so anything a tool sets for itself still wins. */
 :root{
   --blue:#005EB8; --navy:#003087; --bg:#F0F4F5; --surface:#FFFFFF; --text:#212B32; --ink:#212B32;
-  --muted:#4C6272; --line:#D8DDE0; --yellow:#FFB81C; --green:#007F3B; --green-bg:#E3F2E9;
+  --muted:#4C6272; --line:#D8DDE0; --yellow:#FFB81C; --green:#007A38; --green-bg:#E3F2E9;
   --blue-bg:#E6F0FA; --danger:#D5281B; --shadow:0 2px 0 #D8DDE0;
   --warn:#A65300; --ok:#007F3B; --info:#4C6272;
   /* Text on a coloured fill (primary button, selected toggle, badge). The
