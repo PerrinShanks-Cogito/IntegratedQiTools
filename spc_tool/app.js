@@ -552,7 +552,7 @@ function niceTicks(min, max, count){
 }
 
 /* ---------- Palettes ---------- */
-const LIGHT = { bg: '#FFFFFF', ink: '#17222D', muted: '#5A6875', grid: '#EDF0F3', rule: '#DCE2E7', common: '#8A96A3', improve: '#1A7FD4', concern: '#E07B00', neither: '#7A4BB0', target: '#2F7A47', note: '#2F7A47', line: '#3B4956', limit: '#6B7885', accent: '#005EB8' };
+const LIGHT = { bg: '#FFFFFF', ink: '#17222D', muted: '#5A6875', grid: '#EDF0F3', rule: '#DCE2E7', common: '#8A96A3', improve: '#1A7FD4', concern: '#D97500', neither: '#7A4BB0', target: '#2F7A47', note: '#2F7A47', line: '#3B4956', limit: '#6B7885', accent: '#005EB8' };
 function livePalette(){
   const cs = getComputedStyle(document.documentElement), g = k => cs.getPropertyValue('--' + k).trim();
   return { bg: 'transparent', ink: g('ink'), muted: g('muted'), grid: g('grid'), rule: g('rule'), common: g('common'), improve: g('improve'), concern: g('concern'), neither: g('neither'), target: g('target'), note: g('note'), line: g('line'), limit: g('limit'), accent: g('accent') };

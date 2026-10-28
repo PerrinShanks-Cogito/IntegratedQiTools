@@ -21,21 +21,21 @@ permalink: /spc_tool/
 :root{
   --bg:#F3F5F7; --ink:#17222D; --muted:#5A6875; --rule:#DCE2E7; --field:#FFFFFF;
   --accent:#005EB8; --accent-ink:#FFFFFF; --accent-soft:#E3EEF9; --common:#8A96A3; --improve:#1A7FD4;
-  --concern:#E07B00; --neither:#7A4BB0; --target:#2F7A47; --note:#2F7A47;
+  --concern:#D97500; --neither:#7A4BB0; --target:#2F7A47; --note:#2F7A47; --warn-ink:#A35700;
   --limit:#6B7885; --font:"Public Sans", "Segoe UI", system-ui, -apple-system, Arial, sans-serif; color-scheme:light;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --bg:#0F161D; --surface:#17212B; --ink:#E6ECF1; --muted:#9AA8B4; --rule:#2A3744;
     --field:#121B24; --accent:#4C9BE8; --accent-ink:#06121F; --accent-soft:#1A2E44; --common:#8995A1;
-    --improve:#4FA8F0; --concern:#F5A03A; --neither:#A884DB; --target:#5DB37B; --note:#5DB37B;
+    --improve:#4FA8F0; --concern:#F5A03A; --neither:#A884DB; --target:#5DB37B; --note:#5DB37B; --warn-ink:#F5A03A;
     --limit:#8D9AA6;
   }
 }
 :root[data-theme="dark"]{
   --bg:#0F161D; --surface:#17212B; --ink:#E6ECF1; --muted:#9AA8B4; --rule:#2A3744;
   --field:#121B24; --accent:#4C9BE8; --accent-ink:#06121F; --accent-soft:#1A2E44; --common:#8995A1;
-  --improve:#4FA8F0; --concern:#F5A03A; --neither:#A884DB; --target:#5DB37B; --note:#5DB37B;
+  --improve:#4FA8F0; --concern:#F5A03A; --neither:#A884DB; --target:#5DB37B; --note:#5DB37B; --warn-ink:#F5A03A;
   --limit:#8D9AA6;
 }
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.5;font-variant-numeric:tabular-nums}
@@ -53,7 +53,7 @@ textarea{min-height:220px;resize:vertical;font-size:14px;line-height:1.45;white-
 textarea:focus,input:focus,select:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:transparent}
 .hint{font-size:13px;color:var(--muted);margin:6px 0 0}
 .status{font-size:13px;margin:8px 0 0;min-height:1.2em}
-.status.warn{color:var(--concern)}
+.status.warn{color:var(--warn-ink)}
 .suggest{font-size:13px;margin:8px 0 0;padding:8px 10px;border-radius:6px;background:var(--accent-soft)}
 .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}

@@ -502,7 +502,7 @@
     const n4 = x => isFinite(x) ? nf4.format(x) : '–';
     let h = '';
     const gcell = v => { const g = grade(v); return `<td class="num ${g.cls}">${pc(v)}</td>`; };
-    h += `<div class="tablewrap"><h3>Gauge R&amp;R</h3><table><caption class="sr">Variance components, standard deviations and percentages for each source of variation</caption><thead><tr><th>Source</th><th class="num">Variance component</th><th class="num">% Contribution</th><th class="num">Standard deviation</th><th class="num">Study variation (${o.k} × SD)</th><th class="num">% Study variation</th>${o.tol ? '<th class="num">% Tolerance</th>' : ''}${o.histSd > 0 ? '<th class="num">% Process</th>' : ''}</tr></thead><tbody>`;
+    h += `<div class="tablewrap" tabindex="0" role="region" aria-label="Gauge R&amp;R table"><h3>Gauge R&amp;R</h3><table><caption class="sr">Variance components, standard deviations and percentages for each source of variation</caption><thead><tr><th>Source</th><th class="num">Variance component</th><th class="num">% Contribution</th><th class="num">Standard deviation</th><th class="num">Study variation (${o.k} × SD)</th><th class="num">% Study variation</th>${o.tol ? '<th class="num">% Tolerance</th>' : ''}${o.histSd > 0 ? '<th class="num">% Process</th>' : ''}</tr></thead><tbody>`;
     rows.forEach(r => {
       const grrRow = r.key === 'grr' || r.sub;
       h += `<tr><td${r.sub === 2 ? ' class="sub" style="padding-left:2.6rem"' : r.sub ? ' class="sub"' : ''}>${r.key === 'grr' || r.key === 'total' ? `<b>${esc(r.label)}</b>` : esc(r.label)}</td><td class="num">${n4(r.v)}</td><td class="num">${pc(r.contrib)}</td><td class="num">${n4(r.sd)}</td><td class="num">${n4(r.sv)}</td>${grrRow ? gcell(r.psv) : `<td class="num">${pc(r.psv)}</td>`}${o.tol ? (grrRow ? gcell(r.ptol) : `<td class="num">${pc(r.ptol)}</td>`) : ''}${o.histSd > 0 ? (grrRow ? gcell(r.pproc) : `<td class="num">${pc(r.pproc)}</td>`) : ''}</tr>`;
@@ -510,7 +510,7 @@
     h += `</tbody></table><p class="hint">Number of distinct categories: <b>${ndc}</b>. For the measurement rows, green is under 10% (excellent), blue 10% to 30% (acceptable) and red over 30% (unacceptable).${o.method === 'xbarr' ? ' The X-bar and R method can’t split reproducibility into appraiser and interaction.' : ''}</p></div>`;
     if (o.method === 'anova') {
       const t = (title, rs) => {
-        let x = `<div class="tablewrap"><h3>${title}</h3><table><caption class="sr">${title}</caption><thead><tr><th>Source</th><th class="num">DF</th><th class="num">SS</th><th class="num">MS</th><th class="num">F</th><th class="num">P</th></tr></thead><tbody>`;
+        let x = `<div class="tablewrap" tabindex="0" role="region" aria-label="${title}"><h3>${title}</h3><table><caption class="sr">${title}</caption><thead><tr><th>Source</th><th class="num">DF</th><th class="num">SS</th><th class="num">MS</th><th class="num">F</th><th class="num">P</th></tr></thead><tbody>`;
         rs.forEach(r => { x += `<tr><td>${esc(srcName(r.src, o))}</td><td class="num">${r.df}</td><td class="num">${n4(r.ss)}</td><td class="num">${r.ms != null ? n4(r.ms) : ''}</td><td class="num">${r.F != null ? n4(r.F) : ''}</td><td class="num">${r.p != null ? pf(r.p) : ''}</td></tr>`; });
         return x + '</tbody></table>';
       };
