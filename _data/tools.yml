@@ -104,24 +104,28 @@
 - id: gauge_rr
   name: Gauge R&R
   status: Beta
+  hidden: true
   group: Test changes
   description: Check whether a measurement can be trusted, such as blood pressure readings or wound sizes, by seeing how much of its variation comes from the person and the equipment rather than from real differences, with a data sheet to record the study in.
 
 - id: attribute_agreement
   name: Attribute agreement analysis
   status: Beta
+  hidden: true
   group: Test changes
   description: Check whether people rating the same cases, such as pressure ulcer categories or triage levels, agree with themselves, each other and an expert standard, with a data sheet to record the study in.
 
 - id: design_of_experiments
   name: Design of experiments
   status: Beta
+  hidden: true
   group: Test changes
   description: Plan an experiment that tests two to four changes at once, such as staffing, streaming and self check-in, and see which of them, alone or together, really change the result.
 
 - id: hypothesis_test_selector
   name: Hypothesis test selector
   status: Beta
+  hidden: true
   group: Test changes
   description: Answer a few questions about your data, such as whether your result is a count or a measurement and how many groups you are comparing, find the hypothesis test to use, then paste your data to run it.
 
