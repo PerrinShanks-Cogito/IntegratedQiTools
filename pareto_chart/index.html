@@ -107,7 +107,8 @@ tr.cutrow td{border-bottom:2px dashed var(--muted)}
 </main>
 
 <section class="notes" aria-label="About Pareto charts">
-  <p><b>How to read it:</b> bars show each category's count, largest first. The line shows the running total as a percentage. Categories up to the cut-off line are the "vital few", where improvement effort is likely to have most effect.</p>
+  <p><b>How to read it:</b> bars show each category's count, largest first. The line shows the running total as a percentage, from 0 in the bottom left corner to 100% in the top right. Categories up to the cut-off line are the "vital few", where improvement effort is likely to have most effect; the rest are the "useful many".</p>
+  <p><b>Source:</b> Institute for Healthcare Improvement, <a href="https://www.ihi.org/resources/tools/quality-improvement-essentials-toolkit" target="_blank" rel="noopener">QI Essentials Toolkit: Pareto Chart</a> (2017).</p>
   <div class="notice">Want to build your skills? <a href="https://coh.gstt.nhs.uk/course/view.php?id=3199" target="_blank" rel="noopener">Book QI training with the CITI Academy</a>.</div>
 </section>
 
@@ -246,7 +247,8 @@ tr.cutrow td{border-bottom:2px dashed var(--muted)}
     const charW = 7;
     const rotate = maxLen * charW > band - 6;
     const labelH = rotate ? maxLen * charW * Math.sin(40 * Math.PI / 180) + 22 : 28;
-    const MT = (o.title ? 58 : 18) + 30;
+    // room above the plot for the legend and the vital few / useful many brackets
+    const MT = (o.title ? 58 : 18) + 30 + 30;
     const MB = labelH + 40;
     const H = Math.round(MT + plotH + MB);
     const base = MT + plotH;
@@ -272,9 +274,9 @@ tr.cutrow td{border-bottom:2px dashed var(--muted)}
     if (o.title) s.push(`<text x="${ML}" y="34" font-size="22" font-weight="700" fill="${COLORS.ink}">${esc(o.width ? trunc(o.title, Math.floor((W - ML - 16) / 12.4)) : o.title)}</text>`);
 
     // legend
-    const ly = MT - 22;
+    const ly = MT - 52;
     let lx = ML;
-    const legend = [['rect', COLORS.vital, 'Vital few'], ['rect', COLORS.rest, 'Remaining'], ['line', COLORS.line, 'Cumulative %'], ['dash', COLORS.cut, o.cutoff + '% cut-off']];
+    const legend = [['rect', COLORS.vital, 'Vital few'], ['rect', COLORS.rest, 'Useful many'], ['line', COLORS.line, 'Cumulative %'], ['dash', COLORS.cut, o.cutoff + '% cut-off']];
     legend.forEach(([t, c, txt]) => {
       if (t === 'rect') s.push(`<rect x="${lx}" y="${ly - 10}" width="14" height="14" fill="${c}"/>`);
       else if (t === 'line') s.push(`<line x1="${lx - 2}" y1="${ly - 3}" x2="${lx + 16}" y2="${ly - 3}" stroke="${c}" stroke-width="2.5"/><circle cx="${lx + 7}" cy="${ly - 3}" r="3.5" fill="${c}"/>`);
@@ -310,13 +312,29 @@ tr.cutrow td{border-bottom:2px dashed var(--muted)}
     const cy = yR(o.cutoff);
     s.push(`<line x1="${ML}" y1="${cy}" x2="${ML + plotW}" y2="${cy}" stroke="${COLORS.cut}" stroke-width="1.5" stroke-dasharray="6 5"/>`);
 
-    // cumulative line
-    const pts = rows.map((d, i) => [ML + i * band + band / 2, yR(d.cum)]);
-    s.push(`<polyline points="${pts.map(p => p.join(',')).join(' ')}" fill="none" stroke="${COLORS.line}" stroke-width="2.5" stroke-linejoin="round"/>`);
+    // cumulative line (IHI QI Essentials Toolkit): from 0 in the bottom left corner, with
+    // each point at the right-hand edge of its bar, so it ends at 100% in the top right
+    const pts = rows.map((d, i) => [ML + (i + 1) * band, yR(d.cum)]);
+    s.push(`<polyline points="${[[ML, base]].concat(pts).map(p => p.join(',')).join(' ')}" fill="none" stroke="${COLORS.line}" stroke-width="2.5" stroke-linejoin="round"/>`);
     pts.forEach(([x, y], i) => {
-      s.push(`<circle cx="${x}" cy="${y}" r="4" fill="${COLORS.line}" stroke="#fff" stroke-width="1.5"><title>Cumulative: ${pct(rows[i].cum)}%</title></circle>`);
-      if (o.showLabels && band >= 30) s.push(`<text x="${x}" y="${y - 10}" font-size="11" text-anchor="middle" fill="${COLORS.line}" font-weight="700" ${halo}>${pct(rows[i].cum)}%</text>`);
+      s.push(`<circle cx="${x}" cy="${y}" r="4" fill="${COLORS.line}" stroke="#fff" stroke-width="1.5"><title>Cumulative to ${esc(rows[i].name)}: ${pct(rows[i].cum)}%</title></circle>`);
+      // the last point is always 100%, which the right-hand axis already shows
+      // near the top, label to the left of the point (above the line) to stay clear of the brackets
+      const high = y - 10 < MT + 10;
+      if (o.showLabels && band >= 30 && i < n - 1) s.push(`<text x="${high ? x - 8 : x}" y="${high ? y + 4 : y - 10}" font-size="11" text-anchor="${high ? 'end' : 'middle'}" fill="${COLORS.line}" font-weight="700" ${halo}>${pct(rows[i].cum)}%</text>`);
     });
+
+    // IHI: annotate the vital few, with the share of the total they account for, and the
+    // useful many. Brackets sit above the plot, clear of the bars and the line.
+    const bracket = (from, to, text, c, bold) => {
+      const x1 = ML + from * band + band * 0.12, x2 = ML + to * band - band * 0.12, y = MT - 10;
+      const tw = text.length * (bold ? 7.4 : 7), mid = Math.min(Math.max((x1 + x2) / 2, ML + tw / 2), ML + plotW - tw / 2);
+      s.push(`<path d="M${x1} ${y + 7}V${y}H${x2}V${y + 7}" fill="none" stroke="${c}" stroke-width="2"/>`);
+      s.push(`<text x="${mid}" y="${y - 6}" font-size="13" font-weight="${bold ? 700 : 600}" text-anchor="middle" fill="${c}" ${halo}>${esc(text)}</text>`);
+    };
+    const k = res.vital;
+    bracket(0, k, `Vital few: ${pct(rows[k - 1].cum)}%`, COLORS.vital, true);
+    if (k < n) bracket(k, n, `Useful many: ${pct(100 - rows[k - 1].cum)}%`, COLORS.muted, false);
 
     // axes
     s.push(`<line x1="${ML}" y1="${MT}" x2="${ML}" y2="${base}" stroke="${COLORS.ink}" stroke-width="1.5"/>`);
