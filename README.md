@@ -167,7 +167,9 @@ Improvement's SPC P chart tool (version 3.0)):
   because the Trust's Imprivata single sign-on extension runs WebAssembly in
   the page and fails without it. If
   a tool needs a new outside script, font, image or API, add its origin to
-  the matching directive, or the browser will block it.
+  the matching directive, or the browser will block it. The OWASP ASVS
+  Level 1 security record is in `docs/security/asvs-level-1.md`, with the
+  changes that mean it needs reviewing; `docs/` is not published.
 
 ## Programme guide
 
