@@ -153,7 +153,6 @@ dialog::backdrop{background:rgba(0,20,40,.5)}
 .row1{margin-top:.45rem}.row1 label{display:block;font-size:.8rem;font-weight:700;color:var(--muted)}.row1 .field{margin-top:.15rem;width:100%}
 .foot-btns{display:flex;gap:.35rem;flex-wrap:wrap;margin-left:auto}
 .step-head{display:flex;align-items:center;gap:.3rem;margin-bottom:.4rem}
-.num{flex:none;width:1.6rem;height:1.6rem;border-radius:50%;background:var(--navy);color:var(--surface);display:grid;place-items:center;font-size:.8rem;font-weight:800}
 .field.sm{padding:.25rem .4rem;font-size:.88rem;border-width:1px;min-width:0}
 select.field{overflow:visible;cursor:pointer}
 .step-head select{flex:1 1 0}
@@ -318,7 +317,7 @@ select.field{overflow:visible;cursor:pointer}
 <dialog id="tableDlg">
   <form method="dialog" class="dlg" id="tableForm">
     <h2>Edit as table</h2>
-    <p class="hint" style="margin:0">One step per line, in order. Paste straight from Excel, or separate columns with |. Columns: Lane, Step, Type (start/end, activity, decision, new path, wait), Value (VA, NNVA, NVA), Time, Issue, If no go to step (for the last new path step: the step it goes to, or End), Bottleneck (yes). Only Lane and Step are needed. This replaces the map you're viewing.</p>
+    <p class="hint" style="margin:0">One step per line, in order. Paste straight from Excel, or separate columns with |. Columns: Lane, Step, Type (start/end, activity, decision, new path, wait), Value (VA, NNVA, NVA), Time, Issue, If no go to (the name of the step it goes to; for the last new path step, a step name or End), Bottleneck (yes). Only Lane and Step are needed. This replaces the map you're viewing.</p>
     <textarea id="tableText" spellcheck="false" aria-label="Step table"></textarea>
     <div class="row">
       <button class="btn" value="cancel" type="submit">Cancel</button>

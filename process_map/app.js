@@ -504,29 +504,34 @@ function renderEditing(){
   const d=$("#delFuture"); if(d) d.addEventListener("click",()=>{if(!confirm("Delete the redesign map? The current map is kept."))return;state.maps.future=null;setActive("current");});
   const g=$("#goFuture"); if(g) g.addEventListener("click",()=>setActive("future"));
 }
+/* Steps are referred to by name, not number. Elements that show a step's name carry
+   data-name-of (and data-pre for any leading words) so they update as the name is typed. */
+function nameOf(s){const t=String((s&&s.text)||"").replace(/\s+/g," ").trim();return t?(t.length>45?t.slice(0,44).trim()+"…":t):"(untitled step)";}
+function nameAttr(o,pre){return ' data-name-of="'+o.id+'"'+(pre?' data-pre="'+esc(pre)+'"':"");}
+function refreshNames(s){document.querySelectorAll('[data-name-of="'+s.id+'"]').forEach(el=>{el.textContent=(el.dataset.pre||"")+nameOf(s)+(el.dataset.post||"");});}
 function laneOptions(m,sel){return m.lanes.map(l=>'<option value="'+l.id+'"'+(l.id===sel?" selected":"")+'>'+esc(l.name||"Unnamed lane")+'</option>').join("");}
 function stepCard(m,s,i,F){
   const isT=s.type==="terminator", isD=s.type==="decision", isB=s.type==="branch";
-  const short=(o,k)=>(k+1)+'. '+esc((o.text||"(no text)").slice(0,40));
-  const others=m.steps.map((o,k)=>o.id===s.id?"":'<option value="'+o.id+'"'+(o.id===s.noTo?" selected":"")+'>'+short(o,k)+'</option>').join("");
+  const opt=(o,sel,pre)=>'<option value="'+o.id+'"'+(sel?" selected":"")+nameAttr(o,pre)+'>'+esc((pre||"")+nameOf(o))+'</option>';
+  const others=m.steps.map(o=>o.id===s.id?"":opt(o,o.id===s.noTo,"")).join("");
   const run=isD?F.runs[i]:null, own=isB&&F.onPath[i]!==undefined?F.runs[F.onPath[i]]:null;
   /* where a decision's no route goes: back to an earlier step, or down the new path that follows it */
   const noRow=!isD?"":run?
-    '<div class="row2"><p class="path-note">If no, take the new path: step'+(run.last>run.first?"s "+(run.first+1)+" to "+(run.last+1):" "+(run.first+1))+'</p><label>No label<input class="field sm nl" type="text"></label></div>':
+    '<div class="row2"><p class="path-note">If no, take the new path, starting with <span'+nameAttr(m.steps[run.first])+'>'+esc(nameOf(m.steps[run.first]))+'</span></p><label>No label<input class="field sm nl" type="text"></label></div>':
     '<div class="row2"><label>If no, go to<select class="field sm nt"><option value="">Carry on (no loop)</option>'+others+'</select></label><label>No label<input class="field sm nl" type="text"></label></div>';
   /* the last step on a new path says where the path goes next */
   let pathRow="";
   if(own&&own.last===i){
-    const later=m.steps.map((o,k)=>k>i&&k!==own.after&&F.onPath[k]===undefined?'<option value="'+o.id+'"'+(o.id===s.thenTo?" selected":"")+'>Go to step '+short(o,k)+'</option>':"").join("");
-    const earlier=m.steps.map((o,k)=>k<own.first?'<option value="'+o.id+'"'+(o.id===s.thenTo?" selected":"")+'>Go back to step '+short(o,k)+'</option>':"").join("");
+    const later=m.steps.map((o,k)=>k>i&&k!==own.after&&F.onPath[k]===undefined?opt(o,o.id===s.thenTo,"Go to "):"").join("");
+    const earlier=m.steps.map((o,k)=>k<own.first?opt(o,o.id===s.thenTo,"Go back to "):"").join("");
     pathRow='<div class="row1"><label>At the end of this path<select class="field sm th">'+
-      '<option value="">'+(own.after>=0?"Rejoin the main path at step "+(own.after+1):"Rejoin the main path")+'</option>'+
+      (own.after>=0?'<option value=""'+nameAttr(m.steps[own.after],"Rejoin the main path at ")+'>'+esc("Rejoin the main path at "+nameOf(m.steps[own.after]))+'</option>':'<option value="">Rejoin the main path</option>')+
       '<option value="end"'+(s.thenTo==="end"?" selected":"")+'>End the path here</option>'+
       (later?'<optgroup label="Rejoin later on">'+later+'</optgroup>':"")+
       (earlier?'<optgroup label="Loop back (rework)">'+earlier+'</optgroup>':"")+'</select></label></div>';
   } else if(isB&&!own) pathRow='<p class="path-note warn">Put this straight after a decision, or after another new path step, to make it the decision\'s "no" route.</p>';
   return '<div class="step t-'+s.type+(s.value&&!isT?" v-"+s.value:"")+(selected===s.id?" sel":"")+'" data-id="'+s.id+'">'+
-    '<div class="step-head"><span class="num" aria-hidden="true">'+(i+1)+'</span>'+
+    '<div class="step-head">'+
     '<select class="field sm ty" aria-label="Step '+(i+1)+' type">'+Object.keys(TYPES).map(k=>'<option value="'+k+'"'+(k===s.type?" selected":"")+'>'+TYPES[k]+'</option>').join("")+'</select>'+
     '<select class="field sm la" aria-label="Step '+(i+1)+' lane">'+laneOptions(m,s.lane)+'</select>'+
     '<button class="btn icon ghost" data-act="up" type="button" aria-label="Move step '+(i+1)+' up">↑</button>'+
@@ -584,7 +589,7 @@ ed.addEventListener("input",e=>{
   const c=e.target.closest(".step"); if(!c) return;
   const s=m.steps.find(x=>x.id===c.dataset.id); if(!s) return;
   const cl=e.target.classList;
-  if(cl.contains("t")){s.text=e.target.value;autosize(e.target);}
+  if(cl.contains("t")){s.text=e.target.value;autosize(e.target);refreshNames(s);}
   else if(cl.contains("tm")){const v=e.target.value;s.time=v===""?"":Math.max(0,+v||0);}
   else if(cl.contains("is")) s.issue=e.target.value;
   else if(cl.contains("nl")) s.noLabel=e.target.value;
@@ -713,13 +718,12 @@ function renderAnalysis(){
   } else h+='<p class="hint">Add steps to see the value mix.</p>';
   /* prompts */
   const P=[];
-  const num=s=>am.steps.indexOf(s)+1;
   if(a.steps&&a.nva) P.push(a.nva+" of "+a.steps+" steps add no value for the patient. Which could you stop doing altogether?");
   if(a.handoffs>=3) P.push("The patient or the work changes hands "+a.handoffs+" times. Could one person or team do more of the journey?");
   const waits=am.steps.filter(s=>s.type==="wait"&&+s.time>0).sort((x,y)=>y.time-x.time).slice(0,3);
-  if(waits.length) P.push("Longest wait"+(waits.length>1?"s":"")+": "+waits.map(s=>"step "+num(s)+", "+(s.text||"untitled")+" ("+fmtT(s.time)+")").join("; ")+". What is the work waiting for?");
+  if(waits.length) P.push("Longest wait"+(waits.length>1?"s":"")+": "+waits.map(s=>nameOf(s)+" ("+fmtT(s.time)+")").join("; ")+". What is the work waiting for?");
   if(a.lead>0&&a.vaPct<25) P.push("Only "+Math.round(a.vaPct)+"% of the lead time adds value. Shortening waits will usually do more than speeding up the work itself.");
-  am.steps.filter(s=>s.bottleneck).forEach(s=>P.push("Step "+num(s)+" is marked as a bottleneck. Protect its capacity: make sure it never waits for work, and move tasks away from it that others could do."));
+  am.steps.filter(s=>s.bottleneck).forEach(s=>P.push('"'+nameOf(s)+'" is marked as a bottleneck. Protect its capacity: make sure it never waits for work, and move tasks away from it that others could do.'));
   if(a.loops) P.push(a.loops+" rework loop"+(a.loops>1?"s send":" sends")+" work back. Fix the cause at source rather than checking for it later.");
   if(a.paths) P.push(a.paths+" decision"+(a.paths>1?"s send":" sends")+" some cases down a new path. How often does each path happen, and what would make it unnecessary?");
   if(a.nnva) P.push("Necessary steps can still be simplified or done at the same time as something else. Look at the "+a.nnva+" amber step"+(a.nnva>1?"s":"")+".");
@@ -753,11 +757,11 @@ function renderChecks(){
     const F=flow(m);
     const openD=st.filter((s,i)=>s.type==="decision"&&!s.noTo&&!F.runs[i]);
     if(openD.length) add("info",openD.length+" decision"+(openD.length>1?"s have":" has")+" no 'no' route","If a 'no' sends work back to an earlier step, link it so the rework loop shows. If it goes a different way, add a new path.");
-    const lost=st.map((s,i)=>s.type==="branch"&&F.onPath[i]===undefined?i+1:0).filter(Boolean);
+    const lost=st.filter((s,i)=>s.type==="branch"&&F.onPath[i]===undefined).map(s=>'"'+nameOf(s)+'"');
     if(lost.length) add("warn","New path step"+(lost.length>1?"s ":" ")+lost.join(", ")+(lost.length>1?" don't":" doesn't")+" follow a decision","Move "+(lost.length>1?"them":"it")+" to straight after a decision, or change the type to Activity.");
     Object.keys(F.runs).forEach(k=>{
       const r=F.runs[k];
-      if(r.after<0) add("info","Decision "+(+k+1)+" has no 'yes' step","Its new path is at the end of the map. Add the steps that follow a 'yes' after the path.");
+      if(r.after<0) add("info",'Decision "'+nameOf(st[k])+'" has no \'yes\' step',"Its new path is at the end of the map. Add the steps that follow a 'yes' after the path.");
     });
     if(!M.waits&&M.steps) add("info","No waits mapped","Most processes have queues. Add them as Wait / queue steps so they are counted.");
     const usedL=new Set(st.map(s=>s.lane));
@@ -787,11 +791,12 @@ document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{sho
 
 /* ---------- table dialog ---------- */
 function toTable(m){
-  const idx={}; m.steps.forEach((s,i)=>idx[s.id]=i+1);
+  const byId={}; m.steps.forEach(s=>byId[s.id]=s);
+  const nm=id=>byId[id]?String(byId[id].text||"").replace(/[\t\n]/g," ").trim():"";
   const tn={terminator:"Start/end",step:"Activity",decision:"Decision",branch:"New path",wait:"Wait"};
   const out=[["Lane","Step","Type","Value","Time ("+UNITS[state.unit]+")","Issue","If no go to","Bottleneck"].join("\t")];
   /* for a new path step, "If no go to" holds where the path goes next: a step number or End */
-  const go=s=>s.type==="branch"?(s.thenTo==="end"?"End":s.thenTo?idx[s.thenTo]:""):s.noTo?idx[s.noTo]:"";
+  const go=s=>s.type==="branch"?(s.thenTo==="end"?"End":s.thenTo?nm(s.thenTo):""):s.noTo?nm(s.noTo):"";
   m.steps.forEach(s=>out.push([laneOf(m,s.lane).name,s.text,tn[s.type],VSHORT[s.value]||"",s.time,s.issue,go(s),s.bottleneck?"Yes":""].map(c=>String(c==null?"":c).replace(/[\t\n]/g," ")).join("\t")));
   return out.join("\n");
 }
@@ -812,9 +817,14 @@ function fromTable(src,old){
     gotos.push(c[6]||""); m.steps.push(s);
   });
   m.steps.forEach((s,i)=>{
-    const raw=gotos[i].trim(), g=parseInt(raw,10);
-    if(s.type==="decision"&&g>=1&&g<=m.steps.length&&g!==i+1) s.noTo=m.steps[g-1].id;
-    if(s.type==="branch"){ if(/^end/i.test(raw)) s.thenTo="end"; else if(g>=1&&g<=m.steps.length&&g!==i+1) s.thenTo=m.steps[g-1].id; }
+    /* "If no go to" names the step (a step number from older tables still works) */
+    const raw=gotos[i].trim(); if(!raw) return;
+    let t=null;
+    if(/^\d+$/.test(raw)){const g=+raw; if(g>=1&&g<=m.steps.length) t=m.steps[g-1];}
+    else{const key=raw.toLowerCase().replace(/\s+/g," "); t=m.steps.find(o=>o!==s&&String(o.text||"").toLowerCase().replace(/\s+/g," ").trim()===key)||null;}
+    if(t===s) t=null;
+    if(s.type==="decision"&&t) s.noTo=t.id;
+    if(s.type==="branch"){ if(/^end$/i.test(raw)&&!t) s.thenTo="end"; else if(t) s.thenTo=t.id; }
   });
   if(!m.lanes.length) m.lanes.push(L("Patient",true));
   return m;
@@ -852,7 +862,7 @@ FocusActions.mount({
     {type:"svg",run:()=>withMap(m=>saveFile(slug()+suffix()+".svg",layout(m,{export:true}).svg,"image/svg+xml"))},
     {type:"csv",label:"Step table (.csv)",run:()=>withMap(m=>{
       const q=v=>{v=String(v==null?"":v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;};
-      const csv=toTable(m).split("\n").map((r,i)=>[i?i:"Step number"].concat(r.split("\t")).map(q).join(",")).join("\n");
+      const csv=toTable(m).split("\n").map(r=>r.split("\t").map(q).join(",")).join("\n");
       saveFile(slug()+suffix()+".csv","\uFEFF"+csv,"text/csv");
     })}
   ])
