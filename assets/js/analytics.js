@@ -7,6 +7,7 @@
  *  - No click auto-capture, no AJAX/fetch capture -> pasted data is never collected
  *  - Query strings and #hashes are stripped from URLs before sending
  *  - Only send counts/settings via trackToolEvent – NEVER data values or labels
+ *  - Error reports carry only the error type and code location, never the message
  *
  * Location: assets/js/analytics.js
  *
@@ -29,9 +30,10 @@
   // rather than from Microsoft's CDN, so a change on the CDN can't run code on
   // pages that hold pasted data. The file is Microsoft's own, unchanged: its
   // hash is the one in ai.3.4.5.integrity.json in the npm package
-  // @microsoft/applicationinsights-web@3.4.5 (browser/es5). To update, copy the
-  // new browser/es5/ai.<version>.gbl.min.js into assets/js/vendor and change
-  // the file name and hash here.
+  // @microsoft/applicationinsights-web@3.4.5 (browser/es5). Check for a new
+  // version once a year, or sooner if Microsoft announces a security fix. To
+  // update, copy the new browser/es5/ai.<version>.gbl.min.js into
+  // assets/js/vendor and change the file name and hash here.
   var thisScript = document.currentScript;
   var SDK_URL = new URL("vendor/ai.3.4.5.gbl.min.js", thisScript ? thisScript.src : location.origin + "/assets/js/").href;
   var SDK_INTEGRITY = "sha384-aTKCfGVKAFg+If03Hanf/RLpTadzuv1kyXFITdZe/xx2AW3KxVHNVKRTjUz40hVh";
@@ -47,6 +49,13 @@
 
   function cleanUrl(u) {
     return typeof u === "string" ? u.split(/[?#]/)[0] : u;
+  }
+
+  // The kind of error (TypeError, RangeError…), read from the stack or message.
+  // The SDK's own typeName for a window.onerror report is just "String".
+  function errorType(ex, props) {
+    var m = /^(\w*Error)\b/.exec(ex.stack || "") || /^(?:Uncaught )?(\w*Error)\b/.exec(ex.message || (props && props.message) || "");
+    return m ? m[1] : "Error";
   }
 
   // Public helper – safe to call before the SDK has loaded (events are queued),
@@ -92,6 +101,21 @@
       ai.addTelemetryInitializer(function (item) {
         item.data = item.data || {};
         item.data.tool = tool;
+        // Error reports keep only the kind of error and where in the site's
+        // code it happened: an error's message (and the stack trace, which
+        // repeats it) can quote what someone pasted, so neither is sent
+        if (item.baseType === "ExceptionData" && item.baseData) {
+          var bd = item.baseData, props = bd.properties || {};
+          bd.exceptions = (bd.exceptions || []).map(function (ex) {
+            var type = errorType(ex, props);
+            return { typeName: type, message: type, hasFullStack: false, stack: "", parsedStack: ex.parsedStack || [] };
+          });
+          var type0 = bd.exceptions.length ? bd.exceptions[0].typeName : "Error";
+          bd.properties = { typeName: type0, url: cleanUrl(props.url), lineNumber: props.lineNumber, columnNumber: props.columnNumber };
+          delete bd.problemGroup;
+          // The SDK also keeps window.onerror's details here, merged in when it sends
+          item.data = { tool: tool, typeName: type0 };
+        }
         if (item.baseData) {
           if (item.baseData.uri) item.baseData.uri = cleanUrl(item.baseData.uri);
           if (item.baseData.refUri) item.baseData.refUri = cleanUrl(item.baseData.refUri);
