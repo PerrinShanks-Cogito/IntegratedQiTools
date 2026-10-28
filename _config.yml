@@ -27,3 +27,4 @@ exclude:
   - vendor
   - .github
   - tests
+  - docs
