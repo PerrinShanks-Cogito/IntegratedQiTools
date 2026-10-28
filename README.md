@@ -65,6 +65,15 @@ Improvement's SPC P chart tool (version 3.0)):
   chatbot, and the "Get support" and "QI charting tools" menus. Its styles
   (`assets/css/focus-header.css`) are all prefixed `.fh` so they don't clash
   with each tool's own CSS.
+- `assets/css/focus-tool.css` – the shared base every tool links just before
+  its own `<style>`: the colour tokens (light and dark), the page reset, the
+  full-width page gutter (`--gutter`, matching the header), buttons, print
+  and reduced motion. A tool only keeps the styles that are its own, and
+  anything it sets wins over the shared file. Standard tools (data panel on
+  the left, results on the right) add `class="ft-standard"` to `<body>` to
+  share the layout, panel, form and table styles too; diagram tools use the
+  `.btn` classes. Text on a coloured fill uses `var(--on-accent)`, which
+  turns dark in dark mode so it stays readable.
 - `assets/js/focus-actions.js` – the shared toolbar at the top right of every
   tool: **Example** (fill in example data), **Open** (reopen a saved project
   file), **Save** (download a project

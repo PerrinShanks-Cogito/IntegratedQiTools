@@ -128,7 +128,8 @@
   border:1px dashed var(--fx-line); border-radius:8px; background:var(--fx-surface)}
 .fx-wrap[hidden]{display:none}
 .fx-link{display:inline-flex; align-items:center; gap:.45rem; margin:0; padding:.2rem 0; border:0; background:none;
-  color:var(--fx-blue); font:inherit; font-size:1rem; font-weight:700; text-decoration:underline; text-underline-offset:3px; cursor:pointer}
+  color:var(--fx-blue); font:inherit; font-size:1rem; font-weight:700; text-decoration:underline; text-underline-offset:3px; cursor:pointer;
+  white-space:normal; text-align:left; max-width:100%}
 .fx-link:hover{text-decoration-thickness:2px}
 .fx-link:focus-visible,.fx-btn:focus-visible,.fx-x:focus-visible,.fx-text:focus-visible{outline:3px solid var(--fx-yellow); outline-offset:2px}
 .fx-hint{color:var(--fx-muted); font-size:.9rem}

@@ -16,60 +16,19 @@ permalink: /attribute_agreement/
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ '/assets/css/focus-tool.css' | relative_url }}">
 <style>
-:root{
-  --blue:#005EB8; --navy:#003087; --bg:#F0F4F5; --surface:#FFFFFF; --text:#212B32;
-  --muted:#4C6272; --line:#D8DDE0; --yellow:#FFB81C; --green:#007F3B; --green-bg:#E3F2E9;
-  --blue-bg:#E6F0FA; --danger:#D5281B; --shadow:0 2px 0 #D8DDE0; --warn:#A65300;
-  box-sizing:border-box;
-  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
-}
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --blue:#5AA2EA; --navy:#9CC3EF; --bg:#0E1A24; --surface:#162533; --text:#E8EEF2;
-    --muted:#A3B6C3; --line:#2A3E4F; --green:#4CC17E; --green-bg:#143326; --blue-bg:#15314B;
-    --danger:#FF7468; --shadow:0 2px 0 #0A131B; --warn:#F0A54A;
-    color-scheme:dark;
-  }
-}
-:root[data-theme="dark"]{
-  --blue:#5AA2EA; --navy:#9CC3EF; --bg:#0E1A24; --surface:#162533; --text:#E8EEF2;
-  --muted:#A3B6C3; --line:#2A3E4F; --green:#4CC17E; --green-bg:#143326; --blue-bg:#15314B;
-  --danger:#FF7468; --shadow:0 2px 0 #0A131B; --warn:#F0A54A;
-  color-scheme:dark;
-}
-*,*::before,*::after{box-sizing:inherit}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;background:var(--bg);color:var(--text);font-family:Figtree,"Frutiger","Helvetica Neue",Arial,sans-serif;font-size:1rem;line-height:1.5}
-a{color:var(--blue)}
-:focus-visible{outline:3px solid var(--yellow);outline-offset:2px;border-radius:2px}
-button,input,select,textarea{font:inherit;color:inherit}
-.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-[hidden]{display:none !important}
-
-/* Page head */
-.page-head{padding:1rem 1.25rem}
-.page-head h1{margin:0;font-size:clamp(1.4rem,2.6vw,1.8rem);line-height:1.2;font-weight:800;letter-spacing:-.015em}
-.page-head .meta{color:var(--muted);margin:.15rem 0 0;max-width:70ch}
-
 /* Workspace */
-main{display:grid;grid-template-columns:minmax(300px,380px) minmax(0,1fr);gap:1.25rem;padding:0 1.25rem 1.25rem;align-items:start}
+main{display:grid;grid-template-columns:minmax(300px,380px) minmax(0,1fr);gap:1.25rem;padding:0 var(--gutter) 1.25rem;align-items:start}
 @media (max-width:880px){main{grid-template-columns:1fr}}
-@media (max-width:420px){main{padding:0 1rem 1rem} .page-head,.notes{padding-left:1rem;padding-right:1rem}}
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow);padding:1.1rem;min-width:0}
-.panel h2{font-size:1.05rem;font-weight:700;margin:0 0 .75rem}
-.block{margin-bottom:1.1rem}
-label{display:block;font-weight:600;margin:0 0 .35rem}
-.hint{color:var(--muted);font-size:.88rem;margin:0 0 .5rem}
 textarea,input[type=text]{width:100%;padding:.5rem .65rem;border:2px solid var(--muted);border-radius:4px;background:var(--surface)}
 textarea{min-height:260px;resize:vertical;font:14px/1.45 Consolas,"Courier New",monospace}
 textarea:focus,input[type=text]:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px var(--yellow)}
 select{width:100%;padding:.5rem .65rem;border:2px solid var(--muted);border-radius:4px;background:var(--surface)}
 select:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px var(--yellow)}
 .check{display:flex;gap:.6rem;align-items:flex-start;font-weight:400;margin-bottom:.6rem;cursor:pointer}
-.check input{width:20px;height:20px;margin:2px 0 0;flex:none;accent-color:var(--blue)}
 #detected{font-size:.88rem;color:var(--muted);margin:.4rem 0 0;min-height:1.3em}
-
 /* Category order */
 .cats{list-style:none;margin:0;padding:0;border:1px solid var(--line);border-radius:6px}
 .cats li{display:flex;align-items:center;gap:.5rem;padding:.35rem .5rem}
@@ -77,32 +36,17 @@ select:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px var(--ye
 .cats .rank{color:var(--muted);font-size:.85rem;width:1.5rem;text-align:right;flex:none}
 .cats .name{flex:1;font-weight:600;overflow-wrap:anywhere}
 .cats button{padding:.15rem .5rem;font-size:.85rem}
-
 /* Buttons */
-.btns{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
-button{display:inline-flex;align-items:center;gap:.4rem;border-radius:4px;padding:.5rem .95rem;font-weight:700;cursor:pointer;background:var(--surface);color:var(--blue);border:2px solid var(--blue);line-height:1.2;white-space:nowrap}
-button:hover{background:var(--blue-bg)}
 button:disabled{opacity:.4;cursor:default;background:var(--surface)}
-button.primary{background:var(--green);color:#fff;border-color:var(--green);box-shadow:0 3px 0 #00401E}
-button.primary:hover{filter:brightness(1.07);background:var(--green)}
-button.primary:active{transform:translateY(2px);box-shadow:0 1px 0 #00401E}
-
 /* Result */
 .summary{font-size:clamp(1.3rem,2.6vw,1.85rem);line-height:1.25;font-weight:700;letter-spacing:-.01em;margin:0 0 .3rem;max-width:36ch}
-.summary strong{color:var(--blue);font-weight:800}
-.focuson{margin:0 0 1rem;color:var(--muted);max-width:70ch}
 .chartbar{display:flex;flex-wrap:wrap;gap:.5rem 1rem;align-items:end;margin:0 0 .6rem}
 .chartbar .block{margin:0;min-width:260px}
-.chartwrap{border:1px solid var(--line);border-radius:8px;overflow-x:auto;margin-bottom:.9rem;background:#fff}
-.chartwrap svg{width:100%;min-width:560px;height:auto;display:block}
-.empty{padding:3rem .5rem;text-align:center;color:var(--muted)}
 .empty p{margin:0 auto .9rem;max-width:60ch}
 .tablewrap{overflow-x:auto;margin-top:1.25rem}
 .tablewrap h3{font-size:1.05rem;font-weight:700;margin:0 0 .5rem}
 .tablewrap .hint{margin:.4rem 0 0}
-table{border-collapse:collapse;width:100%;font-size:.94rem}
 th,td{text-align:left;padding:.5rem .65rem;border-bottom:1px solid var(--line)}
-th{border-bottom:2px solid var(--text)}
 td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 td.good{color:var(--green);font-weight:700}
 td.poor{color:var(--warn);font-weight:700}
@@ -116,18 +60,10 @@ td.poor{color:var(--warn);font-weight:700}
 .reading p{max-width:75ch;margin:0 0 .75rem}
 .guide{display:grid;grid-template-columns:auto 1fr;gap:.2rem .8rem;font-size:.9rem;margin:.4rem 0 0;max-width:60ch}
 .guide b{font-variant-numeric:tabular-nums}
-
-/* Notes */
-.notes{padding:0 1.25rem 2rem;color:var(--muted);font-size:.92rem}
-.notes p{max-width:80ch;margin:0 0 .75rem}
-/* Centre the page in the same 1340px column as the FOCUS header */
-.page-head,main,.notes{box-sizing:border-box;max-width:1340px;margin-left:auto;margin-right:auto}
-.notice{background:var(--blue-bg);color:var(--text);border-left:5px solid var(--blue);border-radius:0 4px 4px 0;padding:.7rem .9rem;max-width:80ch}
-@media (prefers-reduced-motion: no-preference){button{transition:background .15s,filter .15s}}
 </style>
 {% include focus-head.html %}
 </head>
-<body>
+<body class="ft-standard">
 
 {% include focus-header.html %}
 

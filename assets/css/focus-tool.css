@@ -1,0 +1,91 @@
+/* © Guy’s and St Thomas’ NHS Foundation Trust 2026. All rights reserved. */
+
+/* Shared base for FOCUS tool pages: colour tokens, page reset, the full-width
+   page gutter, buttons and print. Each tool links this before its own <style>,
+   so anything a tool sets for itself still wins. */
+:root{
+  --blue:#005EB8; --navy:#003087; --bg:#F0F4F5; --surface:#FFFFFF; --text:#212B32; --ink:#212B32;
+  --muted:#4C6272; --line:#D8DDE0; --yellow:#FFB81C; --green:#007F3B; --green-bg:#E3F2E9;
+  --blue-bg:#E6F0FA; --danger:#D5281B; --shadow:0 2px 0 #D8DDE0;
+  --warn:#A65300; --ok:#007F3B; --info:#4C6272;
+  /* Text on a coloured fill (primary button, selected toggle, badge). The
+     fills lighten in dark mode, so the text turns dark to keep 4.5:1. */
+  --on-accent:#FFFFFF;
+  /* Side padding for every page, matching the FOCUS header */
+  --gutter:clamp(1rem,2vw,2.5rem);
+  --font:Figtree, "Frutiger", "Helvetica Neue", Arial, sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --blue:#5AA2EA; --navy:#9CC3EF; --bg:#0E1A24; --surface:#162533; --text:#E8EEF2; --ink:#E8EEF2;
+    --muted:#A3B6C3; --line:#2A3E4F; --green:#4CC17E; --green-bg:#143326; --blue-bg:#15314B;
+    --danger:#FF7468; --shadow:0 2px 0 #0A131B; --warn:#F0A54A; --ok:#4CC17E; --info:#A3B6C3;
+    --on-accent:#0E1A24;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --blue:#5AA2EA; --navy:#9CC3EF; --bg:#0E1A24; --surface:#162533; --text:#E8EEF2; --ink:#E8EEF2;
+  --muted:#A3B6C3; --line:#2A3E4F; --green:#4CC17E; --green-bg:#143326; --blue-bg:#15314B;
+  --danger:#FF7468; --shadow:0 2px 0 #0A131B; --warn:#F0A54A; --ok:#4CC17E; --info:#A3B6C3;
+  --on-accent:#0E1A24;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:1rem;line-height:1.5}
+a{color:var(--blue)}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:2px;border-radius:2px}
+button,input,select,textarea{font:inherit;color:inherit}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+[hidden]{display:none!important}
+
+/* Buttons. Diagram tools use the .btn classes; standard tools (body class
+   ft-standard) style every button. :where() keeps those rules at the same
+   strength as a bare "button" selector, so each tool's own button rules win. */
+.btn,:where(.ft-standard) button{display:inline-flex;align-items:center;gap:.4rem;border-radius:4px;padding:.5rem .95rem;font-weight:700;cursor:pointer;background:var(--surface);color:var(--blue);border:2px solid var(--blue);line-height:1.2;white-space:nowrap}
+.btn{text-decoration:none}
+.btn:hover,:where(.ft-standard) button:hover{background:var(--blue-bg)}
+.btn.primary,:where(.ft-standard) button.primary{background:var(--green);color:var(--on-accent);border-color:var(--green);box-shadow:0 3px 0 #00401E}
+.btn.primary:hover,:where(.ft-standard) button.primary:hover{filter:brightness(1.07);background:var(--green)}
+.btn.primary:active,:where(.ft-standard) button.primary:active{transform:translateY(2px);box-shadow:0 1px 0 #00401E}
+.btn.small{padding:.25rem .6rem;font-size:.85rem;border-width:2px}
+.btn.icon{padding:.15rem .45rem;font-size:.85rem;min-width:2rem;justify-content:center}
+.btn.ghost{border-color:transparent;background:transparent;color:var(--muted)}
+.btn.ghost:hover{color:var(--blue);border-color:var(--blue);background:var(--surface)}
+.btn.danger:hover{color:var(--danger);border-color:var(--danger)}
+@media (prefers-reduced-motion: no-preference){:where(.ft-standard) button{transition:background .15s,filter .15s}}
+
+/* Standard tool layout: data panel on the left, results on the right,
+   stretching the full width of the window */
+:where(.ft-standard) .page-head{padding:1rem var(--gutter)}
+:where(.ft-standard) .page-head h1{margin:0;font-size:clamp(1.4rem,2.6vw,1.8rem);line-height:1.2;font-weight:800;letter-spacing:-.015em}
+:where(.ft-standard) .page-head .meta{color:var(--muted);margin:.15rem 0 0;max-width:70ch}
+:where(.ft-standard) .panel h2{font-size:1.05rem;font-weight:700;margin:0 0 .75rem}
+:where(.ft-standard) .block{margin-bottom:1.1rem}
+:where(.ft-standard) label{display:block;font-weight:600;margin:0 0 .35rem}
+:where(.ft-standard) .hint{color:var(--muted);font-size:.88rem;margin:0 0 .5rem}
+:where(.ft-standard) .btns{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+:where(.ft-standard) .check input{width:20px;height:20px;margin:2px 0 0;flex:none;accent-color:var(--blue)}
+:where(.ft-standard) .focuson{margin:0 0 1rem;color:var(--muted);max-width:70ch}
+:where(.ft-standard) .chartwrap{border:1px solid var(--line);border-radius:8px;overflow-x:auto;margin-bottom:.9rem;background:#fff}
+:where(.ft-standard) .chartwrap svg{width:100%;min-width:560px;height:auto;display:block}
+:where(.ft-standard) .summary strong{color:var(--blue);font-weight:800}
+:where(.ft-standard) .empty{padding:3rem .5rem;text-align:center;color:var(--muted)}
+:where(.ft-standard) .notice{background:var(--blue-bg);color:var(--text);border-left:5px solid var(--blue);border-radius:0 4px 4px 0;padding:.7rem .9rem;max-width:80ch}
+:where(.ft-standard) table{border-collapse:collapse;width:100%;font-size:.94rem}
+:where(.ft-standard) th{border-bottom:2px solid var(--text)}
+:where(.ft-standard) .notes{padding:0 var(--gutter) 2rem;color:var(--muted);font-size:.92rem}
+:where(.ft-standard) .notes p{max-width:80ch;margin:0 0 .75rem}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+
+/* Print the results only: drop the data panel and let the results take the
+   full page width */
+@media print{
+  body{background:#fff}
+  main > section[aria-labelledby="data-h"],.layout > aside{display:none!important}
+  main,.layout{display:block!important}
+}

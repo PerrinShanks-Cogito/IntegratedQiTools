@@ -14,44 +14,25 @@ permalink: /programme_guide/
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ '/assets/css/focus-tool.css' | relative_url }}">
 <style>
 :root{
-  --blue:#005EB8; --navy:#003087; --bg:#F0F4F5; --surface:#FFFFFF; --text:#212B32;
-  --muted:#4C6272; --line:#D8DDE0; --yellow:#FFB81C; --green:#007F3B; --green-bg:#E3F2E9;
-  --blue-bg:#E6F0FA; --danger:#D5281B; --shadow:0 2px 0 #D8DDE0; --warn:#A65300;
   --s-find:#005EB8; --s-observe:#330072; --s-create:#00A499; --s-undertake:#007F3B; --s-sustain:#7C2855;
-  box-sizing:border-box;
-  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --blue:#5AA2EA; --navy:#9CC3EF; --bg:#0E1A24; --surface:#162533; --text:#E8EEF2;
-    --muted:#A3B6C3; --line:#2A3E4F; --green:#4CC17E; --green-bg:#143326; --blue-bg:#15314B;
-    --danger:#FF7468; --shadow:0 2px 0 #0A131B; --warn:#F0A54A;
     --s-find:#5AA2EA; --s-observe:#B79CE0; --s-create:#3CCFC2; --s-undertake:#4CC17E; --s-sustain:#E07BAE;
-    color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --blue:#5AA2EA; --navy:#9CC3EF; --bg:#0E1A24; --surface:#162533; --text:#E8EEF2;
-  --muted:#A3B6C3; --line:#2A3E4F; --green:#4CC17E; --green-bg:#143326; --blue-bg:#15314B;
-  --danger:#FF7468; --shadow:0 2px 0 #0A131B; --warn:#F0A54A;
   --s-find:#5AA2EA; --s-observe:#B79CE0; --s-create:#3CCFC2; --s-undertake:#4CC17E; --s-sustain:#E07BAE;
-  color-scheme:dark;
 }
-*,*::before,*::after{box-sizing:inherit}
-body{margin:0;background:var(--bg);color:var(--text);font-family:Figtree,"Frutiger","Helvetica Neue",Arial,sans-serif;font-size:1rem;line-height:1.5}
-a{color:var(--blue)}
-:focus-visible{outline:3px solid var(--yellow);outline-offset:2px;border-radius:2px}
 button{font:inherit;color:inherit}
-.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-[hidden]{display:none !important}
-.page-head{padding:1rem 1.25rem}
+.page-head{padding:1rem var(--gutter)}
 .page-head h1{margin:0;font-size:clamp(1.4rem,2.6vw,1.8rem);line-height:1.2;font-weight:800;letter-spacing:-.015em}
 .page-head .meta{color:var(--muted);margin:.15rem 0 0;max-width:80ch}
-
 /* Stages */
-.stages{padding:0 1.25rem 1rem}
+.stages{padding:0 var(--gutter) 1rem}
 .stagebar{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.5rem}
 @media (max-width:880px){.stagebar{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}}
 .stagebtn{display:flex;flex-direction:column;justify-content:flex-start;width:100%;height:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-top:6px solid var(--sc);border-radius:8px;box-shadow:var(--shadow);padding:.65rem .8rem;cursor:pointer;color:var(--text)}
@@ -61,26 +42,23 @@ button{font:inherit;color:inherit}
 .stagebtn .fl{color:var(--sc);font-size:1.35em}
 .stagebtn small{display:block;color:var(--muted);font-size:.86rem;line-height:1.35;margin-top:.15rem}
 .codes{display:flex;flex-wrap:wrap;gap:.25rem;margin-top:.45rem}
-.code{display:inline-flex;align-items:center;justify-content:center;min-width:1.7rem;height:1.5rem;padding:0 .3rem;border-radius:4px;background:var(--sc,var(--blue));color:#fff;font-weight:800;font-size:.8rem}
+.code{display:inline-flex;align-items:center;justify-content:center;min-width:1.7rem;height:1.5rem;padding:0 .3rem;border-radius:4px;background:var(--sc,var(--blue));color:var(--on-accent);font-weight:800;font-size:.8rem}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .code{color:#0E1A24}}
 :root[data-theme="dark"] .code{color:#0E1A24}
-
 /* Workspace */
-main{display:grid;grid-template-columns:minmax(300px,400px) minmax(0,1fr);gap:1.25rem;padding:0 1.25rem 1.25rem;align-items:start}
+main{display:grid;grid-template-columns:minmax(300px,400px) minmax(0,1fr);gap:1.25rem;padding:0 var(--gutter) 1.25rem;align-items:start}
 @media (max-width:880px){main{grid-template-columns:1fr}}
 @media (max-width:420px){main,.stages,.alldocs,.notes{padding-left:1rem;padding-right:1rem} .page-head{padding-left:1rem;padding-right:1rem}}
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow);padding:1.1rem;min-width:0}
 .panel h2{font-size:1.05rem;font-weight:700;margin:0 0 .75rem}
 .hint{color:var(--muted);font-size:.9rem;margin:0 0 .6rem}
-
 .btns{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
-.btn{display:inline-flex;align-items:center;gap:.4rem;border-radius:4px;padding:.45rem .85rem;font-weight:700;cursor:pointer;background:var(--surface);color:var(--blue);border:2px solid var(--blue);line-height:1.2;text-decoration:none;font-size:.95rem}
+.btn{display:inline-flex;align-items:center;gap:.4rem;border-radius:4px;padding:.45rem .85rem;font-weight:700;cursor:pointer;background:var(--surface);color:var(--blue);border:2px solid var(--blue);line-height:1.2;text-decoration:none;font-size:.95rem;white-space:normal}
 .btn:hover{background:var(--blue-bg)}
-.btn.primary{background:var(--green);color:#fff;border-color:var(--green);box-shadow:0 3px 0 #00401E}
+.btn.primary{background:var(--green);color:var(--on-accent);border-color:var(--green);box-shadow:0 3px 0 #00401E}
 .btn.primary:hover{filter:brightness(1.07);background:var(--green)}
 .btn svg{width:1.05em;height:1.05em;flex:none}
 .link{border:0;padding:0;background:none;font-weight:600;text-decoration:underline;color:var(--blue);cursor:pointer}
-
 .step{color:var(--muted);font-size:.85rem;font-weight:600;margin:0 0 .2rem;text-transform:uppercase;letter-spacing:.04em}
 .question{font-size:1.25rem;font-weight:800;line-height:1.25;margin:0 0 .35rem}
 .option{display:block;width:100%;text-align:left;border:2px solid var(--line);border-radius:6px;padding:.7rem .85rem;margin:0 0 .55rem;color:var(--text);background:var(--surface);cursor:pointer}
@@ -91,7 +69,6 @@ main{display:grid;grid-template-columns:minmax(300px,400px) minmax(0,1fr);gap:1.
 .route li{padding:.45rem 0;border-bottom:1px solid var(--line);font-size:.93rem}
 .route .q{color:var(--muted);display:block;font-size:.84rem}
 .route .a{font-weight:700}
-
 /* Result */
 .tag{display:inline-block;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--sc,var(--blue))}
 .summary{font-size:clamp(1.3rem,2.4vw,1.7rem);line-height:1.25;font-weight:800;letter-spacing:-.01em;margin:.1rem 0 .4rem}
@@ -120,9 +97,8 @@ h3.sub{font-size:1rem;font-weight:700;margin:1.2rem 0 .4rem}
 .thumbs button{padding:0;border:1px solid var(--line);border-radius:4px;background:#fff;cursor:pointer;overflow:hidden}
 .thumbs button:hover{border-color:var(--blue)}
 .thumbs img{display:block;width:100%;height:auto}
-
 /* All documents */
-.alldocs{padding:0 1.25rem 1.25rem}
+.alldocs{padding:0 var(--gutter) 1.25rem}
 .flow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.75rem}
 @media (max-width:1000px){.flow{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}}
 .flow h3{margin:0 0 .4rem;font-size:.95rem;font-weight:800;color:var(--sc)}
@@ -134,7 +110,6 @@ h3.sub{font-size:1rem;font-weight:700;margin:1.2rem 0 .4rem}
 .flow ul.flowtools{flex-direction:row;flex-wrap:wrap;gap:.35rem}
 .flowtools a{display:inline-block;border:2px solid var(--blue);border-radius:4px;padding:.15rem .5rem;font-weight:700;font-size:.85rem;text-decoration:none}
 .flowtools a:hover{background:var(--blue-bg)}
-
 /* Example viewer */
 dialog.viewer{border:0;border-radius:10px;padding:0;width:min(1200px,96vw);max-height:94vh;overflow:hidden;background:var(--surface);color:var(--text);box-shadow:0 10px 40px rgba(0,0,0,.35)}
 dialog.viewer[open]{display:flex;flex-direction:column}
@@ -169,11 +144,9 @@ table.sheet tr.ws td{background:var(--blue-bg);font-weight:700}
 .gbar{position:absolute;top:.45rem;height:.75rem;left:0;right:0;background:#4472C4}
 .gbar.crit{background:#C00000}
 .note{color:var(--muted);font-size:.85rem;margin:.5rem 0 0}
-
-.notes{padding:0 1.25rem 2rem;color:var(--muted);font-size:.92rem}
+.notes{padding:0 var(--gutter) 2rem;color:var(--muted);font-size:.92rem}
 .notes p{max-width:85ch;margin:0 0 .75rem}
 .notice{background:var(--blue-bg);color:var(--text);border-left:5px solid var(--blue);border-radius:0 4px 4px 0;padding:.7rem .9rem;max-width:85ch}
-.page-head,.stages,main,.alldocs,.notes{box-sizing:border-box;max-width:1340px;margin-left:auto;margin-right:auto}
 @media (prefers-reduced-motion: no-preference){.btn,.option,.stagebtn,.docbtn{transition:background .15s,border-color .15s}}
 </style>
 {% include focus-head.html %}

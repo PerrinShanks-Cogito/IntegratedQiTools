@@ -15,49 +15,41 @@ permalink: /admin_demand_capacity/
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700;800&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ '/assets/css/focus-tool.css' | relative_url }}">
 <style>
 :root{
-  --bg:#F3F5F7; --surface:#FFFFFF; --ink:#17222D; --muted:#5A6875; --rule:#DCE2E7; --field:#FFFFFF;
-  --accent:#005EB8; --accent-ink:#FFFFFF; --accent-soft:#E3EEF9;
-  --req:#5B9BD9; --req-soft:#CFE2F5; --core:#1F6E3B; --adhoc:#8AB833; --carve:#8A96A3;
-  --wl:#BBD8A8; --wl-ink:#2F6A1E; --current:#003087;
-  --r1:#C8372D; --r2:#4E9A2F; --r3:#7A4BB0; --r4:#E07B00;
-  --s1:#DCE8F5; --s2:#DDF0DA; --s3:#ECE1F6; --s4:#FBE5D2;
-  --ok:#2F7A47; --ok-soft:#E3F2E9; --warn:#9A5A00; --warn-soft:#FFF4DB; --bad:#B42318; --bad-soft:#FDECEA;
-  --line:#3B4956; --limit:#6B7885; --grid:#EDF0F3;
-  --font:"Public Sans", "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
-  box-sizing:border-box;
-  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
-  color-scheme:light;
+  --bg:#F3F5F7; --ink:#17222D; --muted:#5A6875; --rule:#DCE2E7; --field:#FFFFFF;
+  --accent:#005EB8; --accent-ink:#FFFFFF; --accent-soft:#E3EEF9; --req:#5B9BD9; --req-soft:#CFE2F5;
+  --core:#1F6E3B; --adhoc:#8AB833; --carve:#8A96A3; --wl:#BBD8A8; --wl-ink:#2F6A1E;
+  --current:#003087; --r1:#C8372D; --r2:#4E9A2F; --r3:#7A4BB0; --r4:#E07B00;
+  --s1:#DCE8F5; --s2:#DDF0DA; --s3:#ECE1F6; --s4:#FBE5D2; --ok:#2F7A47;
+  --ok-soft:#E3F2E9; --warn:#9A5A00; --warn-soft:#FFF4DB; --bad:#B42318; --bad-soft:#FDECEA;
+  --line:#3B4956; --limit:#6B7885; --grid:#EDF0F3; --font:"Public Sans", "Segoe UI", system-ui, -apple-system, Arial, sans-serif; color-scheme:light;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#0F161D; --surface:#17212B; --ink:#E6ECF1; --muted:#9AA8B4; --rule:#2A3744; --field:#121B24;
-    --accent:#4C9BE8; --accent-ink:#06121F; --accent-soft:#1A2E44;
-    --req:#4C8FD0; --req-soft:#1C3550; --core:#5DB37B; --adhoc:#B5D96A; --carve:#8995A1;
-    --wl:#2E4D2A; --wl-ink:#9BD48A; --current:#9CC3EF;
-    --r1:#F0776D; --r2:#7CC95E; --r3:#A884DB; --r4:#F5A03A;
-    --s1:#1A2A3B; --s2:#1B2E22; --s3:#271F36; --s4:#33261A;
-    --ok:#5DB37B; --ok-soft:#143326; --warn:#FFD27A; --warn-soft:#3A2E10; --bad:#F0776D; --bad-soft:#3B1B19;
-    --line:#C3CED8; --limit:#8D9AA6; --grid:#1F2B37; color-scheme:dark;
+    --bg:#0F161D; --surface:#17212B; --ink:#E6ECF1; --muted:#9AA8B4; --rule:#2A3744;
+    --field:#121B24; --accent:#4C9BE8; --accent-ink:#06121F; --accent-soft:#1A2E44; --req:#4C8FD0;
+    --req-soft:#1C3550; --core:#5DB37B; --adhoc:#B5D96A; --carve:#8995A1; --wl:#2E4D2A;
+    --wl-ink:#9BD48A; --current:#9CC3EF; --r1:#F0776D; --r2:#7CC95E; --r3:#A884DB;
+    --r4:#F5A03A; --s1:#1A2A3B; --s2:#1B2E22; --s3:#271F36; --s4:#33261A;
+    --ok:#5DB37B; --ok-soft:#143326; --warn:#FFD27A; --warn-soft:#3A2E10; --bad:#F0776D;
+    --bad-soft:#3B1B19; --line:#C3CED8; --limit:#8D9AA6; --grid:#1F2B37;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#0F161D; --surface:#17212B; --ink:#E6ECF1; --muted:#9AA8B4; --rule:#2A3744; --field:#121B24;
-  --accent:#4C9BE8; --accent-ink:#06121F; --accent-soft:#1A2E44;
-  --req:#4C8FD0; --req-soft:#1C3550; --core:#5DB37B; --adhoc:#B5D96A; --carve:#8995A1;
-  --wl:#2E4D2A; --wl-ink:#9BD48A; --current:#9CC3EF;
-  --r1:#F0776D; --r2:#7CC95E; --r3:#A884DB; --r4:#F5A03A;
-  --s1:#1A2A3B; --s2:#1B2E22; --s3:#271F36; --s4:#33261A;
-  --ok:#5DB37B; --ok-soft:#143326; --warn:#FFD27A; --warn-soft:#3A2E10; --bad:#F0776D; --bad-soft:#3B1B19;
-  --line:#C3CED8; --limit:#8D9AA6; --grid:#1F2B37; color-scheme:dark;
+  --bg:#0F161D; --surface:#17212B; --ink:#E6ECF1; --muted:#9AA8B4; --rule:#2A3744;
+  --field:#121B24; --accent:#4C9BE8; --accent-ink:#06121F; --accent-soft:#1A2E44; --req:#4C8FD0;
+  --req-soft:#1C3550; --core:#5DB37B; --adhoc:#B5D96A; --carve:#8995A1; --wl:#2E4D2A;
+  --wl-ink:#9BD48A; --current:#9CC3EF; --r1:#F0776D; --r2:#7CC95E; --r3:#A884DB;
+  --r4:#F5A03A; --s1:#1A2A3B; --s2:#1B2E22; --s3:#271F36; --s4:#33261A;
+  --ok:#5DB37B; --ok-soft:#143326; --warn:#FFD27A; --warn-soft:#3A2E10; --bad:#F0776D;
+  --bad-soft:#3B1B19; --line:#C3CED8; --limit:#8D9AA6; --grid:#1F2B37;
 }
-*,*::before,*::after{box-sizing:inherit}
 aside *,aside *::before,aside *::after{box-sizing:border-box}
 aside input,aside select,aside textarea{min-width:0}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.5;font-variant-numeric:tabular-nums}
-.wrap{max-width:1340px;margin:0 auto;padding:26px 1.25rem 48px}
+.wrap{padding:26px var(--gutter) 48px}
 .layout{display:grid;grid-template-columns:360px minmax(0,1fr);gap:24px;align-items:start}
 @media (max-width:900px){.layout{grid-template-columns:1fr}}
 .panel{background:var(--surface);border:1px solid var(--rule);border-radius:10px}
