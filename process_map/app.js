@@ -127,7 +127,7 @@ function fmtT(v,unit){
 }
 
 /* ---------- flow ----------
-   Steps run in list order, and each has a path level: 0 is the main path.
+   Steps run in list order, and each has a path level: 0 is the usual path.
    Steps one level deeper straight after a decision are its "no" route, a new
    path; the decision's "yes" carries on along its own path. Any kind of step
    can sit on a path, including another decision with a new path of its own.
@@ -176,7 +176,7 @@ function flow(m){
     if(c.to>=0) edges.push({a:i,b:c.to,kind:c.kind==="seq"?(yes?"yes":"seq"):c.kind,yes:yes});
     else if(c.end) ends.push(i);
   }
-  /* Step labels follow the yes route: 1, 2, 3… along the main path. A decision's new
+  /* Step labels follow the yes route: 1, 2, 3… along the usual path. A decision's new
      path takes its number plus a letter (3a, 3b); a path from a decision on that path
      adds a number (3b1, 3b2), then letters again */
   const labels=[], kids={}; let num=0;
@@ -557,11 +557,11 @@ function stepCard(m,s,i,F){
   /* the last step on a path says where the path goes next */
   let pathRow="";
   if(F.last[i]){
-    const r=F.rejoin(i), pre=r.to>=0&&F.dep[r.to]===0?"Rejoin the main path at ":"Rejoin the path above at ";
+    const r=F.rejoin(i), pre=r.to>=0&&F.dep[r.to]===0?"Rejoin the usual path at ":"Rejoin the path above at ";
     const later=m.steps.map((o,k)=>k>i&&k!==r.to?opt(o,o.id===s.thenTo,"Go to "):"").join("");
     const earlier=m.steps.map((o,k)=>k<i?opt(o,o.id===s.thenTo,"Go back to "):"").join("");
     pathRow='<div class="row1"><label>'+(run?"If yes, at the end of this path":"At the end of this path")+'<select class="field sm th">'+
-      (r.to>=0?'<option value=""'+nameAttr(m.steps[r.to],pre)+'>'+esc(pre+nameOf(m.steps[r.to]))+'</option>':'<option value="">'+(r.end?"End, as the path above does":"Rejoin the main path")+'</option>')+
+      (r.to>=0?'<option value=""'+nameAttr(m.steps[r.to],pre)+'>'+esc(pre+nameOf(m.steps[r.to]))+'</option>':'<option value="">'+(r.end?"End, as the path above does":"Rejoin the usual path")+'</option>')+
       '<option value="end"'+(s.thenTo==="end"?" selected":"")+'>End the path here</option>'+
       (later?'<optgroup label="Go on to a later step">'+later+'</optgroup>':"")+
       (earlier?'<optgroup label="Loop back (rework)">'+earlier+'</optgroup>':"")+'</select></label></div>';
@@ -860,7 +860,7 @@ document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{sho
 
 /* ---------- table dialog ---------- */
 /* Columns: Lane, Step, Type, Value, Time, Issue, If no go to, Bottleneck, Path level
-   (blank or 0 for the main path), At path end (for the last step on a path: a step name or End) */
+   (blank or 0 for the usual path), At path end (for the last step on a path: a step name or End) */
 function toTable(m){
   const byId={}, F=flow(m); m.steps.forEach(s=>byId[s.id]=s);
   const nm=id=>byId[id]?String(byId[id].text||"").replace(/[\t\n]/g," ").trim():"";
