@@ -371,6 +371,26 @@ select:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px var(--ye
   let headerTouched = false;
   let current = null;
   let timer = null;
+  // The chart on screen is drawn at the width it's shown at (like the SPC
+  // chart), so it fills wide screens without the text growing. Exports still
+  // use the standard 960-wide drawing.
+  const BASE_W = 960, MIN_W = 760;
+  let drawW = BASE_W, lastChart = null, shownW = 0;
+  function chartWidth() { return Math.max(MIN_W, Math.round(els.result.clientWidth) - 2); }
+  function drawAt(w, fn) { const was = drawW; drawW = w; try { return fn(); } finally { drawW = was; } }
+  function drawShown(fn) { lastChart = fn; shownW = chartWidth(); return drawAt(shownW, fn); }
+  const svgOf = out => out && (typeof out === 'string' ? out : out.svg);
+  let resizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      const c = document.getElementById('chart');
+      if (!lastChart || !c || !c.querySelector('svg') || chartWidth() === shownW) return;
+      shownW = chartWidth();
+      const svg = svgOf(drawAt(shownW, lastChart));
+      if (svg) c.innerHTML = svg;
+    }, 150);
+  });
 
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const escRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -479,7 +499,7 @@ select:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px var(--ye
   // ---- chart ----
   function renderSVG(d, o) {
     const { items, sc, xs: xSplit, ys: ySplit, p: pr } = d;
-    const W = 960, ML = 78, MR = 24, MT = o.title ? 62 : 22, plotW = W - ML - MR, plotH = 600, MB = 70, H = MT + plotH + MB;
+    const W = drawW, ML = 78, MR = 24, MT = o.title ? 62 : 22, plotW = W - ML - MR, plotH = 600, MB = 70, H = MT + plotH + MB;
     const pad = (sc.hi - sc.lo) * 0.06, lo = sc.lo - pad, hi = sc.hi + pad;
     const X = v => ML + (v - lo) / (hi - lo) * plotW;
     const Y = v => MT + plotH - (v - lo) / (hi - lo) * plotH;
@@ -487,7 +507,7 @@ select:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px var(--ye
     const s = [];
     s.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(o.aria)}" font-family="${FONT}">`);
     s.push(`<rect width="${W}" height="${H}" fill="#ffffff"/>`);
-    if (o.title) s.push(`<text x="${ML}" y="38" font-size="22" font-weight="700" fill="${COLORS.ink}">${esc(trunc(o.title, 70))}</text>`);
+    if (o.title) s.push(`<text x="${ML}" y="38" font-size="22" font-weight="700" fill="${COLORS.ink}">${esc(trunc(o.title, Math.min(70, Math.floor((W - (ML) - 16) / 12.32))))}</text>`);
 
     // quadrant backgrounds and names
     const xs = Math.min(Math.max(X(xSplit), ML), ML + plotW), ys = Math.min(Math.max(Y(ySplit), MT), MT + plotH);
@@ -619,10 +639,10 @@ select:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px var(--ye
     const sm = summarise(d, xLabel, yLabel);
     const plain = sm.head.replace(/<[^>]+>/g, '');
     trackChart({ points: d.items.length });
-    const svg = renderSVG(d, {
+    const svg = drawShown(() => renderSVG(d, {
       title, xLabel, yLabel, showNames: els.showNames.checked,
       aria: (title ? title + '. ' : '') + `2x2 matrix of ${count(d.items.length, p.item)}, ${xLabel} across and ${yLabel} up. ${plain}.`
-    });
+    }));
     current = { d, sm, title, xLabel, yLabel };
 
     const sameScores = new Set(d.items.map(i => i.x + '|' + i.y)).size < d.items.length;
@@ -642,7 +662,7 @@ select:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px var(--ye
     els.result.innerHTML = `
       <p class="summary">${sm.head}.</p>
       ${sm.sub ? `<p class="focuson">${esc(sm.sub)}</p>` : ''}
-      <div class="chartwrap" id="chart">${svg}</div>
+      <div class="chartwrap fit" id="chart">${svg}</div>
       ${sameScores ? `<p class="hint">${cap(p.item[1])} with the same scores are spread out a little so you can see them all.</p>` : ''}
       <div class="reading">${shown.map(quadBlock).join('')}</div>
       <details class="values">
@@ -661,7 +681,15 @@ select:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px var(--ye
   function schedule() { clearTimeout(timer); timer = setTimeout(update, 180); }
 
   // ---- exports ----
-  function svgEl() { return document.querySelector('#chart svg'); }
+  // Exports use the standard drawing, whatever the size on screen
+  function svgEl() {
+    if (!document.querySelector('#chart svg')) return null;
+    const svg = svgOf(drawAt(BASE_W, lastChart));
+    if (!svg) return document.querySelector('#chart svg');
+    const d = document.createElement('div');
+    d.innerHTML = svg;
+    return d.firstElementChild;
+  }
   function fileName() { return slug(current && current.title); }
   let dlPromise = null;
   function getDownloads() {

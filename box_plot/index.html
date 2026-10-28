@@ -147,6 +147,17 @@ td.warn{color:var(--warn);font-weight:600}
   let headerTouched = false;
   let current = null;
   let timer = null;
+  // The chart on screen is drawn at the width it's shown at (like the SPC
+  // chart), so it fills wide screens without the text growing. Exports still
+  // use the standard 960-wide drawing.
+  const MIN_W = 760;
+  let shownW = 0;
+  function chartWidth() { return Math.max(MIN_W, Math.round(els.result.clientWidth) - 2); }
+  let resizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => { if (current && chartWidth() !== shownW) redrawChart(); }, 150);
+  });
 
   // Example: minutes from arrival to being seen in ED, 28 patients sampled each day (made-up data)
   const EXAMPLE = (function () {
@@ -259,7 +270,7 @@ td.warn{color:var(--warn);font-weight:600}
   // ---- drawing ----
   const charW = size => size * 0.56;
   function renderSVG(stats, o) {
-    const W = 960, M = 16, k = stats.length;
+    const W = o.width || 960, M = 16, k = stats.length;
     const legend = [['median', 'Median']];
     if (o.showMean) legend.push(['mean', 'Mean']);
     if (o.tukey && stats.some(s => s.outliers.length)) legend.push(['outlier', 'Outlier']);
@@ -284,7 +295,7 @@ td.warn{color:var(--warn);font-weight:600}
     const s = [];
     s.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.aria)}" font-family="${FONT}">`);
     s.push(`<rect width="${W}" height="${H}" fill="#ffffff"/>`);
-    if (o.title) s.push(`<text x="${M}" y="30" font-size="20" font-weight="700" fill="${COLORS.ink}">${esc(trunc(o.title, 80))}</text>`);
+    if (o.title) s.push(`<text x="${M}" y="30" font-size="20" font-weight="700" fill="${COLORS.ink}">${esc(trunc(o.title, Math.min(80, Math.floor((W - 2 * M) / charW(20)))))}</text>`);
 
     // legend, right-aligned above the plot
     const keyW = t => 28 + charW(12) * t.length + 18;
@@ -443,7 +454,8 @@ td.warn{color:var(--warn);font-weight:600}
     };
     o.aria = (title ? title + '. ' : '') + `Box and whisker plot of ${nVals} values in ${stats.length} group${stats.length === 1 ? '' : 's'}. ` +
       stats.slice(0, 8).map(s => `${s.name}: median ${nf.format(s.med)}, quartiles ${nf.format(s.q1)} to ${nf.format(s.q3)}`).join('; ') + (stats.length > 8 ? '; and more.' : '.');
-    const svg = renderSVG(stats, o);
+    shownW = chartWidth();
+    const svg = renderSVG(stats, { ...o, width: shownW });
     trackChart({ points: nVals });
     current = { stats, o };
 
@@ -469,7 +481,7 @@ td.warn{color:var(--warn);font-weight:600}
         <div class="stat"><b>${nf.format(quantile(all, 0.5))}</b><span>Median${stats.length > 1 ? ' of all values' : ''}</span></div>
         ${tukey ? `<div class="stat"><b>${nOut}</b><span>Outliers</span></div>` : `<div class="stat"><b>${nf.format(all[0])} – ${nf.format(all[all.length - 1])}</b><span>Range</span></div>`}
       </div>
-      <div class="chartwrap" id="chart">${svg}</div>
+      <div class="chartwrap fit" id="chart">${svg}</div>
       <p class="legend-note">Hover over a box to see its figures.</p>
       <div class="reading"><h3>What the chart shows</h3>${readingParts(stats, o).map(x => `<p>${x}</p>`).join('')}</div>
       ${tableHTML()}`;
@@ -481,7 +493,17 @@ td.warn{color:var(--warn);font-weight:600}
   function schedule() { clearTimeout(timer); timer = setTimeout(update, 180); }
 
   // ---- exports ----
-  function svgEl() { return document.querySelector('#chart svg'); }
+  function redrawChart() {
+    shownW = chartWidth();
+    $('chart').innerHTML = renderSVG(current.stats, { ...current.o, width: shownW });
+  }
+  // Exports use the standard 960-wide drawing, whatever the size on screen
+  function svgEl() {
+    if (!current) return null;
+    const d = document.createElement('div');
+    d.innerHTML = renderSVG(current.stats, current.o);
+    return d.firstElementChild;
+  }
   function fileName() { return slug(current && current.o.title); }
   let dlPromise = null;
   function getDownloads() {

@@ -149,6 +149,26 @@ td.poor{color:var(--warn);font-weight:700}
   let chartType = 'agreement';
   let current = null;
   let timer = null;
+  // The chart on screen is drawn at the width it's shown at (like the SPC
+  // chart), so it fills wide screens without the text growing. Exports still
+  // use the standard 960-wide drawing.
+  const BASE_W = 960, MIN_W = 760;
+  let drawW = BASE_W, lastChart = null, shownW = 0;
+  function chartWidth() { return Math.max(MIN_W, Math.round(els.result.clientWidth) - 2); }
+  function drawAt(w, fn) { const was = drawW; drawW = w; try { return fn(); } finally { drawW = was; } }
+  function drawShown(fn) { lastChart = fn; shownW = chartWidth(); return drawAt(shownW, fn); }
+  const svgOf = out => out && (typeof out === 'string' ? out : out.svg);
+  let resizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      const c = document.getElementById('chart');
+      if (!lastChart || !c || !c.querySelector('svg') || chartWidth() === shownW) return;
+      shownW = chartWidth();
+      const svg = svgOf(drawAt(shownW, lastChart));
+      if (svg) c.innerHTML = svg;
+    }, 150);
+  });
 
   // Example: three ward nurses grade 20 pressure ulcer photos twice, against the
   // tissue viability nurse's grading (made-up data)
@@ -338,7 +358,7 @@ td.poor{color:var(--warn);font-weight:700}
   const f1 = v => Math.round(v * 10) / 10;
   function svgOpen(W, H, o) {
     const s = [`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.aria)}" font-family="${FONT}">`, `<rect width="${W}" height="${H}" fill="#ffffff"/>`];
-    if (o.title) s.push(`<text x="16" y="30" font-size="20" font-weight="700" fill="${COLORS.ink}">${esc(trunc(o.title, 80))}</text>`);
+    if (o.title) s.push(`<text x="16" y="30" font-size="20" font-weight="700" fill="${COLORS.ink}">${esc(trunc(o.title, Math.min(80, Math.floor((W - (16) - 16) / 11.2))))}</text>`);
     return s;
   }
   // Percent matched with its confidence interval, for each appraiser: within and versus standard.
@@ -347,7 +367,7 @@ td.poor{color:var(--warn);font-weight:700}
     const panels = [];
     if (res.within) panels.push(['Within appraisers', res.within]);
     if (res.vsStd) panels.push(['Appraiser versus standard', res.vsStd]);
-    const W = 960, ML = 64, MR = 20, gap = 40;
+    const W = drawW, ML = 64, MR = 20, gap = 40;
     const MT = (o.title ? 44 : 8) + 62, plotH = 320;
     const longest = Math.max(...res.vsStd ? res.vsStd.map(r => r.name.length) : [0], ...res.within ? res.within.map(r => r.name.length) : [0]);
     const pw = (W - ML - MR - gap * (panels.length - 1)) / panels.length, band = pw / res.A;
@@ -394,7 +414,7 @@ td.poor{color:var(--warn);font-weight:700}
     const cols = [];
     if (d.hasStd) cols.push({ head: 'Standard', sub: '', get: s => s.std, std: true });
     d.apps.forEach((name, a) => { for (let t = 0; t < d.trials; t++) cols.push({ head: name, sub: d.trials > 1 ? 'Trial ' + (t + 1) : '', get: s => s.r[a][t], a }); });
-    const W = 960, ML = 110, MR = 16, cellH = 24;
+    const W = drawW, ML = 110, MR = 16, cellH = 24;
     const cw = Math.min(110, (W - ML - MR) / cols.length);
     const MT = (o.title ? 44 : 8) + 62;
     const H = MT + Math.max(1, rows.length) * cellH + 30;
@@ -578,7 +598,7 @@ td.poor{color:var(--warn);font-weight:700}
     const top = res.allStd || res.between || res.within[0];
     const what = res.allStd ? 'every rating matched the standard' : res.between ? 'every appraiser agreed' : `${d.apps[0]} agreed with themselves`;
     const o = { title, aria: (title ? title + '. ' : '') + `${CHARTS[chartType]}. ${d.samples.length} cases, ${d.nApp} appraisers, ${d.trials} trials. ${what} on ${pc(top.p)} of cases.` };
-    const svg = chartType === 'agreement' && canAgree ? agreementSVG(o) : gridSVG(o);
+    const svg = drawShown(() => chartType === 'agreement' && canAgree ? agreementSVG(o) : gridSVG(o));
     trackChart({ points: d.samples.length });
 
     const g2 = rating(top.coef);
@@ -597,7 +617,7 @@ td.poor{color:var(--warn);font-weight:700}
         ${res.allStd ? `<div class="stat"><b>${pc(res.allStd.p)}</b><span>All appraisers versus standard</span></div>` : ''}
       </div>
       <div class="chartbar"><div class="block"><label for="chartType">Chart</label><select id="chartType">${Object.keys(CHARTS).filter(c => c !== 'agreement' || canAgree).map(c => `<option value="${c}"${c === chartType ? ' selected' : ''}>${CHARTS[c]}</option>`).join('')}</select></div></div>
-      <div class="chartwrap" id="chart">${svg}</div>
+      <div class="chartwrap fit" id="chart">${svg}</div>
       <p class="legend-note">${chartType === 'agreement' && canAgree ? 'Each dot is the percent of cases an appraiser matched, with a bar for its 95% confidence interval. Hover over a dot to see the figures.' : `Each row is a case and each column an appraiser’s trial. ${d.hasStd ? 'Red cells differ from the standard.' : 'Red cells differ from the most common rating for that case.'}`}</p>
       <div class="reading"><h3>What the study shows</h3>${readingParts().map(x => `<p>${x}</p>`).join('')}</div>
       ${tableHTML()}`;
@@ -609,7 +629,15 @@ td.poor{color:var(--warn);font-weight:700}
   function schedule() { clearTimeout(timer); timer = setTimeout(update, 180); }
 
   // ---- exports ----
-  function svgEl() { return document.querySelector('#chart svg'); }
+  // Exports use the standard drawing, whatever the size on screen
+  function svgEl() {
+    if (!document.querySelector('#chart svg')) return null;
+    const svg = svgOf(drawAt(BASE_W, lastChart));
+    if (!svg) return document.querySelector('#chart svg');
+    const d = document.createElement('div');
+    d.innerHTML = svg;
+    return d.firstElementChild;
+  }
   function fileName() { return slug(els.title.value.trim()); }
   let dlPromise = null;
   function getDownloads() {

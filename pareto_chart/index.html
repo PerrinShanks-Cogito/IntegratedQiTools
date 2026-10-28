@@ -128,6 +128,17 @@ tr.cutrow td{border-bottom:2px dashed var(--muted)}
   let headerTouched = false;
   let current = null;
   let timer = null;
+  // The chart on screen is drawn at the width it's shown at (like the SPC
+  // chart), so it fills wide screens without the text growing. Exports still
+  // use the standard 960-wide drawing.
+  const MIN_W = 760;
+  let shownW = 0;
+  function chartWidth() { return Math.max(MIN_W, Math.round(els.result.clientWidth) - 2); }
+  let resizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => { if (current && chartWidth() !== shownW) redrawChart(); }, 150);
+  });
 
   const EXAMPLE = [
     'Reason\tDelays',
@@ -228,7 +239,7 @@ tr.cutrow td{border-bottom:2px dashed var(--muted)}
   function renderSVG(res, o) {
     const { rows, total } = res;
     const n = rows.length;
-    const W = 960, ML = 76, MR = 76;
+    const W = o.width || 960, ML = 76, MR = 76;
     const plotW = W - ML - MR, band = plotW / n, plotH = 340;
     const labels = rows.map(d => trunc(d.name, 28));
     const maxLen = Math.max(...labels.map(l => l.length));
@@ -258,7 +269,7 @@ tr.cutrow td{border-bottom:2px dashed var(--muted)}
     const s = [];
     s.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(o.aria)}" font-family="${FONT}">`);
     s.push(`<rect width="${W}" height="${H}" fill="#ffffff"/>`);
-    if (o.title) s.push(`<text x="${ML}" y="34" font-size="22" font-weight="700" fill="${COLORS.ink}">${esc(o.title)}</text>`);
+    if (o.title) s.push(`<text x="${ML}" y="34" font-size="22" font-weight="700" fill="${COLORS.ink}">${esc(o.width ? trunc(o.title, Math.floor((W - ML - 16) / 12.4)) : o.title)}</text>`);
 
     // legend
     const ly = MT - 22;
@@ -357,19 +368,21 @@ tr.cutrow td{border-bottom:2px dashed var(--muted)}
     const sentence = `${k} of ${n} categories account for ${pct(reach)}% of the total (${nf.format(res.total)}).`;
 
     trackChart({ points: n });
-    const svg = renderSVG(res, {
+    const opts = {
       title, yLabel, xLabel: p.catLabel, cutoff,
       aligned: els.aligned.checked, showLabels: els.showLabels.checked,
       aria: (title ? title + '. ' : '') + 'Pareto chart. ' + sentence
-    });
+    };
+    shownW = chartWidth();
+    const svg = renderSVG(res, { ...opts, width: shownW });
 
     const focusNames = res.rows.slice(0, k).filter(d => !d.other).map(d => d.name);
-    current = { res, title, yLabel, catLabel: p.catLabel };
+    current = { res, opts, title, yLabel, catLabel: p.catLabel };
 
     els.result.innerHTML = `
       <p class="summary"><strong>${k} of ${n}</strong> categories account for <strong>${pct(reach)}%</strong> of the total (${nf.format(res.total)}).</p>
       ${focusNames.length ? `<p class="focuson">Vital few: ${esc(joinNames(focusNames))}.</p>` : '<p class="focuson"></p>'}
-      <div class="chartwrap" id="chart">${svg}</div>
+      <div class="chartwrap fit" id="chart">${svg}</div>
       <div class="tablewrap">
         <table>
           <thead><tr><th class="num">Rank</th><th>${esc(p.catLabel)}</th><th class="num">${esc(yLabel)}</th><th class="num">% of total</th><th class="num">Cumulative %</th></tr></thead>
@@ -392,7 +405,17 @@ tr.cutrow td{border-bottom:2px dashed var(--muted)}
   function schedule() { clearTimeout(timer); timer = setTimeout(update, 180); }
 
   // ---- exports ----
-  function svgEl() { return document.querySelector('#chart svg'); }
+  function redrawChart() {
+    shownW = chartWidth();
+    $('chart').innerHTML = renderSVG(current.res, { ...current.opts, width: shownW });
+  }
+  // Exports use the standard 960-wide drawing, whatever the size on screen
+  function svgEl() {
+    if (!current) return null;
+    const d = document.createElement('div');
+    d.innerHTML = renderSVG(current.res, current.opts);
+    return d.firstElementChild;
+  }
   function fileName() { return slug(current && current.title); }
   function downloadBlob(blob, name, msg) {
     FocusActions.saveFile(name, blob).then(

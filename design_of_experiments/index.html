@@ -219,6 +219,26 @@ td.yes{color:var(--green);font-weight:700}
   let state = null;
   let current = null;
   let timer = null;
+  // The chart on screen is drawn at the width it's shown at (like the SPC
+  // chart), so it fills wide screens without the text growing. Exports still
+  // use the standard 960-wide drawing.
+  const BASE_W = 960, MIN_W = 760;
+  let drawW = BASE_W, lastChart = null, shownW = 0;
+  function chartWidth() { return Math.max(MIN_W, Math.round(els.result.clientWidth) - 2); }
+  function drawAt(w, fn) { const was = drawW; drawW = w; try { return fn(); } finally { drawW = was; } }
+  function drawShown(fn) { lastChart = fn; shownW = chartWidth(); return drawAt(shownW, fn); }
+  const svgOf = out => out && (typeof out === 'string' ? out : out.svg);
+  let resizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      const c = document.getElementById('chart');
+      if (!lastChart || !c || !c.querySelector('svg') || chartWidth() === shownW) return;
+      shownW = chartWidth();
+      const svg = svgOf(drawAt(shownW, lastChart));
+      if (svg) c.innerHTML = svg;
+    }, 150);
+  });
 
   const blankFactor = i => ({ name: '', type: 'text', low: '', high: '' });
   function fresh() {
@@ -515,7 +535,7 @@ td.yes{color:var(--green);font-weight:700}
   const f1 = v => Math.round(v * 10) / 10;
   function svgOpen(W, H, o) {
     const s = [`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.aria)}" font-family="${FONT}">`, `<rect width="${W}" height="${H}" fill="#ffffff"/>`];
-    if (o.title) s.push(`<text x="16" y="30" font-size="20" font-weight="700" fill="${COLORS.ink}">${esc(trunc(o.title, 80))}</text>`);
+    if (o.title) s.push(`<text x="16" y="30" font-size="20" font-weight="700" fill="${COLORS.ink}">${esc(trunc(o.title, Math.min(80, Math.floor((W - (16) - 16) / 11.2))))}</text>`);
     return s;
   }
   function legend(s, items, right, y) {
@@ -532,7 +552,7 @@ td.yes{color:var(--green);font-weight:700}
   function paretoSVG(o) {
     const { m, rows, alpha } = current;
     const terms = rows.filter(r => r.key).slice().sort((a, b) => Math.abs(b.coef) - Math.abs(a.coef));
-    const W = 960, MR = 64, M = 16;
+    const W = drawW, MR = 64, M = 16;
     const labels = terms.map(r => `${r.key}  ${trunc(termName(r.key), 52)}`);
     const ML = Math.min(440, Math.max(110, 24 + charW(13) * Math.max(...labels.map(l => l.length))));
     const MT = (o.title ? 44 : 8) + 34, barH = 30, gap = 10;
@@ -575,7 +595,7 @@ td.yes{color:var(--green);font-weight:700}
   // ---- main effects plot ----
   function mainSVG(o) {
     const { m } = current, k = state.k;
-    const W = 960, MR = 20, ML = 82, gapX = 26;
+    const W = drawW, MR = 20, ML = 82, gapX = 26;
     const MT = (o.title ? 44 : 8) + 34, plotH = 300, H = MT + plotH + 70;
     const pw = (W - ML - MR - gapX * (k - 1)) / k;
     const means = [];
@@ -616,7 +636,7 @@ td.yes{color:var(--green);font-weight:700}
     const pairs = [];
     for (let i = 0; i < k; i++) for (let j = i + 1; j < k; j++) pairs.push([i, j]);
     const cols = Math.min(3, pairs.length), rowsN = Math.ceil(pairs.length / cols);
-    const W = 960, M = 16, gapX = 70, gapY = 40;
+    const W = drawW, M = 16, gapX = 70, gapY = 40;
     const MT = (o.title ? 44 : 8) + 8, ML = 70, MR = 20;
     const pw = (W - ML - MR - gapX * (cols - 1)) / cols, ph = 230, head = 58, foot = 46;
     const H = MT + rowsN * (head + ph + foot) + (rowsN - 1) * gapY + M;
@@ -825,7 +845,7 @@ td.yes{color:var(--green);font-weight:700}
     const o = { title };
     o.aria = (title ? title + '. ' : '') + `${CHARTS[state.chartType]} for a ${state.k}-factor experiment on ${respName()}. ` +
       (m.testable ? (sigTerms.length ? `Clear effects: ${sigTerms.map(r => termName(r.key)).join('; ')}.` : 'No clear effects.') : 'No p-values: no spare runs to measure noise.');
-    const svg = !terms.length ? null : state.chartType === 'main' ? mainSVG(o) : state.chartType === 'inter' ? interSVG(o) : paretoSVG(o);
+    const svg = drawShown(() => !terms.length ? null : state.chartType === 'main' ? mainSVG(o) : state.chartType === 'inter' ? interSVG(o) : paretoSVG(o));
 
     let headline;
     if (!terms.length) headline = 'The model has no terms';
@@ -851,7 +871,7 @@ td.yes{color:var(--green);font-weight:700}
         <div class="stat"><b>${m.df}</b><span>Spare runs (degrees of freedom)</span></div>
       </div>
       ${svg ? `<div class="chartbar"><div class="block"><label for="chartType">Chart</label><select id="chartType">${Object.keys(CHARTS).map(c => `<option value="${c}"${c === state.chartType ? ' selected' : ''}>${CHARTS[c]}</option>`).join('')}</select></div></div>
-      <div class="chartwrap" id="chart">${svg}</div>
+      <div class="chartwrap fit" id="chart">${svg}</div>
       <p class="legend-note">${legendNote} Hover over the chart to see the figures.</p>` : ''}
       <div class="reading"><h3>What the experiment shows</h3>${readingParts().map(x => `<p>${x}</p>`).join('')}</div>
       ${tableHTML()}
@@ -874,7 +894,15 @@ td.yes{color:var(--green);font-weight:700}
   const hasResults = () => Object.keys(state.y).some(s => String(state.y[s]).trim() !== '');
 
   // ---- exports ----
-  function svgEl() { return document.querySelector('#chart svg'); }
+  // Exports use the standard drawing, whatever the size on screen
+  function svgEl() {
+    if (!document.querySelector('#chart svg')) return null;
+    const svg = svgOf(drawAt(BASE_W, lastChart));
+    if (!svg) return document.querySelector('#chart svg');
+    const d = document.createElement('div');
+    d.innerHTML = svg;
+    return d.firstElementChild;
+  }
   function fileName() { return slug(state.title.trim() || state.response.trim()); }
   let dlPromise = null;
   function getDownloads() {

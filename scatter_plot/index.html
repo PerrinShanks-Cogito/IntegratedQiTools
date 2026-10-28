@@ -138,6 +138,26 @@ details.values .tablewrap{margin-top:.6rem}
   let headerTouched = false;
   let current = null;
   let timer = null;
+  // The chart on screen is drawn at the width it's shown at (like the SPC
+  // chart), so it fills wide screens without the text growing. Exports still
+  // use the standard 960-wide drawing.
+  const BASE_W = 960, MIN_W = 760;
+  let drawW = BASE_W, lastChart = null, shownW = 0;
+  function chartWidth() { return Math.max(MIN_W, Math.round(els.result.clientWidth) - 2); }
+  function drawAt(w, fn) { const was = drawW; drawW = w; try { return fn(); } finally { drawW = was; } }
+  function drawShown(fn) { lastChart = fn; shownW = chartWidth(); return drawAt(shownW, fn); }
+  const svgOf = out => out && (typeof out === 'string' ? out : out.svg);
+  let resizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      const c = document.getElementById('chart');
+      if (!lastChart || !c || !c.querySelector('svg') || chartWidth() === shownW) return;
+      shownW = chartWidth();
+      const svg = svgOf(drawAt(shownW, lastChart));
+      if (svg) c.innerHTML = svg;
+    }, 150);
+  });
 
   // Example: daily ward occupancy and time to finish the morning medication round (one unusual day)
   const EX_X = [22, 25, 19, 28, 30, 24, 21, 27, 31, 26, 23, 29, 20, 25, 28, 32, 24, 22, 30, 27, 26, 21, 29, 23];
@@ -266,7 +286,7 @@ details.values .tablewrap{margin-top:.6rem}
     return [lo, hi];
   }
   function renderSVG(p, m, o) {
-    const W = 960, ML = 80, MR = 30, plotH = 440;
+    const W = drawW, ML = 80, MR = 30, plotH = 440;
     const useG = o.byGroup && m.groups.length > 1;
     const legend = useG ? m.groups.map((g, i) => ({ c: GROUP[i % GROUP.length], t: trunc(g, 26), k: 'dot' })) : [{ c: COLORS.point, t: 'One pair of values', k: 'dot' }];
     if (o.showTrend && m.all.ok) legend.push({ c: useG ? COLORS.muted : COLORS.trend, t: useG ? 'Trend line (one per group)' : 'Trend line', k: 'line' });
@@ -284,7 +304,7 @@ details.values .tablewrap{margin-top:.6rem}
     const s = [];
     s.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(o.aria)}" font-family="${FONT}">`);
     s.push(`<rect width="${W}" height="${H}" fill="#ffffff"/>`);
-    if (o.title) s.push(`<text x="${ML}" y="34" font-size="22" font-weight="700" fill="${COLORS.ink}">${esc(trunc(o.title, 70))}</text>`);
+    if (o.title) s.push(`<text x="${ML}" y="34" font-size="22" font-weight="700" fill="${COLORS.ink}">${esc(trunc(o.title, Math.min(70, Math.floor((W - (ML) - 16) / 12.32))))}</text>`);
     // legend
     const ly = MT - 22; let lx = ML;
     legend.forEach(l => {
@@ -396,17 +416,17 @@ details.values .tablewrap{margin-top:.6rem}
     const sub = `r = ${f2(st.r)} across ${st.n} pairs${k.none ? (st.p >= 0.05 ? ', which could easily be chance' : '') : `. ${cap(yLabel.toLowerCase())} tends to ${st.r > 0 ? 'rise' : 'fall'} as ${xLabel.toLowerCase()} rises`}.`;
 
     trackChart({ points: p.rows.length });
-    const svg = renderSVG(p, m, {
+    const svg = drawShown(() => renderSVG(p, m, {
       title, xLabel, yLabel, showTrend: els.showTrend.checked, byGroup: els.byGroup.checked && p.hasGroup,
       flagOdd: els.flagOdd.checked, zero: els.zero.checked,
       aria: (title ? title + '. ' : '') + `Scatter plot of ${yLabel} against ${xLabel}. ${plain}, r = ${f2(st.r)}, ${st.n} pairs.`
-    });
+    }));
     current = { p, m, title, xLabel, yLabel };
 
     els.result.innerHTML = `
       <p class="summary">${headline}</p>
       <p class="focuson">${esc(sub)}</p>
-      <div class="chartwrap" id="chart">${svg}</div>
+      <div class="chartwrap fit" id="chart">${svg}</div>
       ${readingHTML(p, m, xLabel, yLabel)}
       <details class="values"><summary>Show the data and trend values</summary>
       <div class="tablewrap">
@@ -431,7 +451,15 @@ details.values .tablewrap{margin-top:.6rem}
   function schedule() { clearTimeout(timer); timer = setTimeout(update, 180); }
 
   // ---- exports ----
-  function svgEl() { return document.querySelector('#chart svg'); }
+  // Exports use the standard drawing, whatever the size on screen
+  function svgEl() {
+    if (!document.querySelector('#chart svg')) return null;
+    const svg = svgOf(drawAt(BASE_W, lastChart));
+    if (!svg) return document.querySelector('#chart svg');
+    const d = document.createElement('div');
+    d.innerHTML = svg;
+    return d.firstElementChild;
+  }
   function fileName() { return slug(current && current.title); }
   let dlPromise = null;
   function getDownloads() {

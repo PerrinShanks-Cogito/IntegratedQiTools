@@ -165,6 +165,26 @@ td.poor{color:var(--danger);font-weight:700}
   let chartType = 'components';
   let current = null;
   let timer = null;
+  // The chart on screen is drawn at the width it's shown at (like the SPC
+  // chart), so it fills wide screens without the text growing. Exports still
+  // use the standard 960-wide drawing.
+  const BASE_W = 960, MIN_W = 760;
+  let drawW = BASE_W, lastChart = null, shownW = 0;
+  function chartWidth() { return Math.max(MIN_W, Math.round(els.result.clientWidth) - 2); }
+  function drawAt(w, fn) { const was = drawW; drawW = w; try { return fn(); } finally { drawW = was; } }
+  function drawShown(fn) { lastChart = fn; shownW = chartWidth(); return drawAt(shownW, fn); }
+  const svgOf = out => out && (typeof out === 'string' ? out : out.svg);
+  let resizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      const c = document.getElementById('chart');
+      if (!lastChart || !c || !c.querySelector('svg') || chartWidth() === shownW) return;
+      shownW = chartWidth();
+      const svg = svgOf(drawAt(shownW, lastChart));
+      if (svg) c.innerHTML = svg;
+    }, 150);
+  });
 
   // Example: three nurses each take two systolic blood pressure readings from 10
   // volunteers, in a random order (made-up data)
@@ -380,7 +400,7 @@ td.poor{color:var(--danger);font-weight:700}
   }
   function svgOpen(W, H, o) {
     const s = [`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.aria)}" font-family="${FONT}">`, `<rect width="${W}" height="${H}" fill="#ffffff"/>`];
-    if (o.title) s.push(`<text x="16" y="30" font-size="20" font-weight="700" fill="${COLORS.ink}">${esc(trunc(o.title, 80))}</text>`);
+    if (o.title) s.push(`<text x="16" y="30" font-size="20" font-weight="700" fill="${COLORS.ink}">${esc(trunc(o.title, Math.min(80, Math.floor((W - (16) - 16) / 11.2))))}</text>`);
     return s;
   }
   function legend(s, items, right, y) {
@@ -405,7 +425,7 @@ td.poor{color:var(--danger);font-weight:700}
     const series = [['contrib', '% Contribution'], ['psv', '% Study variation']];
     if (o.tol) series.push(['ptol', '% Tolerance']);
     if (o.histSd > 0) series.push(['pproc', '% Process']);
-    const W = 960, ML = 64, MR = 20, MT = (o.title ? 44 : 8) + 40, plotH = 340, H = MT + plotH + 48;
+    const W = drawW, ML = 64, MR = 20, MT = (o.title ? 44 : 8) + 40, plotH = 340, H = MT + plotH + 48;
     const vmax = Math.max(1, ...keep.flatMap(r => series.map(([k]) => r[k]).filter(isFinite)));
     const ax = axis(0, vmax, 5);
     const y = v => MT + plotH - v / ax.max * plotH;
@@ -432,7 +452,7 @@ td.poor{color:var(--danger);font-weight:700}
   // One panel per appraiser, points for each part, with centre line and limits.
   function panelsSVG(o, kind) {
     const { st, res } = current, A = st.apps.length, P = st.parts.length;
-    const W = 960, ML = 70, MR = 16, gap = 14, MT = (o.title ? 44 : 8) + 54, plotH = 300;
+    const W = drawW, ML = 70, MR = 16, gap = 14, MT = (o.title ? 44 : 8) + 54, plotH = 300;
     const longest = Math.max(...st.parts.map(p => String(p).length));
     const pw = (W - ML - MR - gap * (A - 1)) / A, step = pw / P;
     const rotate = charW(11) * Math.min(longest, 12) > step - 2;
@@ -478,7 +498,7 @@ td.poor{color:var(--danger);font-weight:700}
     const groups = by === 'part'
       ? st.parts.map((p, i) => ({ name: String(p), vals: st.cells[i].flat() }))
       : st.apps.map((a, j) => ({ name: a, vals: st.cells.map(row => row[j]).flat() }));
-    const W = 960, ML = 70, MR = 20, MT = (o.title ? 44 : 8) + 40, plotH = 340;
+    const W = drawW, ML = 70, MR = 20, MT = (o.title ? 44 : 8) + 40, plotH = 340;
     const band = (W - ML - MR) / groups.length;
     const longest = Math.max(...groups.map(g => g.name.length));
     const rotate = charW(12) * Math.min(longest, 18) > band - 4;
@@ -507,7 +527,7 @@ td.poor{color:var(--danger);font-weight:700}
   }
   function interSVG(o) {
     const { st } = current, P = st.parts.length;
-    const W = 960, ML = 70, MR = 20, MT = (o.title ? 44 : 8) + 40, plotH = 340, H = MT + plotH + 56;
+    const W = drawW, ML = 70, MR = 20, MT = (o.title ? 44 : 8) + 40, plotH = 340, H = MT + plotH + 56;
     const lines = st.apps.map((a, j) => st.cells.map(row => avg(row[j])));
     const ax = axis(Math.min(...lines.flat()), Math.max(...lines.flat()), 5);
     const y = v => MT + plotH - (v - ax.min) / (ax.max - ax.min) * plotH;
@@ -530,7 +550,7 @@ td.poor{color:var(--danger);font-weight:700}
   function runSVG(o) {
     const { st, res } = current, P = st.parts.length;
     const cols = Math.min(5, P), rowsN = Math.ceil(P / cols);
-    const W = 960, ML = 70, MR = 16, gap = 10, MT = (o.title ? 44 : 8) + 40, ph = 150, gapY = 30;
+    const W = drawW, ML = 70, MR = 16, gap = 10, MT = (o.title ? 44 : 8) + 40, ph = 150, gapY = 30;
     const pw = (W - ML - MR - gap * (cols - 1)) / cols, H = MT + rowsN * (ph + gapY) + 20;
     const all = st.cells.flat().flat();
     const ax = axis(Math.min(...all), Math.max(...all), 4);
@@ -681,7 +701,7 @@ td.poor{color:var(--danger);font-weight:700}
     if (!CHARTS[chartType]) chartType = 'components';
     const main = o.histSd > 0 ? get('grr').pproc : get('grr').psv, g = grade(main);
     o.aria = (o.title ? o.title + '. ' : '') + `${CHARTS[chartType]}. Gauge R&R is ${pc(main)} of ${o.histSd > 0 ? 'process' : 'study'} variation, ${g.text.toLowerCase()}. ${ndc} distinct categories.`;
-    const svg = chartType === 'rchart' || chartType === 'xbar' ? panelsSVG(o, chartType) : chartType === 'bypart' ? dotsSVG(o, 'part') : chartType === 'byapp' ? dotsSVG(o, 'app') : chartType === 'inter' ? interSVG(o) : chartType === 'run' ? runSVG(o) : componentsSVG(o);
+    const svg = drawShown(() => chartType === 'rchart' || chartType === 'xbar' ? panelsSVG(o, chartType) : chartType === 'bypart' ? dotsSVG(o, 'part') : chartType === 'byapp' ? dotsSVG(o, 'app') : chartType === 'inter' ? interSVG(o) : chartType === 'run' ? runSVG(o) : componentsSVG(o));
     trackChart({ points: d.obs.length });
     const legendNote = {
       components: 'Each group of bars shows a source of variation. The dashed lines mark the 10% and 30% guidelines; the measurement bars (Gauge R&R, repeatability and reproducibility) should be short and the part-to-part bars tall.',
@@ -704,7 +724,7 @@ td.poor{color:var(--danger);font-weight:700}
         <div class="stat"><b class="${ndc >= 5 ? 'good' : 'poor'}">${isFinite(ndc) ? ndc : '–'}</b><span>Distinct categories (5 or more)</span></div>
       </div>
       <div class="chartbar"><div class="block"><label for="chartType">Chart</label><select id="chartType">${Object.keys(CHARTS).map(c => `<option value="${c}"${c === chartType ? ' selected' : ''}>${CHARTS[c]}</option>`).join('')}</select></div></div>
-      <div class="chartwrap" id="chart">${svg}</div>
+      <div class="chartwrap fit" id="chart">${svg}</div>
       <p class="legend-note">${legendNote} Hover over the chart to see the figures.</p>
       <div class="reading"><h3>What the study shows</h3>${readingParts().map(x => `<p>${x}</p>`).join('')}</div>
       ${tableHTML()}`;
@@ -716,7 +736,15 @@ td.poor{color:var(--danger);font-weight:700}
   function schedule() { clearTimeout(timer); timer = setTimeout(update, 180); }
 
   // ---- exports ----
-  function svgEl() { return document.querySelector('#chart svg'); }
+  // Exports use the standard drawing, whatever the size on screen
+  function svgEl() {
+    if (!document.querySelector('#chart svg')) return null;
+    const svg = svgOf(drawAt(BASE_W, lastChart));
+    if (!svg) return document.querySelector('#chart svg');
+    const d = document.createElement('div');
+    d.innerHTML = svg;
+    return d.firstElementChild;
+  }
   function fileName() { return slug(current && current.o.title); }
   let dlPromise = null;
   function getDownloads() {
