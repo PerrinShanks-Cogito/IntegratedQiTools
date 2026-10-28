@@ -93,7 +93,7 @@ label.f{display:block;font-weight:600;margin:0 0 .35rem}
 .stage.full{position:fixed;inset:0;height:auto;align-self:stretch;justify-self:stretch;border:0;border-radius:0;z-index:1500}
 body.ft-full{overflow:hidden}
 .stage:fullscreen .fx-wrap,.stage.full .fx-wrap{display:none}
-.stage:fullscreen .canvas-wrap,.stage.full .canvas-wrap{text-align:center}
+.canvas-wrap{text-align:center}
 dialog{border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--text);padding:0;width:min(680px,94vw);max-height:90vh}
 dialog::backdrop{background:rgba(0,20,40,.5)}
 .dlg{padding:1.25rem 1.5rem;display:flex;flex-direction:column;gap:.7rem;max-height:88vh}
@@ -186,7 +186,7 @@ dialog::backdrop{background:rgba(0,20,40,.5)}
       <p>A cause and effect diagram helps a team explore and display the many causes that contribute to an effect or outcome. It shows how the causes relate to the effect and to each other, which helps you find the changes worth testing.</p>
       <p>It is also called an Ishikawa diagram, after its creator, or a fishbone diagram, because it looks like the bones of a fish.</p>
       <h3>Moving around the diagram</h3>
-      <p>The diagram has its own window, which stays in view as you scroll down the page. Drag the diagram to move it around in its window. A click without a drag still opens a box for editing. To move around without opening boxes, turn on <b>Move</b> or hold Space. Once you've clicked the diagram, the arrow keys move it too (hold Shift to move further). Use <b>−</b>, <b>+</b> and <b>Fit to width</b> to zoom, and <b>Full screen</b> to give the diagram the whole screen, as big as it will fit (Esc leaves it).</p>
+      <p>The diagram has its own window, which stays in view as you scroll down the page. Drag the diagram to move it around in its window. A click without a drag still opens a box for editing. To move around without opening boxes, turn on <b>Move</b> or hold Space. Once you've clicked the diagram, the arrow keys move it too (hold Shift to move further). Use <b>−</b>, <b>+</b> and <b>Fit to window</b> to zoom, and <b>Full screen</b> to give the diagram the whole screen, as big as it will fit (Esc leaves it).</p>
       <h3>How to build one</h3>
       <ol>
         <li><b>Write the effect</b> you want to influence. The tool puts it in a box on the right-hand side.</li>
@@ -212,7 +212,7 @@ dialog::backdrop{background:rgba(0,20,40,.5)}
       <button class="btn icon" id="zoomOut" type="button" aria-label="Zoom out">−</button>
       <span class="zoom-label" id="zoomLabel">100%</span>
       <button class="btn icon" id="zoomIn" type="button" aria-label="Zoom in">+</button>
-      <button class="btn small" id="zoomFit" type="button">Fit to width</button>
+      <button class="btn small" id="zoomFit" type="button">Fit to window</button>
       <button class="btn small" id="panMode" type="button" aria-pressed="false" title="Hand tool: drag the diagram to move it in its window without selecting boxes. You can also hold Space."><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 11V6a2 2 0 0 0-4 0v5M14 10V4a2 2 0 0 0-4 0v6M10 10.5V6a2 2 0 0 0-4 0v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>Move</button>
       <button class="btn small" id="fullScreen" type="button" aria-pressed="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M16 21h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg><span>Full screen</span></button>
       <span class="spacer"></span>
