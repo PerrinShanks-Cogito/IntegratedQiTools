@@ -179,6 +179,26 @@ fieldset.opts legend{font-weight:600;margin:0 0 .35rem;padding:0}
   let headerTouched = false;
   let current = null;
   let timer = null;
+  // The chart on screen is drawn at the width it's shown at (like the SPC
+  // chart), so it fills wide screens without the text growing. Exports still
+  // use the standard 960-wide drawing.
+  const BASE_W = 960, MIN_W = 760;
+  let drawW = BASE_W, lastChart = null, shownW = 0;
+  function chartWidth() { return Math.max(MIN_W, Math.round(els.result.clientWidth) - 2); }
+  function drawAt(w, fn) { const was = drawW; drawW = w; try { return fn(); } finally { drawW = was; } }
+  function drawShown(fn) { lastChart = fn; shownW = chartWidth(); return drawAt(shownW, fn); }
+  const svgOf = out => out && (typeof out === 'string' ? out : out.svg);
+  let resizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      const c = document.getElementById('chart');
+      if (!lastChart || !c || !c.querySelector('svg') || chartWidth() === shownW) return;
+      shownW = chartWidth();
+      const svg = svgOf(drawAt(shownW, lastChart));
+      if (svg) c.innerHTML = svg;
+    }, 150);
+  });
 
   const EXAMPLE = [
     'Ward\t2023/24\t2024/25',
@@ -259,7 +279,7 @@ fieldset.opts legend{font-weight:600;margin:0 0 .35rem;padding:0}
     const { cats, series } = d, n = cats.length, k = series.length;
     const multi = k > 1, layout = multi ? o.layout : 'group';
     const stacked = layout !== 'group';
-    const W = 960, horiz = o.orient === 'h';
+    const W = drawW, horiz = o.orient === 'h';
     const labels = cats.map(c => trunc(c.name, horiz ? 34 : 28));
     const maxLen = Math.max(...labels.map(l => l.length)), charW = 7;
     const legend = multi ? series.map((s, i) => ({ c: SERIES[i % SERIES.length], t: trunc(s, 24) })) : [];
@@ -299,7 +319,7 @@ fieldset.opts legend{font-weight:600;margin:0 0 .35rem;padding:0}
     const s = [];
     s.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(o.aria)}" font-family="${FONT}">`);
     s.push(`<rect width="${W}" height="${H}" fill="#ffffff"/>`);
-    if (o.title) s.push(`<text x="${horiz ? 24 : ML}" y="34" font-size="22" font-weight="700" fill="${COLORS.ink}">${esc(trunc(o.title, 70))}</text>`);
+    if (o.title) s.push(`<text x="${horiz ? 24 : ML}" y="34" font-size="22" font-weight="700" fill="${COLORS.ink}">${esc(trunc(o.title, Math.min(70, Math.floor((W - (horiz ? 24 : ML) - 16) / 12.32))))}</text>`);
     // legend
     let lx = horiz ? 24 : ML; const ly = MT - 22;
     legend.forEach(l => {
@@ -447,11 +467,11 @@ fieldset.opts legend{font-weight:600;margin:0 0 .35rem;padding:0}
     const sm = summarise(d, layout);
     const plain = sm.head.replace(/<[^>]+>/g, '');
     trackChart({ points: d.cats.length * d.series.length });
-    const svg = renderSVG(d, {
+    const svg = drawShown(() => renderSVG(d, {
       title, xLabel, yLabel, orient: radio('orient'), layout,
       showLabels: els.showLabels.checked, showAvg: els.showAvg.checked,
       aria: (title ? title + '. ' : '') + `Bar chart of ${d.cats.length} categories. ${plain}.`
-    });
+    }));
     current = { d, title, xLabel, yLabel: els.yLabel.value.trim() || d.valHead || 'Value', grand: sm.grand };
 
     const multi = d.series.length > 1;
@@ -461,7 +481,7 @@ fieldset.opts legend{font-weight:600;margin:0 0 .35rem;padding:0}
     els.result.innerHTML = `
       <p class="summary">${sm.head}.</p>
       <p class="focuson">${esc(sm.sub)}</p>
-      <div class="chartwrap" id="chart">${svg}</div>
+      <div class="chartwrap fit" id="chart">${svg}</div>
       ${timeWarn}
       <div class="tablewrap">
         <table>
@@ -483,7 +503,15 @@ fieldset.opts legend{font-weight:600;margin:0 0 .35rem;padding:0}
   function schedule() { clearTimeout(timer); timer = setTimeout(update, 180); }
 
   // ---- exports ----
-  function svgEl() { return document.querySelector('#chart svg'); }
+  // Exports use the standard drawing, whatever the size on screen
+  function svgEl() {
+    if (!document.querySelector('#chart svg')) return null;
+    const svg = svgOf(drawAt(BASE_W, lastChart));
+    if (!svg) return document.querySelector('#chart svg');
+    const d = document.createElement('div');
+    d.innerHTML = svg;
+    return d.firstElementChild;
+  }
   function fileName() { return slug(current && current.title); }
   let dlPromise = null;
   function getDownloads() {

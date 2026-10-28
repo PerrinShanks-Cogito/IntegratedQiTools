@@ -150,7 +150,7 @@ td.warn{color:var(--warn);font-weight:600}
   // The chart on screen is drawn at the width it's shown at (like the SPC
   // chart), so it fills wide screens without the text growing. Exports still
   // use the standard 960-wide drawing.
-  const MIN_W = 640;
+  const MIN_W = 760;
   let shownW = 0;
   function chartWidth() { return Math.max(MIN_W, Math.round(els.result.clientWidth) - 2); }
   let resizeTimer = null;

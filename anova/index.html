@@ -161,6 +161,26 @@ td.yes{color:var(--green);font-weight:700}
   let headerTouched = false;
   let current = null;
   let timer = null;
+  // The chart on screen is drawn at the width it's shown at (like the SPC
+  // chart), so it fills wide screens without the text growing. Exports still
+  // use the standard 960-wide drawing.
+  const BASE_W = 960, MIN_W = 760;
+  let drawW = BASE_W, lastChart = null, shownW = 0;
+  function chartWidth() { return Math.max(MIN_W, Math.round(els.result.clientWidth) - 2); }
+  function drawAt(w, fn) { const was = drawW; drawW = w; try { return fn(); } finally { drawW = was; } }
+  function drawShown(fn) { lastChart = fn; shownW = chartWidth(); return drawAt(shownW, fn); }
+  const svgOf = out => out && (typeof out === 'string' ? out : out.svg);
+  let resizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      const c = document.getElementById('chart');
+      if (!lastChart || !c || !c.querySelector('svg') || chartWidth() === shownW) return;
+      shownW = chartWidth();
+      const svg = svgOf(drawAt(shownW, lastChart));
+      if (svg) c.innerHTML = svg;
+    }, 150);
+  });
 
   // Example: hours from decision to discharge to leaving the ward, 20 patients on each of four wards (made-up data)
   const EXAMPLE = (function () {
@@ -308,7 +328,7 @@ td.yes{color:var(--green);font-weight:700}
   // ---- drawing: each group's values, mean and confidence interval ----
   const charW = size => size * 0.56;
   function renderSVG(stats, o) {
-    const W = 960, M = 16, k = stats.length;
+    const W = drawW, M = 16, k = stats.length;
     const legend = [['mean', 'Mean'], ['ci', pct(o.alpha) + ' confidence interval'], ['grand', 'Overall mean']];
     if (o.showPoints) legend.push(['point', 'Each value']);
     const MT = (o.title ? 44 : 8) + 30;
@@ -334,7 +354,7 @@ td.yes{color:var(--green);font-weight:700}
     const s = [];
     s.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.aria)}" font-family="${FONT}">`);
     s.push(`<rect width="${W}" height="${H}" fill="#ffffff"/>`);
-    if (o.title) s.push(`<text x="${M}" y="30" font-size="20" font-weight="700" fill="${COLORS.ink}">${esc(trunc(o.title, 80))}</text>`);
+    if (o.title) s.push(`<text x="${M}" y="30" font-size="20" font-weight="700" fill="${COLORS.ink}">${esc(trunc(o.title, Math.min(80, Math.floor((W - (M) - 16) / 11.2))))}</text>`);
 
     // legend, right-aligned above the plot
     const keyW = t => 28 + charW(12) * t.length + 18;
@@ -553,7 +573,7 @@ td.yes{color:var(--green);font-weight:700}
       stats.slice(0, 8).map(s => `${s.name}: mean ${nf.format(s.mean)}, ${nf.format(s.ciLo)} to ${nf.format(s.ciHi)}`).join('; ') + (stats.length > 8 ? '; and more.' : '.') +
       ` ${sig ? 'The means differ' : 'No clear difference between the means'}, ${pIs(res.p)}.`;
     current = { stats, o, res, cls, wel, spread, pairs };
-    const svg = renderSVG(stats, o);
+    const svg = drawShown(() => renderSVG(stats, o));
     trackChart({ points: nVals });
 
     const headline = sig ? 'The group means <strong>differ</strong>' : 'No clear difference between the group means';
@@ -567,7 +587,7 @@ td.yes{color:var(--green);font-weight:700}
         <div class="stat"><b>${Math.round(cls.eta2 * 100)}%</b><span>Variation explained by group</span></div>
         <div class="stat"><b>${stats.length}</b><span>Groups, ${nVals} values</span></div>
       </div>
-      <div class="chartwrap" id="chart">${svg}</div>
+      <div class="chartwrap fit" id="chart">${svg}</div>
       <p class="legend-note">Each dot in colour is a group’s mean, with a bar showing its ${pct(alpha)} confidence interval. Hover over a group to see its figures.</p>
       <div class="reading"><h3>What the test shows</h3>${readingParts().map(x => `<p>${x}</p>`).join('')}</div>
       ${tableHTML()}`;
@@ -579,7 +599,15 @@ td.yes{color:var(--green);font-weight:700}
   function schedule() { clearTimeout(timer); timer = setTimeout(update, 180); }
 
   // ---- exports ----
-  function svgEl() { return document.querySelector('#chart svg'); }
+  // Exports use the standard drawing, whatever the size on screen
+  function svgEl() {
+    if (!document.querySelector('#chart svg')) return null;
+    const svg = svgOf(drawAt(BASE_W, lastChart));
+    if (!svg) return document.querySelector('#chart svg');
+    const d = document.createElement('div');
+    d.innerHTML = svg;
+    return d.firstElementChild;
+  }
   function fileName() { return slug(current && current.o.title); }
   let dlPromise = null;
   function getDownloads() {

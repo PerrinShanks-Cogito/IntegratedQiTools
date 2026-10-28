@@ -190,6 +190,28 @@ input[aria-invalid=true]{border-color:var(--danger)}
 
   let current = null;
   let timer = null;
+  // The chart on screen is drawn at the width it's shown at (like the SPC
+  // chart), so it fills wide screens without the text growing. Exports still
+  // use the standard 760-wide drawing.
+  const BASE_W = 760, MIN_W = 760;
+  let drawW = BASE_W, lastChart = null, shownW = 0;
+  function chartWidth() { return Math.max(MIN_W, Math.round(els.result.clientWidth) - 2); }
+  function drawAt(w, fn) { const was = drawW; drawW = w; try { return fn(); } finally { drawW = was; } }
+  function drawShown(fn) { lastChart = fn; shownW = chartWidth(); return drawAt(shownW, fn); }
+  // Shorten a title too long for the chart width, rather than let it run off the edge
+  const fitText = (t, n) => t.length > n ? t.slice(0, Math.max(1, Math.floor(n) - 1)) + '…' : t;
+  const svgOf = out => out && (typeof out === 'string' ? out : out.svg);
+  let resizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      const c = document.getElementById('chart');
+      if (!lastChart || !c || !c.querySelector('svg') || chartWidth() === shownW) return;
+      shownW = chartWidth();
+      const svg = svgOf(drawAt(shownW, lastChart));
+      if (svg) c.innerHTML = svg;
+    }, 150);
+  });
 
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const slug = s => (s || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'power-and-sample-size';
@@ -452,11 +474,11 @@ input[aria-invalid=true]{border-color:var(--danger)}
   }
   function chartSVG(r) {
     const o = r.o, c = curveData(r);
-    const W = 760, H = 420, m = { l: 64, r: 24, t: o.title ? 52 : 24, b: 58 };
+    const W = drawW, H = 420, m = { l: 64, r: 24, t: o.title ? 52 : 24, b: 58 };
     const pw = W - m.l - m.r, ph = H - m.t - m.b;
     const X = v => m.l + (v - c.x0) / (c.x1 - c.x0) * pw, Y = v => m.t + (1 - v) * ph;
     let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.aria)}" font-family="${FONT}"><rect width="${W}" height="${H}" fill="#fff"/>`;
-    if (o.title) s += `<text x="${W / 2}" y="30" text-anchor="middle" font-size="18" font-weight="700" fill="${COLORS.ink}">${esc(o.title)}</text>`;
+    if (o.title) s += `<text x="${W / 2}" y="30" text-anchor="middle" font-size="18" font-weight="700" fill="${COLORS.ink}">${esc(fitText(o.title, (W - 32) / 10.08))}</text>`;
     [0, 0.2, 0.4, 0.6, 0.8, 1].forEach(v => {
       s += `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="${COLORS.grid}"/>`;
       s += `<text x="${m.l - 8}" y="${Y(v) + 4}" text-anchor="end" font-size="12" fill="${COLORS.muted}">${v * 100}%</text>`;
@@ -580,7 +602,7 @@ input[aria-invalid=true]{border-color:var(--danger)}
       <p class="summary">${headline(r)}</p>
       <p class="focuson">${esc(setupWords(o))}.</p>
       ${stats.length ? `<div class="stats">${stats.map(s => `<div class="stat"><b${s[2] ? ` class="${s[2]}"` : ''}>${esc(s[0])}</b><span>${esc(s[1])}</span></div>`).join('')}</div>` : ''}
-      <div class="chartwrap" id="chart">${chartSVG(r)}</div>
+      <div class="chartwrap fit" id="chart">${drawShown(() => chartSVG(r))}</div>
       <p class="legend-note">${esc(legend)} The dashed green line marks ${o.mode === 'power' ? 'the usual target of 80% power' : 'your target power'}. Hover over the chart to see the figures.</p>
       <div class="reading"><h3>What this means</h3>${readingParts(r).map(x => `<p>${esc(x)}</p>`).join('')}</div>
       ${tableHTML(tableData(r))}`;
@@ -592,7 +614,15 @@ input[aria-invalid=true]{border-color:var(--danger)}
   function schedule() { clearTimeout(timer); timer = setTimeout(update, 250); }
 
   // ---- exports ----
-  function svgEl() { return document.querySelector('#chart svg'); }
+  // Exports use the standard drawing, whatever the size on screen
+  function svgEl() {
+    if (!document.querySelector('#chart svg')) return null;
+    const svg = svgOf(drawAt(BASE_W, lastChart));
+    if (!svg) return document.querySelector('#chart svg');
+    const d = document.createElement('div');
+    d.innerHTML = svg;
+    return d.firstElementChild;
+  }
   function fileName() { return slug(current && current.o.title); }
   let dlPromise = null;
   function getDownloads() {

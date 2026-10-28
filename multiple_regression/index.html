@@ -155,6 +155,26 @@ td.sig{font-weight:700}
   let headerTouched = false;
   let current = null;
   let timer = null;
+  // The chart on screen is drawn at the width it's shown at (like the SPC
+  // chart), so it fills wide screens without the text growing. Exports still
+  // use the standard 960-wide drawing.
+  const BASE_W = 960, MIN_W = 760;
+  let drawW = BASE_W, lastChart = null, shownW = 0;
+  function chartWidth() { return Math.max(MIN_W, Math.round(els.result.clientWidth) - 2); }
+  function drawAt(w, fn) { const was = drawW; drawW = w; try { return fn(); } finally { drawW = was; } }
+  function drawShown(fn) { lastChart = fn; shownW = chartWidth(); return drawAt(shownW, fn); }
+  const svgOf = out => out && (typeof out === 'string' ? out : out.svg);
+  let resizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      const c = document.getElementById('chart');
+      if (!lastChart || !c || !c.querySelector('svg') || chartWidth() === shownW) return;
+      shownW = chartWidth();
+      const svg = svgOf(drawAt(shownW, lastChart));
+      if (svg) c.innerHTML = svg;
+    }, 150);
+  });
   let colSig = '';
   let chartType = 'effects';
   let whatIf = {};
@@ -350,7 +370,7 @@ td.sig{font-weight:700}
   }
   function svgOpen(W, H, o) {
     const s = [`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(o.aria)}" font-family="${FONT}">`, `<rect width="${W}" height="${H}" fill="#ffffff"/>`];
-    if (o.title) s.push(`<text x="24" y="34" font-size="22" font-weight="700" fill="${COLORS.ink}">${esc(trunc(o.title, 70))}</text>`);
+    if (o.title) s.push(`<text x="24" y="34" font-size="22" font-weight="700" fill="${COLORS.ink}">${esc(trunc(o.title, Math.min(70, Math.floor((W - (24) - 16) / 12.32))))}</text>`);
     return s;
   }
   function legendRow(s, items, x, y) {
@@ -364,7 +384,7 @@ td.sig{font-weight:700}
   }
   // Standardised effect of each factor with its 95% confidence interval
   function effectsSVG(m, o) {
-    const W = 960, ML = 300, MR = 40, rowH = 38, cs = m.coefs.slice(1);
+    const W = drawW, ML = 300, MR = 40, rowH = 38, cs = m.coefs.slice(1);
     const MT = (o.title ? 58 : 18) + 34, plotH = cs.length * rowH, MB = 96, H = MT + plotH + MB, plotW = W - ML - MR, base = MT + plotH;
     const vals = cs.flatMap(c => [c.lo * c.scale, c.hi * c.scale]).concat([0]);
     const xt = niceTicks(...span(vals), 8), x0 = xt[0], x1 = xt[xt.length - 1];
@@ -391,7 +411,7 @@ td.sig{font-weight:700}
     return s.join('');
   }
   function pointsSVG(d, m, o, kind) {
-    const W = 960, ML = 80, MR = 30, plotH = 420;
+    const W = drawW, ML = 80, MR = 30, plotH = 420;
     const MT = (o.title ? 58 : 18) + 30, MB = 66, H = MT + plotH + MB, plotW = W - ML - MR, base = MT + plotH;
     const ys = kind === 'fit' ? d.rows.map(r => r.y) : m.res;
     const xs = kind === 'order' ? d.rows.map((_, i) => i + 1) : m.pred;
@@ -582,7 +602,7 @@ td.sig{font-weight:700}
       : `${nSig} of ${m.k} factor${m.k > 1 ? 's show' : ' shows'} a clear link once the others are allowed for. ${m.n} rows.`;
     if (!CHARTS[chartType]) chartType = 'effects';
     const o = { title, yName, flagOdd: els.flagOdd.checked, aria: (title ? title + '. ' : '') + `${CHARTS[chartType]} for a regression of ${yName} on ${m.k} factors. R squared ${Math.round(m.r2 * 100)}%, ${m.n} rows.` };
-    const svg = chartType === 'effects' ? effectsSVG(m, o) : pointsSVG(d, m, o, chartType);
+    const svg = drawShown(() => chartType === 'effects' ? effectsSVG(m, o) : pointsSVG(d, m, o, chartType));
     trackChart({ points: d.rows.length, factors: d.xs.length });
     current = { d, m, title, yName };
 
@@ -597,7 +617,7 @@ td.sig{font-weight:700}
         <div class="stat"><b>${nf.format(m.s)}</b><span>Typical prediction error</span></div>
       </div>
       <div class="chartbar"><div class="block"><label for="chartType">Chart</label><select id="chartType">${Object.keys(CHARTS).map(k => `<option value="${k}"${k === chartType ? ' selected' : ''}>${CHARTS[k]}</option>`).join('')}</select></div></div>
-      <div class="chartwrap" id="chart">${svg}</div>
+      <div class="chartwrap fit" id="chart">${svg}</div>
       ${readingHTML(d, m, yName)}
       <div class="tablewrap">
         <table>
@@ -631,7 +651,15 @@ td.sig{font-weight:700}
   function schedule() { clearTimeout(timer); timer = setTimeout(update, 180); }
 
   // ---- exports ----
-  function svgEl() { return document.querySelector('#chart svg'); }
+  // Exports use the standard drawing, whatever the size on screen
+  function svgEl() {
+    if (!document.querySelector('#chart svg')) return null;
+    const svg = svgOf(drawAt(BASE_W, lastChart));
+    if (!svg) return document.querySelector('#chart svg');
+    const d = document.createElement('div');
+    d.innerHTML = svg;
+    return d.firstElementChild;
+  }
   function fileName() { return slug(current && current.title); }
   let dlPromise = null;
   function getDownloads() {

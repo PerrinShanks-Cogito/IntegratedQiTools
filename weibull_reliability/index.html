@@ -194,6 +194,28 @@ details.adv summary{cursor:pointer;font-weight:600;color:var(--blue);margin-bott
   let chartType = 'prob';
   let current = null;
   let timer = null;
+  // The chart on screen is drawn at the width it's shown at (like the SPC
+  // chart), so it fills wide screens without the text growing. Exports still
+  // use the standard 760-wide drawing.
+  const BASE_W = 760, MIN_W = 760;
+  let drawW = BASE_W, lastChart = null, shownW = 0;
+  function chartWidth() { return Math.max(MIN_W, Math.round(els.result.clientWidth) - 2); }
+  function drawAt(w, fn) { const was = drawW; drawW = w; try { return fn(); } finally { drawW = was; } }
+  function drawShown(fn) { lastChart = fn; shownW = chartWidth(); return drawAt(shownW, fn); }
+  // Shorten a title too long for the chart width, rather than let it run off the edge
+  const fitText = (t, n) => t.length > n ? t.slice(0, Math.max(1, Math.floor(n) - 1)) + '…' : t;
+  const svgOf = out => out && (typeof out === 'string' ? out : out.svg);
+  let resizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      const c = document.getElementById('chart');
+      if (!lastChart || !c || !c.querySelector('svg') || chartWidth() === shownW) return;
+      shownW = chartWidth();
+      const svg = svgOf(drawAt(shownW, lastChart));
+      if (svg) c.innerHTML = svg;
+    }, 150);
+  });
 
   // Example: days each of 40 infusion pumps was in use before it first needed repair (made-up data)
   const EXAMPLE = ['Days to first repair'].concat('95, 66, 143, 48, 125, 101, 43, 121, 36, 111, 47, 53, 109, 177, 60, 79, 139, 220, 132, 105, 243, 39, 185, 90, 65, 59, 92, 174, 71, 132, 141, 102, 127, 45, 44, 76, 148, 110, 93, 133'.split(', ')).join('\n');
@@ -374,7 +396,7 @@ details.adv summary{cursor:pointer;font-weight:600;color:var(--blue);margin-bott
   }
   function frame(o, W, H, m) {
     let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.aria)}" font-family="${FONT}"><rect width="${W}" height="${H}" fill="#fff"/>`;
-    if (o.title) s += `<text x="${W / 2}" y="30" text-anchor="middle" font-size="18" font-weight="700" fill="${COLORS.ink}">${esc(o.title)}</text>`;
+    if (o.title) s += `<text x="${W / 2}" y="30" text-anchor="middle" font-size="18" font-weight="700" fill="${COLORS.ink}">${esc(fitText(o.title, (W - 32) / 10.08))}</text>`;
     return s;
   }
   function axes(s, W, H, m, xLabel, yLabel) {
@@ -405,7 +427,7 @@ details.adv summary{cursor:pointer;font-weight:600;color:var(--blue);margin-bott
     return { x0: lo, x1: Math.max(...cands) * 1.05 };
   }
   function curveSVG(r, kind) {
-    const { o, model } = r, W = 760, H = 420, m = { l: 70, r: 24, t: o.title ? 52 : 24, b: 58 };
+    const { o, model } = r, W = drawW, H = 420, m = { l: 70, r: 24, t: o.title ? 52 : 24, b: 58 };
     const pw = W - m.l - m.r, ph = H - m.t - m.b;
     const { x0, x1 } = timeRange(r);
     const n = 300, xs = Array.from({ length: n + 1 }, (_, i) => x0 + (x1 - x0) * i / n);
@@ -442,7 +464,7 @@ details.adv summary{cursor:pointer;font-weight:600;color:var(--blue);margin-bott
     return s + '</svg>';
   }
   function histSVG(r) {
-    const { o, model, fails } = r, W = 760, H = 420, m = { l: 60, r: 24, t: o.title ? 52 : 24, b: 58 };
+    const { o, model, fails } = r, W = drawW, H = 420, m = { l: 60, r: 24, t: o.title ? 52 : 24, b: 58 };
     const pw = W - m.l - m.r, ph = H - m.t - m.b;
     const lo0 = fails[0], hi0 = fails[fails.length - 1];
     const bins = Math.max(6, Math.min(30, Math.round(1.5 * Math.sqrt(fails.length))));
@@ -472,7 +494,7 @@ details.adv summary{cursor:pointer;font-weight:600;color:var(--blue);margin-bott
     return s + '</svg>';
   }
   function probSVG(r) {
-    const { o, fitted, pts, model } = r, W = 760, H = 460, m = { l: 64, r: 24, t: o.title ? 52 : 24, b: 58 };
+    const { o, fitted, pts, model } = r, W = drawW, H = 460, m = { l: 64, r: 24, t: o.title ? 52 : 24, b: 58 };
     const pw = W - m.l - m.r, ph = H - m.t - m.b;
     const tv = pts.map(p => p.t);
     const lx0 = Math.log(Math.min(...tv)), lx1 = Math.log(Math.max(...tv, fitted.alpha));
@@ -570,7 +592,7 @@ details.adv summary{cursor:pointer;font-weight:600;color:var(--blue);margin-bott
     if (!CHARTS[chartType]) chartType = 'prob';
     const { o, model, pred } = r, sw = shapeWords(model.beta);
     o.aria = (o.title ? o.title + '. ' : '') + `${CHARTS[chartType]}. Weibull shape ${fmt(model.beta)}, scale ${fmt(model.alpha)}${o.three ? `, threshold ${fmt(model.theta)}` : ''}. ${sw.tag}.`;
-    const svg = chartType === 'hist' ? histSVG(r) : chartType === 'surv' ? curveSVG(r, 'surv') : chartType === 'haz' ? curveSVG(r, 'haz') : probSVG(r);
+    const svg = drawShown(() => chartType === 'hist' ? histSVG(r) : chartType === 'surv' ? curveSVG(r, 'surv') : chartType === 'haz' ? curveSVG(r, 'haz') : probSVG(r));
     trackChart({ points: r.N });
     const legend = {
       prob: 'Each dot is a failure, plotted on Weibull scales; the red line is the fitted distribution. If the Weibull distribution fits, the dots lie close to the line. The dashed grid line marks 63.2%, which the line crosses at the scale.',
@@ -591,7 +613,7 @@ details.adv summary{cursor:pointer;font-weight:600;color:var(--blue);margin-bott
       <p class="focuson">${esc(`${o.three ? '3' : '2'}-parameter Weibull, ${r.N} items, ${r.fails.length} failures${o.hasCensor ? `, ${r.m} still working at ${fmt(o.censor)}` : ''}.${r.manual ? ' Predictions use the shape and scale you set.' : ''}`)}</p>
       <div class="stats">${stats.map(s => `<div class="stat"><b${s[2] ? ` class="${s[2]}"` : ''}>${esc(s[0])}</b><span>${esc(s[1])}</span></div>`).join('')}</div>
       <div class="chartbar"><div class="block"><label for="chartType">Chart</label><select id="chartType">${Object.keys(CHARTS).map(c => `<option value="${c}"${c === chartType ? ' selected' : ''}>${CHARTS[c]}</option>`).join('')}</select></div></div>
-      <div class="chartwrap" id="chart">${svg}</div>
+      <div class="chartwrap fit" id="chart">${svg}</div>
       <p class="legend-note">${esc(legend)} Hover over the chart to see the figures.</p>
       <div class="reading"><h3>What the analysis shows</h3>${readingParts(r).map(x => `<p>${esc(x)}</p>`).join('')}</div>
       ${tableHTML(r)}`;
@@ -603,7 +625,15 @@ details.adv summary{cursor:pointer;font-weight:600;color:var(--blue);margin-bott
   function schedule() { clearTimeout(timer); timer = setTimeout(update, 200); }
 
   // ---- exports ----
-  function svgEl() { return document.querySelector('#chart svg'); }
+  // Exports use the standard drawing, whatever the size on screen
+  function svgEl() {
+    if (!document.querySelector('#chart svg')) return null;
+    const svg = svgOf(drawAt(BASE_W, lastChart));
+    if (!svg) return document.querySelector('#chart svg');
+    const d = document.createElement('div');
+    d.innerHTML = svg;
+    return d.firstElementChild;
+  }
   function fileName() { return slug(current && current.o.title); }
   let dlPromise = null;
   function getDownloads() {

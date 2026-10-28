@@ -166,6 +166,26 @@ td.tot,th.tot{font-weight:700}
   let modeTouched = false;
   let current = null;
   let timer = null;
+  // The chart on screen is drawn at the width it's shown at (like the SPC
+  // chart), so it fills wide screens without the text growing. Exports still
+  // use the standard 960-wide drawing.
+  const BASE_W = 960, MIN_W = 760;
+  let drawW = BASE_W, lastChart = null, shownW = 0;
+  function chartWidth() { return Math.max(MIN_W, Math.round(els.result.clientWidth) - 2); }
+  function drawAt(w, fn) { const was = drawW; drawW = w; try { return fn(); } finally { drawW = was; } }
+  function drawShown(fn) { lastChart = fn; shownW = chartWidth(); return drawAt(shownW, fn); }
+  const svgOf = out => out && (typeof out === 'string' ? out : out.svg);
+  let resizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      const c = document.getElementById('chart');
+      if (!lastChart || !c || !c.querySelector('svg') || chartWidth() === shownW) return;
+      shownW = chartWidth();
+      const svg = svgOf(drawAt(shownW, lastChart));
+      if (svg) c.innerHTML = svg;
+    }, 150);
+  });
 
   // Examples (made-up data)
   const EXAMPLE = [
@@ -391,7 +411,7 @@ td.tot,th.tot{font-weight:700}
   function svgOpen(s, W, H, o) {
     s.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.aria)}" font-family="${FONT}">`);
     s.push(`<rect width="${W}" height="${H}" fill="#ffffff"/>`);
-    if (o.title) s.push(`<text x="16" y="30" font-size="20" font-weight="700" fill="${COLORS.ink}">${esc(trunc(o.title, 80))}</text>`);
+    if (o.title) s.push(`<text x="16" y="30" font-size="20" font-weight="700" fill="${COLORS.ink}">${esc(trunc(o.title, Math.min(80, Math.floor((W - (16) - 16) / 11.2))))}</text>`);
   }
   // Legend items laid out left to right, wrapping onto new lines; returns the number of lines.
   function legendLayout(items, x0, maxX) {
@@ -408,7 +428,7 @@ td.tot,th.tot{font-weight:700}
   // Independence: one 100% bar for each group, split by category, with an overall bar for comparison.
   function renderTable(o) {
     const { rows, cols, obs } = o.table, t = o.t;
-    const W = 960, M = 16;
+    const W = drawW, M = 16;
     const longest = Math.max(...rows.map(r => r.length), 7);
     const ML = Math.min(230, Math.max(90, charW(13) * Math.min(longest, 34) + 26)), MR = 84;
     const plotW = W - ML - MR;
@@ -463,7 +483,7 @@ td.tot,th.tot{font-weight:700}
   // Goodness of fit: observed counts as bars, with the expected count marked on each.
   function renderFit(o) {
     const { cats, obs } = o.fit, t = o.t;
-    const W = 960, M = 16, k = cats.length;
+    const W = drawW, M = 16, k = cats.length;
     const MT = (o.title ? 44 : 8) + 34;
     const ML = 72 + (o.valName ? 22 : 0), MR = 24;
     const plotW = W - ML - MR, band = plotW / k, bw = Math.max(6, Math.min(70, band * 0.6));
@@ -708,7 +728,7 @@ td.tot,th.tot{font-weight:700}
         rows.slice(0, 8).map((r, i) => `${r}: ` + cols.map((c, j) => `${c} ${share(obs[i][j] / t.rt[i])}`).join(', ')).join('; ') + (rows.length > 8 ? '; and more.' : '.') +
         ` ${sig ? 'The split differs between groups' : 'No clear difference between the groups'}, ${pIs(t.pMain)}.`;
       current = { o, t };
-      svg = renderTable(o);
+      svg = drawShown(() => renderTable(o));
       trackChart({ points: rows.length * cols.length });
       headline = sig ? 'The groups <strong>differ</strong>' : 'No clear difference between the groups';
       sub = `${t.useFisher ? 'Fisher’s exact test' : 'Chi-squared test of independence'} on ${nf.format(t.N)}${valName ? ' ' + lower(valName) : ' counts'} in ${rows.length} groups and ${cols.length} categories, at the ${Math.round(alpha * 100)}% significance level.`;
@@ -737,7 +757,7 @@ td.tot,th.tot{font-weight:700}
         cats.slice(0, 10).map((c, i) => `${c}: ${nf.format(obs[i])} observed, ${nf1.format(t.E[i])} expected`).join('; ') + (cats.length > 10 ? '; and more.' : '.') +
         ` ${sig ? 'The counts differ from what was expected' : 'No clear difference from what was expected'}, ${pIs(t.p)}.`;
       current = { o, t };
-      svg = renderFit(o);
+      svg = drawShown(() => renderFit(o));
       trackChart({ points: cats.length });
       headline = sig ? 'The counts <strong>differ</strong> from what was expected' : 'No clear difference from what was expected';
       sub = `Chi-squared goodness of fit test on ${nf.format(t.N)}${valName ? ' ' + lower(valName) : ' counts'} in ${cats.length} categories, against ${p.exp ? 'your expected split' : 'an equal split'}, at the ${Math.round(alpha * 100)}% significance level.`;
@@ -748,7 +768,7 @@ td.tot,th.tot{font-weight:700}
       <p class="summary">${headline}</p>
       <p class="focuson">${esc(sub)}</p>
       <div class="stats">${tiles.map(([b, s]) => `<div class="stat"><b>${b}</b><span>${s}</span></div>`).join('')}</div>
-      <div class="chartwrap" id="chart">${svg}</div>
+      <div class="chartwrap fit" id="chart">${svg}</div>
       <p class="legend-note">${mode === 'independence' ? 'Each bar shows how one group splits across the categories, with the overall split at the bottom for comparison.' : 'Each bar is the count in one category; the dashed line is the count expected.'} Outlined parts, marked ▲ or ▼, stand out as higher or lower than expected. Hover over the chart to see the figures.</p>
       <div class="reading"><h3>What the test shows</h3>${readingParts().map(x => `<p>${x}</p>`).join('')}</div>
       ${tableHTML()}`;
@@ -760,7 +780,15 @@ td.tot,th.tot{font-weight:700}
   function schedule() { clearTimeout(timer); timer = setTimeout(update, 180); }
 
   // ---- exports ----
-  function svgEl() { return document.querySelector('#chart svg'); }
+  // Exports use the standard drawing, whatever the size on screen
+  function svgEl() {
+    if (!document.querySelector('#chart svg')) return null;
+    const svg = svgOf(drawAt(BASE_W, lastChart));
+    if (!svg) return document.querySelector('#chart svg');
+    const d = document.createElement('div');
+    d.innerHTML = svg;
+    return d.firstElementChild;
+  }
   function fileName() { return slug(current && current.o.title); }
   let dlPromise = null;
   function getDownloads() {

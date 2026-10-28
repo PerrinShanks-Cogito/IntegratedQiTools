@@ -173,6 +173,26 @@ td.flag{color:var(--warn);font-weight:700}
   let headerTouched = false;
   let current = null;
   let timer = null;
+  // The chart on screen is drawn at the width it's shown at (like the SPC
+  // chart), so it fills wide screens without the text growing. Exports still
+  // use the standard 960-wide drawing.
+  const BASE_W = 960, MIN_W = 760;
+  let drawW = BASE_W, lastChart = null, shownW = 0;
+  function chartWidth() { return Math.max(MIN_W, Math.round(els.result.clientWidth) - 2); }
+  function drawAt(w, fn) { const was = drawW; drawW = w; try { return fn(); } finally { drawW = was; } }
+  function drawShown(fn) { lastChart = fn; shownW = chartWidth(); return drawAt(shownW, fn); }
+  const svgOf = out => out && (typeof out === 'string' ? out : out.svg);
+  let resizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      const c = document.getElementById('chart');
+      if (!lastChart || !c || !c.querySelector('svg') || chartWidth() === shownW) return;
+      shownW = chartWidth();
+      const svg = svgOf(drawAt(shownW, lastChart));
+      if (svg) c.innerHTML = svg;
+    }, 150);
+  });
 
   // Example: referrals to dermatology from 24 GP practices over a year, with registered list sizes (made-up data)
   const EXAMPLE = [
@@ -293,7 +313,7 @@ td.flag{color:var(--warn);font-weight:700}
   // ---- drawing ----
   const charW = size => size * 0.56;
   function renderSVG(a, o) {
-    const W = 960, M = 16;
+    const W = drawW, M = 16;
     const legend = [['point', 'Population'], ['centre', o.centreMethod === 'mean' ? 'Average of rates' : 'Overall rate'], ['limit', '99.7% limits']];
     if (o.showWarn) legend.push(['warn', '95% limits']);
     if (a.rows.some(r => r.status === 'above' || r.status === 'below')) legend.push(['outlier', 'Outlier']);
@@ -323,7 +343,7 @@ td.flag{color:var(--warn);font-weight:700}
     s.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.aria)}" font-family="${FONT}">`);
     s.push(`<rect width="${W}" height="${H}" fill="#ffffff"/>`);
     s.push(`<defs><clipPath id="fpClip"><rect x="${ML}" y="${MT}" width="${plotW}" height="${plotH}"/></clipPath></defs>`);
-    if (o.chartTitle) s.push(`<text x="${M}" y="30" font-size="20" font-weight="700" fill="${COLORS.ink}">${esc(trunc(o.chartTitle, 80))}</text>`);
+    if (o.chartTitle) s.push(`<text x="${M}" y="30" font-size="20" font-weight="700" fill="${COLORS.ink}">${esc(trunc(o.chartTitle, Math.min(80, Math.floor((W - (M) - 16) / 11.2))))}</text>`);
 
     // legend, right-aligned above the plot
     const keyW = t => 30 + charW(12) * t.length + 16;
@@ -489,7 +509,7 @@ td.flag{color:var(--warn);font-weight:700}
     const outs = a.rows.filter(r => r.status === 'above' || r.status === 'below');
     o.aria = (o.chartTitle ? o.chartTitle + '. ' : '') + `Funnel plot of ${plural(a.rows.length, 'population', 'populations')}. Centre line ${rateText(a.p, o)}. ` +
       (outs.length ? `Outside the 99.7% limits: ${outs.slice(0, 10).map(r => `${r.name} (${STATUS[r.status].toLowerCase()})`).join(', ')}${outs.length > 10 ? ' and more' : ''}.` : 'Every population is within the 99.7% limits.');
-    const drawn = renderSVG(a, o);
+    const drawn = drawShown(() => renderSVG(a, o));
     trackChart({ points: a.rows.length });
     if (drawn.hidden) note += ` ${plural(drawn.hidden, 'population is', 'populations are')} outside the horizontal axis range you set, so not drawn.`;
     els.detected.textContent = note;
@@ -511,7 +531,7 @@ td.flag{color:var(--warn);font-weight:700}
         <div class="stat"><b>${above}</b><span>Above upper limit</span></div>
         <div class="stat"><b>${below}</b><span>Below lower limit</span></div>
       </div>
-      <div class="chartwrap" id="chart">${drawn.svg}</div>
+      <div class="chartwrap fit" id="chart">${drawn.svg}</div>
       <p class="legend-note">Hover over a point to see its figures. Rows outside the 99.7% limits are highlighted in the table.</p>
       <div class="reading"><h3>What the chart shows</h3>${readingParts(a, o).map(x => `<p>${x}</p>`).join('')}</div>
       ${tableHTML()}`;
@@ -523,7 +543,15 @@ td.flag{color:var(--warn);font-weight:700}
   function schedule() { clearTimeout(timer); timer = setTimeout(update, 180); }
 
   // ---- exports ----
-  function svgEl() { return document.querySelector('#chart svg'); }
+  // Exports use the standard drawing, whatever the size on screen
+  function svgEl() {
+    if (!document.querySelector('#chart svg')) return null;
+    const svg = svgOf(drawAt(BASE_W, lastChart));
+    if (!svg) return document.querySelector('#chart svg');
+    const d = document.createElement('div');
+    d.innerHTML = svg;
+    return d.firstElementChild;
+  }
   function fileName() { return slug(current && current.o.chartTitle); }
   let dlPromise = null;
   function getDownloads() {
