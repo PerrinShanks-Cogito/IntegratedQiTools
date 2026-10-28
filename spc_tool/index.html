@@ -77,6 +77,14 @@ button:focus-visible,summary:focus-visible,.seg input:focus-visible+span,input[t
 .chip{display:inline-flex;align-items:center;gap:4px;background:var(--accent-soft);border-radius:999px;padding:2px 4px 2px 10px;font-size:13px}
 .chip button{border:0;background:none;padding:0 6px;font-size:16px;line-height:1;color:var(--muted)}
 details.rules summary{cursor:pointer;font-weight:600;font-size:15px}
+details.typepick{position:relative}
+details.typepick summary{list-style:none;display:flex;gap:10px;align-items:center;cursor:pointer;font-size:14px;background:var(--field);border:1px solid var(--rule);border-radius:6px;padding:8px 10px}
+details.typepick summary::-webkit-details-marker{display:none}
+details.typepick summary::after{content:"";flex:none;width:8px;height:8px;margin:0 2px 4px auto;border:solid var(--muted);border-width:0 2px 2px 0;transform:rotate(45deg)}
+details.typepick[open] summary::after{transform:rotate(-135deg);margin-bottom:-4px}
+details.typepick summary small{display:block;color:var(--muted);font-size:13px}
+details.typepick .typelist{border:1px solid var(--rule);border-top:0;border-radius:0 0 6px 6px;padding:0 10px 10px;background:var(--field)}
+details.typepick[open] summary{border-radius:6px 6px 0 0}
 details.rules .grid2{display:grid;grid-template-columns:1fr auto;gap:8px 12px;align-items:center;margin-top:10px;font-size:14px}
 details.rules .grid2 input{width:64px;padding:3px 6px}
 main.panel{padding:22px 24px 24px;min-width:0}
@@ -157,13 +165,16 @@ td button{font-size:12px;padding:2px 8px}
     <aside class="panel" aria-label="Data and settings">
       <section>
         <h2 class="sec" id="typeLabel">What are you measuring?</h2>
-        <div role="radiogroup" aria-labelledby="typeLabel">
+        <details class="typepick" id="typePick">
+        <summary><span id="typeCurrent"><b>A value for each period</b><small>Such as days to first appointment or length of stay. Gives an XmR chart.</small></span></summary>
+        <div class="typelist" role="radiogroup" aria-labelledby="typeLabel">
           <label class="check"><input type="radio" name="spctype" value="xmr" checked><span><b>A value for each period</b><small>Such as days to first appointment or length of stay. Gives an XmR chart.</small></span></label>
           <label class="check"><input type="radio" name="spctype" value="p"><span><b>How many out of a total</b><small>Such as patients seen within four hours out of all who attended. Gives a P chart.</small></span></label>
           <label class="check"><input type="radio" name="spctype" value="u"><span><b>A rate of events</b><small>A count against the time or activity it happened in, such as falls per 1,000 bed days. Gives a U chart.</small></span></label>
           <label class="check"><input type="radio" name="spctype" value="c"><span><b>A count of events each period</b><small>Such as complaints each month, when there's about the same opportunity for them each time. Gives a C chart.</small></span></label>
           <label class="check"><input type="radio" name="spctype" value="t"><span><b>Dates of rare events</b><small>Such as falls with harm or never events, when they happen too seldom for the other charts. Gives a T chart of the days between them.</small></span></label>
         </div>
+        </details>
       </section>
 
       <section>

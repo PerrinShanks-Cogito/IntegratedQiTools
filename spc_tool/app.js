@@ -1196,6 +1196,7 @@ function showType(){
   $('#laneyHint').textContent = isU() ? 'Use a U′ (Laney) chart when the exposures are large, such as thousands of bed days a month, and most points fall outside the U chart\u2019s limits even though nothing has changed.'
     : 'Use a P′ (Laney) chart when the totals are large, such as thousands of attendances a month, and most points fall outside the P chart\u2019s limits even though nothing has changed.';
   const r = document.querySelector(`input[name=spctype][value=${state.type}]`); if (r) r.checked = true;
+  if (r) $('#typeCurrent').innerHTML = r.nextElementSibling.innerHTML;
 }
 // Keep the address in step with the chart type, so a link opens the same chart
 function syncUrl(){
@@ -1293,7 +1294,7 @@ function readForm(){
   showType();
 }
 
-document.querySelectorAll('input[name=spctype]').forEach(r => r.addEventListener('change', e => setType(e.target.value)));
+document.querySelectorAll('input[name=spctype]').forEach(r => r.addEventListener('change', e => { setType(e.target.value); $('#typePick').open = false; }));
 $('#data').addEventListener('input', () => { clearTimeout(parseTimer); parseTimer = setTimeout(() => { readData(); renderAll(); }, 180); });
 $('#title').addEventListener('input', e => { state.title = e.target.value.trim(); $('#chartTitle').textContent = state.title || 'Your ' + chartName(); });
 $('#title').addEventListener('change', renderAll);
