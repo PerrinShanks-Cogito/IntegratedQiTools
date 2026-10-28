@@ -460,11 +460,16 @@ function layout(st,opts){
 function renderDiagram(){
   const wrapEl=$("#canvasWrap");
   const L=layout(state,{scale:1});
-  /* Fit: in full screen the diagram is as big as the screen allows; otherwise it fits the width */
+  /* Fit: the diagram is as big as its window allows, width and height. On a
+     narrow screen fitting the width would make the text too small to read, so
+     it fits the height instead and you drag sideways to see the rest. */
   if(autoFit){
     const aw=wrapEl.clientWidth-36, ah=wrapEl.clientHeight-36;
-    if(isFull()) zoom=aw>0&&ah>0?Math.min(2,Math.max(0.3,Math.min(aw/L.W,ah/L.H))):1;
-    else zoom=aw>0?Math.min(1,Math.max(0.3,aw/L.W)):1;
+    if(aw>0&&ah>0){
+      const fw=aw/L.W, fh=ah/L.H, fit=Math.min(fw,fh);
+      zoom=fit<0.6&&!isFull()?Math.max(fw,Math.min(0.8,fh)):fit;
+      zoom=Math.min(isFull()?2:1.75,Math.max(0.3,zoom));
+    } else zoom=1;
   }
   $("#canvas").innerHTML=layout(state,{scale:zoom}).svg;
   $("#zoomLabel").textContent=Math.round(zoom*100)+"%";
@@ -483,7 +488,10 @@ function setZoom(z){autoFit=false;zoom=Math.min(2,Math.max(0.3,z));renderDiagram
 $("#zoomIn").addEventListener("click",()=>setZoom(zoom+0.1));
 $("#zoomOut").addEventListener("click",()=>setZoom(zoom-0.1));
 $("#zoomFit").addEventListener("click",()=>{autoFit=true;renderDiagram();});
-let rz; window.addEventListener("resize",()=>{clearTimeout(rz);rz=setTimeout(()=>{if(autoFit)renderDiagram();else updatePanCursor();},120);});
+let rz; const refit=()=>{clearTimeout(rz);rz=setTimeout(()=>{if(autoFit)renderDiagram();else updatePanCursor();},120);};
+window.addEventListener("resize",refit);
+/* The window's height settles after the header's sticky height is known */
+if(window.ResizeObserver) new ResizeObserver(refit).observe($("#canvasWrap"));
 
 const wrapEl=$("#canvasWrap"), canvasEl=$("#canvas");
 /* ---------- move around the diagram by dragging ----------
@@ -554,7 +562,7 @@ function fullChanged(){
   const on=isFull();
   fullBtn.setAttribute("aria-pressed",on);
   fullBtn.querySelector("span").textContent=on?"Exit full screen":"Full screen";
-  $("#zoomFit").textContent=on?"Fit to screen":"Fit to width";
+  $("#zoomFit").textContent=on?"Fit to screen":"Fit to window";
   document.body.classList.toggle("ft-full",stageEl.classList.contains("full"));
   autoFit=true;
   requestAnimationFrame(()=>renderDiagram());
