@@ -1294,6 +1294,7 @@ function readForm(){
   showType();
 }
 
+$('#typeJump').addEventListener('click', () => { const d = $('#typePick'); d.open = true; d.scrollIntoView({ block: 'nearest' }); d.querySelector('summary').focus(); });
 document.querySelectorAll('input[name=spctype]').forEach(r => r.addEventListener('change', e => { setType(e.target.value); $('#typePick').open = false; }));
 $('#data').addEventListener('input', () => { clearTimeout(parseTimer); parseTimer = setTimeout(() => { readData(); renderAll(); }, 180); });
 $('#title').addEventListener('input', e => { state.title = e.target.value.trim(); $('#chartTitle').textContent = state.title || 'Your ' + chartName(); });
