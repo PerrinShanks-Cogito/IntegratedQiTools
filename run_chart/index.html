@@ -44,7 +44,7 @@ a{color:var(--brand)}
 @media (max-width:920px){.layout{grid-template-columns:1fr}}
 
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:1.25rem 1.5rem;box-shadow:var(--shadow)}
-aside.panel{position:sticky;top:16px}
+aside.panel{position:sticky;top:calc(var(--fh-stick-h,0px) + 16px)}
 @media (max-width:920px){aside.panel{position:static}}
 aside h2{font-size:1.15rem;margin:0 0 4px}
 .hint{font-size:.9rem;color:var(--muted);margin:0 0 10px}

@@ -48,7 +48,7 @@ textarea{min-height:110px;font:inherit}
 .secfield h3{font-size:1rem;margin:0 0 .2rem;color:var(--navy)}
 .secfield .q{margin:0 0 .15rem;font-weight:600;font-size:.92rem}
 .secfield .g{margin:0 0 .45rem;color:var(--muted);font-size:.88rem;font-style:italic}
-.preview{position:sticky;top:1rem}
+.preview{position:sticky;top:calc(var(--fh-stick-h,0px) + 1rem)}
 @media (max-width:880px){.preview{position:static}}
 .tray{list-style:none;margin:0;padding:0;display:grid;gap:.6rem}
 .clip{display:grid;grid-template-columns:92px minmax(0,1fr);gap:.6rem;align-items:start;border:1px solid var(--line);border-radius:6px;padding:.5rem}

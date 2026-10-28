@@ -73,6 +73,10 @@
 
 @media print{.fh{display:none!important}}
 
+/* Tool pages (focus-actions.js adds fh-stick): the header scrolls away until
+   the dark blue bar reaches the top of the screen, then that bar stays */
+.fh.fh-stick{position:sticky;top:calc(-1 * var(--fh-top-h,0px));z-index:1100}
+
 /* Shared footer on tool pages */
 .fh-foot{margin-top:2rem;border-top:1px solid var(--fh-line);color:var(--fh-muted);font-size:.85rem}
 .fh-foot .fh-inner{padding:1rem clamp(1rem,2vw,2.5rem) 1.5rem}

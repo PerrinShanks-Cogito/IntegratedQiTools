@@ -74,8 +74,11 @@ Improvement's SPC P chart tool (version 3.0)):
   share the layout, panel, form and table styles too; diagram tools use the
   `.btn` classes. Text on a coloured fill uses `var(--on-accent)`, which
   turns dark in dark mode so it stays readable.
-- `assets/js/focus-actions.js` – the shared toolbar at the top right of every
-  tool: **Example** (fill in example data), **Open** (reopen a saved project
+- `assets/js/focus-actions.js` – the shared toolbar for every tool, docked at
+  the right of the dark blue header bar. On tool pages the header scrolls
+  away until that bar reaches the top of the screen, then the bar stays
+  there, so the buttons are always to hand (`--fh-stick-h` holds the bar's
+  height for anything else that sticks below it). The toolbar: **Example** (fill in example data), **Open** (reopen a saved project
   file), **Save** (download a project
   `.json`) and **Export** (a menu of PNG, SVG, CSV and copy options, using the
   same labels in every tool). Tools with a **Data sheet** (a blank `.xlsx` to
