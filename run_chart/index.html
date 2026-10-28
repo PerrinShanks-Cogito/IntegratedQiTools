@@ -15,73 +15,27 @@ permalink: /run_chart/
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ '/assets/css/focus-tool.css' | relative_url }}">
 <style>
 :root{
-  --blue:#005EB8; --navy:#003087; --bg:#F0F4F5; --surface:#FFFFFF; --ink:#212B32;
-  --muted:#4C6272; --line:#D8DDE0; --soft:#F6F8F9; --yellow:#FFB81C; --green:#007F3B; --green-bg:#E3F2E9;
-  --blue-bg:#E6F0FA; --shadow:0 2px 0 #D8DDE0;
-  --brand:var(--blue); --brand-ink:#FFFFFF; --focus:var(--yellow);
-  --improve:#0072CE; --concern:#C9580A; --neutral:#7C2855; --common:#8A9AA5;
-  --font:Figtree, "Frutiger", "Helvetica Neue", Arial, sans-serif;
+  --soft:#F6F8F9; --brand:var(--blue); --brand-ink:#FFFFFF; --focus:var(--yellow); --improve:#0072CE;
+  --concern:#C9580A; --neutral:#7C2855; --common:#8A9AA5;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --blue:#5AA2EA; --navy:#9CC3EF; --bg:#0E1A24; --surface:#162533; --ink:#E8EEF2;
-    --muted:#A3B6C3; --line:#2A3E4F; --soft:#1C2E3E; --green:#4CC17E; --green-bg:#143326; --blue-bg:#15314B;
-    --shadow:0 2px 0 #0A131B; --brand-ink:#0E1A24;
-    --improve:#5AB0F5; --concern:#F29A4A; --neutral:#D584B0; --common:#7E909C;
+    --soft:#1C2E3E; --brand-ink:#0E1A24; --improve:#5AB0F5; --concern:#F29A4A; --neutral:#D584B0;
+    --common:#7E909C;
   }
 }
 :root[data-theme="dark"]{
-  --blue:#5AA2EA; --navy:#9CC3EF; --bg:#0E1A24; --surface:#162533; --ink:#E8EEF2;
-  --muted:#A3B6C3; --line:#2A3E4F; --soft:#1C2E3E; --green:#4CC17E; --green-bg:#143326; --blue-bg:#15314B;
-  --shadow:0 2px 0 #0A131B; --brand-ink:#0E1A24;
-  --improve:#5AB0F5; --concern:#F29A4A; --neutral:#D584B0; --common:#7E909C;
+  --soft:#1C2E3E; --brand-ink:#0E1A24; --improve:#5AB0F5; --concern:#F29A4A; --neutral:#D584B0;
+  --common:#7E909C;
 }
 *,*::before,*::after{box-sizing:border-box}
 :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;background:var(--bg);color:var(--ink);font:400 1rem/1.5 var(--font);-webkit-font-smoothing:antialiased}
-button,input,select,textarea{font:inherit;color:inherit}
 a{color:var(--brand)}
-:focus-visible{outline:3px solid var(--yellow);outline-offset:2px;border-radius:2px}
-
-.wrap{max-width:1340px;margin:0 auto;padding:0 1.25rem}
-/* Header (FOCUS style) */
-.top{background:#005EB8;color:#fff}
-.top-inner{max-width:1240px;margin:0 auto;padding:.9rem 1.25rem;display:flex;flex-wrap:wrap;gap:.75rem 1.5rem;align-items:center;justify-content:space-between}
-.brand{display:flex;align-items:center;gap:.6rem;color:#fff;text-decoration:none}
-.brand b{font-size:1.25rem;font-weight:800;letter-spacing:-.01em}
-.brand span{opacity:.85;font-size:.95rem}
-.brand .tag{opacity:1}
-.top nav{display:flex;flex-wrap:wrap;gap:.25rem}
-.top nav a{color:#fff;text-decoration:none;padding:.4rem .7rem;border-radius:4px;font-weight:600;font-size:.95rem}
-.top nav a:hover{background:rgba(255,255,255,.14)}
-.support{background:#003087;color:#fff}
-.support-inner{max-width:1240px;margin:0 auto;padding:.5rem 1.25rem;display:flex;flex-wrap:wrap;gap:.25rem 1.75rem;align-items:center;font-size:.92rem}
-.support a{color:#fff;text-underline-offset:3px}
-.tools{position:relative}
-.tools summary{cursor:pointer;list-style:none;text-decoration:underline;text-underline-offset:3px;display:inline-flex;align-items:center;gap:.35rem}
-.tools summary::-webkit-details-marker{display:none}
-.tools summary::after{content:"";width:.45rem;height:.45rem;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-2px) rotate(45deg);transition:transform .15s}
-.tools[open] summary::after{transform:translateY(2px) rotate(-135deg)}
-.tools .menu{position:absolute;z-index:20;top:calc(100% + .5rem);left:0;width:min(380px,calc(100vw - 2.5rem));max-height:70vh;overflow:auto;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:8px;box-shadow:0 12px 32px rgba(0,20,40,.25);padding:.4rem}
-.toollist{list-style:none;margin:0;padding:0}
-.toollist li{display:flex;justify-content:space-between;align-items:center;gap:.75rem;padding:.5rem .6rem;border-radius:4px}
-.toollist li+li{border-top:1px solid var(--line)}
-.toollist a{color:var(--blue);font-weight:600}
-.toollist .off{color:var(--muted)}
-.toollist li[aria-current] a{color:var(--ink);text-decoration:none}
-.supportlist li{flex-direction:column;align-items:flex-start;gap:.1rem}
-.menu-desc{font-size:.85rem;color:var(--muted)}
-.menu-note{font-size:.82rem;color:var(--muted);margin:.4rem .6rem .2rem}
-.tag{flex:none;font-size:.78rem;font-weight:700;padding:.1rem .5rem;border-radius:99px;white-space:nowrap}
-.tag.beta{background:var(--green-bg);color:var(--green)}
-.tag.alpha{background:var(--blue-bg);color:var(--navy)}
-.tag.dev{background:#FFF4DB;color:#6B4A00}
-.tag.idea{background:var(--bg);color:var(--muted);border:1px solid var(--line)}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .tag.dev{background:#3A2E10;color:#FFD27A}}
-:root[data-theme="dark"] .tag.dev{background:#3A2E10;color:#FFD27A}
+.wrap{padding:0 var(--gutter)}
 .page-head{padding:1.5rem 0 1.25rem}
 .page-head h1{margin:0;font-size:clamp(1.5rem,3vw,2rem);line-height:1.2;font-weight:800;letter-spacing:-.015em}
 .page-head p{margin:.35rem 0 0;color:var(--muted);max-width:68ch}
@@ -99,7 +53,7 @@ textarea:focus,input:focus,select:focus{outline:none;border-color:var(--ink);box
 .row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 0}
 button{display:inline-flex;align-items:center;gap:.4rem;font-weight:700;font-size:.95rem;border-radius:4px;padding:.5rem .95rem;cursor:pointer;background:var(--surface);color:var(--blue);border:2px solid var(--blue)}
 button:hover{background:var(--blue-bg)}
-button.primary{background:var(--green);color:#fff;border:0;padding:.65rem 1.1rem;box-shadow:0 3px 0 #00401E}
+button.primary{background:var(--green);color:var(--on-accent);border:0;padding:.65rem 1.1rem;box-shadow:0 3px 0 #00401E}
 button.primary:hover{background:var(--green);filter:brightness(1.06)}
 button.primary:active{transform:translateY(2px);box-shadow:0 1px 0 #00401E}
 .field{margin-top:18px}
@@ -109,7 +63,7 @@ input[type=text],input[type=number],select{width:100%;padding:.55rem .7rem;borde
 .seg input{position:absolute;opacity:0;pointer-events:none}
 .seg label{text-align:center;padding:8px 4px;font-size:.92rem;cursor:pointer;border-left:1px solid var(--line)}
 .seg label:first-of-type{border-left:0}
-.seg input:checked + label{background:var(--blue);color:#fff;font-weight:700}
+.seg input:checked + label{background:var(--blue);color:var(--on-accent);font-weight:700}
 .seg input:focus-visible + label{outline:3px solid var(--focus);outline-offset:-3px}
 .inline{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:.92rem}
 .inline input{width:80px}
@@ -154,7 +108,7 @@ main{display:grid;gap:20px;min-width:0}
 .rules li:first-child{border-top:0}
 .rules li:hover,.rules li:focus-within,.rules li:focus{background:var(--soft)}
 .chip{align-self:start;justify-self:start;font-size:.82rem;font-weight:700;padding:3px 10px;border-radius:999px;border:1.5px solid currentColor;white-space:nowrap}
-.chip.signal{background:var(--blue);color:#fff;border-color:var(--blue)}
+.chip.signal{background:var(--blue);color:var(--on-accent);border-color:var(--blue)}
 .chip.clear{color:var(--muted)}
 .chip.check{color:var(--concern)}
 .chip.na{color:var(--muted);border-style:dashed}
@@ -176,7 +130,6 @@ th{font-weight:700}
 td.num{text-align:right}
 footer{color:var(--muted);font-size:.85rem;padding:0 0 32px}
 footer p{max-width:90ch;margin:0 0 6px}
-[hidden]{display:none!important}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 </style>
 {% include focus-head.html %}

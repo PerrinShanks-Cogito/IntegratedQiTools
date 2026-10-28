@@ -16,45 +16,15 @@ permalink: /hypothesis_test_selector/
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ '/assets/css/focus-tool.css' | relative_url }}">
 <style>
-:root{
-  --blue:#005EB8; --navy:#003087; --bg:#F0F4F5; --surface:#FFFFFF; --text:#212B32;
-  --muted:#4C6272; --line:#D8DDE0; --yellow:#FFB81C; --green:#007F3B; --green-bg:#E3F2E9;
-  --blue-bg:#E6F0FA; --danger:#D5281B; --shadow:0 2px 0 #D8DDE0; --warn:#A65300;
-  box-sizing:border-box;
-  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
-}
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --blue:#5AA2EA; --navy:#9CC3EF; --bg:#0E1A24; --surface:#162533; --text:#E8EEF2;
-    --muted:#A3B6C3; --line:#2A3E4F; --green:#4CC17E; --green-bg:#143326; --blue-bg:#15314B;
-    --danger:#FF7468; --shadow:0 2px 0 #0A131B; --warn:#F0A54A;
-    color-scheme:dark;
-  }
-}
-:root[data-theme="dark"]{
-  --blue:#5AA2EA; --navy:#9CC3EF; --bg:#0E1A24; --surface:#162533; --text:#E8EEF2;
-  --muted:#A3B6C3; --line:#2A3E4F; --green:#4CC17E; --green-bg:#143326; --blue-bg:#15314B;
-  --danger:#FF7468; --shadow:0 2px 0 #0A131B; --warn:#F0A54A;
-  color-scheme:dark;
-}
-*,*::before,*::after{box-sizing:inherit}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;background:var(--bg);color:var(--text);font-family:Figtree,"Frutiger","Helvetica Neue",Arial,sans-serif;font-size:1rem;line-height:1.5}
-a{color:var(--blue)}
-:focus-visible{outline:3px solid var(--yellow);outline-offset:2px;border-radius:2px}
-button,input,select,textarea{font:inherit;color:inherit}
-.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-[hidden]{display:none !important}
 /* Page head */
-.page-head{padding:1rem 1.25rem}
+.page-head{padding:1rem var(--gutter)}
 .page-head h1{margin:0;font-size:clamp(1.4rem,2.6vw,1.8rem);line-height:1.2;font-weight:800;letter-spacing:-.015em}
 .page-head .meta{color:var(--muted);margin:.15rem 0 0;max-width:70ch}
-
 /* Workspace */
-main{display:grid;grid-template-columns:minmax(300px,420px) minmax(0,1fr);gap:1.25rem;padding:0 1.25rem 1.25rem;align-items:start}
+main{display:grid;grid-template-columns:minmax(300px,420px) minmax(0,1fr);gap:1.25rem;padding:0 var(--gutter) 1.25rem;align-items:start}
 @media (max-width:880px){main{grid-template-columns:1fr}}
-@media (max-width:420px){main{padding:0 1rem 1rem} .page-head,.notes,.roadmap{padding-left:1rem;padding-right:1rem}}
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow);padding:1.1rem;min-width:0}
 .panel h2{font-size:1.05rem;font-weight:700;margin:0 0 .75rem}
 .block{margin-bottom:1.1rem}
@@ -62,18 +32,16 @@ label{display:block;font-weight:600;margin:0 0 .35rem}
 .hint{color:var(--muted);font-size:.88rem;margin:0 0 .5rem}
 input[type=text]{width:100%;padding:.5rem .65rem;border:2px solid var(--muted);border-radius:4px;background:var(--surface)}
 input[type=text]:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px var(--yellow)}
-
 /* Buttons */
 .btns{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
 button{display:inline-flex;align-items:center;gap:.4rem;border-radius:4px;padding:.5rem .95rem;font-weight:700;cursor:pointer;background:var(--surface);color:var(--blue);border:2px solid var(--blue);line-height:1.2;white-space:nowrap}
 button:hover{background:var(--blue-bg)}
 button:disabled{opacity:.45;cursor:not-allowed;background:var(--surface)}
-button.primary{background:var(--green);color:#fff;border-color:var(--green);box-shadow:0 3px 0 #00401E}
+button.primary{background:var(--green);color:var(--on-accent);border-color:var(--green);box-shadow:0 3px 0 #00401E}
 button.primary:hover{filter:brightness(1.07);background:var(--green)}
 button.primary:active{transform:translateY(2px);box-shadow:0 1px 0 #00401E}
 button.link{border:0;padding:.1rem .25rem;background:none;font-weight:600;text-decoration:underline;color:var(--blue)}
 button.link:hover{background:none;color:var(--navy)}
-
 /* Question */
 .step{color:var(--muted);font-size:.85rem;font-weight:600;margin:0 0 .2rem;text-transform:uppercase;letter-spacing:.04em}
 .question{font-size:1.25rem;font-weight:800;line-height:1.25;margin:0 0 .35rem}
@@ -83,14 +51,12 @@ button.link:hover{background:none;color:var(--navy)}
 .option:hover{border-color:var(--blue);background:var(--blue-bg)}
 .option b{display:block;font-weight:700;color:var(--blue)}
 .option small{display:block;color:var(--muted);font-size:.86rem;margin-top:.1rem}
-
 /* Route so far */
 .route{list-style:none;margin:0 0 1rem;padding:0;border-top:1px solid var(--line)}
 .route li{display:flex;gap:.5rem;justify-content:space-between;align-items:baseline;padding:.45rem 0;border-bottom:1px solid var(--line);font-size:.93rem}
 .route li span{min-width:0}
 .route li .a{font-weight:700}
 .route li .q{color:var(--muted);display:block;font-size:.84rem}
-
 /* Result */
 .summary{font-size:clamp(1.3rem,2.6vw,1.85rem);line-height:1.25;font-weight:700;letter-spacing:-.01em;margin:0 0 .3rem;max-width:36ch}
 .summary strong{color:var(--blue);font-weight:800}
@@ -114,9 +80,8 @@ button.link:hover{background:none;color:var(--navy)}
 .warnbox{background:#FFF4DB;color:#6B4A00;border-left:5px solid var(--yellow);border-radius:0 4px 4px 0;padding:.6rem .8rem;margin:0 0 1rem;max-width:75ch}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .warnbox{background:#3A2E10;color:#FFD27A}}
 :root[data-theme="dark"] .warnbox{background:#3A2E10;color:#FFD27A}
-
 /* Full road map */
-.roadmap{padding:0 1.25rem 1.25rem}
+.roadmap{padding:0 var(--gutter) 1.25rem}
 .roadmap .panel > p{margin:0 0 .9rem;max-width:80ch;color:var(--muted)}
 .tree,.tree ul{list-style:none;margin:0;padding:0}
 .tree ul{margin-left:.55rem;padding-left:1rem;border-left:2px solid var(--line)}
@@ -128,19 +93,15 @@ button.link:hover{background:none;color:var(--navy)}
 .tree ul.on{border-left-color:var(--blue)}
 .tree .leaf{font:inherit;font-weight:700;border:2px solid var(--line);border-radius:4px;padding:.15rem .55rem;color:var(--text);background:var(--surface);white-space:normal;text-align:left}
 .tree .leaf:hover{border-color:var(--blue);background:var(--blue-bg)}
-.tree .leaf.here{border-color:var(--blue);background:var(--blue);color:#fff}
+.tree .leaf.here{border-color:var(--blue);background:var(--blue);color:var(--on-accent)}
 .tree .then{color:var(--muted);font-size:.9rem}
-
 /* Notes */
 .knowbox{border-bottom:1px solid var(--line);padding-bottom:1.1rem}
 .knowbox select{width:100%;padding:.5rem .65rem;border:2px solid var(--muted);border-radius:4px;background:var(--surface)}
 .knowbox select:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 3px var(--yellow)}
-.notes{padding:0 1.25rem 2rem;color:var(--muted);font-size:.92rem}
+.notes{padding:0 var(--gutter) 2rem;color:var(--muted);font-size:.92rem}
 .notes p{max-width:80ch;margin:0 0 .75rem}
-/* Centre the page in the same 1340px column as the FOCUS header */
-.page-head,main,.roadmap,.notes{box-sizing:border-box;max-width:1340px;margin-left:auto;margin-right:auto}
 .notice{background:var(--blue-bg);color:var(--text);border-left:5px solid var(--blue);border-radius:0 4px 4px 0;padding:.7rem .9rem;max-width:80ch}
-
 /* Run the test */
 .runbox{border:2px solid var(--blue);border-radius:8px;padding:1rem;margin:0 0 1rem}
 .runbox h3{font-size:1.1rem;font-weight:800;margin:0 0 .35rem}
