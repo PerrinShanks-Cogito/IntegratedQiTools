@@ -94,7 +94,7 @@ label.f{display:block;font-weight:600;margin:0 0 .35rem}
 .stage-tools .zoom-label{min-width:48px;text-align:center;font-size:.88rem;color:var(--muted);font-weight:600}
 .stage-tools .spacer{flex:1}
 .canvas-wrap{flex:1;min-height:0;overflow:auto;padding:1rem;background:var(--bg)}
-#canvas{display:inline-block;background:#fff;border:1px solid var(--line);border-radius:4px;line-height:0;box-shadow:var(--shadow)}
+#canvas{display:inline-block;vertical-align:top;background:#fff;border:1px solid var(--line);border-radius:4px;line-height:0;box-shadow:var(--shadow)}
 #canvas svg{display:block;user-select:none;-webkit-user-select:none}
 #canvas g.box{cursor:pointer}
 .canvas-wrap.can-pan,.canvas-wrap.pan,.canvas-wrap.pan #canvas g.box{cursor:grab}
@@ -104,6 +104,7 @@ label.f{display:block;font-weight:600;margin:0 0 .35rem}
 .stage.full{position:fixed;inset:0;height:auto;align-self:stretch;justify-self:stretch;border:0;border-radius:0;z-index:1500}
 body.ft-full{overflow:hidden}
 .stage:fullscreen .fx-wrap,.stage.full .fx-wrap{display:none}
+.stage:fullscreen .canvas-wrap,.stage.full .canvas-wrap{text-align:center}
 dialog{border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--text);padding:0;width:min(680px,94vw);max-height:90vh}
 dialog::backdrop{background:rgba(0,20,40,.5)}
 .dlg{padding:1.25rem 1.5rem;display:flex;flex-direction:column;gap:.7rem;max-height:88vh}
@@ -243,7 +244,7 @@ select.field{overflow:visible;cursor:pointer}
         <span class="sw dash"></span><span><b>Rework loop</b>: a "no" that sends work back to an earlier step.</span>
       </div>
       <h3>Moving around the map</h3>
-      <p>The map has its own window, which stays in view as you scroll down the page. Drag the map to move it around in its window. A click without a drag still opens a step for editing. To move around without opening steps, turn on <b>Move</b> or hold Space. Once you've clicked the map, the arrow keys move it too (hold Shift to move further). Use <b>−</b>, <b>+</b> and <b>Fit</b> to zoom, and <b>Full screen</b> to give the map the whole screen (Esc leaves it).</p>
+      <p>The map has its own window, which stays in view as you scroll down the page. Drag the map to move it around in its window. A click without a drag still opens a step for editing. To move around without opening steps, turn on <b>Move</b> or hold Space. Once you've clicked the map, the arrow keys move it too (hold Shift to move further). Use <b>−</b>, <b>+</b> and <b>Fit</b> to zoom, and <b>Full screen</b> to give the map the whole screen, as big as it will fit (Esc leaves it).</p>
       <h3>Before you map</h3>
       <ol>
         <li>Pick a process that matters to patients and staff, and that you have some ability to change.</li>
@@ -631,7 +632,11 @@ function renderCanvas(){
   }
   canvasEl.style.background="";canvasEl.style.border="";canvasEl.style.boxShadow="";
   const Lr=layout(m);
-  if(autoFit){const avail=wrapEl.clientWidth-34; zoom=Math.max(.6,Math.min(1,avail/Lr.W));}
+  /* Fit: in full screen the map is as big as the screen allows; otherwise it fits the width */
+  if(autoFit){
+    const aw=wrapEl.clientWidth-34, ah=wrapEl.clientHeight-34;
+    zoom=isFull()?Math.max(.2,Math.min(3,aw/Lr.W,ah/Lr.H)):Math.max(.6,Math.min(1,aw/Lr.W));
+  }
   canvasEl.innerHTML=Lr.svg;
   const svg=canvasEl.querySelector("svg");
   svg.setAttribute("width",Math.round(Lr.W*zoom)); svg.setAttribute("height",Math.round(Lr.H*zoom));
@@ -720,6 +725,7 @@ function fullChanged(){
   fullBtn.setAttribute("aria-pressed",on);
   fullBtn.querySelector("span").textContent=on?"Exit full screen":"Full screen";
   document.body.classList.toggle("ft-full",stageEl.classList.contains("full"));
+  autoFit=true;
   requestAnimationFrame(()=>renderCanvas());
 }
 function setFull(on){
