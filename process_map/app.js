@@ -571,7 +571,7 @@ function renderEditor(){
     h+='<div class="lane-row" data-id="'+l.id+'"><input class="field ln" type="text" aria-label="Lane '+(i+1)+' name" placeholder="Role or team">'+
       '<button class="btn icon ghost" data-act="up" type="button" aria-label="Move lane up">↑</button><button class="btn icon ghost" data-act="down" type="button" aria-label="Move lane down">↓</button><button class="btn icon ghost danger" data-act="del" type="button" aria-label="Remove lane">✕</button></div>';
   });
-  h+='</div><p class="hint">Give each person, role, team or organisation involved its own lane, including patients, service users, carers and families. Name the lane for the people the service is for Patient, Service user or Carer so the steps they go through are counted. Supporting work, such as samples, notes or IT systems, can have its own lane too.</p>';
+  h+='</div><p class="hint">Give each person, role, team or organisation involved its own lane, including patients, service users, carers and families. Where work passes between different governance structures, such as another directorate, trust, provider, contractor or the local authority, give each its own lane, even if the same kind of staff do the work, so changes of accountability show up. Name the lane for the people the service is for Patient, Service user or Carer so the steps they go through are counted. Supporting work, such as samples, notes or IT systems, can have its own lane too.</p>';
   h+='<div class="section-h"><h2>Steps</h2></div>';
   const F=flow(m);
   h+='<div id="steps">'+m.steps.map((s,i)=>stepCard(m,s,i,F)).join("")+'</div>';
