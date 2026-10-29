@@ -128,13 +128,13 @@ const STAGES=[
   fields:[
    {row:[{k:"status",t:"select",l:"Project status",o:"status"},{k:"completionDate",t:"date",l:"Completion date"}]},
    {k:"realised",t:"radio3",l:"Did this project realise its expected benefits?",o:"realised"},
-   {k:"benefits",t:"benefits",l:"Benefits register",hint:"Record what each benefit achieved and whether it was realised. This is the same register you started on the Observe stage: change it on either and it changes on both. Add as many or as few benefits as you need."},
    {k:"beneficiaries",t:"radio3",l:"Who benefits from the project?",o:"beneficiaries"},
    {k:"reach",t:"radio3",l:"How many people does this affect per year?",o:"reach"},
    {k:"learning",t:"textarea",l:"Key learning from your project"},
    {k:"repo",t:"repo",l:"Submit your A3 to the QI repository and become eligible for a prize",hint:"Share your project and its A3 report so others across the Trust can learn from it."},
    {k:"scalable",t:"radio3",l:"Is this idea scalable?",o:"scalable"},
-   {k:"pulse",t:"pulse",l:"Project promoted to Pulse"}
+   {k:"pulse",t:"pulse",l:"Project promoted to Pulse"},
+   {k:"benefits",t:"benefits",l:"Benefits register",hint:"Record what each benefit achieved and whether it was realised. This is the same register you started on the Observe stage: change it on either and it changes on both. Add as many or as few benefits as you need."}
   ]}
 ];
 const LAST=STAGES.length-1;
