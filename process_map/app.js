@@ -12,7 +12,7 @@ let seq=0;
 const nid=()=>"s"+Date.now().toString(36)+(seq++).toString(36);
 const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
-const TYPES={terminator:"Start / end",step:"Activity",decision:"Decision",wait:"Wait / queue"};
+const TYPES={terminator:"Start / end",step:"Activity",decision:"Decision"};
 const PATH="#005EB8"; // arrows and outlines for steps on a decision's new path
 const VALUES={"":"Not classified",va:"Value-adding",nnva:"Necessary (NNVA)",nva:"Non-value-adding"};
 const VSHORT={va:"VA",nnva:"NNVA",nva:"NVA"};
@@ -35,17 +35,17 @@ function example(){
   const c4=S(rc,"step","Prints labels and a paper request form","nnva",{issue:"Same details written out twice"});
   const cur={lanes:[pt,rc,ph,po,lab,cl],steps:[
     S(pt,"terminator","Patient arrives for blood test",""),
-    S(pt,"wait","Takes a ticket and waits to check in","nva"),
+    S(pt,"step","Takes a ticket and waits to check in","nva"),
     S(rc,"step","Checks identity and finds the request","nnva",{issue:"Request is on the EPR but gets re-keyed"}),
     c4,
-    S(pt,"wait","Waits to be called","nva",{issue:"Queue peaks 08:30 to 10:00"}),
+    S(pt,"step","Waits to be called","nva",{issue:"Queue peaks 08:30 to 10:00"}),
     S(ph,"step","Takes blood sample","va"),
     S(ph,"decision","Labels match the patient?","nnva",{noTo:c4.id,noLabel:"No, relabel"}),
-    S(po,"wait","Sample waits in tray for porter round","nva",{issue:"Porter round only hourly"}),
+    S(po,"step","Sample waits in tray for porter round","nva",{issue:"Porter round only hourly"}),
     S(po,"step","Carries samples to the lab","nnva"),
-    S(lab,"wait","Sample waits to be booked in","nva"),
+    S(lab,"step","Sample waits to be booked in","nva"),
     S(lab,"step","Books in and analyses sample","va"),
-    S(cl,"wait","Result waits in inbox","nva",{issue:"Only reviewed at end of clinic"}),
+    S(cl,"step","Result waits in inbox","nva",{issue:"Only reviewed at end of clinic"}),
     S(cl,"step","Reviews result and decides action","va"),
     S(pt,"terminator","Patient told the result","")
   ]};
@@ -53,13 +53,13 @@ function example(){
   const fut={lanes:[fp,fph,flab,fcl],steps:[
     S(fp,"terminator","Patient arrives at booked slot",""),
     S(fp,"step","Checks in at the kiosk","nnva"),
-    S(fp,"wait","Waits to be called","nva",{issue:"Booked slots spread the morning peak"}),
+    S(fp,"step","Waits to be called","nva",{issue:"Booked slots spread the morning peak"}),
     S(fph,"step","Prints labels at the chair from the e-request","nnva"),
     S(fph,"step","Takes and labels sample at the chair","va"),
     S(fph,"step","Sends sample by air tube","nnva"),
-    S(flab,"wait","Sample waits to be booked in","nva"),
+    S(flab,"step","Sample waits to be booked in","nva"),
     S(flab,"step","Books in and analyses sample","va"),
-    S(fcl,"wait","Result flagged and waits for review","nva"),
+    S(fcl,"step","Result flagged and waits for review","nva"),
     S(fcl,"step","Reviews result and decides action","va"),
     S(fp,"terminator","Patient told the result in the app","")
   ]};
@@ -80,7 +80,9 @@ function normMap(m){
   const steps=(Array.isArray(m.steps)?m.steps:[]).map(s=>{
     s=s||{};
     const legacy=s.type==="branch"; // older maps had a New path step type
-    const n=S(idmap["L"+s.lane]||lanes[0].id,legacy?"step":TYPES[s.type]?s.type:"step",String(s.text||""),VALUES[s.value]!==undefined?s.value:"",
+    /* older maps also had a Wait / queue type: it opens as a non-value-adding activity */
+    const wait=s.type==="wait", value=VALUES[s.value]!==undefined?s.value:"";
+    const n=S(idmap["L"+s.lane]||lanes[0].id,legacy||wait?"step":TYPES[s.type]?s.type:"step",String(s.text||""),wait&&!value?"nva":value,
       {issue:String(s.issue||""),yesLabel:String(s.yesLabel||"Yes"),noLabel:String(s.noLabel||"No"),
        depth:legacy?Math.max(1,Math.floor(+s.depth||1)):Math.max(0,Math.floor(+s.depth||0))});
     idmap["S"+s.id]=n.id; n._old=s.noTo; n._then=s.thenTo; return n;
@@ -178,7 +180,7 @@ function flow(m){
 
 /* ---------- metrics ---------- */
 function metrics(m){
-  const r={steps:0,patient:0,handoffs:0,decisions:0,waits:0,va:0,nnva:0,nva:0,unc:0,loops:0,paths:0,issues:0,hasPatient:m.lanes.some(isPat)};
+  const r={steps:0,patient:0,handoffs:0,decisions:0,va:0,nnva:0,nva:0,unc:0,loops:0,paths:0,issues:0,hasPatient:m.lanes.some(isPat)};
   const pl={}; m.lanes.forEach(l=>pl[l.id]=isPat(l));
   const F=flow(m), idx=F.idx;
   /* a path that loops back is rework, so like a rework loop it isn't counted as a hand-off */
@@ -190,7 +192,6 @@ function metrics(m){
     r.steps++;
     if(pl[s.lane]) r.patient++;
     if(s.type==="decision"){r.decisions++; if(!F.runs[i]&&s.noTo&&idx[s.noTo]!==undefined&&idx[s.noTo]<i) r.loops++;}
-    if(s.type==="wait") r.waits++;
     if(s.value) r[s.value]++; else r.unc++;
   });
   return r;
@@ -337,12 +338,11 @@ function layout(m,o){
     let shape;
     if(s.type==="decision") shape='<path d="M'+g.cx+","+top+"L"+(x+BW)+","+g.cy+"L"+g.cx+","+(top+g.h)+"L"+x+","+g.cy+'Z"';
     else if(s.type==="terminator") shape='<rect x="'+x+'" y="'+top+'" width="'+BW+'" height="'+g.h+'" rx="'+Math.min(22,g.h/2)+'"';
-    else if(s.type==="wait"){const r=Math.min(g.h/2,24);shape='<path d="M'+x+","+top+"H"+(x+BW-r)+"A"+r+","+r+" 0 0 1 "+(x+BW)+","+(top+r)+"V"+(top+g.h-r)+"A"+r+","+r+" 0 0 1 "+(x+BW-r)+","+(top+g.h)+"H"+x+'Z"';}
     else shape='<rect x="'+x+'" y="'+top+'" width="'+BW+'" height="'+g.h+'" rx="4"';
     p.push('<g class="box" data-id="'+s.id+'">');
     if(!ex&&selected===s.id) p.push(shape+' fill="none" stroke="#FFB81C" stroke-width="9" stroke-linejoin="round"/>');
-    p.push(shape+' fill="'+fill+'" stroke="'+stroke+'" stroke-width="'+sw+'"'+(s.type==="wait"?' stroke-dasharray="5 3"':"")+'/>');
-    const lh=s.type==="decision"?15:16, by=g.cy-(g.lines.length-1)*lh/2+(s.type==="step"||s.type==="wait"?1.5:4.5);
+    p.push(shape+' fill="'+fill+'" stroke="'+stroke+'" stroke-width="'+sw+'"'+'/>');
+    const lh=s.type==="decision"?15:16, by=g.cy-(g.lines.length-1)*lh/2+(s.type==="step"?1.5:4.5);
     g.lines.forEach((t,k)=>p.push('<text x="'+g.cx+'" y="'+(by+k*lh)+'" text-anchor="middle" font-family="'+FF+'" font-size="13" font-weight="600" '+(g.empty?'font-style="italic" fill="#768692"':'fill="#212B32"')+'>'+esc(t)+'</text>'));
     /* step label badge: a circle for 1-digit labels, a pill for longer ones such as 12 or 3a */
     const lab=F.labels[g.i], bw=Math.max(20,lab.length*6.5+9), bfill=g.dep>0?PATH:"#003087";
@@ -350,7 +350,7 @@ function layout(m,o){
     p.push('<rect x="'+(bx-bw/2)+'" y="'+(byy-10)+'" width="'+bw+'" height="20" rx="10" fill="'+bfill+'"/><text x="'+bx+'" y="'+(byy+4)+'" text-anchor="middle" font-family="'+FF+'" font-size="10.5" font-weight="800" fill="#fff">'+esc(lab)+'</text>');
     /* value tag */
     if(s.value&&s.type!=="terminator"){
-      const vx=s.type==="decision"?g.cx:x+BW-(s.type==="wait"?14:6), vy=s.type==="decision"?top+g.h-16:top+g.h-6;
+      const vx=s.type==="decision"?g.cx:x+BW-6, vy=s.type==="decision"?top+g.h-16:top+g.h-6;
       p.push('<text x="'+vx+'" y="'+vy+'" text-anchor="'+(s.type==="decision"?"middle":"end")+'" font-family="'+FF+'" font-size="9.5" font-weight="800" fill="'+c.ink+'">'+VSHORT[s.value]+'</text>');
     }
     p.push('</g>');
@@ -559,13 +559,14 @@ function stepCard(m,s,i,F){
     '<button class="btn icon ghost" data-act="up" type="button" aria-label="Move step '+F.labels[i]+' up">↑</button>'+
     '<button class="btn icon ghost" data-act="down" type="button" aria-label="Move step '+F.labels[i]+' down">↓</button>'+
     '<button class="btn icon ghost danger" data-act="del" type="button" aria-label="Remove step '+F.labels[i]+'">✕</button></div>'+
-    '<textarea class="field t" rows="1" aria-label="Step '+F.labels[i]+' description" placeholder="'+(isT?(i===0?"Where the process starts":"Where the process ends"):isD?"A yes or no question":s.type==="wait"?"Who or what is waiting, and where":d?"What happens on this path? Start with a verb":"What happens? Start with a verb")+'"></textarea>'+
+    '<textarea class="field t" rows="1" aria-label="Step '+F.labels[i]+' description" placeholder="'+(isT?(i===0?"Where the process starts":"Where the process ends"):isD?"A yes or no question":d?"What happens on this path? Start with a verb":"What happens? Start with a verb")+'"></textarea>'+
     noRow+pathRow+
     '<input class="field measure issue is" type="text" aria-label="Issue for step '+F.labels[i]+'" placeholder="Issue or frustration (optional)">'+
     (isT?"":'<div class="row1"><label>Value<select class="field sm va">'+Object.keys(VALUES).map(k=>'<option value="'+k+'"'+(k===(s.value||"")?" selected":"")+'>'+VALUES[k]+'</option>').join("")+'</select></label></div>')+
     '<div class="step-foot"><span></span>'+
     '<span class="foot-btns">'+moves+
-    '<button class="btn small" data-act="ins" type="button">'+(d?"Add path step below":"Add step below")+'</button></span></div></div>';
+    '<button class="btn small" data-act="ins" type="button">'+(d?"Add path step below":"Add step below")+'</button>'+
+    '<button class="btn small" data-act="branch" type="button">Add new branch</button></span></div></div>';
 }
 function renderEditor(){
   renderEditing();
@@ -593,8 +594,8 @@ function renderEditor(){
   h+='</div><div class="section-h"><h2>Steps</h2></div>';
   const F=flow(m);
   h+='<div id="steps">'+m.steps.map((s,i)=>stepCard(m,s,i,F)).join("")+'</div>';
-  h+='<div style="margin-top:.6rem"><button class="btn small" id="addStep" type="button">Add step at the end</button></div>';
-  h+='<p class="hint">Press Enter in a step to add the next one in the same lane. Shift+Enter starts a new line. To give a decision a different "no" route, choose <b>A new path</b> in its <b>If no, go to</b> list: the yes route carries on along its own path. A path can have its own decisions and new paths.</p>';
+  h+='<div class="actions" style="margin-top:.6rem"><button class="btn small" id="addStep" type="button">Add step at the end</button><button class="btn small" id="addBranch" type="button">Add new branch at the end</button></div>';
+  h+='<p class="hint">Press Enter in a step to add the next one in the same lane. Shift+Enter starts a new line. <b>Add new branch</b> adds a decision with a new path for its "no" route. To give a decision a different "no" route, choose <b>A new path</b> in its <b>If no, go to</b> list: the yes route carries on along its own path. A path can have its own decisions and new paths.</p>';
   host.innerHTML=h;
   host.querySelectorAll(".lane-row").forEach(r=>{r.querySelector(".ln").value=laneOf(m,r.dataset.id).name;});
   host.querySelectorAll(".step").forEach(c=>{
@@ -635,7 +636,6 @@ ed.addEventListener("change",e=>{
   if(cl.contains("ty")){
     const hadPath=!!flow(m).runs[m.steps.indexOf(s)];
     s.type=e.target.value;
-    if(s.type==="wait"&&!s.value) s.value="nva";
     if(s.type!=="decision") s.noTo="";
     if(s.type==="terminator") s.value="";
     /* a new decision starts with a new path for its "no" route */
@@ -686,6 +686,12 @@ function insertAfter(i){
   }
   m.steps.splice(at,0,ns); selected=ns.id; changed(true); focusCard(ns.id,".t");
 }
+/* Add a decision after this one on the same path, with a new path started for its "no" route */
+function insertBranch(i){
+  insertAfter(i);
+  const m=map(), s=m.steps.find(x=>x.id===selected);
+  s.type="decision"; addPathStep(m.steps.indexOf(s),true); focusCard(s.id,".t");
+}
 /* Add a step to a decision's new path, starting the path if it hasn't got one */
 function addPathStep(i,stay){
   const m=map(), F=flow(m);
@@ -721,6 +727,7 @@ ed.addEventListener("click",e=>{
   const m=map(); if(!m) return;
   if(e.target.id==="addLane"){m.lanes.push(L("New lane"));changed(true);const rows=document.querySelectorAll(".lane-row .ln");const last=rows[rows.length-1];last.focus();last.select();return;}
   if(e.target.id==="addStep"){insertAfter(m.steps.length-1);return;}
+  if(e.target.id==="addBranch"){insertBranch(m.steps.length-1);return;}
   const b=e.target.closest("[data-act]"); if(!b) return;
   const act=b.dataset.act;
   const lr=b.closest(".lane-row");
@@ -751,6 +758,7 @@ ed.addEventListener("click",e=>{
     if(ids.includes(selected))selected=null; changed(true);
   }
   else if(act==="ins") insertAfter(i);
+  else if(act==="branch") insertBranch(i);
 });
 /* header fields */
 $("#title").addEventListener("input",e=>{state.title=e.target.value;changed();});
@@ -761,7 +769,7 @@ function renderAnalysis(){
   const cur=metrics(state.maps.current), fm=state.maps.future, fut=fm?metrics(fm):null;
   const rows=[
     ["Steps","steps",-1,0],["Steps the patient goes through","patient",-1,0,!cur.hasPatient&&!(fut&&fut.hasPatient)],["Hand-offs","handoffs",-1,0],
-    ["Decisions","decisions",-1,0],["Waits and queues","waits",-1,0],["Non-value-adding steps","nva",-1,0],["Necessary non-value-adding steps","nnva",-1,0],
+    ["Decisions","decisions",-1,0],["Non-value-adding steps","nva",-1,0],["Necessary non-value-adding steps","nnva",-1,0],
     ["Value-adding steps","va",0,0],["Rework loops","loops",-1,0],["New paths from decisions","paths",0,0,!cur.paths&&!(fut&&fut.paths)]
   ];
   const f=v=>String(v);
@@ -778,7 +786,7 @@ function renderAnalysis(){
   });
   h+='</tbody></table>';
   if(!fut) h+='<p class="hint">Start a redesign from the map view to compare the two.</p>';
-  const a=state.active==="future"&&fut?fut:cur, am=map()||state.maps.current, label=state.active==="future"&&fut?"redesign":"current process";
+  const a=state.active==="future"&&fut?fut:cur, label=state.active==="future"&&fut?"redesign":"current process";
   const tot=a.va+a.nnva+a.nva+a.unc;
   h+='<div class="section-h"><h2>Where the value is ('+label+')</h2></div>';
   if(tot){
@@ -790,8 +798,6 @@ function renderAnalysis(){
   const P=[];
   if(a.steps&&a.nva) P.push(a.nva+" of "+a.steps+" steps add no value for the patient. Which could you stop doing altogether?");
   if(a.handoffs>=3) P.push("The patient or the work changes hands "+a.handoffs+" times. Could one person or team do more of the journey?");
-  const waits=am.steps.filter(s=>s.type==="wait");
-  if(waits.length) P.push("There "+(waits.length>1?"are "+waits.length+" waits or queues":"is 1 wait or queue")+" on the map. What is the work waiting for"+(waits.length>1?" at each one?":"?"));
   if(a.loops) P.push(a.loops+" rework loop"+(a.loops>1?"s send":" sends")+" work back. Fix the cause at source rather than checking for it later.");
   if(a.paths) P.push(a.paths+" decision"+(a.paths>1?"s send":" sends")+" some cases down a new path. How often does each path happen, and what would make it unnecessary?");
   if(a.nnva) P.push("Necessary steps can still be simplified or done at the same time as something else. Look at the "+a.nnva+" amber step"+(a.nnva>1?"s":"")+".");
@@ -830,7 +836,6 @@ function renderChecks(){
     const unc=st.filter(s=>s.type!=="terminator"&&!s.value);
     if(unc.length) add("warn",steps(unc.map(lab))+(unc.length>1?" aren't":" isn't")+" classified for value","Ask of each one: would the patient value this? Mark it value-adding, necessary or non-value-adding.");
     else if(M.steps) add("pass","Every step is classified for value","");
-    if(!M.waits&&M.steps) add("info","No waits or queues mapped","Most processes have them. Add them as Wait / queue steps so they're counted.");
     if(!M.issues&&M.steps>=3) add("info","No issues noted yet","Add the frustrations people raise as issue notes on the steps. They become your list of things to fix.");
 
     if(M.decisions){
@@ -898,7 +903,7 @@ function colMap(head){
 function toTable(m){
   const byId={}, F=flow(m); m.steps.forEach(s=>byId[s.id]=s);
   const nm=id=>byId[id]?String(byId[id].text||"").replace(/[\t\n]/g," ").trim():"";
-  const tn={terminator:"Start/end",step:"Activity",decision:"Decision",wait:"Wait"};
+  const tn={terminator:"Start/end",step:"Activity",decision:"Decision"};
   const out=[COLS.join("\t")];
   m.steps.forEach((s,i)=>out.push([laneOf(m,s.lane).name,s.text,tn[s.type],VSHORT[s.value]||"",s.issue,
     s.type==="decision"&&s.noTo?nm(s.noTo):"",F.dep[i]||"",
@@ -918,7 +923,7 @@ function fromTable(src,old){
     const ty=col(c,"type").toLowerCase(), va=col(c,"value").toLowerCase().replace(/[^a-z]/g,"");
     /* older tables had a "New path" type: an activity one level below the step before it */
     const legacy=/new path|branch|altern/.test(ty);
-    const type=legacy?"step":/start|end|termin/.test(ty)?"terminator":/decis|question|\?/.test(ty)?"decision":/wait|queue|delay/.test(ty)?"wait":"step";
+    const type=legacy?"step":/start|end|termin/.test(ty)?"terminator":/decis|question|\?/.test(ty)?"decision":"step";
     const value=type==="terminator"?"":va==="nnva"||/necess|amber/.test(va)?"nnva":va==="nva"||/^non|waste|red/.test(va)?"nva":va==="va"||/^value|green/.test(va)?"va":"";
     const lvRaw=col(c,"level"), go=col(c,"go"), th=col(c,"then");
     const lv=/^\d+$/.test(lvRaw)?+lvRaw:legacy?(prev?prev.depth+(prev.type==="decision"?1:0):0)||1:0;
