@@ -108,6 +108,12 @@ aside dd{margin:0;font-weight:600;overflow-wrap:anywhere}
 .history time{color:var(--muted)}
 .toollinks a{font-weight:600}
 .toollinks .why{display:block;color:var(--muted);font-size:.85rem}
+.guidedocs{list-style:none;margin:0;padding:0;display:grid;gap:.8rem;font-size:.93rem}
+.guidedocs li+li{border-top:1px solid var(--line);padding-top:.8rem}
+.guidedocs .dname{font-weight:700}
+.guidedocs .code{display:inline-block;min-width:1.9rem;margin-right:.35rem;padding:0 .3rem;border-radius:4px;background:var(--blue-bg);color:var(--navy);font-size:.8rem;font-weight:800;text-align:center}
+.guidedocs .why{display:block;color:var(--muted);font-size:.85rem;margin:.15rem 0 .35rem}
+.guidedocs .dl{display:flex;flex-wrap:wrap;gap:.25rem .9rem;font-size:.88rem;font-weight:600}
 
 /* Move-on checklist dialog */
 dialog.ck{border:0;border-radius:8px;padding:0;width:min(640px,calc(100% - 2rem));max-height:calc(100% - 2rem);background:var(--surface);color:var(--text);box-shadow:0 20px 60px rgba(0,20,40,.35)}
@@ -168,6 +174,8 @@ dialog.ck::backdrop{background:rgba(0,30,60,.55)}
 
 {%- comment %} The other tools, for the "Tools for this stage" card {% endcomment %}
 <script type="application/json" id="toolsData" data-base="{{ site.baseurl }}">{{ site.data.tools | jsonify }}</script>
+{%- comment %} The programme guide's documents, for the "Programme documents" card {% endcomment %}
+<script type="application/json" id="guideDocs" data-base="{{ '/programme_guide/' | relative_url }}">[{% for d in site.data.programme_guide.docs %}{"id":{{ d.id | jsonify }},"code":{{ d.code | jsonify }},"stage":{{ d.stage | jsonify }},"name":{{ d.name | jsonify }},"kind":{{ d.kind | jsonify }},"template":{{ d.template | jsonify }},"example":{{ d.example | jsonify }},"purpose":{{ d.purpose | jsonify }}}{% unless forloop.last %},{% endunless %}{% endfor %}]</script>
 <script src="{{ '/miqi_project/app.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
 {% include focus-footer.html %}
 <script src="{{ '/assets/js/analytics.js' | relative_url }}" data-tool="miqi-project"></script>

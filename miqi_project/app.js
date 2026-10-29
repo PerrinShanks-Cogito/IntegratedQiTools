@@ -140,6 +140,13 @@ try{
 }catch(e){TOOLS={};}
 const toolUrl=id=>BASE+"/"+id+"/";
 
+/* ---------- the programme guide's documents, by stage ---------- */
+let GUIDE=[], GUIDE_BASE="";
+try{const el=$("#guideDocs"); GUIDE_BASE=el.dataset.base||""; GUIDE=JSON.parse(el.textContent);}catch(e){GUIDE=[];}
+const KIND={slides:"PowerPoint",sheet:"Excel",doc:"Word"};
+/* the guide has no Close stage: its closure report sits under Sustain */
+const guideDocs=sid=>GUIDE.filter(d=>d.stage===(sid==="close"?"sustain":sid));
+
 /* ---------- state ---------- */
 const today=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");};
 const uid=()=>Math.random().toString(36).slice(2,9);
@@ -300,12 +307,27 @@ function renderAside(){
      '<dt>Documents</dt><dd>'+docCount+'</dd></dl></div>'+
    (tools.length?'<div class="card"><h3>Tools for this stage</h3><ul class="toollinks">'+tools.map(([id,why])=>'<li><a href="'+esc(toolUrl(id))+'" target="_blank" rel="noopener">'+esc(TOOLS[id].name)+'<span class="sr"> (opens in a new tab)</span></a><span class="why">'+esc(why)+'</span></li>').join("")+'</ul>'+
      '<p class="hint" style="margin:.6rem 0 0">Tools open in a new tab, so this project stays open here.</p></div>':"")+
+   guideCard(s)+
    '<div class="card"><h3>Stage history</h3><ul class="history">'+P.history.slice().reverse().map(h=>'<li><span>'+STAGES[h.stage].name+'</span><time>'+fmt(h.date)+'</time></li>').join("")+'</ul></div>'+
    '<div class="card"><h3>Need a hand?</h3><ul class="helplinks">'+
      '<li><a href="'+esc(LINKS.chatbot)+'" target="_blank" rel="noopener">Ask the QI Coach chatbot</a></li>'+
      '<li><a href="'+esc(LINKS.clinic)+'" target="_blank" rel="noopener">Book a QI Clinic</a></li>'+
      '<li><a href="'+esc(LINKS.training)+'" target="_blank" rel="noopener">Book training with the CITI Academy</a></li>'+
      '<li><a href="'+esc(LINKS.community)+'" target="_blank" rel="noopener">Ask a question in the Improvement Community Hub</a></li></ul></div>';
+}
+
+function guideCard(s){
+  const docs=guideDocs(s.id); if(!docs.length) return "";
+  const kind=d=>KIND[d.kind]||"";
+  const kinds=[...new Set(docs.map(kind).filter(Boolean))];
+  return '<div class="card"><h3>Programme documents</h3><ul class="guidedocs">'+docs.map(d=>
+    '<li><span class="dname">'+(d.code?'<span class="code">'+esc(d.code)+'</span>':"")+esc(d.name)+'</span>'+
+    '<span class="why">'+esc(d.purpose)+'</span><span class="dl">'+
+    (d.template?'<a href="'+esc(GUIDE_BASE+"templates/"+d.template)+'" download>Blank template<span class="sr"> for '+esc(d.name)+', '+kind(d)+'</span></a>':"")+
+    (d.example?'<a href="'+esc(GUIDE_BASE+"examples/"+d.example)+'" download>Worked example<span class="sr"> of '+esc(d.name)+', '+kind(d)+'</span></a>':"")+
+    '</span></li>').join("")+'</ul>'+
+    '<p class="hint" style="margin:.7rem 0 0">'+(kinds.length?"Files download as "+(kinds.length>1?kinds.slice(0,-1).join(", ")+" and "+kinds[kinds.length-1]:kinds[0])+". ":"")+
+    'See how they fit together in the <a href="'+esc(GUIDE_BASE)+'" target="_blank" rel="noopener">programme guide<span class="sr"> (opens in a new tab)</span></a>.</p></div>';
 }
 
 /* ---------- move-on checklist ---------- */
