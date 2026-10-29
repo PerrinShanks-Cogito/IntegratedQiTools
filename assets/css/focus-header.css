@@ -27,6 +27,8 @@
 .fh-inner{width:100%;max-width:none;margin:0;padding:.9rem clamp(1rem,2vw,2.5rem);display:flex;flex-wrap:wrap;gap:.75rem 1.5rem;align-items:center;justify-content:space-between}
 .fh-sub .fh-inner{padding:.5rem clamp(1rem,2vw,2.5rem);gap:.25rem 1.75rem;justify-content:flex-start;font-size:.92rem}
 
+.fh-id{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+.fh-status{cursor:help}
 .fh-brand{display:flex;align-items:baseline;gap:.6rem;color:#fff;text-decoration:none}
 .fh-brand:hover span{text-decoration:underline;text-underline-offset:3px}
 .fh-brand b{font-size:1.25rem;font-weight:800;letter-spacing:-.01em}
@@ -74,7 +76,7 @@
 /* Responsive header layout */
 @media (max-width:768px){
   .fh-inner{padding:.75rem 1rem;gap:.6rem}
-  .fh-brand{width:100%}
+  .fh-id{width:100%}
   .fh-nav{width:100%;gap:.2rem}
   .fh-nav a{padding:.35rem .5rem}
   .fh-sub .fh-inner{padding:.5rem 1rem;gap:.5rem 1rem}

@@ -6,7 +6,13 @@
 <header class="fh"{% if current_tool %} data-tool-name="{{ current_tool.name | escape }}" data-tool-desc="{{ current_tool.description | escape }}"{% endif %}>
   <div class="fh-top">
     <div class="fh-inner">
-      <a class="fh-brand" href="{{ '/' | relative_url }}"><b>FOCUS</b>{% if current_tool %}<span>{{ current_tool.name }}</span>{% else %}<span>QI charting tools</span>{% endif %}</a>
+      <div class="fh-id">
+        <a class="fh-brand" href="{{ '/' | relative_url }}"><b>FOCUS</b>{% if current_tool %}<span>{{ current_tool.name }}</span>{% else %}<span>QI charting tools</span>{% endif %}</a>
+        {%- comment %} A tool that's still Alpha or Beta says so next to its name {% endcomment %}
+        {%- if current_tool.status %}{% assign st = current_tool.status | downcase %}
+        <span class="fh-tag fh-tag-{{ st }} fh-status" title="{% if st == 'alpha' %}Alpha: an early version that's still being built and tested. Check results carefully, and tell us what you find with Feedback.{% elsif st == 'beta' %}Beta: ready to use, and still being improved. Tell us what you think with Feedback.{% else %}{{ current_tool.status }}{% endif %}">{{ current_tool.status }}</span>
+        {%- endif %}
+      </div>
       <nav class="fh-nav" aria-label="Main">
         <details class="fh-dd"><summary>Get support</summary><div class="fh-menu"><ul class="fh-list fh-support"><li><a href="https://m365.cloud.microsoft/chat/?titleId=T_9a8ef1bb-12ee-5134-a332-f2a26e2f1bd9&amp;source=embedded-builder" target="_blank" rel="noopener">QI Coach chatbot</a><span class="fh-desc">Talk through your idea or next step</span></li><li><a href="https://nhs.sharepoint.com/:u:/r/sites/msteams_de9171/SitePages/Coaching,-Mentoring-%26-QI-Clinics.aspx?d=w388a701be9e940038a5ed1ab42b9b192&amp;csf=1&amp;web=1&amp;e=6gO0oF" target="_blank" rel="noopener">Book a QI Clinic</a><span class="fh-desc">One-to-one time with an improvement advisor</span></li><li><a href="https://coh.gstt.nhs.uk/course/view.php?id=3199" target="_blank" rel="noopener">Book training</a><span class="fh-desc">QI courses from the CITI Academy</span></li><li><a href="https://teams.microsoft.com/l/channel/19%3AtqDE8DYvOERF7Q7JAJyW4WuaJFD6AmLJ07wypT9dVks1%40thread.tacv2/Improvement%20Community%20Hub?groupId=1bf22369-4401-488f-8994-68e3d2340c12&amp;tenantId=37c354b2-85b0-47f5-b222-07b48d774ee3" target="_blank" rel="noopener">Ask the Improvement Community</a><span class="fh-desc">Post a question in the Teams hub</span></li></ul></div></details>
         {%- comment %} Case studies menu hidden for now. Remove this comment tag and its endcomment to show it again. {% endcomment %}
