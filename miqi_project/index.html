@@ -85,6 +85,13 @@ legend.lbl{font-weight:600;margin-bottom:.35rem;padding:0}
 .out.Adapted{background:var(--blue-bg);color:var(--navy)}
 .out.Abandoned{background:var(--bg);color:var(--danger);border:1px solid var(--line)}
 .pulse-row{display:flex;flex-wrap:wrap;gap:.75rem 1rem;align-items:center}
+.ms-add{display:grid;grid-template-columns:minmax(0,2fr) minmax(9.5rem,1fr) minmax(0,1.3fr);gap:.6rem;align-items:end}
+.ms{list-style:none;margin:.9rem 0 0;padding:0;display:grid;gap:.5rem}
+.ms li{display:grid;grid-template-columns:7.5rem minmax(0,1fr) auto auto;gap:.75rem;align-items:center;padding:.55rem .8rem;border:1px solid var(--line);border-left:4px solid var(--blue);border-radius:4px}
+.ms li.past{border-left-color:var(--muted)}
+.ms time{font-weight:700;color:var(--blue);font-size:.92rem}
+.ms li.past time{color:var(--muted)}
+.ms-what{display:flex;flex-direction:column;min-width:0;overflow-wrap:anywhere}
 .xbtn{display:inline-flex;align-items:center;justify-content:center;width:2rem;height:2rem;border:2px solid transparent;border-radius:4px;background:transparent;color:var(--muted);cursor:pointer}
 .xbtn:hover{color:var(--danger);border-color:var(--danger);background:var(--surface)}
 
@@ -143,7 +150,8 @@ dialog.ck::backdrop{background:rgba(0,30,60,.55)}
 
 @media (max-width:960px){.work{grid-template-columns:1fr}}
 @media (max-width:640px){
-  .grid2,.pdsa-add{grid-template-columns:1fr}
+  .grid2,.pdsa-add,.ms-add{grid-template-columns:1fr}
+  .ms li{grid-template-columns:1fr auto}.ms li .btn{grid-column:1}
   .pdsa li{grid-template-columns:1fr auto}.pdsa li::before{grid-column:1/-1}
   .rail .name,.rail .state{display:none}
   .rail button{align-items:center;padding:.8rem .2rem}

@@ -88,7 +88,8 @@ const STAGES=[
   fields:[
    {k:"smartAim",t:"yesno",l:"Do you have a SMART aim?",hint:"Specific, measurable, achievable, relevant and time-bound."},
    {k:"planOnPage",t:"yesno",l:"Have you created a Plan on a Page?"},
-   {k:"solutions",t:"yesno",l:"Do you have a list of solutions to test?"}
+   {k:"solutions",t:"yesno",l:"Do you have a list of solutions to test?"},
+   {k:"milestones",t:"milestones",l:"Key milestones",hint:"The dates the project has to hit, such as the first PDSA cycle starting or a report to the board. Add each one to your Outlook calendar as a reminder."}
   ],
   checklist:[
    {k:"smartAim",q:"Do you have a SMART aim?"},
@@ -150,7 +151,7 @@ const guideDocs=sid=>GUIDE.filter(d=>d.stage===(sid==="close"?"sustain":sid));
 /* ---------- state ---------- */
 const today=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");};
 const uid=()=>Math.random().toString(36).slice(2,9);
-function blankProject(){return {id:uid(),stage:0,closed:false,created:today(),history:[{stage:0,date:today()}],data:{sites:[],updates:[],pdsa:[]},docs:{}};}
+function blankProject(){return {id:uid(),stage:0,closed:false,created:today(),history:[{stage:0,date:today()}],data:{sites:[],updates:[],pdsa:[],milestones:[]},docs:{}};}
 
 /* Check a project read from a file or this tab, and keep only what this page uses */
 const isDate=s=>typeof s==="string"&&/^\d{4}-\d{2}-\d{2}$/.test(s);
@@ -170,8 +171,9 @@ function normalise(p){
     else if(k==="sites"&&Array.isArray(v)) d[k]=v.filter(x=>OPTS.sites.includes(x));
     else if(k==="updates"&&Array.isArray(v)) d[k]=v.filter(u=>u&&isDate(u.date)&&typeof u.text==="string").map(u=>({date:u.date,text:u.text}));
     else if(k==="pdsa"&&Array.isArray(v)) d[k]=v.filter(c=>c&&typeof c.change==="string"&&OPTS.pdsaOutcome.includes(c.outcome)).map(c=>({change:c.change,outcome:c.outcome}));
+    else if(k==="milestones"&&Array.isArray(v)) d[k]=v.filter(m=>m&&typeof m.title==="string"&&isDate(m.date)).map(m=>({id:typeof m.id==="string"?m.id.slice(0,40):uid(),title:m.title,date:m.date,owner:typeof m.owner==="string"?m.owner:""}));
   });
-  out.data=Object.assign({sites:[],updates:[],pdsa:[]},d);
+  out.data=Object.assign({sites:[],updates:[],pdsa:[],milestones:[]},d);
   if(p.docs&&typeof p.docs==="object") STAGES.forEach(s=>{const a=p.docs[s.id]; if(Array.isArray(a)) out.docs[s.id]=a.filter(n=>typeof n==="string").map(n=>n.slice(0,200));});
   return out;
 }
@@ -239,6 +241,22 @@ function fieldHTML(f,d){
         '<div class="seg">'+OPTS.pdsaOutcome.map((o,i)=>'<label><input type="radio" name="pdsaOut" data-k="draftPdsaOut" value="'+o+'"'+((d.draftPdsaOut?d.draftPdsaOut===o:i===0)?" checked":"")+'><span>'+o.replace("ed","")+'</span></label>').join("")+'</div></div></div></div>'+
         '<div style="margin-top:.6rem"><button type="button" class="btn" data-act="addPdsa">Add PDSA cycle</button></div>'+
         (cyc.length?'<ol class="pdsa">'+cyc.map((c,i)=>'<li><span>'+esc(c.change)+'</span><span class="out '+c.outcome+'">'+c.outcome+'</span><button type="button" class="xbtn" data-act="rmPdsa" data-i="'+i+'" aria-label="Delete cycle '+(i+1)+'" title="Delete cycle">'+X_SVG+'</button></li>').join("")+'</ol>':'<p class="empty">No PDSA cycles listed yet.</p>')+'</fieldset>';}
+    case "milestones":{
+      const list=sortedMilestones();
+      return '<fieldset class="field"><legend class="lbl">'+lab+'</legend>'+hint+
+        '<div class="ms-add">'+
+          '<div><label for="msTitle" class="hint" style="margin:0 0 .3rem">Milestone</label><input type="text" id="msTitle" data-k="draftMsTitle" value="'+esc(d.draftMsTitle)+'" placeholder="For example: first PDSA cycle starts"></div>'+
+          '<div><label for="msDate" class="hint" style="margin:0 0 .3rem">Date</label><input type="date" id="msDate" data-k="draftMsDate" value="'+esc(d.draftMsDate)+'"></div>'+
+          '<div><label for="msOwner" class="hint" style="margin:0 0 .3rem">Owner (optional)</label><input type="text" id="msOwner" data-k="draftMsOwner" value="'+esc(d.draftMsOwner)+'" placeholder="Who makes sure it happens"></div>'+
+        '</div>'+
+        '<div style="margin-top:.6rem"><button type="button" class="btn" data-act="addMilestone">Add milestone</button></div>'+
+        (list.length?'<ol class="ms">'+list.map(m=>{const past=m.date<today();
+          return '<li'+(past?' class="past"':'')+'><time datetime="'+m.date+'">'+fmt(m.date)+'</time><span class="ms-what"><b>'+esc(m.title)+'</b>'+(m.owner?'<span class="hint" style="margin:0">'+esc(m.owner)+'</span>':'')+'</span>'+
+            '<button type="button" class="btn small" data-act="icsOne" data-id="'+esc(m.id)+'" aria-label="Add '+esc(m.title)+' to your calendar (.ics)">Add to calendar</button>'+
+            '<button type="button" class="xbtn" data-act="rmMilestone" data-id="'+esc(m.id)+'" aria-label="Delete milestone '+esc(m.title)+'" title="Delete milestone">'+X_SVG+'</button></li>';}).join("")+'</ol>'+
+          '<div style="margin-top:.75rem"><button type="button" class="btn primary" data-act="icsAll">Add all '+list.length+' to calendar (.ics)</button></div>'+
+          '<p class="hint" style="margin:.5rem 0 0">Calendar files download to your Downloads folder. Open one and it appears in Outlook as an all-day entry with a reminder a week before: choose Save &amp; Close to keep it. Add all puts every milestone in one file.</p>'
+        :'<p class="empty">No milestones yet.</p>')+'</fieldset>';}
     case "log":{
       const list=(v||[]).map((u,i)=>Object.assign({i:i},u)).reverse();
       return '<div class="field"><label for="'+id+'">'+lab+'</label><span class="hint">Add a dated note each time you test a change or reach a milestone.</span>'+
@@ -413,6 +431,16 @@ panel.addEventListener("click",e=>{
       delete d.draftPdsa; delete d.draftPdsaOut; save(); render(); toast("PDSA cycle added"); break;}
     case "rmUpdate": d.updates.splice(+b.dataset.i,1); save(); render(); toast("Update deleted"); break;
     case "rmPdsa": d.pdsa.splice(+b.dataset.i,1); save(); render(); toast("PDSA cycle deleted"); break;
+    case "addMilestone":{
+      const t=$("#msTitle"), dt=$("#msDate"), title=t.value.trim();
+      if(!title){t.focus(); toast("Name the milestone first"); return;}
+      if(!isDate(dt.value)){dt.focus(); toast("Choose the milestone's date"); return;}
+      (d.milestones=d.milestones||[]).push({id:uid(),title:title,date:dt.value,owner:$("#msOwner").value.trim()});
+      delete d.draftMsTitle; delete d.draftMsDate; delete d.draftMsOwner;
+      save(); render(); $("#msTitle").focus(); toast("Milestone added"); break;}
+    case "rmMilestone": d.milestones=(d.milestones||[]).filter(m=>m.id!==b.dataset.id); save(); render(); toast("Milestone deleted"); break;
+    case "icsOne":{const m=(d.milestones||[]).find(x=>x.id===b.dataset.id); if(m) downloadIcs([m],fileBase()+"-"+slugOf(m.title)+".ics"); break;}
+    case "icsAll": downloadIcs(sortedMilestones(),fileBase()+"-milestones.ics"); break;
     case "exportPulse": exportPulse(); break;
     case "closeProject":
       if(!d.status||!d.completionDate){toast("Add a project status and completion date to close"); return;}
@@ -433,6 +461,47 @@ rail.addEventListener("keydown",e=>{
   e.preventDefault();
 });
 
+/* ---------- milestones as calendar files (.ics) ----------
+   Each milestone is an all-day entry, shown as free time, with a reminder a
+   week before. Outlook, Teams, Google and Apple calendars all open them. The
+   UID stays the same for a milestone, so adding it again updates the entry
+   rather than adding a second one. */
+const sortedMilestones=()=>(P.data.milestones||[]).slice().sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:0);
+const slugOf=t=>String(t||"").replace(/[^\w\- ]+/g,"").trim().replace(/\s+/g,"-").slice(0,40)||"milestone";
+function icsText(t){return String(t||"").replace(/\\/g,"\\\\").replace(/;/g,"\\;").replace(/,/g,"\\,").replace(/\r?\n/g,"\\n");}
+/* Lines over 75 bytes are folded onto continuation lines starting with a space */
+function icsFold(line){
+  const enc=new TextEncoder(); let out="", cur="", n=0;
+  for(const ch of line){const b=enc.encode(ch).length; if(n+b>(out?74:75)){out+=(out?"\r\n ":"")+cur; cur=""; n=0;} cur+=ch; n+=b;}
+  return out+(out?"\r\n ":"")+cur;
+}
+function ics(list){
+  const ymd=s=>s.replace(/-/g,"");
+  const next=s=>{const d=new Date(s+"T12:00:00Z"); d.setUTCDate(d.getUTCDate()+1); return d.toISOString().slice(0,10).replace(/-/g,"");};
+  const stamp=new Date().toISOString().replace(/[-:]/g,"").replace(/\.\d+Z$/,"Z");
+  const title=P.data.title||"Untitled project";
+  const lines=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//GSTT FOCUS//MiQi project//EN","CALSCALE:GREGORIAN","METHOD:PUBLISH"];
+  list.forEach(m=>{
+    const desc=["Milestone for the improvement project "+title+".",m.owner?"Owner: "+m.owner+".":"",P.data.leadName?"Project lead: "+P.data.leadName+".":"","From the MiQi improvement project tool."].filter(Boolean).join("\n");
+    lines.push("BEGIN:VEVENT","UID:"+P.id+"-"+m.id+"@miqi-project","DTSTAMP:"+stamp,
+      "DTSTART;VALUE=DATE:"+ymd(m.date),"DTEND;VALUE=DATE:"+next(m.date),
+      "SUMMARY:"+icsText("Milestone: "+m.title+" ("+title+")"),"DESCRIPTION:"+icsText(desc),"CATEGORIES:MiQi project",
+      "TRANSP:TRANSPARENT","X-MICROSOFT-CDO-BUSYSTATUS:FREE","X-MICROSOFT-CDO-ALLDAYEVENT:TRUE",
+      "BEGIN:VALARM","ACTION:DISPLAY","DESCRIPTION:"+icsText("Milestone in a week: "+m.title),"TRIGGER:-P7D","END:VALARM","END:VEVENT");
+  });
+  lines.push("END:VCALENDAR");
+  return lines.map(icsFold).join("\r\n")+"\r\n";
+}
+/* Straight to the Downloads folder, without a Save as window */
+function downloadIcs(list,name){
+  if(!list.length) return toast("Add a milestone first");
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([ics(list)],{type:"text/calendar;charset=utf-8"}));
+  a.download=name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+  toast(list.length>1?"Downloaded "+list.length+" milestones in "+name+". Open it to add them to Outlook.":"Downloaded "+name+". Open it to add it to Outlook.");
+}
+
 /* ---------- export for Pulse ---------- */
 function pulseCSV(){
   const p=P, d=p.data, v=x=>Array.isArray(x)?x.join("; "):(x==null?"":x);
@@ -444,6 +513,7 @@ function pulseCSV(){
     ["Lifecycle history",p.history.map(h=>STAGES[h.stage].name+" ("+h.date+")")],
     ["How improvement is measured",d.measuring],["Supporting evidence",d.evidence],["Current state",d.currentState],["Baseline measures",d.baseline],
     ["SMART aim",d.smartAim],["Plan on a Page",d.planOnPage],["Solutions to test",d.solutions],
+    ["Key milestones",sortedMilestones().map(m=>m.date+": "+m.title+(m.owner?" ("+m.owner+")":""))],
     ["Completed PDSA cycles",d.pdsaCount],["PDSA cycles",(d.pdsa||[]).map((c,i)=>"Cycle "+(i+1)+": "+c.change+" ("+c.outcome+")")],
     ["Progress updates",(d.updates||[]).map(u=>u.date+": "+u.text)],["Improvements logged",d.loggedImprovements],
     ["Sustainability plan",d.sustainPlan],["Established in business as usual",d.bau],
