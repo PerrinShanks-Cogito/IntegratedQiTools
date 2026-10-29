@@ -107,7 +107,7 @@ function normalise(o){
 function cloneMap(m){return normMap(JSON.parse(JSON.stringify(m)));}
 
 let state=blank();
-let selected=null, zoom=1, autoFit=true;
+let selected=null, zoom=1, autoFit=true, laneTipsOpen=false;
 const map=()=>state.maps[state.active];
 const laneOf=(m,id)=>m.lanes.find(l=>l.id===id)||m.lanes[0];
 
@@ -568,14 +568,23 @@ function renderEditor(){
     host.innerHTML='<div class="empty" style="margin-top:1rem">No redesign yet.<div class="actions" style="justify-content:center;margin-top:.7rem"><button class="btn small" type="button" data-start="copy">Copy current map</button><button class="btn small" type="button" data-start="blank">Start blank</button></div></div>';
     return;
   }
-  let h='<div class="section-h"><h2>Lanes</h2><button class="btn small" id="addLane" type="button">Add lane</button></div><div id="lanes">';
+  let h='<div class="section-h"><h2>Lanes</h2><button class="btn small" id="addLane" type="button">Add lane</button></div>';
+  /* with one lane, explain that swimlanes are what make hand-offs visible and countable */
+  h+='<p class="hint">'+(m.lanes.length===1?'With one lane the map is a simple flowchart. To track hand-offs, turn it into a swimlane map. ':'Hand-offs are counted each time the work moves from one lane to another. ')+
+    'Give each person, role, team or organisation involved its own lane, including patients, service users, carers and families.</p>';
+  /* when a new lane earns its place, and when it doesn't */
+  h+='<details class="lane-tips"'+(laneTipsOpen?" open":"")+'><summary>When to add a lane</summary><ul>'+
+    '<li><b>Another role or team does the next step</b>, for example when the work moves from reception to a nurse.</li>'+
+    '<li><b>The work crosses into a different organisation or governance structure</b>, such as another directorate, trust, provider, contractor or the local authority. Give it its own lane even if the same kind of staff do the work, so the change of accountability shows.</li>'+
+    '<li><b>You want to see the patient\'s own journey</b>, including the waiting. Call that lane Patient, Service user or Carer so the steps they go through are counted.</li>'+
+    '<li><b>Something travels separately</b> from the patient and has its own delays: samples, notes, referrals or an IT system.</li>'+
+    '</ul><p>You don\'t need a new lane for each person (use their role), or for steps the same role does one after another. If you need more than about eight lanes, the map is probably covering too much: narrow the scope, or map the detail separately.</p></details>';
+  h+='<div id="lanes">';
   m.lanes.forEach((l,i)=>{
     h+='<div class="lane-row" data-id="'+l.id+'"><input class="field ln" type="text" aria-label="Lane '+(i+1)+' name" placeholder="Role or team">'+
       '<button class="btn icon ghost" data-act="up" type="button" aria-label="Move lane up">↑</button><button class="btn icon ghost" data-act="down" type="button" aria-label="Move lane down">↓</button><button class="btn icon ghost danger" data-act="del" type="button" aria-label="Remove lane">✕</button></div>';
   });
-  /* with one lane, explain that swimlanes are what make hand-offs visible and countable */
-  h+='</div><p class="hint">'+(m.lanes.length===1?'<b>With one lane the map is a simple flowchart.</b> To track hand-offs, turn it into a swimlane map. ':'Hand-offs are counted each time the work moves from one lane to another. ')+'Give each person, role, team or organisation involved its own lane, including patients, service users, carers and families. Where work passes between different governance structures, such as another directorate, trust, provider, contractor or the local authority, give each its own lane, even if the same kind of staff do the work, so changes of accountability show up. Name the lane for the people the service is for Patient, Service user or Carer so the steps they go through are counted. Supporting work, such as samples, notes or IT systems, can have its own lane too.</p>';
-  h+='<div class="section-h"><h2>Steps</h2></div>';
+  h+='</div><div class="section-h"><h2>Steps</h2></div>';
   const F=flow(m);
   h+='<div id="steps">'+m.steps.map((s,i)=>stepCard(m,s,i,F)).join("")+'</div>';
   h+='<div style="margin-top:.6rem"><button class="btn small" id="addStep" type="button">Add step at the end</button></div>';
@@ -593,6 +602,7 @@ function markSel(){document.querySelectorAll(".step").forEach(c=>c.classList.tog
 function changed(full){const m=map(); if(m) syncDepth(m.steps); persist(); if(full) renderEditor(); renderCanvas(); renderChecks(); renderAnalysis();}
 
 const ed=$("#mapEditor");
+ed.addEventListener("toggle",e=>{if(e.target.classList&&e.target.classList.contains("lane-tips")) laneTipsOpen=e.target.open;},true);
 ed.addEventListener("input",e=>{
   const m=map(); if(!m) return;
   const lr=e.target.closest(".lane-row");

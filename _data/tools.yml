@@ -4,8 +4,9 @@
 # works for anyone with the link. A group with only hidden tools isn't shown.
 - id: process_map
   name: Process map
+  status: Beta
   group: Understand the system
-  description: Map each step of a process, mark waits and handoffs, and see where time and effort are lost before you redesign it.
+  description: Map each step of a process, see where the work changes hands and where waste and rework creep in, before you redesign it.
 
 - id: driver_diagram
   name: Driver diagram
