@@ -535,7 +535,7 @@ function stepCard(m,s,i,F){
   /* where a decision's no route goes: back to an earlier step, or down the new path that follows it */
   const noRow=!isD?"":run?
     '<div class="row2"><p class="path-note">If no, take the new path, starting with <span'+nameAttr(m.steps[run.first])+'>'+esc(nameOf(m.steps[run.first]))+'</span></p><label>No label<input class="field sm nl" type="text"></label></div>':
-    '<div class="row2"><label>If no, go to<select class="field sm nt"><option value="">Carry on (no loop)</option>'+others+'</select></label><label>No label<input class="field sm nl" type="text"></label></div>';
+    '<div class="row2"><label>If no, go to<select class="field sm nt"><option value="">Carry on (no loop)</option><option value="__path">A new path</option>'+(others?'<optgroup label="Go to a step">'+others+'</optgroup>':"")+'</select></label><label>No label<input class="field sm nl" type="text"></label></div>';
   /* the last step on a path says where the path goes next */
   let pathRow="";
   if(F.last[i]){
@@ -643,7 +643,11 @@ ed.addEventListener("change",e=>{
   }
   if(cl.contains("la")){s.lane=e.target.value;changed();return;}
   if(cl.contains("va")){s.value=e.target.value;c.className=c.className.replace(/\sv-\w+/g,"")+(s.value?" v-"+s.value:"");changed();return;}
-  if(cl.contains("nt")){s.noTo=e.target.value;changed();return;}
+  if(cl.contains("nt")){
+    /* choosing A new path starts the decision's new path, as Add new path does */
+    if(e.target.value==="__path"){s.noTo=""; addPathStep(m.steps.indexOf(s)); return;}
+    s.noTo=e.target.value;changed();return;
+  }
   if(cl.contains("th")){s.thenTo=e.target.value;changed();return;}
 });
 ed.addEventListener("focusin",e=>{
