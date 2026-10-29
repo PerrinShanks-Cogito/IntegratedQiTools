@@ -474,7 +474,11 @@ FocusActions.mount({
   say:toast,
   ready:()=>true,
   a3:false,
-  exports:[{type:"csv",label:"Export for Pulse (.csv)",hint:"The whole project as one row, to upload to Pulse",run:exportPulse}]
+  exports:[
+    {type:"csv",label:"Export for Pulse (.csv)",hint:"The whole project as one row, to upload to Pulse",run:exportPulse},
+    /* placeholder until the QI repository exists */
+    {type:"repo",label:"Add project to QI repository",hint:"Coming soon",run:()=>toast("Adding projects to the QI repository is coming soon. For now, use Save to keep a project file.")}
+  ]
 });
 
 /* ---------- arriving from the MiQi Projects menu ---------- */
