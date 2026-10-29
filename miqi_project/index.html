@@ -85,6 +85,15 @@ legend.lbl{font-weight:600;margin-bottom:.35rem;padding:0}
 .out.Adapted{background:var(--blue-bg);color:var(--navy)}
 .out.Abandoned{background:var(--bg);color:var(--danger);border:1px solid var(--line)}
 .pulse-row{display:flex;flex-wrap:wrap;gap:.75rem 1rem;align-items:center}
+.bf{list-style:none;margin:.9rem 0 0;padding:0;display:grid;gap:.9rem}
+.bf>li{border:1px solid var(--line);border-left:4px solid var(--green);border-radius:4px;padding:.8rem 1rem 1rem}
+.bf-head{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:.5rem}
+.bf-head h3{margin:0;font-size:1rem}
+.bf-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.7rem 1rem;align-items:end}
+.bf-grid .bf-wide{grid-column:span 2}
+.bf-grid fieldset{min-width:0}
+.bf-grid .seg span{padding:.4rem .8rem}
+.bf-actions{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:.8rem}
 .ms-add{display:grid;grid-template-columns:minmax(0,2fr) minmax(9.5rem,1fr) minmax(0,1.3fr);gap:.6rem;align-items:end}
 .ms{list-style:none;margin:.9rem 0 0;padding:0;display:grid;gap:.5rem}
 .ms li{display:grid;grid-template-columns:7.5rem minmax(0,1fr) auto auto;gap:.75rem;align-items:center;padding:.55rem .8rem;border:1px solid var(--line);border-left:4px solid var(--blue);border-radius:4px}
@@ -150,7 +159,8 @@ dialog.ck::backdrop{background:rgba(0,30,60,.55)}
 
 @media (max-width:960px){.work{grid-template-columns:1fr}}
 @media (max-width:640px){
-  .grid2,.pdsa-add,.ms-add{grid-template-columns:1fr}
+  .grid2,.pdsa-add,.ms-add,.bf-grid{grid-template-columns:1fr}
+  .bf-grid .bf-wide{grid-column:auto}
   .ms li{grid-template-columns:1fr auto}.ms li .btn{grid-column:1}
   .pdsa li{grid-template-columns:1fr auto}.pdsa li::before{grid-column:1/-1}
   .rail .name,.rail .state{display:none}

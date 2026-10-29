@@ -33,10 +33,13 @@ const OPTS={
   sites:["St Thomas'","Guy's","Royal Brompton","Harefield","Evelina"],
   status:["Completed","Closed, not progressed","On hold","Merged with another project"],
   scalable:["Yes","No","Not sure"],
+  yesno:["Yes","No"],
   realised:["Yes","Partially","No","Too early to tell"],
   beneficiaries:["Patients","Staff","Mixed"],
   reach:["Less than 100","100 - 999","1000 - 9999","10000 +"],
-  pdsaOutcome:["Adopted","Adapted","Abandoned"]
+  pdsaOutcome:["Adopted","Adapted","Abandoned"],
+  benefitType:["Benefit","Dis-benefit"],
+  benefitStatus:["Realised","Partly realised","Not realised","Too early to tell"]
 };
 
 /* Each stage's fields, the checks before moving on, and the tools on this site that help with it */
@@ -123,6 +126,7 @@ const STAGES=[
   fields:[
    {row:[{k:"status",t:"select",l:"Project status",o:"status"},{k:"completionDate",t:"date",l:"Completion date"}]},
    {k:"realised",t:"radio3",l:"Did this project realise its expected benefits?",o:"realised"},
+   {k:"benefits",t:"benefits",l:"Benefits register",hint:"Add each benefit the project set out to deliver, and any dis-benefit, such as a balancing measure that got worse. Add as many or as few as you need."},
    {k:"beneficiaries",t:"radio3",l:"Who benefits from the project?",o:"beneficiaries"},
    {k:"reach",t:"radio3",l:"How many people does this affect per year?",o:"reach"},
    {k:"learning",t:"textarea",l:"Key learning from your project"},
@@ -132,6 +136,22 @@ const STAGES=[
   ]}
 ];
 const LAST=STAGES.length-1;
+
+/* Benefits register columns, following the CITI benefits register (template K) */
+const BENEFIT=[
+  {k:"title",l:"Benefit",w:"wide",ph:"For example: more patients discharged before midday"},
+  {k:"type",l:"Benefit or dis-benefit",t:"seg",o:"benefitType"},
+  {k:"beneficiary",l:"Who benefits",ph:"For example: patients on Florence Ward"},
+  {k:"measure",l:"Measure",ph:"For example: % of discharges before 12:00"},
+  {k:"baseline",l:"Baseline",ph:"For example: 16%"},
+  {k:"target",l:"Target",ph:"For example: 33%"},
+  {k:"achieved",l:"Achieved at close",ph:"For example: 29%"},
+  {k:"status",l:"Status",t:"select",o:"benefitStatus"},
+  {k:"source",l:"Data source and frequency",ph:"For example: EPR discharge times, weekly"},
+  {k:"owner",l:"Benefit owner",ph:"Who looks after it now"},
+  {k:"cash",l:"Cash releasing?",t:"seg",o:"yesno"},
+  {k:"value",l:"£ value per year",ph:"For example: 25,000"}
+];
 
 /* ---------- the other tools on this site ---------- */
 let TOOLS={}, BASE="";
@@ -151,7 +171,7 @@ const guideDocs=sid=>GUIDE.filter(d=>d.stage===(sid==="close"?"sustain":sid));
 /* ---------- state ---------- */
 const today=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");};
 const uid=()=>Math.random().toString(36).slice(2,9);
-function blankProject(){return {id:uid(),stage:0,closed:false,created:today(),history:[{stage:0,date:today()}],data:{sites:[],updates:[],pdsa:[],milestones:[]},docs:{}};}
+function blankProject(){return {id:uid(),stage:0,closed:false,created:today(),history:[{stage:0,date:today()}],data:{sites:[],updates:[],pdsa:[],milestones:[],benefits:[]},docs:{}};}
 
 /* Check a project read from a file or this tab, and keep only what this page uses */
 const isDate=s=>typeof s==="string"&&/^\d{4}-\d{2}-\d{2}$/.test(s);
@@ -171,9 +191,10 @@ function normalise(p){
     else if(k==="sites"&&Array.isArray(v)) d[k]=v.filter(x=>OPTS.sites.includes(x));
     else if(k==="updates"&&Array.isArray(v)) d[k]=v.filter(u=>u&&isDate(u.date)&&typeof u.text==="string").map(u=>({date:u.date,text:u.text}));
     else if(k==="pdsa"&&Array.isArray(v)) d[k]=v.filter(c=>c&&typeof c.change==="string"&&OPTS.pdsaOutcome.includes(c.outcome)).map(c=>({change:c.change,outcome:c.outcome}));
+    else if(k==="benefits"&&Array.isArray(v)) d[k]=v.filter(x=>x&&typeof x==="object").map(x=>{const o={id:typeof x.id==="string"?x.id.slice(0,40):uid()}; BENEFIT.forEach(c=>{if(typeof x[c.k]==="string") o[c.k]=x[c.k];}); return o;});
     else if(k==="milestones"&&Array.isArray(v)) d[k]=v.filter(m=>m&&typeof m.title==="string"&&isDate(m.date)).map(m=>({id:typeof m.id==="string"?m.id.slice(0,40):uid(),title:m.title,date:m.date,owner:typeof m.owner==="string"?m.owner:""}));
   });
-  out.data=Object.assign({sites:[],updates:[],pdsa:[],milestones:[]},d);
+  out.data=Object.assign({sites:[],updates:[],pdsa:[],milestones:[],benefits:[]},d);
   if(p.docs&&typeof p.docs==="object") STAGES.forEach(s=>{const a=p.docs[s.id]; if(Array.isArray(a)) out.docs[s.id]=a.filter(n=>typeof n==="string").map(n=>n.slice(0,200));});
   return out;
 }
@@ -241,6 +262,22 @@ function fieldHTML(f,d){
         '<div class="seg">'+OPTS.pdsaOutcome.map((o,i)=>'<label><input type="radio" name="pdsaOut" data-k="draftPdsaOut" value="'+o+'"'+((d.draftPdsaOut?d.draftPdsaOut===o:i===0)?" checked":"")+'><span>'+o.replace("ed","")+'</span></label>').join("")+'</div></div></div></div>'+
         '<div style="margin-top:.6rem"><button type="button" class="btn" data-act="addPdsa">Add PDSA cycle</button></div>'+
         (cyc.length?'<ol class="pdsa">'+cyc.map((c,i)=>'<li><span>'+esc(c.change)+'</span><span class="out '+c.outcome+'">'+c.outcome+'</span><button type="button" class="xbtn" data-act="rmPdsa" data-i="'+i+'" aria-label="Delete cycle '+(i+1)+'" title="Delete cycle">'+X_SVG+'</button></li>').join("")+'</ol>':'<p class="empty">No PDSA cycles listed yet.</p>')+'</fieldset>';}
+    case "benefits":{
+      const list=v||[];
+      const cell=(b,i,c)=>{
+        const cid="bf_"+b.id+"_"+c.k, val=b[c.k]||"";
+        if(c.t==="seg") return '<fieldset class="bf-'+c.k+'"><legend class="hint" style="margin:0 0 .3rem">'+c.l+'</legend><div class="seg">'+OPTS[c.o].map(o=>'<label><input type="radio" name="'+cid+'" data-bid="'+esc(b.id)+'" data-bk="'+c.k+'" value="'+esc(o)+'"'+(val===o?" checked":"")+'><span>'+esc(o)+'</span></label>').join("")+'</div></fieldset>';
+        const lab='<label for="'+cid+'" class="hint" style="margin:0 0 .3rem">'+c.l+'</label>';
+        if(c.t==="select") return '<div>'+lab+'<select id="'+cid+'" data-bid="'+esc(b.id)+'" data-bk="'+c.k+'"><option value="">Select</option>'+OPTS[c.o].map(o=>'<option'+(o===val?" selected":"")+'>'+esc(o)+'</option>').join("")+'</select></div>';
+        return '<div'+(c.w?' class="bf-'+c.w+'"':'')+'>'+lab+'<input type="text" id="'+cid+'" data-bid="'+esc(b.id)+'" data-bk="'+c.k+'" value="'+esc(val)+'" placeholder="'+esc(c.ph||"")+'"></div>';
+      };
+      return '<fieldset class="field"><legend class="lbl">'+lab+'</legend>'+hint+
+        (list.length?'<ol class="bf">'+list.map((b,i)=>'<li><div class="bf-head"><h3>'+(b.type==="Dis-benefit"?"Dis-benefit ":"Benefit ")+(i+1)+'</h3>'+
+          '<button type="button" class="btn small ghost danger" data-act="rmBenefit" data-id="'+esc(b.id)+'" aria-label="Remove '+(b.title?esc(b.title):"benefit "+(i+1))+'">Remove</button></div>'+
+          '<div class="bf-grid">'+BENEFIT.map(c=>cell(b,i,c)).join("")+'</div></li>').join("")+'</ol>'
+          :'<p class="empty">No benefits added yet.</p>')+
+        '<div class="bf-actions"><button type="button" class="btn" data-act="addBenefit">Add benefit</button>'+
+        (list.length?'<button type="button" class="btn" data-act="benefitsXlsx">Download register (.xlsx)</button>':'')+'</div></fieldset>';}
     case "milestones":{
       const list=sortedMilestones();
       return '<fieldset class="field"><legend class="lbl">'+lab+'</legend>'+hint+
@@ -395,7 +432,15 @@ dlg.addEventListener("click",e=>{
 /* ---------- stage panel ---------- */
 const panel=$("#panel");
 function onField(e){
-  const el=e.target, k=el.dataset.k; if(!k) return;
+  const el=e.target;
+  if(el.dataset.bk){
+    const b=(P.data.benefits||[]).find(x=>x.id===el.dataset.bid); if(!b) return;
+    b[el.dataset.bk]=el.value;
+    /* the card's heading says whether it's a benefit or a dis-benefit */
+    if(el.dataset.bk==="type"){const h=el.closest("li").querySelector("h3"); h.textContent=h.textContent.replace(/^(Dis-benefit|Benefit)/,el.value);}
+    saveSoon(); syncHeader(); return;
+  }
+  const k=el.dataset.k; if(!k) return;
   if(el.type==="checkbox") P.data[k]=[...panel.querySelectorAll('input[data-k="'+k+'"]:checked')].map(i=>i.value);
   else P.data[k]=el.value;
   if(k==="title"||k==="leadName"||k==="group") renderHead(); else syncHeader();
@@ -438,6 +483,15 @@ panel.addEventListener("click",e=>{
       (d.milestones=d.milestones||[]).push({id:uid(),title:title,date:dt.value,owner:$("#msOwner").value.trim()});
       delete d.draftMsTitle; delete d.draftMsDate; delete d.draftMsOwner;
       save(); render(); $("#msTitle").focus(); toast("Milestone added"); break;}
+    case "addBenefit":{
+      const nb={id:uid(),type:"Benefit"}; (d.benefits=d.benefits||[]).push(nb);
+      save(); render(); const f=$("#bf_"+nb.id+"_title"); if(f){f.focus(); f.scrollIntoView({block:"center"});} break;}
+    case "rmBenefit":{
+      const i=(d.benefits||[]).findIndex(x=>x.id===b.dataset.id); if(i<0) return;
+      const x=d.benefits[i], used=BENEFIT.some(c=>c.k!=="type"&&(x[c.k]||"").trim());
+      if(used&&!confirm("Remove "+(x.title?"“"+x.title+"”":"this benefit")+" from the register?")) return;
+      d.benefits.splice(i,1); save(); render(); toast("Benefit removed"); break;}
+    case "benefitsXlsx": benefitsXlsx(); break;
     case "rmMilestone": d.milestones=(d.milestones||[]).filter(m=>m.id!==b.dataset.id); save(); render(); toast("Milestone deleted"); break;
     case "icsOne":{const m=(d.milestones||[]).find(x=>x.id===b.dataset.id); if(m) downloadIcs([m],fileBase()+"-"+slugOf(m.title)+".ics"); break;}
     case "icsAll": downloadIcs(sortedMilestones(),fileBase()+"-milestones.ics"); break;
@@ -460,6 +514,16 @@ rail.addEventListener("keydown",e=>{
   else return;
   e.preventDefault();
 });
+
+/* ---------- benefits register as a spreadsheet ---------- */
+function benefitsXlsx(){
+  const list=P.data.benefits||[]; if(!list.length) return toast("Add a benefit first");
+  const head=BENEFIT.map(c=>({v:c.l,s:"head"}));
+  const sheet={name:"Benefits register",freeze:3,cols:BENEFIT.map(c=>c.w?40:c.k==="source"?30:18),
+    rows:[[{v:"Benefits register: "+(P.data.title||"Untitled project"),s:"title"}],[],head].concat(list.map(b=>BENEFIT.map(c=>({v:b[c.k]||"",s:"wrap"}))))};
+  const name=fileBase()+"-benefits-register.xlsx";
+  FocusActions.saveFile(name,FocusActions.xlsx([sheet])).then(ok=>{if(ok) toast("Saved "+FocusActions.lastSaved());},()=>toast("Couldn't save "+name+"."));
+}
 
 /* ---------- milestones as calendar files (.ics) ----------
    Each milestone is an all-day entry, shown as free time, with a reminder a
@@ -513,6 +577,7 @@ function pulseCSV(){
     ["Lifecycle history",p.history.map(h=>STAGES[h.stage].name+" ("+h.date+")")],
     ["How improvement is measured",d.measuring],["Supporting evidence",d.evidence],["Current state",d.currentState],["Baseline measures",d.baseline],
     ["SMART aim",d.smartAim],["Plan on a Page",d.planOnPage],["Solutions to test",d.solutions],
+    ["Benefits register",(d.benefits||[]).filter(b=>BENEFIT.some(c=>c.k!=="type"&&(b[c.k]||"").trim())).map(b=>[b.type||"Benefit",b.title,b.measure&&"measure "+b.measure,b.baseline&&"baseline "+b.baseline,b.target&&"target "+b.target,b.achieved&&"achieved "+b.achieved,b.status,b.owner&&"owner "+b.owner,b.cash==="Yes"&&("cash releasing"+(b.value?" £"+b.value:""))].filter(Boolean).join(", "))],
     ["Key milestones",sortedMilestones().map(m=>m.date+": "+m.title+(m.owner?" ("+m.owner+")":""))],
     ["Completed PDSA cycles",d.pdsaCount],["PDSA cycles",(d.pdsa||[]).map((c,i)=>"Cycle "+(i+1)+": "+c.change+" ("+c.outcome+")")],
     ["Progress updates",(d.updates||[]).map(u=>u.date+": "+u.text)],["Improvements logged",d.loggedImprovements],
