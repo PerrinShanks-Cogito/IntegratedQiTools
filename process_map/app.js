@@ -574,7 +574,8 @@ function renderEditor(){
       '<button class="btn icon ghost" data-act="up" type="button" aria-label="Move lane up">↑</button><button class="btn icon ghost" data-act="down" type="button" aria-label="Move lane down">↓</button><button class="btn icon ghost danger" data-act="del" type="button" aria-label="Remove lane">✕</button></div>';
   });
   /* with one lane, explain that swimlanes are what make hand-offs visible and countable */
-  h+='</div><p class="hint">'+(m.lanes.length===1?'<b>With one lane the map is a simple flowchart.</b> To track hand-offs, turn it into a swimlane map. ':'Hand-offs are counted each time the work moves from one lane to another. ')+'Give each person, role, team or organisation involved its own lane, including patients, service users, carers and families. Where work passes between different governance structures, such as another directorate, trust, provider, contractor or the local authority, give each its own lane, even if the same kind of staff do the work, so changes of accountability show up. Name the lane for the people the service is for Patient, Service user or Carer so the steps they go through are counted. Supporting work, such as samples, notes or IT systems, can have its own lane too.</p>';
+  h+='</div><p class="hint">'+(m.lanes.length===1?'With one lane the map is a simple flowchart. To track hand-offs, turn it into a swimlane map. ':'Hand-offs are counted each time the work moves from one lane to another. ')+
+    'Give each person, role, team or organisation involved its own lane, including patients, service users, carers and families.</p>';
   h+='<div class="section-h"><h2>Steps</h2></div>';
   const F=flow(m);
   h+='<div id="steps">'+m.steps.map((s,i)=>stepCard(m,s,i,F)).join("")+'</div>';
