@@ -536,7 +536,8 @@ function stepCard(m,s,i,F){
   /* a decision's no route: a new path (the default), carry on, or go to another step */
   const others=m.steps.map((o,k)=>o.id===s.id||(run&&k>i&&k<=F.pathEnd(i))?"":opt(o,!run&&o.id===s.noTo,F.labels[k]+". ")).join(""); // numbered, e.g. "3. Triage referral"
   const noRow=!isD?"":
-    '<div class="row2"><label>If no, go to<select class="field sm nt"><option value=""'+(!run&&!s.noTo?" selected":"")+'>Carry on (no loop)</option><option value="__path"'+(run?" selected":"")+'>A new path</option>'+(others?'<optgroup label="Go to a step">'+others+'</optgroup>':"")+'</select></label><label>No label<input class="field sm nl" type="text"></label></div>';
+    '<div class="row1"><label>If no, go to<select class="field sm nt"><option value=""'+(!run&&!s.noTo?" selected":"")+'>Same as yes (carry on)</option><option value="__path"'+(run?" selected":"")+'>A new path</option>'+(others?'<optgroup label="Go to a step">'+others+'</optgroup>':"")+'</select></label></div>'+
+    '<div class="row2"><label>Yes label<input class="field sm yl" type="text"></label><label>No label<input class="field sm nl" type="text"></label></div>';
   /* the last step on a path says where the path goes next */
   let pathRow="";
   if(F.last[i]){
@@ -606,6 +607,7 @@ function renderEditor(){
     const t=c.querySelector(".t"); t.value=s.text; autosize(t);
     c.querySelector(".is").value=s.issue||"";
     const nl=c.querySelector(".nl"); if(nl) nl.value=s.noLabel||"No";
+    const yl=c.querySelector(".yl"); if(yl) yl.value=s.yesLabel||"Yes";
   });
 }
 function markSel(){document.querySelectorAll(".step").forEach(c=>c.classList.toggle("sel",c.dataset.id===selected));}
@@ -627,6 +629,7 @@ ed.addEventListener("input",e=>{
   if(cl.contains("t")){s.text=e.target.value;autosize(e.target);refreshNames(s);}
   else if(cl.contains("is")) s.issue=e.target.value;
   else if(cl.contains("nl")) s.noLabel=e.target.value;
+  else if(cl.contains("yl")) s.yesLabel=e.target.value;
   else return;
   changed();
 });
