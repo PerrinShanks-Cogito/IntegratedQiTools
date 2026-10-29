@@ -27,7 +27,7 @@ flowchart LR
   azure["<b>Azure Static Web Apps</b><br/>Serves the site's files over HTTPS<br/>with the security headers.<br/>Receives no user data."]
   subgraph browser["User's browser on a Trust computer"]
     tool["<b>FOCUS tool page</b><br/>Reads pasted data, draws charts<br/>and builds exports, all in the browser"]
-    storage["<b>Browser storage</b><br/>Diagram work: until the tab closes<br/>A3 charts and drafts: up to 14 days<br/>Links to saved project files: up to 2 days"]
+    storage["<b>Browser storage</b><br/>Diagram work: until the tab closes<br/>A3 charts and drafts: up to 14 days<br/>Links to saved project files: up to 2 days<br/>Recent MiQi project files: up to 30 days"]
   end
   ai["<b>Application Insights, UK South</b><br/>Page views, counts, settings<br/>and error types.<br/>Never values or labels."]
   fonts["<b>Google Fonts</b><br/>Fonts only, no code"]
@@ -60,7 +60,7 @@ Nine of the 17 chapters apply in full or in part. All nine are met.
 | V11 Cryptography | No | Not applicable | The site does no cryptography of its own. |
 | V12 Secure Communication | Yes | Met | Served over HTTPS only by Azure. `Strict-Transport-Security: max-age=31536000; includeSubDomains`, confirmed on the live site. |
 | V13 Configuration | Yes | Met | Security settings are in `staticwebapp.config.json`, in source control. No secrets in the repository; the Application Insights connection string only allows sending data, so it is public by design. |
-| V14 Data Protection | Yes | Met | Pasted data never leaves the browser. Analytics send counts and fixed settings only, never values, labels or notes. Diagram autosave lasts only while the tab is open. A3 report charts and drafts are cleared after 14 days (#91). In Edge and Chrome, Save remembers which project file it last saved to or opened, per tool and per tab: IndexedDB keeps the browser's handle to that file (never its contents), and the browser asks before the site may write to it. Links are dropped by New and cleared after 2 days. |
+| V14 Data Protection | Yes | Met | Pasted data never leaves the browser. Analytics send counts and fixed settings only, never values, labels or notes. Diagram autosave lasts only while the tab is open. A3 report charts and drafts are cleared after 14 days (#91). In Edge and Chrome, Save remembers which project file it last saved to or opened, per tool and per tab: IndexedDB keeps the browser's handle to that file (never its contents), and the browser asks before the site may write to it. Links are dropped by New and cleared after 2 days. MiQi Projects > Recent projects keeps up to 5 MiQi project files saved or opened in Edge or Chrome: each file's handle and name, the project's title and id, and when it was last used, never the project itself, for up to 30 days, with a Clear recent projects button. On a shared login, the next person could see these titles; reopening still needs their own access to the file and the browser's permission prompt. |
 | V15 Secure Coding and Architecture | Yes | Met | Third-party parts are listed: the Application Insights SDK 3.4.5, self-hosted and loaded with an integrity hash, and Google Fonts. Build dependencies are pinned in `Gemfile.lock`. |
 | V16 Security Logging and Error Handling | In part | Met | No server, so no server-side logs beyond the Azure platform's own. Browser error reports carry only the error type and where in the code it happened, never the message (#92). |
 | V17 WebRTC | No | Not applicable | No WebRTC. |

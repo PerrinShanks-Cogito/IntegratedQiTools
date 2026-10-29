@@ -62,6 +62,11 @@
         <li><a href="{{ '/miqi_project/?new=1' | relative_url }}">Create a new improvement project</a><span class="fh-desc">Work through the FOCUS stages, from finding the opportunity to closing the project</span></li>
         <li><button type="button" class="fh-linkbtn" data-fh-open-project>Open a saved QI project</button><span class="fh-desc">Carry on with a project file you saved</span></li>
       </ul>
+      <div class="fh-recent" hidden data-fh-recent>
+        <p class="fh-recent-head">Recent projects</p>
+        <ul class="fh-list fh-support"></ul>
+        <button type="button" class="fh-linkbtn fh-clear" data-fh-clear-recent>Clear recent projects</button>
+      </div>
       <input type="file" accept=".json,application/json" class="fh-sr" tabindex="-1" aria-hidden="true" data-fh-project-file>
       <p class="fh-note">Your project stays in this browser tab and in the files you save. Nothing is uploaded.</p>
     </div></details>

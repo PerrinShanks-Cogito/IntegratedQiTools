@@ -108,23 +108,83 @@
     file.value = "";
     if (f) go(f, null);
   });
-  function keepHandle(handle) {
+  // The "focus-files" database, opened the same way as in focus-actions.js
+  function filesDb() {
     return new Promise((resolve, reject) => {
-      let tab;
-      try {
-        tab = sessionStorage.getItem("focus-tab");
-        if (!tab) { tab = Math.random().toString(36).slice(2) + Date.now().toString(36); sessionStorage.setItem("focus-tab", tab); }
-      } catch (e) { return reject(e); }
       if (!window.indexedDB) return reject(new Error("no IndexedDB"));
-      const r = indexedDB.open("focus-files", 1);
-      r.onupgradeneeded = () => r.result.createObjectStore("links");
+      const r = indexedDB.open("focus-files", 2);
+      r.onupgradeneeded = () => ["links", "recent"].forEach(n => { if (!r.result.objectStoreNames.contains(n)) r.result.createObjectStore(n); });
       r.onerror = () => reject(r.error);
-      r.onsuccess = () => {
-        const tx = r.result.transaction("links", "readwrite");
-        tx.objectStore("links").put({ handle, name: handle.name, pending: true, saved: Date.now() }, tab + "|miqi_project");
-        tx.oncomplete = resolve;
-        tx.onerror = tx.onabort = () => reject(tx.error);
-      };
+      r.onsuccess = () => resolve(r.result);
     });
   }
+  function store(name, mode, fn) {
+    return filesDb().then(d => new Promise((resolve, reject) => {
+      const tx = d.transaction(name, mode), req = fn(tx.objectStore(name));
+      tx.oncomplete = () => resolve(req && req.result);
+      tx.onerror = tx.onabort = () => reject(tx.error);
+    }));
+  }
+  function keepHandle(handle) {
+    let tab;
+    try {
+      tab = sessionStorage.getItem("focus-tab");
+      if (!tab) { tab = Math.random().toString(36).slice(2) + Date.now().toString(36); sessionStorage.setItem("focus-tab", tab); }
+    } catch (e) { return Promise.reject(e); }
+    return store("links", "readwrite", st => st.put({ handle, name: handle.name, pending: true, saved: Date.now() }, tab + "|miqi_project"));
+  }
+
+  // MiQi Projects > Recent projects: the last 5 project files saved or
+  // opened in Edge or Chrome, kept 30 days (focus-actions.js adds them).
+  // Only each file's handle, name, title and when it was last used are
+  // kept, never the project. Choosing one asks the browser for permission
+  // to read the file, then opens it like Open a saved QI project.
+  const recentBox = proj.querySelector("[data-fh-recent]");
+  if (!recentBox || typeof window.showOpenFilePicker !== "function") return;
+  let recent = [];
+  const when = t => {
+    const d = new Date(t), today = new Date(); today.setHours(0, 0, 0, 0);
+    const days = Math.round((today - new Date(d.getFullYear(), d.getMonth(), d.getDate())) / 864e5);
+    return days <= 0 ? "Today" : days === 1 ? "Yesterday" : d.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+  };
+  function drawRecent() {
+    recentBox.hidden = !recent.length;
+    const ul = recentBox.querySelector("ul");
+    ul.textContent = "";
+    recent.forEach((e, i) => {
+      const li = document.createElement("li"), b = document.createElement("button"), d = document.createElement("span");
+      b.type = "button"; b.className = "fh-linkbtn"; b.dataset.i = i;
+      b.textContent = e.title || "Untitled project";
+      d.className = "fh-desc"; d.textContent = e.name + " · " + when(e.used);
+      li.append(b, d); ul.appendChild(li);
+    });
+  }
+  function loadRecent() {
+    return store("recent", "readonly", st => st.get("miqi_project")).then(list => {
+      const cut = Date.now() - 30 * 864e5;
+      recent = (list || []).filter(e => e && e.handle && e.used >= cut).slice(0, 5);
+      drawRecent();
+    }).catch(() => {});
+  }
+  const saveRecent = () => store("recent", "readwrite", st => st.put(recent, "miqi_project")).catch(() => {});
+  // Read only when the menu opens, so pages that don't need the list never touch the stored handles
+  proj.addEventListener("toggle", () => { if (proj.open) loadRecent(); });
+  recentBox.addEventListener("click", e => {
+    if (e.target.closest("[data-fh-clear-recent]")) {
+      if (!confirm("Clear the list of recent projects? Your project files aren't changed.")) return;
+      recent = []; drawRecent(); saveRecent(); return;
+    }
+    const b = e.target.closest("button[data-i]"); if (!b) return;
+    const entry = recent[+b.dataset.i]; if (!entry) return;
+    const h = entry.handle, mode = { mode: "read" };
+    Promise.resolve(h.queryPermission ? h.queryPermission(mode) : "granted")
+      .then(p => (p === "granted" ? p : h.requestPermission(mode)))
+      .then(p => {
+        if (p !== "granted") return;
+        return h.getFile().then(f => go(f, h), () => {
+          alert("Couldn't find " + entry.name + ". It may have been moved, renamed or deleted, so it's been taken off the list. Use Open a saved QI project to find it.");
+          recent = recent.filter(x => x !== entry); drawRecent(); saveRecent();
+        });
+      }, () => {});
+  });
 })();

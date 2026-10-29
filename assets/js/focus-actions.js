@@ -150,23 +150,36 @@
     function db() {
       if (!dbp) dbp = new Promise((resolve, reject) => {
         if (!window.indexedDB) return reject(new Error("no IndexedDB"));
-        const r = indexedDB.open("focus-files", 1);
-        r.onupgradeneeded = () => r.result.createObjectStore("links");
+        // Version 2 added "recent" (MiQi Projects > Recent projects); focus-header.js opens it the same way
+        const r = indexedDB.open("focus-files", 2);
+        r.onupgradeneeded = () => ["links", "recent"].forEach(n => { if (!r.result.objectStoreNames.contains(n)) r.result.createObjectStore(n); });
         r.onsuccess = () => resolve(r.result);
         r.onerror = () => reject(r.error);
       });
       dbp.catch(() => { dbp = null; });
       return dbp;
     }
-    function run(mode, fn) {
+    function run(mode, fn, store) {
       return db().then(d => new Promise((resolve, reject) => {
-        const tx = d.transaction("links", mode), req = fn(tx.objectStore("links"));
+        const tx = d.transaction(store || "links", mode), req = fn(tx.objectStore(store || "links"));
         tx.oncomplete = () => resolve(req && req.result);
         tx.onerror = tx.onabort = () => reject(tx.error);
       }));
     }
     const key = tool => TAB + "|" + tool;
     return {
+      // Recent project files for a tool: up to 5, newest first, kept 30 days.
+      // Only each file's handle, name, the project's title and id, and when
+      // it was last used. A project is listed once, at the file used last:
+      // entries are matched on the project's own id, not by comparing file
+      // handles (isSameEntry on a stored handle crashes some Chromium builds).
+      remember: async (tool, handle, name, info) => {
+        const now = Date.now(), cut = now - 30 * 864e5;
+        const pid = String(info.id || ""), list = (await run("readonly", st => st.get(tool), "recent")) || [];
+        const keep = list.filter(e => e && e.handle && e.used >= cut && !(pid ? e.pid === pid : e.name === name));
+        keep.unshift({ handle, name, title: String(info.title || ""), pid, used: now });
+        return run("readwrite", st => st.put(keep.slice(0, 5), tool), "recent");
+      },
       get: tool => run("readonly", st => st.get(key(tool))),
       set: (tool, v) => run("readwrite", st => st.put(Object.assign({ saved: Date.now() }, v), key(tool))),
       drop: tool => run("readwrite", st => st.delete(key(tool))),
@@ -178,9 +191,12 @@
       })
     };
   })();
+  let recentTitle = null; // a tool that lists its files in Recent projects passes recent: () => ({ title, id })
+  function remember() { if (recentTitle && linked) links.remember(linkTool, linked.handle, linked.name, recentTitle()).catch(() => {}); }
   function link(f) {
     linked = f; pending = null;
     if (linkTool && TAB) links.set(linkTool, { handle: f.handle, name: f.name }).catch(() => {});
+    remember();
     onLink();
   }
   function unlink() {
@@ -232,7 +248,7 @@
     nextSave = null;
     lastName = name;
     if (proj && linked && !proj.as) {
-      try { if (await writeTo(linked.handle, blob)) { lastName = linked.name; return true; } }
+      try { if (await writeTo(linked.handle, blob)) { lastName = linked.name; remember(); return true; } }
       catch (e) { /* moved, deleted or not allowed: ask where to save instead */ }
     }
     if (typeof window.showSaveFilePicker === "function") {
@@ -687,6 +703,7 @@
     // Save says which file it will update, once there is one
     onLink = () => { saveBtn.title = linked ? "Save changes to " + linked.name : saveTitle; };
     linkTool = o.tool || "";
+    recentTitle = typeof o.recent === "function" ? o.recent : null;
     if (canLink && linkTool && TAB) {
       links.expire().catch(() => {});
       // After a refresh, keep the link only while the tool still has the work in it

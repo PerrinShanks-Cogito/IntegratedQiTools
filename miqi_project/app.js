@@ -680,6 +680,7 @@ FocusActions.mount({
       .then(ok=>{if(ok) toast("Saved "+FocusActions.lastSaved()+(FocusActions.linkedFile()?". Save updates this file from now on.":". Use Open to carry on later."));},()=>toast("Couldn't save "+name+"."));
   },
   open:projIn,
+  recent:()=>({title:(P.data.title||"").trim()||"Untitled project",id:P.id}),
   load:loadDoc,
   hasData:hasData,
   reset:()=>{P=blankProject(); viewStage=0; save(); render();},
