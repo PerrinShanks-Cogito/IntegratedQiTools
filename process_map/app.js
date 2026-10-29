@@ -172,7 +172,8 @@ function flow(m){
     const o=owner[i], k=kids[o]=(kids[o]||0)+1;
     labels[i]=labels[o]+(dep[i]%2?letters(k-1):String(k));
   });
-  return {idx:idx,dep:dep,owner:owner,runs:runs,edges:edges,ends:ends,labels:labels,last:last,rejoin:rejoin};
+  const pathEnd=i=>{let j=i;while(j+1<n&&dep[j+1]>dep[i]) j++;return j;};
+  return {idx:idx,dep:dep,owner:owner,runs:runs,edges:edges,ends:ends,labels:labels,last:last,rejoin:rejoin,pathEnd:pathEnd};
 }
 
 /* ---------- metrics ---------- */
@@ -531,11 +532,11 @@ function laneOptions(m,sel){return m.lanes.map(l=>'<option value="'+l.id+'"'+(l.
 function stepCard(m,s,i,F){
   const isT=s.type==="terminator", isD=s.type==="decision", d=F.dep[i], run=isD?F.runs[i]:null;
   const opt=(o,sel,pre)=>'<option value="'+o.id+'"'+(sel?" selected":"")+nameAttr(o,pre)+'>'+esc((pre||"")+nameOf(o))+'</option>';
-  const others=m.steps.map(o=>o.id===s.id?"":opt(o,o.id===s.noTo,"")).join("");
   /* where a decision's no route goes: back to an earlier step, or down the new path that follows it */
-  const noRow=!isD?"":run?
-    '<div class="row2"><p class="path-note">If no, take the new path, starting with <span'+nameAttr(m.steps[run.first])+'>'+esc(nameOf(m.steps[run.first]))+'</span></p><label>No label<input class="field sm nl" type="text"></label></div>':
-    '<div class="row2"><label>If no, go to<select class="field sm nt"><option value="">Carry on (no loop)</option><option value="__path">A new path</option>'+(others?'<optgroup label="Go to a step">'+others+'</optgroup>':"")+'</select></label><label>No label<input class="field sm nl" type="text"></label></div>';
+  /* a decision's no route: a new path (the default), carry on, or go to another step */
+  const others=m.steps.map((o,k)=>o.id===s.id||(run&&k>i&&k<=F.pathEnd(i))?"":opt(o,!run&&o.id===s.noTo,"")).join("");
+  const noRow=!isD?"":
+    '<div class="row2"><label>If no, go to<select class="field sm nt"><option value=""'+(!run&&!s.noTo?" selected":"")+'>Carry on (no loop)</option><option value="__path"'+(run?" selected":"")+'>A new path</option>'+(others?'<optgroup label="Go to a step">'+others+'</optgroup>':"")+'</select></label><label>No label<input class="field sm nl" type="text"></label></div>';
   /* the last step on a path says where the path goes next */
   let pathRow="";
   if(F.last[i]){
@@ -632,11 +633,13 @@ ed.addEventListener("change",e=>{
   const s=m.steps.find(x=>x.id===c.dataset.id); if(!s) return;
   const cl=e.target.classList;
   if(cl.contains("ty")){
+    const hadPath=!!flow(m).runs[m.steps.indexOf(s)];
     s.type=e.target.value;
     if(s.type==="wait"&&!s.value) s.value="nva";
-    const hadPath=!!flow(m).runs[m.steps.indexOf(s)];
     if(s.type!=="decision") s.noTo="";
     if(s.type==="terminator") s.value="";
+    /* a new decision starts with a new path for its "no" route */
+    if(s.type==="decision"&&!hadPath&&!s.noTo){addPathStep(m.steps.indexOf(s),true); focusCard(s.id,".t"); return;}
     changed(true); focusCard(s.id,".ty");
     if(hadPath&&s.type!=="decision") toast("Its new path's steps moved onto the path above.");
     return;
@@ -645,8 +648,17 @@ ed.addEventListener("change",e=>{
   if(cl.contains("va")){s.value=e.target.value;c.className=c.className.replace(/\sv-\w+/g,"")+(s.value?" v-"+s.value:"");changed();return;}
   if(cl.contains("nt")){
     /* choosing A new path starts the decision's new path */
-    if(e.target.value==="__path"){s.noTo=""; addPathStep(m.steps.indexOf(s)); return;}
-    s.noTo=e.target.value;changed();return;
+    const i=m.steps.indexOf(s), F=flow(m);
+    if(e.target.value==="__path"){if(!F.runs[i]){s.noTo=""; addPathStep(i);} return;}
+    /* moving off A new path removes the path's steps, asking first if any have been filled in */
+    if(F.runs[i]){
+      const gone=m.steps.slice(i+1,F.pathEnd(i)+1), used=gone.filter(x=>x.text.trim()||x.issue.trim()).length;
+      if(used&&!confirm("Remove the "+gone.length+" step"+(gone.length>1?"s":"")+" on this decision's new path?")){changed(true);return;}
+      const ids=gone.map(x=>x.id); m.steps.splice(i+1,gone.length);
+      m.steps.forEach(x=>{if(ids.includes(x.noTo))x.noTo="";if(ids.includes(x.thenTo))x.thenTo="";});
+      if(ids.includes(selected)) selected=null;
+    }
+    s.noTo=e.target.value; changed(true); focusCard(s.id,".nt"); return;
   }
   if(cl.contains("th")){s.thenTo=e.target.value;changed();return;}
 });
@@ -675,11 +687,11 @@ function insertAfter(i){
   m.steps.splice(at,0,ns); selected=ns.id; changed(true); focusCard(ns.id,".t");
 }
 /* Add a step to a decision's new path, starting the path if it hasn't got one */
-function addPathStep(i){
+function addPathStep(i,stay){
   const m=map(), F=flow(m);
   if(F.runs[i]){let k=i+1; for(let j=i+1;j<=blockEnd(F,i);j++) if(F.dep[j]===F.dep[i]+1) k=j; return insertAfter(k);}
   const ns=S(m.steps[i].lane,"step",""); ns.depth=F.dep[i]+1;
-  m.steps.splice(i+1,0,ns); selected=ns.id; changed(true); focusCard(ns.id,".t");
+  m.steps.splice(i+1,0,ns); if(!stay) selected=ns.id; changed(true); if(!stay) focusCard(ns.id,".t");
 }
 /* Move a step, with its own new path, past the step or path next to it */
 function moveStep(i,dir){
