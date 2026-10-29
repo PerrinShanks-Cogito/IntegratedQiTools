@@ -225,7 +225,7 @@ const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;"
 const fmt=d=>d?new Date(d+"T00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}):"";
 const X_SVG='<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>';
 let tt;
-function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("show"),2600);}
+function toast(m,ms){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("show"),ms||2600);}
 const stageLabel=p=>p.closed?"Closed":STAGES[p.stage].name;
 const ext=u=>/^https?:\/\//i.test(u)?' target="_blank" rel="noopener"':"";
 
@@ -513,7 +513,10 @@ panel.addEventListener("click",e=>{
       d.benefits.splice(i,1); save(); render(); toast("Benefit removed"); break;}
     case "benefitsXlsx": benefitsXlsx(); break;
     case "addToRepo": addToRepo(); break;
-    case "rmMilestone": d.milestones=(d.milestones||[]).filter(m=>m.id!==b.dataset.id); save(); render(); toast("Milestone deleted"); break;
+    case "rmMilestone":
+      /* the site can't reach the calendar, so an entry already added there stays */
+      d.milestones=(d.milestones||[]).filter(m=>m.id!==b.dataset.id); save(); render();
+      toast("Milestone deleted from this project. If you added it to your calendar, it's still there: delete it in Outlook too.",8000); break;
     case "icsOne":{const m=(d.milestones||[]).find(x=>x.id===b.dataset.id); if(m) downloadIcs([m],fileBase()+"-"+slugOf(m.title)+".ics"); break;}
     case "icsAll": downloadIcs(sortedMilestones(),fileBase()+"-milestones.ics"); break;
     case "exportPulse": exportPulse(); break;
