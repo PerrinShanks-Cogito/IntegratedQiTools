@@ -552,6 +552,10 @@ function stepCard(m,s,i,F){
   /* moving a step onto or off a path */
   const canIn=i>0&&F.dep[i-1]+(m.steps[i-1].type==="decision"?1:0)>d;
   const moves=(d>0?'<button class="btn small ghost" data-act="out" type="button">Move off path</button>':"")+(canIn?'<button class="btn small ghost" data-act="in" type="button">Move onto path</button>':"");
+  /* nothing is added after the End step from its own card */
+  const isEnd=isT&&i>0&&i===m.steps.length-1;
+  const adds=isEnd?"":'<button class="btn small" data-act="ins" type="button">Add step below</button>'+
+    '<button class="btn small ghost" data-act="path" type="button">Add new path</button>';
   return '<div class="step t-'+s.type+(d?" on-path":"")+(s.value&&!isT?" v-"+s.value:"")+(selected===s.id?" sel":"")+'" data-id="'+s.id+'"'+(d?' style="margin-left:'+(d*1.3)+'rem"':"")+'>'+
     '<div class="step-head"><span class="num" aria-hidden="true">'+esc(F.labels[i])+'</span>'+
     '<select class="field sm ty" aria-label="Step '+F.labels[i]+' type">'+Object.keys(TYPES).map(k=>'<option value="'+k+'"'+(k===s.type?" selected":"")+'>'+TYPES[k]+'</option>').join("")+'</select>'+
@@ -564,9 +568,7 @@ function stepCard(m,s,i,F){
     '<input class="field measure issue is" type="text" aria-label="Issue for step '+F.labels[i]+'" placeholder="Issue or frustration (optional)">'+
     (isT?"":'<div class="row1"><label>Value<select class="field sm va">'+Object.keys(VALUES).map(k=>'<option value="'+k+'"'+(k===(s.value||"")?" selected":"")+'>'+VALUES[k]+'</option>').join("")+'</select></label></div>')+
     '<div class="step-foot"><span></span>'+
-    '<span class="foot-btns">'+moves+
-    '<button class="btn small" data-act="ins" type="button">'+(d?"Add path step below":"Add step below")+'</button>'+
-    '<button class="btn small" data-act="path" type="button">Add new path</button></span></div></div>';
+    '<span class="foot-btns">'+moves+adds+'</span></div></div>';
 }
 function renderEditor(){
   renderEditing();
@@ -595,7 +597,7 @@ function renderEditor(){
   const F=flow(m);
   h+='<div id="steps">'+m.steps.map((s,i)=>stepCard(m,s,i,F)).join("")+'</div>';
   h+='<div style="margin-top:.6rem"><button class="btn small" id="addStep" type="button">Add step at the end</button></div>';
-  h+='<p class="hint">Press Enter in a step to add the next one in the same lane. Shift+Enter starts a new line. <b>Add new path</b> adds a decision below a step with a new path started for its "no" route. To give a decision a different "no" route, choose <b>A new path</b> in its <b>If no, go to</b> list: the yes route carries on along its own path. A path can have its own decisions and new paths.</p>';
+  h+='<p class="hint">Press Enter in a step to add the next one. The Guide tab explains decisions and new paths.</p>';
   host.innerHTML=h;
   host.querySelectorAll(".lane-row").forEach(r=>{r.querySelector(".ln").value=laneOf(m,r.dataset.id).name;});
   host.querySelectorAll(".step").forEach(c=>{
