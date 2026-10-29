@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="{{ '/assets/css/focus-header.css' | relative_url }}">
+<link rel="stylesheet" href="{{ '/assets/css/focus-header.css' | relative_url }}?v={{ site.time | date: '%s' }}">
 {%- if page.tool_id %}
 {%- assign this_tool = site.data.tools | where: "id", page.tool_id | first %}
 {%- if this_tool.hidden %}
