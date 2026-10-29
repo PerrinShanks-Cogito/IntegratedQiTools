@@ -79,6 +79,8 @@ label.f{display:block;font-weight:600;margin:0 0 .35rem}
 .check{display:grid;grid-template-columns:26px 1fr;gap:.6rem;padding:.7rem 0;border-bottom:1px solid var(--line)}
 .check:last-child{border-bottom:0}
 .dot{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:.8rem;font-weight:800;color:var(--on-accent)}
+.check-h{font-size:.95rem;margin:1rem 0 .1rem;color:var(--navy)}
+.check-h:first-child{margin-top:.2rem}
 .dot.pass{background:var(--ok)} .dot.warn{background:var(--warn)} .dot.info{background:var(--info)}
 .check b{display:block}
 .check p{margin:.1rem 0 0;color:var(--muted);font-size:.9rem}
@@ -243,54 +245,87 @@ select.field{overflow:visible;cursor:pointer}
 
     <section class="pane guide" id="pane-guide" role="tabpanel">
       <p>A process map shows what really happens, one step at a time, so the whole team can see the journey from the patient's side, spot the waste and redesign around it. This builder follows the NHS Improvement Leaders' Guide on process mapping, analysis and redesign: map the current process, analyse it, then design and test a better one.</p>
+
+      <h3>Building a map</h3>
+      <ol>
+        <li><b>Set the scope.</b> Fill in <b>Starts when</b>, <b>Ends when</b> and <b>Who it's for</b> so everyone maps the same thing.</li>
+        <li><b>Add the steps in order.</b> Word each one as an action. Press Enter in a step to add the next one. Choose the type for each step: start or end, activity, decision, or wait or queue.</li>
+        <li><b>Add decisions.</b> A decision is a yes or no question. The <b>yes</b> carries on along the usual path. By default the <b>no</b> starts a new path below it; in <b>If no, go to</b> you can instead carry straight on, or go to another step, for example back to an earlier step for rework.</li>
+        <li><b>Build out new paths.</b> Use <b>Add path step below</b> on a path step to add the next one. A path can have its own decisions and new paths. On a path's last step, <b>At the end of this path</b> sets whether it rejoins the path it came from, goes on to a later step, loops back or ends.</li>
+        <li><b>Add lanes if you want to track hand-offs.</b> With one lane the map is a simple flowchart. Add a lane for each person, role, team or organisation involved to make it a swimlane map; <b>When to add a lane</b> under Lanes explains when a new lane is worth it.</li>
+        <li><b>Classify each step</b> as value-adding, necessary or non-value-adding, and add an <b>issue</b> wherever people describe a frustration.</li>
+        <li><b>Check and analyse.</b> <b>Checks</b> lists what's missing. <b>Analyse</b> counts steps, hand-offs, waste and rework, and suggests questions for redesign.</li>
+        <li><b>Redesign.</b> Switch to <b>Redesign (to be)</b>, copy the current map or start blank, and compare the two in Analyse.</li>
+      </ol>
+      <p>Steps are numbered along the usual path: 1, 2, 3. Steps on a decision's new path take the decision's number and a letter (3a, 3b), and a path from a decision on that path adds a number (3b1, 3b2).</p>
+
+      <h3>Saving your work</h3>
+      <p>The tool opens on a fresh map each time and doesn't keep your map in the browser. Use <b>Save</b> to keep a project file and <b>Open</b> to carry on later; the browser asks before you leave a page with work on it. <b>Export</b> gives a picture of the map for slides (PNG or SVG), a step table to open in Excel, or adds the map to an A3 report. <b>Edit as table</b> lets you paste steps straight from Excel.</p>
+
+      <h3>Key</h3>
       <div class="legend">
         <span class="sw" style="background:#fff;border-radius:7px"></span><span><b>Start or end</b>: the agreed boundaries of the process.</span>
         <span class="sw" style="background:#fff"></span><span><b>Activity</b>: something someone does. Start it with a verb.</span>
-        <span class="sw" style="background:#fff;transform:rotate(45deg) scale(.8)"></span><span><b>Decision</b>: a question with a yes and a no route. Link the no route if it sends work back, or add a new path if it goes a different way.</span>
-        <span class="sw" style="background:#fff;border:2px solid #425563"></span><span><b>Usual path</b>: the route most cases follow, taking the "yes" at each decision. Its steps are numbered 1, 2, 3 and so on.</span>
-        <span class="sw" style="background:#fff;border:2px solid #005EB8"></span><span><b>New path</b>: the steps on a decision's "no" route, shown indented. They sit below the path the decision is on, and the "yes" route skips them. Any kind of step can go on a path, including another decision with its own new path. At the end, the path rejoins the path it came from, goes to a later step, loops back to an earlier step (rework) or ends.</span>
+        <span class="sw" style="background:#fff;transform:rotate(45deg) scale(.8)"></span><span><b>Decision</b>: a yes or no question. The yes carries on along the path; the no takes a new path, carries on or goes to another step.</span>
         <span class="sw" style="background:#fff;border-radius:2px 8px 8px 2px"></span><span><b>Wait or queue</b>: time where nothing happens to the patient or the work.</span>
+        <span class="sw" style="background:#fff;border:2px solid #425563"></span><span><b>Usual path</b>: the route most cases follow, taking the yes at each decision.</span>
+        <span class="sw" style="background:#fff;border:2px solid #005EB8"></span><span><b>New path</b>: the steps on a decision's no route, drawn in blue in a row below the path the decision is on.</span>
+        <span class="sw" style="background:#fff;border:2px solid #005EB8;border-radius:50%;width:14px;height:14px"></span><span><b>Path ends</b>: the work on that path stops there, for example a referral is closed.</span>
+        <span class="sw dash"></span><span><b>Rework loop</b>: a no, or the end of a path, that sends work back to an earlier step.</span>
         <span class="sw" style="background:#E3F2E9;border-color:#007F3B"></span><span><b>Value-adding</b>: changes things for the patient in a way they would want.</span>
         <span class="sw" style="background:#FFF4DB;border-color:#FFB81C"></span><span><b>Necessary, non-value-adding</b>: needed for safety, law or the system, but the patient wouldn't miss it.</span>
         <span class="sw" style="background:#FBE7E5;border-color:#D5281B"></span><span><b>Non-value-adding</b>: waste. Waiting, chasing, repeating, re-keying.</span>
-        <span class="sw dash"></span><span><b>Rework loop</b>: a "no" that sends work back to an earlier step.</span>
       </div>
+
       <h3>Moving around the map</h3>
-      <p>The map has its own window, which stays in view as you scroll down the page. Drag the map to move it around in its window. A click without a drag still opens a step for editing. To move around without opening steps, turn on <b>Move</b> or hold Space. Once you've clicked the map, the arrow keys move it too (hold Shift to move further). Use <b>−</b>, <b>+</b> and <b>Fit</b> to zoom, and <b>Full screen</b> to give the map the whole screen, as big as it will fit (Esc leaves it).</p>
+      <p>The map has its own window, which stays in view as you scroll down the page. Drag the map to move it around in its window. A click without a drag opens a step for editing. To move around without opening steps, turn on <b>Move</b> or hold Space. Once you've clicked the map, the arrow keys move it too (hold Shift to move further). Use <b>−</b>, <b>+</b> and <b>Fit</b> to zoom, and <b>Full screen</b> to give the map the whole screen (Esc leaves it). Untick <b>Issues</b> to hide the issue notes.</p>
+
       <h3>Before you map</h3>
       <ol>
         <li>Pick a process that matters to patients and staff, and that you have some ability to change.</li>
         <li>Agree the start and end points and how much detail you need. A high-level map first, then detail where the problems are.</li>
-        <li>Bring together people who work in every part of the process, and patients or carers where you can. No single person knows the whole journey.</li>
+        <li>Bring together people who work in every part of the process, and patients, service users or carers where you can. No single person knows the whole journey.</li>
         <li>Find a facilitator who is not too close to the process to ask naive questions.</li>
       </ol>
+
       <h3>Map the current process</h3>
       <ul>
         <li>Map what actually happens most of the time, not what the policy says should happen. Walk the process if you can.</li>
-        <li>One step per box, worded as an action. Give each role or team its own lane so you can see every time the patient is passed on.</li>
-        <li>Map supporting processes, such as samples, notes or requests, in their own lanes alongside the patient's journey rather than mixed into it.</li>
+        <li>One step per box, worded as an action. Map the usual path first, then add the new paths for the exceptions that matter.</li>
+        <li>Use swimlanes to see every time the work or the patient is passed on. Give separate lanes to different organisations or governance structures, such as another directorate, trust, provider or the local authority, so changes of accountability show.</li>
+        <li>Map supporting work, such as samples, notes or referrals, in its own lane alongside the patient's journey rather than mixed into it.</li>
         <li>Capture frustrations and ideas as issue notes as you go. They become your list of things to fix.</li>
         <li>Expect it to be messier than anyone thought. That is the point.</li>
       </ul>
+
       <h3>Analyse it</h3>
       <ul>
-        <li>Count the steps, the steps the patient goes through, the hand-offs and the steps that add no value. The Analyse tab does this for you.</li>
-        <li>Look for delays and queues, duplication, loops where work is sent back, and steps that only exist to check or chase.</li>
+        <li>Count the steps, the steps the patient goes through, the hand-offs, the rework loops and the steps that add no value. The Analyse tab does this for you.</li>
+        <li>Look for queues, duplication, loops where work is sent back, and steps that only exist to check or chase.</li>
         <li>Ask of every step: would the patient value this? Classify it as value-adding, necessary or waste.</li>
+        <li>Ask how often each new path happens, and what would make it unnecessary.</li>
         <li>Focus on the process, not the people in it.</li>
       </ul>
+
       <h3>Redesign</h3>
       <ul>
         <li>Remove steps that add no value, then simplify the ones that are necessary.</li>
-        <li>Cut hand-offs: can one person do more of the journey?</li>
+        <li>Cut hand-offs: can one person or team do more of the journey?</li>
         <li>Do things in parallel rather than one after another, and move steps so they happen once, at the right time.</li>
-        <li>Design for the common route and handle the exceptions separately.</li>
+        <li>Design for the usual path, and handle the exceptions on their own paths.</li>
+        <li>Fix the cause of rework at source rather than checking for it later.</li>
       </ul>
+
       <h3>Test the changes</h3>
       <p>Use the Model for Improvement: what are we trying to accomplish, how will we know a change is an improvement, and what change can we make? Test the redesign in small PDSA cycles rather than switching it on everywhere at once, and track measures such as the number of steps and hand-offs over time on a run chart.</p>
+
       <h3>Terms</h3>
       <ul>
-        <li><b>Hand-off</b>: a point where the patient or the work moves from one person or team to another.</li>
+        <li><b>Swimlane</b>: a lane on the map for one person, role, team or organisation. Each step sits in the lane of whoever does it.</li>
+        <li><b>Hand-off</b>: a point where the patient or the work moves from one lane to another.</li>
+        <li><b>Usual path</b>: the route most cases follow, taking the yes at each decision.</li>
+        <li><b>New path</b>: the steps a decision's no leads to, when they're different from the usual path.</li>
+        <li><b>Rework</b>: work sent back to be done again.</li>
       </ul>
       <p class="hint">Source: NHS Institute for Innovation and Improvement, Improvement Leaders' Guide 1.2, Process mapping, analysis and redesign (NHS England Improvement Hub). Value colours follow the QSIR value stream mapping convention.</p>
       <div class="notice">Want to build your skills? <a href="https://coh.gstt.nhs.uk/course/view.php?id=3199" target="_blank" rel="noopener">Book QI training with the CITI Academy</a>.</div>

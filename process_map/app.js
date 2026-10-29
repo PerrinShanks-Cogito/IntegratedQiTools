@@ -806,42 +806,73 @@ function renderAnalysis(){
 /* ---------- checks ---------- */
 function renderChecks(){
   const m=map(), C=[];
-  const add=(s,t,d)=>C.push({s,t,d});
+  let group="";
+  const add=(st,t,d)=>C.push({g:group,s:st,t:t,d:d});
+  /* "Step 3", "Steps 2a and 3", "Steps 1, 2 and 3" */
+  const steps=L=>(L.length>1?"Steps ":"Step ")+(L.length>1?L.slice(0,-1).join(", ")+" and "+L[L.length-1]:L[0]);
   const sc=state.scope;
-  if(sc.start.trim()&&sc.end.trim()) add("pass","Start and end points agreed",'From "'+sc.start+'" to "'+sc.end+'".');
-  else add("warn","Agree the start and end points","Fill in where the process starts and ends so the team maps the same thing.");
-  if(!m){add("info","No redesign yet","Switch to Current to check that map, or start a redesign.");}
+
+  group="Scope";
+  if(sc.start.trim()&&sc.end.trim()) add("pass","Start and end agreed",'From "'+sc.start.trim()+'" to "'+sc.end.trim()+'".');
+  else add("warn","Agree where the process starts and ends","Fill in Starts when and Ends when, so everyone maps the same thing.");
+  if(!sc.who.trim()) add("info","Say who it's for","Fill in Who it's for, for example \"Adults referred for routine bloods\", so the map stays focused.");
+
+  if(!m){group="Map"; add("info","No redesign yet","Switch to Current to check that map, or start a redesign.");}
   else{
-    const st=m.steps, M=metrics(m);
-    if(st.length&&st[0].type==="terminator"&&st[st.length-1].type==="terminator") add("pass","Map has a start and an end","The first and last steps are start or end shapes.");
+    const st=m.steps, M=metrics(m), F=flow(m), lab=s=>F.labels[st.indexOf(s)];
+
+    group="Steps";
+    if(st.length&&st[0].type==="terminator"&&st[st.length-1].type==="terminator") add("pass","Map has a start and an end","");
     else add("warn","Mark the start and end","Make the first and last steps Start / end shapes so the boundaries are clear.");
-    const empty=st.filter(s=>!s.text.trim()).length;
-    if(empty) add("warn",empty+" step"+(empty>1?"s have":" has")+" no description","Describe each step as an action, for example \"Books in sample\".");
-    else if(st.length) add("pass","Every step is described","");
-    if(M.unc) add("warn",M.unc+" step"+(M.unc>1?"s aren't":" isn't")+" classified","For each one ask: would the patient value this? Mark it value-adding, necessary or non-value-adding.");
+    const empty=st.filter(s=>!s.text.trim()&&s.type!=="terminator");
+    if(empty.length) add("warn",steps(empty.map(lab))+(empty.length>1?" have":" has")+" no description","Describe each step as an action, for example \"Books in sample\", or each decision as a yes or no question.");
+    else if(M.steps) add("pass","Every step is described","");
+    const unc=st.filter(s=>s.type!=="terminator"&&!s.value);
+    if(unc.length) add("warn",steps(unc.map(lab))+(unc.length>1?" aren't":" isn't")+" classified for value","Ask of each one: would the patient value this? Mark it value-adding, necessary or non-value-adding.");
     else if(M.steps) add("pass","Every step is classified for value","");
-    const F=flow(m);
-    const openD=st.filter((s,i)=>s.type==="decision"&&!s.noTo&&!F.runs[i]);
-    if(openD.length) add("info",openD.length+" decision"+(openD.length>1?"s have":" has")+" no 'no' route","If a 'no' sends work back to an earlier step, link it so the rework loop shows. If it goes a different way, add a new path.");
-    Object.keys(F.runs).map(Number).forEach(k=>{
-      if(F.dep[k]===0&&!F.edges.some(e=>e.a===k&&e.yes)&&!F.ends.includes(k)) add("info",'Decision "'+nameOf(st[k])+'" has no \'yes\' step',"Its new path is at the end of the map. Add the steps that follow a 'yes' after the path.");
-    });
-    if(!M.waits&&M.steps) add("info","No waits mapped","Most processes have queues. Add them as Wait / queue steps so they are counted.");
+    if(!M.waits&&M.steps) add("info","No waits or queues mapped","Most processes have them. Add them as Wait / queue steps so they're counted.");
+    if(!M.issues&&M.steps>=3) add("info","No issues noted yet","Add the frustrations people raise as issue notes on the steps. They become your list of things to fix.");
+
+    if(M.decisions){
+      group="Decisions and paths";
+      const straight=st.filter((s,i)=>s.type==="decision"&&!s.noTo&&!F.runs[i]);
+      straight.forEach(s=>add("info",'"'+nameOf(s)+'" carries straight on if the answer is no',"If a no goes a different way, choose A new path in its If no, go to list. If it sends work back, choose the step it goes back to."));
+      if(!straight.length) add("pass","Every decision has a no route","");
+      Object.keys(F.runs).map(Number).forEach(k=>{
+        if(F.dep[k]===0&&!F.edges.some(e=>e.a===k&&e.yes)&&!F.ends.includes(k)) add("warn",'"'+nameOf(st[k])+'" has no yes route',"Its new path is at the end of the map. Add the steps that follow a yes after the path.");
+      });
+      const ended=F.ends.filter(k=>F.dep[k]>0);
+      if(ended.length) add("info",ended.length+" path"+(ended.length>1?"s end":" ends")+" without rejoining","Check the work really stops there, for example when a referral is closed. Otherwise set where the path goes next on its last step.");
+    }
+
+    group="Lanes";
     const usedL=new Set(st.map(s=>s.lane));
-    const idle=m.lanes.filter(l=>!usedL.has(l.id));
-    if(idle.length) add("info","Lane"+(idle.length>1?"s":"")+" with no steps",idle.map(l=>l.name||"Unnamed").join(", ")+". Remove "+(idle.length>1?"them":"it")+" or add the steps that happen there.");
-    if(usedL.size<2&&M.steps) add("info","Only one lane in use","Give each role its own lane so hand-offs show up.");
-    if(!M.hasPatient) add("info","No patient lane","Call the patient's lane Patient (or service user or carer) to count the steps they go through.");
+    if(m.lanes.length===1) add("info","Simple flowchart","With one lane, hand-offs aren't counted. To track them, add a lane for each person, role, team or organisation involved to make a swimlane map.");
+    else{
+      const idle=m.lanes.filter(l=>!usedL.has(l.id));
+      if(idle.length) add("info","Lane"+(idle.length>1?"s":"")+" with no steps",idle.map(l=>l.name||"Unnamed").join(", ")+". Remove "+(idle.length>1?"them":"it")+" or add the steps that happen there.");
+      if(usedL.size<2&&M.steps) add("info","Only one lane in use","Put each step in the lane of whoever does it, so hand-offs show up.");
+      else if(M.steps) add("pass",M.handoffs+" hand-off"+(M.handoffs===1?"":"s")+" counted","Each time the work moves from one lane to another.");
+      if(!M.hasPatient) add("info","No patient lane","Call the lane for the people the service is for Patient, Service user or Carer, so the steps they go through are counted.");
+    }
   }
+
+  group="Redesign";
   if(state.maps.future){
     const a=metrics(state.maps.current), b=metrics(state.maps.future);
     const ds=a.steps-b.steps, dn=a.nva-b.nva, dh=a.handoffs-b.handoffs;
-    if(ds>0||dn>0||dh>0) add("pass","Redesign improves the process",[ds>0?ds+" fewer step"+(ds>1?"s":""):"",dn>0?dn+" fewer non-value-adding step"+(dn>1?"s":""):"",dh>0?dh+" fewer hand-off"+(dh>1?"s":""):""].filter(Boolean).join(", ")+". Now test it with PDSA cycles.");
+    if(ds>0||dn>0||dh>0) add("pass","Redesign improves the process",[ds>0?ds+" fewer step"+(ds>1?"s":""):"",dn>0?dn+" fewer non-value-adding step"+(dn>1?"s":""):"",dh>0?dh+" fewer hand-off"+(dh>1?"s":""):""].filter(Boolean).join(", ")+". Now test it with small PDSA cycles.");
     else add("warn","Redesign isn't better yet","It doesn't reduce steps, waste or hand-offs compared with the current map.");
-  } else add("info","No redesign yet","Once you have analysed the current map, start a redesign to compare the two.");
+  } else add("info","No redesign yet","Once you've analysed the current map, start a redesign to compare the two.");
+
   const warns=C.filter(c=>c.s==="warn").length, b=$("#checkBadge");
   b.textContent=warns; b.classList.toggle("zero",!warns);
-  $("#checks").innerHTML=C.map(c=>'<div class="check"><span class="dot '+c.s+'" aria-hidden="true">'+(c.s==="pass"?"✓":c.s==="warn"?"!":"i")+'</span><div><b>'+esc(c.t)+'</b>'+(c.d?'<p>'+esc(c.d)+'</p>':"")+'</div></div>').join("");
+  let h="", g=null;
+  C.forEach(c=>{
+    if(c.g!==g){h+='<h3 class="check-h">'+esc(c.g)+'</h3>'; g=c.g;}
+    h+='<div class="check"><span class="dot '+c.s+'" aria-hidden="true">'+(c.s==="pass"?"✓":c.s==="warn"?"!":"i")+'</span><div><b>'+esc(c.t)+'</b>'+(c.d?'<p>'+esc(c.d)+'</p>':"")+'</div></div>';
+  });
+  $("#checks").innerHTML=h;
 }
 
 /* ---------- tabs ---------- */
