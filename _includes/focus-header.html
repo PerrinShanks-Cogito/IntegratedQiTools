@@ -67,6 +67,13 @@
     </div></details>
     {%- comment %} The name of the MiQi project open in this tab; focus-header.js shows it {% endcomment %}
     <a class="fh-projname" href="{{ '/miqi_project/' | relative_url }}" hidden data-fh-project-name{% if page.tool_id == "miqi_project" %} aria-current="page"{% endif %}><svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true" focusable="false"><path d="M2.5 5.5a1 1 0 0 1 1-1h4l1.5 1.75h7.5a1 1 0 0 1 1 1v7.25a1 1 0 0 1-1 1h-13a1 1 0 0 1-1-1z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span></span></a>
+    {%- unless page.tool_id == "miqi_project" %}
+    {%- comment %} A MiQi project open in another tab of this browser; focus-header.js shows it {% endcomment %}
+    <details class="fh-dd fh-projaway" hidden data-fh-project-away><summary><svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true" focusable="false"><path d="M2.5 5.5a1 1 0 0 1 1-1h4l1.5 1.75h7.5a1 1 0 0 1 1 1v7.25a1 1 0 0 1-1 1h-13a1 1 0 0 1-1-1z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span data-fh-away-name></span><span class="fh-away-tag">Open in another tab</span></summary><div class="fh-menu">
+      <p class="fh-away-text" data-fh-away-text></p>
+      <p class="fh-note">Work in this tool stays in this tab. Use Save to keep a project file alongside your MiQi project.</p>
+    </div></details>
+    {%- endunless %}
     </div>
   </div>
 </header>

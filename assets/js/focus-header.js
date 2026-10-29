@@ -19,10 +19,16 @@
   // it. The project page calls FocusHeader.setProject as its title changes.
   const goto = proj && proj.querySelector("[data-fh-current-project]");
   const nameBtn = document.querySelector("[data-fh-project-name]");
+  const away = document.querySelector("[data-fh-project-away]");
+  const others = new Map(); // tab id -> project title, from other tabs (see below)
   const NAME_MAX = 30;
+  const shorten = full => (full.length > NAME_MAX ? full.slice(0, NAME_MAX - 1).trim() + "…" : full);
+  let ownProject = false;
   function setProject(title, show) {
+    ownProject = !!show;
+    if (show) showAway();
     const full = String(title || "").trim() || "Untitled project";
-    const short = full.length > NAME_MAX ? full.slice(0, NAME_MAX - 1).trim() + "…" : full;
+    const short = shorten(full);
     if (goto) {
       goto.querySelector("[data-fh-current-title]").textContent = full + ", open in this tab";
       goto.hidden = !show;
@@ -40,6 +46,39 @@
     if (d && (p.stage > 0 || p.closed || Object.keys(d).some(k => typeof d[k] === "string" ? d[k].trim() : Array.isArray(d[k]) && d[k].length))) setProject(d.title, true);
   } catch (e) { /* no project open in this tab */ }
   window.FocusHeader = { setProject };
+
+  // A MiQi project open in another tab of this browser, such as the tab a
+  // tool was opened from with Tools for this stage. The project page says
+  // it's open on the "focus-miqi" channel (miqi_project/app.js); here, a
+  // button in the dark blue bar shows its name while it stays open. Pages
+  // can't switch tabs, so the button's menu says where to find it.
+  function showAway() {
+    if (!away) return;
+    const list = [...others.values()];
+    away.hidden = ownProject || !list.length;
+    if (away.hidden) { away.open = false; return; }
+    const one = list.length === 1;
+    const name = one ? (list[0] || "Untitled project") : list.length + " MiQi projects";
+    away.querySelector("[data-fh-away-name]").textContent = shorten(name);
+    away.querySelector("summary").title = one ? name + " is open in another tab" : name + " are open in other tabs";
+    away.querySelector("[data-fh-away-text]").textContent = one
+      ? "“" + name + "” is still open in another tab of this browser. To carry on with it, switch to the tab called “" + name + " – MiQi project”."
+      : "These projects are open in other tabs of this browser: " + list.map(t => "“" + (t || "Untitled project") + "”").join(", ") + ". Switch to a project's tab to carry on with it.";
+  }
+  if (away && typeof BroadcastChannel === "function") {
+    const ch = new BroadcastChannel("focus-miqi");
+    ch.onmessage = e => {
+      const m = e.data || {};
+      if (m.type === "here" && typeof m.id === "string") others.set(m.id, String(m.title || "").trim());
+      else if (m.type === "gone") others.delete(m.id);
+      else return;
+      showAway();
+    };
+    const ask = () => { others.clear(); showAway(); ch.postMessage({ type: "ping" }); };
+    ask();
+    // Check again on coming back to this tab, in case a project tab closed without saying
+    document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") ask(); });
+  }
 
   // MiQi Projects > Open a saved QI project: read the file here, hand it to
   // the MiQi project page in this tab, and go there (miqi_project/app.js).

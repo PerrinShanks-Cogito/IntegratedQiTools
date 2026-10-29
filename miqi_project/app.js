@@ -315,7 +315,23 @@ function fieldHTML(f,d){
 
 /* ---------- render ---------- */
 /* the project's name on its button in the header (focus-header.js) */
-function syncHeader(){if(window.FocusHeader) window.FocusHeader.setProject(P.data.title,hasData());}
+function syncHeader(){
+  if(window.FocusHeader) window.FocusHeader.setProject(P.data.title,hasData());
+  /* the browser tab shows the project's name, so it's easy to find again */
+  const t=(P.data.title||"").trim();
+  document.title=t?t+" \u2013 MiQi project":"MiQi improvement project";
+  announce();
+}
+/* Tell other tabs of this site that this project is open (focus-header.js
+   shows its name there), and that it's gone when this tab closes */
+const tabId=uid()+uid();
+const miqiCh=typeof BroadcastChannel==="function"?new BroadcastChannel("focus-miqi"):null;
+function announce(){if(miqiCh) miqiCh.postMessage(hasData()?{type:"here",id:tabId,title:(P.data.title||"").trim()}:{type:"gone",id:tabId});}
+if(miqiCh){
+  miqiCh.onmessage=e=>{if(e.data&&e.data.type==="ping") announce();};
+  window.addEventListener("pagehide",()=>miqiCh.postMessage({type:"gone",id:tabId}));
+  window.addEventListener("pageshow",e=>{if(e.persisted) announce();});
+}
 window.addEventListener("load",syncHeader);
 function renderHead(){
   const d=P.data;

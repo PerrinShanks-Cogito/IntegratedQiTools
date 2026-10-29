@@ -111,6 +111,15 @@
   .fh-sub .fh-projects .fh-menu{left:1rem;top:calc(100% - .25rem)}
 }
 
+/* A MiQi project open in another tab: a button with its name, next to MiQi Projects */
+.fh .fh-sub .fh-projaway summary{gap:.4rem;border-style:dashed}
+.fh .fh-sub .fh-projaway summary svg{flex:none}
+.fh-away-tag{font-weight:600;font-size:.78rem;padding:.05rem .45rem;border-radius:99px;background:rgba(255,255,255,.18)}
+.fh-projaway .fh-menu{padding:.7rem .8rem}
+.fh-away-text{margin:0 0 .3rem;font-size:.92rem}
+.fh-projaway[hidden]{display:none}
+@media (max-width:768px){.fh-away-tag{display:none}.fh-sub .fh-projaway{position:static}.fh-sub .fh-projaway .fh-menu{left:1rem;top:calc(100% - .25rem)}}
+
 /* The open MiQi project's name, a button next to MiQi Projects */
 .fh .fh-projname{display:inline-flex;align-items:center;gap:.4rem;min-height:2.25rem;max-width:100%;padding:.3rem .75rem;border:2px solid rgba(255,255,255,.6);border-radius:4px;color:#fff;font-weight:700;font-size:.92rem;text-decoration:none;white-space:nowrap}
 .fh .fh-projname span{overflow:hidden;text-overflow:ellipsis}
