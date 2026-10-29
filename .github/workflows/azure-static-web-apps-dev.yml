@@ -1,13 +1,13 @@
-name: Build and deploy to Azure Static Web Apps
+name: name: Build and deploy to Azure Static Web Apps (dev)
 
 on:
   push:
     branches:
-      - main
+      - dev
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
-      - main
+      - dev
   workflow_dispatch:
 
 jobs:
