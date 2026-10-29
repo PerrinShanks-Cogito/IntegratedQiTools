@@ -563,7 +563,7 @@ function stepCard(m,s,i,F){
     noRow+pathRow+
     '<input class="field measure issue is" type="text" aria-label="Issue for step '+F.labels[i]+'" placeholder="Issue or frustration (optional)">'+
     '<div class="step-foot"><span></span>'+
-    '<span class="foot-btns">'+moves+(isD?'<button class="btn small" data-act="path" type="button">'+(run?"Add step to new path":"Add new path")+'</button>':"")+
+    '<span class="foot-btns">'+moves+
     '<button class="btn small" data-act="ins" type="button">'+(d?"Add path step below":"Add step below")+'</button></span></div></div>';
 }
 function renderEditor(){
@@ -593,7 +593,7 @@ function renderEditor(){
   const F=flow(m);
   h+='<div id="steps">'+m.steps.map((s,i)=>stepCard(m,s,i,F)).join("")+'</div>';
   h+='<div style="margin-top:.6rem"><button class="btn small" id="addStep" type="button">Add step at the end</button></div>';
-  h+='<p class="hint">Press Enter in a step to add the next one in the same lane. Shift+Enter starts a new line. To give a decision a different "no" route, use <b>Add new path</b> on the decision: the yes route carries on along its own path. A path can have its own decisions and new paths.</p>';
+  h+='<p class="hint">Press Enter in a step to add the next one in the same lane. Shift+Enter starts a new line. To give a decision a different "no" route, choose <b>A new path</b> in its <b>If no, go to</b> list: the yes route carries on along its own path. A path can have its own decisions and new paths.</p>';
   host.innerHTML=h;
   host.querySelectorAll(".lane-row").forEach(r=>{r.querySelector(".ln").value=laneOf(m,r.dataset.id).name;});
   host.querySelectorAll(".step").forEach(c=>{
@@ -644,7 +644,7 @@ ed.addEventListener("change",e=>{
   if(cl.contains("la")){s.lane=e.target.value;changed();return;}
   if(cl.contains("va")){s.value=e.target.value;c.className=c.className.replace(/\sv-\w+/g,"")+(s.value?" v-"+s.value:"");changed();return;}
   if(cl.contains("nt")){
-    /* choosing A new path starts the decision's new path, as Add new path does */
+    /* choosing A new path starts the decision's new path */
     if(e.target.value==="__path"){s.noTo=""; addPathStep(m.steps.indexOf(s)); return;}
     s.noTo=e.target.value;changed();return;
   }
@@ -739,7 +739,6 @@ ed.addEventListener("click",e=>{
     if(ids.includes(selected))selected=null; changed(true);
   }
   else if(act==="ins") insertAfter(i);
-  else if(act==="path") addPathStep(i);
 });
 /* header fields */
 $("#title").addEventListener("input",e=>{state.title=e.target.value;changed();});
