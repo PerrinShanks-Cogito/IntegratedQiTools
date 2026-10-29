@@ -13,19 +13,33 @@
 
   const proj = document.querySelector(".fh-projects");
 
-  // Go to your open project: shown when this tab has a MiQi project with
-  // something in it (kept by miqi_project/app.js), named by its title.
+  // The MiQi project open in this tab (kept by miqi_project/app.js) is shown
+  // as a button with its name next to MiQi Projects, and as Go to your open
+  // project in the menu. Both are hidden until the project has something in
+  // it. The project page calls FocusHeader.setProject as its title changes.
   const goto = proj && proj.querySelector("[data-fh-current-project]");
-  if (goto) {
-    try {
-      const p = JSON.parse(sessionStorage.getItem("miqi-project-v1") || "null");
-      const d = p && p.data;
-      if (d && (p.stage > 0 || p.closed || Object.keys(d).some(k => typeof d[k] === "string" ? d[k].trim() : Array.isArray(d[k]) && d[k].length))) {
-        goto.querySelector("[data-fh-current-title]").textContent = (typeof d.title === "string" && d.title.trim() ? d.title.trim() : "Untitled project") + ", open in this tab";
-        goto.hidden = false;
-      }
-    } catch (e) { /* no project to go back to */ }
+  const nameBtn = document.querySelector("[data-fh-project-name]");
+  const NAME_MAX = 30;
+  function setProject(title, show) {
+    const full = String(title || "").trim() || "Untitled project";
+    const short = full.length > NAME_MAX ? full.slice(0, NAME_MAX - 1).trim() + "…" : full;
+    if (goto) {
+      goto.querySelector("[data-fh-current-title]").textContent = full + ", open in this tab";
+      goto.hidden = !show;
+    }
+    if (nameBtn) {
+      nameBtn.querySelector("span").textContent = short;
+      nameBtn.title = full;
+      nameBtn.setAttribute("aria-label", "Open project: " + full);
+      nameBtn.hidden = !show;
+    }
   }
+  try {
+    const p = JSON.parse(sessionStorage.getItem("miqi-project-v1") || "null");
+    const d = p && p.data;
+    if (d && (p.stage > 0 || p.closed || Object.keys(d).some(k => typeof d[k] === "string" ? d[k].trim() : Array.isArray(d[k]) && d[k].length))) setProject(d.title, true);
+  } catch (e) { /* no project open in this tab */ }
+  window.FocusHeader = { setProject };
 
   // MiQi Projects > Open a saved QI project: read the file here, hand it to
   // the MiQi project page in this tab, and go there (miqi_project/app.js).

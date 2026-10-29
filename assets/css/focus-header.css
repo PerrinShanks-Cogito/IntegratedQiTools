@@ -110,3 +110,11 @@
   .fh-sub .fh-projects{position:static}
   .fh-sub .fh-projects .fh-menu{left:1rem;top:calc(100% - .25rem)}
 }
+
+/* The open MiQi project's name, a button next to MiQi Projects */
+.fh .fh-projname{display:inline-flex;align-items:center;gap:.4rem;min-height:2.25rem;max-width:100%;padding:.3rem .75rem;border:2px solid rgba(255,255,255,.6);border-radius:4px;color:#fff;font-weight:700;font-size:.92rem;text-decoration:none;white-space:nowrap}
+.fh .fh-projname span{overflow:hidden;text-overflow:ellipsis}
+.fh .fh-projname:hover{background:rgba(255,255,255,.14)}
+.fh .fh-projname[aria-current="page"]{background:rgba(255,255,255,.14)}
+.fh .fh-projname[hidden]{display:none}
+.fh .fh-projname svg{flex:none}

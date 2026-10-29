@@ -243,8 +243,12 @@ function fieldHTML(f,d){
 }
 
 /* ---------- render ---------- */
+/* the project's name on its button in the header (focus-header.js) */
+function syncHeader(){if(window.FocusHeader) window.FocusHeader.setProject(P.data.title,hasData());}
+window.addEventListener("load",syncHeader);
 function renderHead(){
   const d=P.data;
+  syncHeader();
   $("#projTitle").textContent=d.title||"Untitled project";
   $("#projMeta").textContent=[d.leadName&&("Led by "+d.leadName),d.group,"Started "+fmt(P.created)].filter(Boolean).join(", ");
   const st=$("#projStatus");
@@ -351,7 +355,7 @@ function onField(e){
   const el=e.target, k=el.dataset.k; if(!k) return;
   if(el.type==="checkbox") P.data[k]=[...panel.querySelectorAll('input[data-k="'+k+'"]:checked')].map(i=>i.value);
   else P.data[k]=el.value;
-  if(k==="title"||k==="leadName"||k==="group") renderHead();
+  if(k==="title"||k==="leadName"||k==="group") renderHead(); else syncHeader();
   saveSoon(); if(e.type==="change") renderAside();
 }
 panel.addEventListener("input",onField);

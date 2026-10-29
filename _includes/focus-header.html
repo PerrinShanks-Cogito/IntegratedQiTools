@@ -65,6 +65,8 @@
       <input type="file" accept=".json,application/json" class="fh-sr" tabindex="-1" aria-hidden="true" data-fh-project-file>
       <p class="fh-note">Your project stays in this browser tab and in the files you save. Nothing is uploaded.</p>
     </div></details>
+    {%- comment %} The name of the MiQi project open in this tab; focus-header.js shows it {% endcomment %}
+    <a class="fh-projname" href="{{ '/miqi_project/' | relative_url }}" hidden data-fh-project-name{% if page.tool_id == "miqi_project" %} aria-current="page"{% endif %}><svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true" focusable="false"><path d="M2.5 5.5a1 1 0 0 1 1-1h4l1.5 1.75h7.5a1 1 0 0 1 1 1v7.25a1 1 0 0 1-1 1h-13a1 1 0 0 1-1-1z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span></span></a>
     </div>
   </div>
 </header>
