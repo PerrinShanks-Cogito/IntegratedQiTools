@@ -321,7 +321,8 @@ function renderHead(){
   const d=P.data;
   syncHeader();
   $("#projTitle").textContent=d.title||"Untitled project";
-  $("#projMeta").textContent=[d.leadName&&("Led by "+d.leadName),d.group,"Started "+fmt(P.created)].filter(Boolean).join(", ");
+  /* each part labelled, so the team doesn't read as the lead's own team */
+  $("#projMeta").textContent=[d.leadName&&("Lead: "+d.leadName),d.group&&("Team: "+d.group),"Started "+fmt(P.created)].filter(Boolean).join(" · ");
   const st=$("#projStatus");
   st.textContent=P.closed?"Closed":"Current stage: "+STAGES[P.stage].name;
   st.className="pill"+(P.closed?" done":"");
