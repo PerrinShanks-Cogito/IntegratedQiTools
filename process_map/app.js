@@ -519,7 +519,12 @@ function renderEditing(){
 }
 /* Steps are referred to by name, not number. Elements that show a step's name carry
    data-name-of (and data-pre for any leading words) so they update as the name is typed. */
-function nameOf(s){const t=String((s&&s.text)||"").replace(/\s+/g," ").trim();return t?(t.length>45?t.slice(0,44).trim()+"…":t):"(untitled step)";}
+function nameOf(s){
+  const t=String((s&&s.text)||"").replace(/\s+/g," ").trim(), short=t.length>45?t.slice(0,44).trim()+"…":t;
+  /* start and end shapes are named Start or End, with their wording after it */
+  if(s&&s.type==="terminator"){const m=map(), first=!m||m.steps.indexOf(s)===0, k=first?"Start":"End"; return t?k+": "+short:k;}
+  return t?short:"(untitled step)";
+}
 function nameAttr(o,pre){return ' data-name-of="'+o.id+'"'+(pre?' data-pre="'+esc(pre)+'"':"");}
 function refreshNames(s){document.querySelectorAll('[data-name-of="'+s.id+'"]').forEach(el=>{el.textContent=(el.dataset.pre||"")+nameOf(s)+(el.dataset.post||"");});}
 function laneOptions(m,sel){return m.lanes.map(l=>'<option value="'+l.id+'"'+(l.id===sel?" selected":"")+'>'+esc(l.name||"Unnamed lane")+'</option>').join("");}
