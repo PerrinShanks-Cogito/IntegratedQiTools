@@ -99,3 +99,13 @@
 .fh-cases li{flex-direction:column;align-items:flex-start;gap:.1rem}
 .fh-cases .fh-group{padding:.7rem .6rem .25rem;font-size:.78rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--fh-muted)}
 .fh-cases .fh-group+li{border-top:0}
+
+/* MiQi Projects menu: Open a saved QI project is a button that reads like the links */
+.fh .fh-linkbtn{all:unset;cursor:pointer;color:var(--fh-link);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.fh .fh-linkbtn:focus-visible{outline:3px solid var(--fh-yellow);outline-offset:2px;border-radius:2px}
+/* On narrow screens it drops down from the left of the bar, so it stays on screen */
+@media (max-width:768px){
+  .fh-sub .fh-inner{position:relative}
+  .fh-sub .fh-projects{position:static}
+  .fh-sub .fh-projects .fh-menu{left:1rem;top:calc(100% - .25rem)}
+}

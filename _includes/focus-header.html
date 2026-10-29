@@ -52,6 +52,16 @@
       </ul>
       <p class="fh-note">Tools still in development or ideation are listed so you know what is coming.</p>
     </div></details>
+    {%- comment %} MiQi Projects: start or open an improvement project
+    (miqi_project). focus-header.js reads the file and opens the page with it. {% endcomment %}
+    <details class="fh-dd fh-projects" data-project-url="{{ '/miqi_project/' | relative_url }}"><summary>MiQi Projects</summary><div class="fh-menu">
+      <ul class="fh-list fh-support">
+        <li><a href="{{ '/miqi_project/?new=1' | relative_url }}">Create a new improvement project</a><span class="fh-desc">Work through the FOCUS stages, from finding the opportunity to closing the project</span></li>
+        <li><button type="button" class="fh-linkbtn" data-fh-open-project>Open a saved QI project</button><span class="fh-desc">Carry on with a project file you saved</span></li>
+      </ul>
+      <input type="file" accept=".json,application/json" class="fh-sr" tabindex="-1" aria-hidden="true" data-fh-project-file>
+      <p class="fh-note">Your project stays in this browser tab and in the files you save. Nothing is uploaded.</p>
+    </div></details>
     </div>
   </div>
 </header>

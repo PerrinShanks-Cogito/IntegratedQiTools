@@ -157,6 +157,13 @@
   group: Share your work
   description: Tell the story of your improvement project on one A3 page, from the background and root causes to the changes you tested and how you will sustain them, with charts from the other tools and your own pictures, and export it to PowerPoint.
 
+- id: miqi_project
+  name: MiQi project
+  status: Alpha
+  hidden: true
+  group: Share your work
+  description: Work through the FOCUS stages of an improvement project, from finding the opportunity to closing it, with a checklist before each stage, PDSA cycles, progress updates and an export for Pulse. Opened from the MiQi Projects menu.
+
 - id: programme_guide
   name: Programme guide
   status: Beta
