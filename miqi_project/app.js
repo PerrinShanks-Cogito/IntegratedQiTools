@@ -194,7 +194,7 @@ function normalise(p){
     else if(k==="updates"&&Array.isArray(v)) d[k]=v.filter(u=>u&&isDate(u.date)&&typeof u.text==="string").map(u=>({date:u.date,text:u.text}));
     else if(k==="pdsa"&&Array.isArray(v)) d[k]=v.filter(c=>c&&typeof c.change==="string"&&OPTS.pdsaOutcome.includes(c.outcome)).map(c=>({change:c.change,outcome:c.outcome}));
     else if(k==="benefits"&&Array.isArray(v)) d[k]=v.filter(x=>x&&typeof x==="object").map(x=>{const o={id:typeof x.id==="string"?x.id.slice(0,40):uid()}; BENEFIT.forEach(c=>{if(typeof x[c.k]==="string") o[c.k]=x[c.k];}); return o;});
-    else if(k==="milestones"&&Array.isArray(v)) d[k]=v.filter(m=>m&&typeof m.title==="string"&&isDate(m.date)).map(m=>({id:typeof m.id==="string"?m.id.slice(0,40):uid(),title:m.title,date:m.date,owner:typeof m.owner==="string"?m.owner:""}));
+    else if(k==="milestones"&&Array.isArray(v)) d[k]=v.filter(m=>m&&typeof m.title==="string"&&isDate(m.date)).map(m=>({id:typeof m.id==="string"?m.id.slice(0,40):uid(),title:m.title,date:m.date,owner:typeof m.owner==="string"?m.owner:"",seq:Number.isInteger(m.seq)&&m.seq>=0?m.seq:0,changed:!!m.changed}));
   });
   out.data=Object.assign({sites:[],updates:[],pdsa:[],milestones:[],benefits:[]},d);
   if(p.docs&&typeof p.docs==="object") STAGES.forEach(s=>{const a=p.docs[s.id]; if(Array.isArray(a)) out.docs[s.id]=a.filter(n=>typeof n==="string").map(n=>n.slice(0,200));});
@@ -295,10 +295,12 @@ function fieldHTML(f,d){
         '</div>'+
         '<div style="margin-top:.6rem"><button type="button" class="btn" data-act="addMilestone">Add milestone</button></div>'+
         (list.length?'<ol class="ms">'+list.map(m=>{const past=m.date<today();
-          return '<li'+(past?' class="past"':'')+'><time datetime="'+m.date+'">'+fmt(m.date)+'</time><span class="ms-what"><b>'+esc(m.title)+'</b>'+(m.owner?'<span class="hint" style="margin:0">'+esc(m.owner)+'</span>':'')+'</span>'+
-            '<button type="button" class="btn small" data-act="icsOne" data-id="'+esc(m.id)+'" aria-label="Add '+esc(m.title)+' to your calendar (.ics)">Add to calendar</button>'+
+          return '<li class="'+(past?"past":"")+(m.changed?" changed":"")+'"><input type="date" class="ms-date" data-mid="'+esc(m.id)+'" value="'+m.date+'" aria-label="Date of '+esc(m.title)+'" title="Change the date">'+
+            '<span class="ms-what"><b>'+esc(m.title)+'</b>'+(m.owner?'<span class="hint" style="margin:0">'+esc(m.owner)+'</span>':'')+
+            (m.changed?'<span class="ms-note">Date changed. Update your calendar to move the entry.</span>':'')+'</span>'+
+            '<button type="button" class="btn small'+(m.changed?' primary':'')+'" data-act="icsOne" data-id="'+esc(m.id)+'" aria-label="'+(m.changed?"Update "+esc(m.title)+" in":"Add "+esc(m.title)+" to")+' your calendar (.ics)">'+(m.changed?"Update calendar":"Add to calendar")+'</button>'+
             '<button type="button" class="xbtn" data-act="rmMilestone" data-id="'+esc(m.id)+'" aria-label="Delete milestone '+esc(m.title)+'" title="Delete milestone">'+X_SVG+'</button></li>';}).join("")+'</ol>'+
-          '<div style="margin-top:.75rem"><button type="button" class="btn primary" data-act="icsAll">Add all '+list.length+' to calendar (.ics)</button></div>'+
+          '<div style="margin-top:.75rem"><button type="button" class="btn primary" data-act="icsAll">'+(list.some(m=>m.changed)?"Add or update all ":"Add all ")+list.length+' in calendar (.ics)</button></div>'+
           '<p class="hint" style="margin:.5rem 0 0">Calendar files download to your Downloads folder. Open one and it appears in Outlook as an all-day entry with a reminder a week before: choose Save &amp; Close to keep it. Add all puts every milestone in one file.</p>'
         :'<p class="empty">No milestones yet.</p>')+'</fieldset>';}
     case "log":{
@@ -440,6 +442,17 @@ dlg.addEventListener("click",e=>{
 const panel=$("#panel");
 function onField(e){
   const el=e.target;
+  if(el.dataset.mid){
+    /* a milestone's new date: flag it so its calendar entry gets updated */
+    if(e.type!=="change") return;
+    const m=(P.data.milestones||[]).find(x=>x.id===el.dataset.mid); if(!m) return;
+    if(!isDate(el.value)){el.value=m.date; return toast("Choose a date for the milestone");}
+    if(el.value===m.date) return;
+    m.date=el.value; m.seq=(m.seq||0)+1; m.changed=true;
+    save(); render();
+    const again=panel.querySelector('.ms-date[data-mid="'+m.id+'"]'); if(again) again.focus();
+    return toast("Date changed. Use Update calendar to move it in Outlook.");
+  }
   if(el.dataset.bk){
     const b=(P.data.benefits||[]).find(x=>x.id===el.dataset.bid); if(!b) return;
     b[el.dataset.bk]=el.value;
@@ -560,7 +573,7 @@ function ics(list){
   const lines=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//GSTT FOCUS//MiQi project//EN","CALSCALE:GREGORIAN","METHOD:PUBLISH"];
   list.forEach(m=>{
     const desc=["Milestone for the improvement project "+title+".",m.owner?"Owner: "+m.owner+".":"",P.data.leadName?"Project lead: "+P.data.leadName+".":"","From the MiQi improvement project tool."].filter(Boolean).join("\n");
-    lines.push("BEGIN:VEVENT","UID:"+P.id+"-"+m.id+"@miqi-project","DTSTAMP:"+stamp,
+    lines.push("BEGIN:VEVENT","UID:"+P.id+"-"+m.id+"@miqi-project","SEQUENCE:"+(m.seq||0),"DTSTAMP:"+stamp,"LAST-MODIFIED:"+stamp,
       "DTSTART;VALUE=DATE:"+ymd(m.date),"DTEND;VALUE=DATE:"+next(m.date),
       "SUMMARY:"+icsText("Milestone: "+m.title+" ("+title+")"),"DESCRIPTION:"+icsText(desc),"CATEGORIES:MiQi project",
       "TRANSP:TRANSPARENT","X-MICROSOFT-CDO-BUSYSTATUS:FREE","X-MICROSOFT-CDO-ALLDAYEVENT:TRUE",
@@ -576,6 +589,7 @@ function downloadIcs(list,name){
   a.href=URL.createObjectURL(new Blob([ics(list)],{type:"text/calendar;charset=utf-8"}));
   a.download=name; document.body.appendChild(a); a.click(); a.remove();
   setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+  if(list.some(m=>m.changed)){list.forEach(m=>{m.changed=false;}); save(); render();}
   toast(list.length>1?"Downloaded "+list.length+" milestones in "+name+". Open it to add them to Outlook.":"Downloaded "+name+". Open it to add it to Outlook.");
 }
 

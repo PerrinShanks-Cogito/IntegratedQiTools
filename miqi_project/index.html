@@ -99,10 +99,13 @@ legend.lbl{font-weight:600;margin-bottom:.35rem;padding:0}
 .bf-actions{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:.8rem}
 .ms-add{display:grid;grid-template-columns:minmax(0,2fr) minmax(9.5rem,1fr) minmax(0,1.3fr);gap:.6rem;align-items:end}
 .ms{list-style:none;margin:.9rem 0 0;padding:0;display:grid;gap:.5rem}
-.ms li{display:grid;grid-template-columns:7.5rem minmax(0,1fr) auto auto;gap:.75rem;align-items:center;padding:.55rem .8rem;border:1px solid var(--line);border-left:4px solid var(--blue);border-radius:4px}
+.ms li{display:grid;grid-template-columns:10rem minmax(0,1fr) auto auto;gap:.75rem;align-items:center;padding:.55rem .8rem;border:1px solid var(--line);border-left:4px solid var(--blue);border-radius:4px}
 .ms li.past{border-left-color:var(--muted)}
-.ms time{font-weight:700;color:var(--blue);font-size:.92rem}
-.ms li.past time{color:var(--muted)}
+.panel .ms .ms-date{width:100%;padding:.3rem .45rem;border:2px solid var(--line);font-weight:700;color:var(--blue);font-size:.92rem}
+.panel .ms .ms-date:hover{border-color:var(--muted)}
+.panel .ms li.past .ms-date{color:var(--muted)}
+.ms li.changed{border-left-color:var(--yellow);background:var(--blue-bg)}
+.ms-note{font-size:.85rem;font-weight:600;color:var(--text)}
 .ms-what{display:flex;flex-direction:column;min-width:0;overflow-wrap:anywhere}
 .xbtn{display:inline-flex;align-items:center;justify-content:center;width:2rem;height:2rem;border:2px solid transparent;border-radius:4px;background:transparent;color:var(--muted);cursor:pointer}
 .xbtn:hover{color:var(--danger);border-color:var(--danger);background:var(--surface)}
