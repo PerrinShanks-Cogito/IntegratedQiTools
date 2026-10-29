@@ -534,7 +534,7 @@ function stepCard(m,s,i,F){
   const opt=(o,sel,pre)=>'<option value="'+o.id+'"'+(sel?" selected":"")+nameAttr(o,pre)+'>'+esc((pre||"")+nameOf(o))+'</option>';
   /* where a decision's no route goes: back to an earlier step, or down the new path that follows it */
   /* a decision's no route: a new path (the default), carry on, or go to another step */
-  const others=m.steps.map((o,k)=>o.id===s.id||(run&&k>i&&k<=F.pathEnd(i))?"":opt(o,!run&&o.id===s.noTo,"")).join("");
+  const others=m.steps.map((o,k)=>o.id===s.id||(run&&k>i&&k<=F.pathEnd(i))?"":opt(o,!run&&o.id===s.noTo,F.labels[k]+". ")).join(""); // numbered, e.g. "3. Triage referral"
   const noRow=!isD?"":
     '<div class="row2"><label>If no, go to<select class="field sm nt"><option value=""'+(!run&&!s.noTo?" selected":"")+'>Carry on (no loop)</option><option value="__path"'+(run?" selected":"")+'>A new path</option>'+(others?'<optgroup label="Go to a step">'+others+'</optgroup>':"")+'</select></label><label>No label<input class="field sm nl" type="text"></label></div>';
   /* the last step on a path says where the path goes next */
