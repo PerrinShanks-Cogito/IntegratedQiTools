@@ -234,15 +234,15 @@ function fieldHTML(f,d){
     case "pdsa":{
       const cyc=v||[];
       return '<fieldset class="field"><legend class="lbl">'+lab+'</legend>'+hint+
-        '<div class="pdsa-add"><div><label for="pdsaChange" class="hint" style="margin:0 0 .3rem">What did this cycle change?</label><input type="text" id="pdsaChange" placeholder="For example: added a pharmacy prompt at the 10am huddle"></div>'+
+        '<div class="pdsa-add"><div><label for="pdsaChange" class="hint" style="margin:0 0 .3rem">What did this cycle change?</label><input type="text" id="pdsaChange" data-k="draftPdsa" value="'+esc(d.draftPdsa)+'" placeholder="For example: added a pharmacy prompt at the 10am huddle"></div>'+
         '<div><span class="hint" style="margin:0 0 .3rem" id="pdsaOutLbl">Outcome</span><div role="radiogroup" aria-labelledby="pdsaOutLbl">'+
-        '<div class="seg">'+OPTS.pdsaOutcome.map((o,i)=>'<label><input type="radio" name="pdsaOut" value="'+o+'"'+(i===0?" checked":"")+'><span>'+o.replace("ed","")+'</span></label>').join("")+'</div></div></div></div>'+
+        '<div class="seg">'+OPTS.pdsaOutcome.map((o,i)=>'<label><input type="radio" name="pdsaOut" data-k="draftPdsaOut" value="'+o+'"'+((d.draftPdsaOut?d.draftPdsaOut===o:i===0)?" checked":"")+'><span>'+o.replace("ed","")+'</span></label>').join("")+'</div></div></div></div>'+
         '<div style="margin-top:.6rem"><button type="button" class="btn" data-act="addPdsa">Add PDSA cycle</button></div>'+
         (cyc.length?'<ol class="pdsa">'+cyc.map((c,i)=>'<li><span>'+esc(c.change)+'</span><span class="out '+c.outcome+'">'+c.outcome+'</span><button type="button" class="xbtn" data-act="rmPdsa" data-i="'+i+'" aria-label="Delete cycle '+(i+1)+'" title="Delete cycle">'+X_SVG+'</button></li>').join("")+'</ol>':'<p class="empty">No PDSA cycles listed yet.</p>')+'</fieldset>';}
     case "log":{
       const list=(v||[]).map((u,i)=>Object.assign({i:i},u)).reverse();
       return '<div class="field"><label for="'+id+'">'+lab+'</label><span class="hint">Add a dated note each time you test a change or reach a milestone.</span>'+
-        '<textarea id="'+id+'" placeholder="What did you test, what happened, what will you do next?"></textarea>'+
+        '<textarea id="'+id+'" data-k="draftUpdate" placeholder="What did you test, what happened, what will you do next?">'+esc(d.draftUpdate)+'</textarea>'+
         '<div style="margin-top:.6rem"><button type="button" class="btn" data-act="addUpdate">Add update</button></div>'+
         (list.length?'<ul class="log">'+list.map(u=>'<li><div><time>'+fmt(u.date)+'</time>'+esc(u.text)+'</div><button type="button" class="xbtn" data-act="rmUpdate" data-i="'+u.i+'" aria-label="Delete update from '+fmt(u.date)+'" title="Delete update">'+X_SVG+'</button></li>').join("")+'</ul>':'<p class="empty">No updates yet. Your first update will appear here.</p>')+'</div>';}
   }
@@ -404,13 +404,13 @@ panel.addEventListener("click",e=>{
     case "addUpdate":{
       const ta=$("#f_updates"), txt=ta.value.trim();
       if(!txt){ta.focus(); toast("Write your update first"); return;}
-      (d.updates=d.updates||[]).push({date:today(),text:txt}); save(); render(); toast("Update added"); break;}
+      (d.updates=d.updates||[]).push({date:today(),text:txt}); delete d.draftUpdate; save(); render(); toast("Update added"); break;}
     case "addPdsa":{
       const inp=$("#pdsaChange"), txt=inp.value.trim();
       if(!txt){inp.focus(); toast("Describe what the cycle changed first"); return;}
       (d.pdsa=d.pdsa||[]).push({change:txt,outcome:panel.querySelector('input[name="pdsaOut"]:checked').value});
       if(!d.pdsaCount||+d.pdsaCount<d.pdsa.length) d.pdsaCount=String(d.pdsa.length);
-      save(); render(); toast("PDSA cycle added"); break;}
+      delete d.draftPdsa; delete d.draftPdsaOut; save(); render(); toast("PDSA cycle added"); break;}
     case "rmUpdate": d.updates.splice(+b.dataset.i,1); save(); render(); toast("Update deleted"); break;
     case "rmPdsa": d.pdsa.splice(+b.dataset.i,1); save(); render(); toast("PDSA cycle deleted"); break;
     case "exportPulse": exportPulse(); break;
