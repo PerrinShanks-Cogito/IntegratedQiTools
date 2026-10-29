@@ -536,7 +536,8 @@ function stepCard(m,s,i,F){
   /* a decision's no route: a new path (the default), carry on, or go to another step */
   const others=m.steps.map((o,k)=>o.id===s.id||(run&&k>i&&k<=F.pathEnd(i))?"":opt(o,!run&&o.id===s.noTo,F.labels[k]+". ")).join(""); // numbered, e.g. "3. Triage referral"
   const noRow=!isD?"":
-    '<div class="row2"><label>If no, go to<select class="field sm nt"><option value=""'+(!run&&!s.noTo?" selected":"")+'>Carry on (no loop)</option><option value="__path"'+(run?" selected":"")+'>A new path</option>'+(others?'<optgroup label="Go to a step">'+others+'</optgroup>':"")+'</select></label><label>No label<input class="field sm nl" type="text"></label></div>';
+    '<div class="row1"><label>If no, go to<select class="field sm nt"><option value=""'+(!run&&!s.noTo?" selected":"")+'>Same as yes (carry on)</option><option value="__path"'+(run?" selected":"")+'>A new path</option>'+(others?'<optgroup label="Go to a step">'+others+'</optgroup>':"")+'</select></label></div>'+
+    '<div class="row2"><label>Yes label<input class="field sm yl" type="text"></label><label>No label<input class="field sm nl" type="text"></label></div>';
   /* the last step on a path says where the path goes next */
   let pathRow="";
   if(F.last[i]){
@@ -552,6 +553,11 @@ function stepCard(m,s,i,F){
   /* moving a step onto or off a path */
   const canIn=i>0&&F.dep[i-1]+(m.steps[i-1].type==="decision"?1:0)>d;
   const moves=(d>0?'<button class="btn small ghost" data-act="out" type="button">Move off path</button>':"")+(canIn?'<button class="btn small ghost" data-act="in" type="button">Move onto path</button>':"");
+  /* nothing is added after the End step from its own card. On a decision, Add new path
+     starts its own "no" path, so it only shows while the decision hasn't got one */
+  const isEnd=isT&&i>0&&i===m.steps.length-1;
+  const adds=isEnd?"":'<button class="btn small" data-act="ins" type="button">Add step below</button>'+
+    (isD&&run?"":'<button class="btn small ghost" data-act="path" type="button">Add new path</button>');
   return '<div class="step t-'+s.type+(d?" on-path":"")+(s.value&&!isT?" v-"+s.value:"")+(selected===s.id?" sel":"")+'" data-id="'+s.id+'"'+(d?' style="margin-left:'+(d*1.3)+'rem"':"")+'>'+
     '<div class="step-head"><span class="num" aria-hidden="true">'+esc(F.labels[i])+'</span>'+
     '<select class="field sm ty" aria-label="Step '+F.labels[i]+' type">'+Object.keys(TYPES).map(k=>'<option value="'+k+'"'+(k===s.type?" selected":"")+'>'+TYPES[k]+'</option>').join("")+'</select>'+
@@ -564,8 +570,7 @@ function stepCard(m,s,i,F){
     '<input class="field measure issue is" type="text" aria-label="Issue for step '+F.labels[i]+'" placeholder="Issue or frustration (optional)">'+
     (isT?"":'<div class="row1"><label>Value<select class="field sm va">'+Object.keys(VALUES).map(k=>'<option value="'+k+'"'+(k===(s.value||"")?" selected":"")+'>'+VALUES[k]+'</option>').join("")+'</select></label></div>')+
     '<div class="step-foot"><span></span>'+
-    '<span class="foot-btns">'+moves+
-    '<button class="btn small" data-act="ins" type="button">'+(d?"Add path step below":"Add step below")+'</button></span></div></div>';
+    '<span class="foot-btns">'+moves+adds+'</span></div></div>';
 }
 function renderEditor(){
   renderEditing();
@@ -594,7 +599,7 @@ function renderEditor(){
   const F=flow(m);
   h+='<div id="steps">'+m.steps.map((s,i)=>stepCard(m,s,i,F)).join("")+'</div>';
   h+='<div style="margin-top:.6rem"><button class="btn small" id="addStep" type="button">Add step at the end</button></div>';
-  h+='<p class="hint">Press Enter in a step to add the next one in the same lane. Shift+Enter starts a new line. To give a decision a different "no" route, choose <b>A new path</b> in its <b>If no, go to</b> list: the yes route carries on along its own path. A path can have its own decisions and new paths.</p>';
+  h+='<p class="hint">Press Enter in a step to add the next one. The Guide tab explains decisions and new paths.</p>';
   host.innerHTML=h;
   host.querySelectorAll(".lane-row").forEach(r=>{r.querySelector(".ln").value=laneOf(m,r.dataset.id).name;});
   host.querySelectorAll(".step").forEach(c=>{
@@ -602,6 +607,7 @@ function renderEditor(){
     const t=c.querySelector(".t"); t.value=s.text; autosize(t);
     c.querySelector(".is").value=s.issue||"";
     const nl=c.querySelector(".nl"); if(nl) nl.value=s.noLabel||"No";
+    const yl=c.querySelector(".yl"); if(yl) yl.value=s.yesLabel||"Yes";
   });
 }
 function markSel(){document.querySelectorAll(".step").forEach(c=>c.classList.toggle("sel",c.dataset.id===selected));}
@@ -623,6 +629,7 @@ ed.addEventListener("input",e=>{
   if(cl.contains("t")){s.text=e.target.value;autosize(e.target);refreshNames(s);}
   else if(cl.contains("is")) s.issue=e.target.value;
   else if(cl.contains("nl")) s.noLabel=e.target.value;
+  else if(cl.contains("yl")) s.yesLabel=e.target.value;
   else return;
   changed();
 });
@@ -685,6 +692,12 @@ function insertAfter(i){
     if(F.last[i]){ns.thenTo=ref.thenTo; ref.thenTo="";}
   }
   m.steps.splice(at,0,ns); selected=ns.id; changed(true); focusCard(ns.id,".t");
+}
+/* Add a decision after this one on the same path, with a new path started for its "no" route */
+function insertDecision(i){
+  insertAfter(i);
+  const m=map(), s=m.steps.find(x=>x.id===selected);
+  s.type="decision"; addPathStep(m.steps.indexOf(s),true); focusCard(s.id,".t");
 }
 /* Add a step to a decision's new path, starting the path if it hasn't got one */
 function addPathStep(i,stay){
@@ -751,6 +764,17 @@ ed.addEventListener("click",e=>{
     if(ids.includes(selected))selected=null; changed(true);
   }
   else if(act==="ins") insertAfter(i);
+  else if(act==="path"){
+    const s=m.steps[i];
+    if(s.type==="decision"){
+      if(flow(m).runs[i]) return;
+      /* the new path takes over from a no route that went to another step */
+      const was=s.noTo&&m.steps.find(x=>x.id===s.noTo);
+      s.noTo=""; addPathStep(i);
+      if(was) toast('Its no route now starts a new path instead of going to "'+nameOf(was)+'".');
+    }
+    else insertDecision(i);
+  }
 });
 /* header fields */
 $("#title").addEventListener("input",e=>{state.title=e.target.value;changed();});
