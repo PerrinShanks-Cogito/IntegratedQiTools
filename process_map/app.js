@@ -552,10 +552,11 @@ function stepCard(m,s,i,F){
   /* moving a step onto or off a path */
   const canIn=i>0&&F.dep[i-1]+(m.steps[i-1].type==="decision"?1:0)>d;
   const moves=(d>0?'<button class="btn small ghost" data-act="out" type="button">Move off path</button>':"")+(canIn?'<button class="btn small ghost" data-act="in" type="button">Move onto path</button>':"");
-  /* nothing is added after the End step from its own card */
+  /* nothing is added after the End step from its own card. On a decision, Add new path
+     starts its own "no" path, so it only shows while the decision hasn't got one */
   const isEnd=isT&&i>0&&i===m.steps.length-1;
   const adds=isEnd?"":'<button class="btn small" data-act="ins" type="button">Add step below</button>'+
-    '<button class="btn small ghost" data-act="path" type="button">Add new path</button>';
+    (isD&&run?"":'<button class="btn small ghost" data-act="path" type="button">Add new path</button>');
   return '<div class="step t-'+s.type+(d?" on-path":"")+(s.value&&!isT?" v-"+s.value:"")+(selected===s.id?" sel":"")+'" data-id="'+s.id+'"'+(d?' style="margin-left:'+(d*1.3)+'rem"':"")+'>'+
     '<div class="step-head"><span class="num" aria-hidden="true">'+esc(F.labels[i])+'</span>'+
     '<select class="field sm ty" aria-label="Step '+F.labels[i]+' type">'+Object.keys(TYPES).map(k=>'<option value="'+k+'"'+(k===s.type?" selected":"")+'>'+TYPES[k]+'</option>').join("")+'</select>'+
@@ -760,7 +761,17 @@ ed.addEventListener("click",e=>{
     if(ids.includes(selected))selected=null; changed(true);
   }
   else if(act==="ins") insertAfter(i);
-  else if(act==="path") insertDecision(i);
+  else if(act==="path"){
+    const s=m.steps[i];
+    if(s.type==="decision"){
+      if(flow(m).runs[i]) return;
+      /* the new path takes over from a no route that went to another step */
+      const was=s.noTo&&m.steps.find(x=>x.id===s.noTo);
+      s.noTo=""; addPathStep(i);
+      if(was) toast('Its no route now starts a new path instead of going to "'+nameOf(was)+'".');
+    }
+    else insertDecision(i);
+  }
 });
 /* header fields */
 $("#title").addEventListener("input",e=>{state.title=e.target.value;changed();});
