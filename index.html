@@ -19,7 +19,7 @@ layout: default
         <article class="card">
           <div class="card-head">
             <h3><a href="{{ '/' | append: t.id | append: '/' | relative_url }}">{{ t.name }}</a></h3>
-            {%- if t.status %}<span class="status">{{ t.status }}</span>{% endif %}
+            {%- if t.status %}<span class="status status-{{ t.status | downcase }}">{{ t.status }}</span>{% endif %}
           </div>
           <p>{{ t.description }}</p>
           <span class="go" aria-hidden="true">Open tool &rarr;</span>
