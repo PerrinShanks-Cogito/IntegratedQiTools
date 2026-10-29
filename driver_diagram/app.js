@@ -588,7 +588,7 @@ FocusActions.mount({
   hasData:()=>hasContent(), reset:()=>{newProject();trackCleared();}, load:doc=>{state=normalise(doc);selected=null;autoFit=true;persist();renderAll();},
   example:()=>loadExampleProject(),
   save:()=>saveFile(slug()+".json",JSON.stringify(state,null,2),"application/json"),
-  open:()=>$("#fileIn").click(),
+  open:"#fileIn",
   ready:()=>hasContent(),
   exports:trackExports([
     {type:"png",run:()=>exportPng()},
@@ -612,7 +612,12 @@ $("#fileIn").addEventListener("change",e=>{
   const big=FocusActions.tooBig(f,"project"); if(big){e.target.value="";return toast(big);}
   const r=new FileReader();
   r.onload=()=>{
-    try{state=normalise(JSON.parse(r.result));selected=null;autoFit=true;persist();renderAll();toast("Opened "+f.name);}
+    try{
+      const doc=JSON.parse(r.result);
+      /* only a driver diagram's own file, so Save never writes over another tool's */
+      if(!doc||!doc.goal||!Array.isArray(doc.drivers)) throw new Error("bad");
+      state=normalise(doc);selected=null;autoFit=true;persist();renderAll();FocusActions.opened();toast("Opened "+f.name);
+    }
     catch(err){toast("That file isn't a driver diagram project file.");}
     e.target.value="";
   };
@@ -638,7 +643,7 @@ async function saveFile(name,data,mime){
     }
     return;
   }
-  try{if(await FocusActions.saveFile(name,data,mime)) toast("Saved "+name);}
+  try{if(await FocusActions.saveFile(name,data,mime)) toast("Saved "+FocusActions.lastSaved());}
   catch(err){toast("Couldn't save "+name+".");}
 }
 let tt;

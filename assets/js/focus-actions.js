@@ -123,6 +123,102 @@
     html: ["text/html", "Web page"], pdf: ["application/pdf", "PDF document"],
     pptx: ["application/vnd.openxmlformats-officedocument.presentationml.presentation", "PowerPoint presentation"]
   };
+  /* ---------- the project file you're working in ----------
+     Where the browser lets a page write to a file the person picked (Edge,
+     Chrome), Save writes back to the project file last saved or opened, like
+     Word, instead of asking where to save each time. Save as picks a new
+     file. The link is kept per tool and per browser tab (in IndexedDB, as a
+     file handle, never the file's contents), so it lasts through a refresh
+     while the tool still has the work in it. New, Example and sample data
+     drop it, so new work never overwrites the old file. A file picked in
+     Open only becomes the linked file once the tool has opened it without
+     an error (opened()), so a file that didn't open is never overwritten.
+     Firefox and Safari can't write to a picked file: there Save downloads a
+     new copy each time, as before. */
+  const canLink = typeof window.showSaveFilePicker === "function" && typeof window.showOpenFilePicker === "function";
+  let linkTool = "", linked = null, pending = null, nextSave = null, lastName = "", onLink = () => {};
+  let restored = Promise.resolve();
+  const TAB = (() => {
+    try {
+      let t = sessionStorage.getItem("focus-tab");
+      if (!t) { t = Math.random().toString(36).slice(2) + Date.now().toString(36); sessionStorage.setItem("focus-tab", t); }
+      return t;
+    } catch (e) { return ""; }
+  })();
+  const links = (function () {
+    let dbp = null;
+    function db() {
+      if (!dbp) dbp = new Promise((resolve, reject) => {
+        if (!window.indexedDB) return reject(new Error("no IndexedDB"));
+        const r = indexedDB.open("focus-files", 1);
+        r.onupgradeneeded = () => r.result.createObjectStore("links");
+        r.onsuccess = () => resolve(r.result);
+        r.onerror = () => reject(r.error);
+      });
+      dbp.catch(() => { dbp = null; });
+      return dbp;
+    }
+    function run(mode, fn) {
+      return db().then(d => new Promise((resolve, reject) => {
+        const tx = d.transaction("links", mode), req = fn(tx.objectStore("links"));
+        tx.oncomplete = () => resolve(req && req.result);
+        tx.onerror = tx.onabort = () => reject(tx.error);
+      }));
+    }
+    const key = tool => TAB + "|" + tool;
+    return {
+      get: tool => run("readonly", st => st.get(key(tool))),
+      set: (tool, v) => run("readwrite", st => st.put(Object.assign({ saved: Date.now() }, v), key(tool))),
+      drop: tool => run("readwrite", st => st.delete(key(tool))),
+      // Links from tabs closed more than two days ago
+      expire: () => run("readwrite", st => {
+        const cut = Date.now() - 2 * 864e5, c = st.openCursor();
+        c.onsuccess = e => { const x = e.target.result; if (!x) return; if (!(x.value && x.value.saved >= cut)) x.delete(); x.continue(); };
+        return c;
+      })
+    };
+  })();
+  function link(f) {
+    linked = f; pending = null;
+    if (linkTool && TAB) links.set(linkTool, { handle: f.handle, name: f.name }).catch(() => {});
+    onLink();
+  }
+  function unlink() {
+    linked = null; pending = null;
+    if (linkTool && TAB) links.drop(linkTool).catch(() => {});
+    onLink();
+  }
+  // A tool calls this once a project file picked with Open has opened
+  function opened() { return restored.then(() => { if (pending) link(pending); }); }
+  async function writeTo(handle, blob) {
+    const mode = { mode: "readwrite" };
+    if (handle.queryPermission && await handle.queryPermission(mode) !== "granted" &&
+        await handle.requestPermission(mode) !== "granted") return false;
+    const w = await handle.createWritable();
+    await w.write(blob); await w.close();
+    return true;
+  }
+  // Open's file window. Resolves the File picked, or null. A project file
+  // becomes pending until the tool says it opened (opened()).
+  async function pickFile(withSheets) {
+    const types = [{ description: "Saved work", accept: { "application/json": [".json"] } }];
+    if (withSheets) types.push({ description: "Data sheet", accept: { [SAVE_TYPES.xlsx[0]]: [".xlsx", ".xlsm"] } });
+    let hs;
+    try { hs = await window.showOpenFilePicker({ types, multiple: false }); }
+    catch (e) { return null; }
+    const h = hs && hs[0]; if (!h) return null;
+    const f = await h.getFile();
+    pending = /\.json$/i.test(f.name) ? { handle: h, name: h.name } : null;
+    return f;
+  }
+  // Hands a picked file to a tool's own file input, as if chosen there
+  function feed(input, f) {
+    const dt = new DataTransfer();
+    dt.items.add(f);
+    input.files = dt.files;
+    input.dispatchEvent(new Event("change", { bubbles: true }));
+  }
+
   async function saveFile(name, data, mime) {
     const blob = data instanceof Blob ? data : new Blob([data], { type: mime });
     if (capture && /\.svg$/i.test(name)) {
@@ -130,6 +226,14 @@
       done(blob);
       // Never settles, so the tool doesn't also say it saved a file.
       return new Promise(() => {});
+    }
+    // The toolbar's Save or Save as marks the next .json saved as the project file
+    const proj = nextSave && /\.json$/i.test(name) ? nextSave : null;
+    nextSave = null;
+    lastName = name;
+    if (proj && linked && !proj.as) {
+      try { if (await writeTo(linked.handle, blob)) { lastName = linked.name; return true; } }
+      catch (e) { /* moved, deleted or not allowed: ask where to save instead */ }
     }
     if (typeof window.showSaveFilePicker === "function") {
       const ext = (String(name).match(/\.([a-z0-9]+)$/i) || [])[1];
@@ -142,6 +246,8 @@
       if (handle) {
         const w = await handle.createWritable();
         await w.write(blob); await w.close();
+        lastName = handle.name;
+        if (proj) link({ handle, name: handle.name });
         return true;
       }
     }
@@ -542,6 +648,13 @@
         (o.example ? '<button type="button" class="fa-btn" data-fa="example">' + ICONS.example + '<span>Example</span></button>' : '') +
         '<button type="button" class="fa-btn" data-fa="open">' + ICONS.open + '<span>Open</span></button>' +
         '<button type="button" class="fa-btn" data-fa="save">' + ICONS.save + '<span>Save</span></button>' +
+        (canLink ?
+          '<div class="fa-menu fa-saveas">' +
+            '<button type="button" class="fa-btn fa-drop" data-fa="saveasmenu" aria-haspopup="true" aria-expanded="false" title="More ways to save"><span class="fa-sr">More ways to save</span></button>' +
+            '<div class="fa-list" role="menu" aria-label="Save" hidden>' +
+              '<button type="button" role="menuitem" data-fa="saveas">Save as…<small>Save a copy as a new project file</small></button>' +
+            '</div>' +
+          '</div>' : '') +
         '<div class="fa-menu">' +
           '<button type="button" class="fa-btn fa-primary" data-fa="export" aria-haspopup="true" aria-expanded="false">' + ICONS.export + '<span>Export</span></button>' +
           '<div class="fa-list" role="menu" aria-label="Export" hidden></div>' +
@@ -569,7 +682,21 @@
     const list = expBtn.nextElementSibling;
     const fileIn = bar.querySelector(".fa-file");
     openBtn.title = o.template && o.template.import ? "Open a project file you saved, or a filled-in data sheet" : "Open a project file you saved";
-    saveBtn.title = "Save a project file to reopen and keep editing later";
+    const saveTitle = "Save a project file to reopen and keep editing later";
+    saveBtn.title = saveTitle;
+    // Save says which file it will update, once there is one
+    onLink = () => { saveBtn.title = linked ? "Save changes to " + linked.name : saveTitle; };
+    linkTool = o.tool || "";
+    if (canLink && linkTool && TAB) {
+      links.expire().catch(() => {});
+      // After a refresh, keep the link only while the tool still has the work in it
+      restored = links.get(linkTool).then(v => {
+        if (!v || !v.handle) return;
+        if (v.pending) { pending = { handle: v.handle, name: v.name }; links.drop(linkTool).catch(() => {}); }
+        else if (o.hasData && o.hasData()) { linked = { handle: v.handle, name: v.name }; onLink(); }
+        else links.drop(linkTool).catch(() => {});
+      }).catch(() => {});
+    }
 
     list.innerHTML = (o.exports || []).map((e, i) => {
       const f = FORMATS[e.type] || { label: e.label || e.type, hint: "" };
@@ -734,6 +861,7 @@
       exBtn.title = "Fill in example data to see how the tool works";
       exBtn.addEventListener("click", () => {
         if (o.hasData && o.hasData() && !confirm("Replace what you've entered with the example?")) return;
+        unlink();
         o.example();
       });
     }
@@ -743,6 +871,7 @@
     const dlg = bar.querySelector(".fa-dialog");
     newBtn.title = "Clear the tool and start a new analysis";
     function startNew() {
+      unlink();
       if (o.reset) {
         try { o.reset(); } catch (e) { return say("Sorry, the tool couldn't be cleared. Reload the page instead."); }
         const note = document.querySelector(".fa-sample"); if (note) note.remove();
@@ -784,19 +913,38 @@
     });
     dlg.addEventListener("cancel", e => { e.preventDefault(); closeNew(); });
 
-    /* Save */
-    saveBtn.addEventListener("click", () => {
+    /* Save, and Save as */
+    function saveProject(as) {
+      nextSave = { as: !!as };
+      // A tool's own save calls saveFile straight away; anything else isn't the project file
+      setTimeout(() => { nextSave = null; }, 0);
       if (o.save) return o.save();
       const doc = {
         focus: { tool: o.tool, version: 1, saved: new Date().toISOString() },
         fields: fieldsRoot ? readFields(fieldsRoot) : {},
         extra: o.getExtra ? o.getExtra() : null
       };
-      download(baseName() + ".json", JSON.stringify(doc, null, 2), "application/json", "Saved " + baseName() + ".json. Use Open to carry on later.");
-    });
+      saveFile(baseName() + ".json", JSON.stringify(doc, null, 2), "application/json").then(
+        ok => say(ok ? "Saved " + lastName + "." + (linked ? " Save updates this file from now on." : " Use Open to carry on later.") : "Download cancelled."),
+        () => say("The file couldn’t be saved here."));
+    }
+    saveBtn.addEventListener("click", () => saveProject(false));
+    const saveAsMenuBtn = bar.querySelector('[data-fa="saveasmenu"]');
+    if (saveAsMenuBtn) {
+      const closeSaveAs = menu(saveAsMenuBtn, saveAsMenuBtn.nextElementSibling);
+      bar.querySelector('[data-fa="saveas"]').addEventListener("click", () => { closeSaveAs(false); saveAsMenuBtn.focus(); saveProject(true); });
+    }
 
-    /* Open */
-    openBtn.addEventListener("click", () => { if (o.open) return o.open(); fileIn.click(); });
+    /* Open. A tool with its own project files passes open as its file input
+       (an element or selector), so a file picked here can be linked to Save;
+       a function is still called as it is. */
+    const toolIn = o.open && typeof o.open !== "function" ? $(o.open) : null;
+    openBtn.addEventListener("click", () => {
+      if (typeof o.open === "function") return o.open();
+      const input = toolIn || fileIn;
+      if (!canLink) return input.click();
+      pickFile(!toolIn && o.template && o.template.import).then(f => { if (f) feed(input, f); }, () => say("Couldn't open that file."));
+    });
     // Restore a project document saved by this toolbar. Returns an error
     // message, or "" when it worked.
     function applyDoc(doc) {
@@ -830,7 +978,8 @@
         let doc;
         try { doc = JSON.parse(r.result); } catch (e) { return say("That file isn't a FOCUS project file."); }
         const err = applyDoc(doc);
-        say(err || "Opened " + f.name + ".");
+        if (!err) opened();
+        say(err || "Opened " + f.name + "." + (pending || linked ? " Save updates this file." : ""));
       };
       r.onerror = () => say("Couldn't read that file.");
       r.readAsText(f);
@@ -850,6 +999,7 @@
         .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
         .then(doc => {
           if (o.hasData && o.hasData() && !confirm("Replace what you've entered with the case study sample data?")) return;
+          unlink();
           let err = "";
           if (o.load) {
             if (doc && doc.focus && doc.focus.tool && doc.focus.tool !== o.tool) err = "That sample belongs to another tool.";
@@ -899,5 +1049,6 @@
     host.parentNode.insertBefore(note, host.nextSibling);
   }
 
-  window.FocusActions = { mount, say, xlsx, readXlsx, zip, saveFile, FORMATS, clips, LIMITS, tooBig, addingToA3: () => a3Running };
+  window.FocusActions = { mount, say, xlsx, readXlsx, zip, saveFile, FORMATS, clips, LIMITS, tooBig, addingToA3: () => a3Running,
+    opened, lastSaved: () => lastName, linkedFile: () => (linked ? linked.name : "") };
 })();

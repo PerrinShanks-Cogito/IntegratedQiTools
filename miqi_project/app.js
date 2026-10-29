@@ -474,6 +474,7 @@ function openText(text,name){
     const other=doc&&doc.focus&&doc.focus.tool&&doc.focus.tool!=="miqi_project";
     return toast(other?"That file was saved from the "+String(doc.focus.tool).replace(/_/g," ")+" tool. Open it there instead.":"That file isn't a MiQi project file.");
   }
+  FocusActions.opened();
   toast("Opened "+(name||"your project"));
 }
 const projIn=document.createElement("input");
@@ -494,9 +495,9 @@ FocusActions.mount({
   save:()=>{
     const name=fileBase()+".json";
     FocusActions.saveFile(name,JSON.stringify(docOf(),null,2),"application/json")
-      .then(ok=>{if(ok) toast("Saved "+name+". Use Open to carry on later.");},()=>toast("Couldn't save "+name+"."));
+      .then(ok=>{if(ok) toast("Saved "+FocusActions.lastSaved()+(FocusActions.linkedFile()?". Save updates this file from now on.":". Use Open to carry on later."));},()=>toast("Couldn't save "+name+"."));
   },
-  open:()=>projIn.click(),
+  open:projIn,
   load:loadDoc,
   hasData:hasData,
   reset:()=>{P=blankProject(); viewStage=0; save(); render();},

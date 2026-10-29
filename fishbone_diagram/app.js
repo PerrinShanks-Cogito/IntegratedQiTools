@@ -731,7 +731,7 @@ FocusActions.mount({
   hasData:()=>hasContent(), reset:()=>{newProject();trackCleared();}, load:doc=>{state=normalise(doc);selected=null;autoFit=true;persist();renderAll();},
   example:()=>loadExampleProject(),
   save:()=>saveFile(slug()+".json",projectJson(),"application/json"),
-  open:()=>$("#fileIn").click(),
+  open:"#fileIn",
   ready:()=>!!(state.effect.trim()||hasCauses()),
   exports:trackExports([
     {type:"png",run:()=>exportPng()},
@@ -752,7 +752,7 @@ $("#fileIn").addEventListener("change",e=>{
     try{doc=JSON.parse(r.result);}catch(err){return toast("That file isn't a cause and effect diagram project file.");}
     if(doc&&doc.focus&&doc.focus.tool&&doc.focus.tool!==TOOL) return toast("That file was saved from the "+String(doc.focus.tool).replace(/_/g," ")+" tool. Open it there instead.");
     try{state=normalise(doc);}catch(err){return toast("That file isn't a cause and effect diagram project file.");}
-    selected=null; autoFit=true; persist(); renderAll(); toast("Opened "+f.name);
+    selected=null; autoFit=true; persist(); renderAll(); FocusActions.opened(); toast("Opened "+f.name);
   };
   r.readAsText(f);
 });
@@ -776,7 +776,7 @@ async function saveFile(name,data,mime){
     }
     return;
   }
-  try{if(await FocusActions.saveFile(name,data,mime)) toast("Saved "+name);}
+  try{if(await FocusActions.saveFile(name,data,mime)) toast("Saved "+FocusActions.lastSaved());}
   catch(err){toast("Couldn't save "+name+".");}
 }
 let tt;

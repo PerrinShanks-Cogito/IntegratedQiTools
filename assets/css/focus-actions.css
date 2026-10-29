@@ -179,3 +179,11 @@
 .fx-status{min-height:1.4em; margin:.6rem 0 0; font-weight:600}
 .fx-sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
 @media print{.fx-wrap{display:none}}
+
+/* Save and its Save as arrow sit together as one split button */
+.fa-sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+.fa-btns [data-fa="save"]:has(+ .fa-saveas){border-top-right-radius:0; border-bottom-right-radius:0}
+.fa-btns .fa-saveas{margin-left:-.5rem}
+.fh-sub .fa-btns .fa-saveas{margin-left:-.4rem}
+.fa-bar .fa-saveas .fa-btn{border-left-width:0; border-top-left-radius:0; border-bottom-left-radius:0; padding-left:.5rem; padding-right:.6rem}
+.fa-bar .fa-saveas .fa-btn::after{margin-left:0}

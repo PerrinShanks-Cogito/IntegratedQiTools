@@ -46,17 +46,46 @@
   const btn = proj && proj.querySelector("[data-fh-open-project]");
   const file = proj && proj.querySelector("[data-fh-project-file]");
   if (!btn || !file) return;
-  btn.addEventListener("click", () => file.click());
-  file.addEventListener("change", () => {
-    const f = file.files && file.files[0];
-    file.value = "";
-    if (!f) return;
+  function go(f, handle) {
     proj.open = false;
     if (f.size > 5 * 1024 * 1024) { alert("That file is too big to be a MiQi project file."); return; }
     f.text().then(text => {
       try { sessionStorage.setItem("miqi-open", JSON.stringify({ name: f.name, text })); }
       catch (e) { alert("Couldn't open that file in this browser."); return; }
-      location.href = proj.dataset.projectUrl + "?open=1";
+      const next = () => { location.href = proj.dataset.projectUrl + "?open=1"; };
+      if (handle) keepHandle(handle).then(next, next); else next();
     }, () => alert("Couldn't read that file."));
+  }
+  // Where the browser can save back to a picked file (Edge, Chrome), the
+  // file's handle goes with it, so Save on the project page updates this
+  // file (see "the project file you're working in" in focus-actions.js).
+  btn.addEventListener("click", () => {
+    if (typeof window.showOpenFilePicker !== "function") return file.click();
+    window.showOpenFilePicker({ types: [{ description: "Saved work", accept: { "application/json": [".json"] } }], multiple: false })
+      .then(hs => hs[0].getFile().then(f => go(f, hs[0])), () => {});
   });
+  file.addEventListener("change", () => {
+    const f = file.files && file.files[0];
+    file.value = "";
+    if (f) go(f, null);
+  });
+  function keepHandle(handle) {
+    return new Promise((resolve, reject) => {
+      let tab;
+      try {
+        tab = sessionStorage.getItem("focus-tab");
+        if (!tab) { tab = Math.random().toString(36).slice(2) + Date.now().toString(36); sessionStorage.setItem("focus-tab", tab); }
+      } catch (e) { return reject(e); }
+      if (!window.indexedDB) return reject(new Error("no IndexedDB"));
+      const r = indexedDB.open("focus-files", 1);
+      r.onupgradeneeded = () => r.result.createObjectStore("links");
+      r.onerror = () => reject(r.error);
+      r.onsuccess = () => {
+        const tx = r.result.transaction("links", "readwrite");
+        tx.objectStore("links").put({ handle, name: handle.name, pending: true, saved: Date.now() }, tab + "|miqi_project");
+        tx.oncomplete = resolve;
+        tx.onerror = tx.onabort = () => reject(tx.error);
+      };
+    });
+  }
 })();
