@@ -76,7 +76,9 @@ const STAGES=[
    {k:"measuring",t:"textarea",l:"Document how you are measuring your improvement"},
    {k:"evidence",t:"textarea",l:"Supporting evidence or rationale"},
    {k:"currentState",t:"textarea",l:"What is the current state?"},
-   {k:"baseline",t:"textarea",l:"What are your baseline measures?"}
+   {k:"baseline",t:"textarea",l:"What are your baseline measures?"},
+   {k:"benefits",t:"benefits",l:"Benefits register",hide:["achieved","status"],
+    hint:"Set out the benefits the project should deliver, with a measure, baseline and target for each, and any dis-benefit to watch for. This is the same register as on the Close stage, where you record what was achieved: change it on either and it changes on both."}
   ],
   docsLabel:"Supporting documents",
   checklist:[
@@ -126,7 +128,7 @@ const STAGES=[
   fields:[
    {row:[{k:"status",t:"select",l:"Project status",o:"status"},{k:"completionDate",t:"date",l:"Completion date"}]},
    {k:"realised",t:"radio3",l:"Did this project realise its expected benefits?",o:"realised"},
-   {k:"benefits",t:"benefits",l:"Benefits register",hint:"Add each benefit the project set out to deliver, and any dis-benefit, such as a balancing measure that got worse. Add as many or as few as you need."},
+   {k:"benefits",t:"benefits",l:"Benefits register",hint:"Record what each benefit achieved and whether it was realised. This is the same register you started on the Observe stage: change it on either and it changes on both. Add as many or as few benefits as you need."},
    {k:"beneficiaries",t:"radio3",l:"Who benefits from the project?",o:"beneficiaries"},
    {k:"reach",t:"radio3",l:"How many people does this affect per year?",o:"reach"},
    {k:"learning",t:"textarea",l:"Key learning from your project"},
@@ -274,7 +276,7 @@ function fieldHTML(f,d){
       return '<fieldset class="field"><legend class="lbl">'+lab+'</legend>'+hint+
         (list.length?'<ol class="bf">'+list.map((b,i)=>'<li><div class="bf-head"><h3>'+(b.type==="Dis-benefit"?"Dis-benefit ":"Benefit ")+(i+1)+'</h3>'+
           '<button type="button" class="btn small ghost danger" data-act="rmBenefit" data-id="'+esc(b.id)+'" aria-label="Remove '+(b.title?esc(b.title):"benefit "+(i+1))+'">Remove</button></div>'+
-          '<div class="bf-grid">'+BENEFIT.map(c=>cell(b,i,c)).join("")+'</div></li>').join("")+'</ol>'
+          '<div class="bf-grid">'+BENEFIT.filter(c=>!(f.hide||[]).includes(c.k)).map(c=>cell(b,i,c)).join("")+'</div></li>').join("")+'</ol>'
           :'<p class="empty">No benefits added yet.</p>')+
         '<div class="bf-actions"><button type="button" class="btn" data-act="addBenefit">Add benefit</button>'+
         (list.length?'<button type="button" class="btn" data-act="benefitsXlsx">Download register (.xlsx)</button>':'')+'</div></fieldset>';}
