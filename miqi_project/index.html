@@ -108,6 +108,13 @@ aside dd{margin:0;font-weight:600;overflow-wrap:anywhere}
 .history time{color:var(--muted)}
 .toollinks a{font-weight:600}
 .toollinks .why{display:block;color:var(--muted);font-size:.85rem}
+aside details.guide summary{display:flex;align-items:center;justify-content:space-between;gap:.5rem;cursor:pointer;list-style:none;border-radius:4px}
+aside details.guide summary::-webkit-details-marker{display:none}
+aside details.guide summary h3{margin:0}
+aside details.guide summary .count{color:var(--muted);font-weight:600}
+aside details.guide summary::after{content:"";flex:none;width:.5rem;height:.5rem;border-right:2px solid var(--blue);border-bottom:2px solid var(--blue);transform:translateY(-2px) rotate(45deg);transition:transform .15s}
+aside details.guide[open] summary::after{transform:translateY(2px) rotate(-135deg)}
+aside details.guide[open] summary{margin-bottom:.8rem}
 .guidedocs{list-style:none;margin:0;padding:0;display:grid;gap:.8rem;font-size:.93rem}
 .guidedocs li+li{border-top:1px solid var(--line);padding-top:.8rem}
 .guidedocs .dname{font-weight:700}

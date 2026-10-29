@@ -316,18 +316,21 @@ function renderAside(){
      '<li><a href="'+esc(LINKS.community)+'" target="_blank" rel="noopener">Ask a question in the Improvement Community Hub</a></li></ul></div>';
 }
 
+/* The card starts closed, and stays open or closed as the stages change */
+let guideOpen=false;
+$("#aside").addEventListener("toggle",e=>{if(e.target.classList.contains("guide")) guideOpen=e.target.open;},true);
 function guideCard(s){
   const docs=guideDocs(s.id); if(!docs.length) return "";
   const kind=d=>KIND[d.kind]||"";
   const kinds=[...new Set(docs.map(kind).filter(Boolean))];
-  return '<div class="card"><h3>Programme documents</h3><ul class="guidedocs">'+docs.map(d=>
+  return '<details class="card guide"'+(guideOpen?" open":"")+'><summary><h3>Programme documents <span class="count">('+docs.length+')</span></h3></summary><ul class="guidedocs">'+docs.map(d=>
     '<li><span class="dname">'+(d.code?'<span class="code">'+esc(d.code)+'</span>':"")+esc(d.name)+'</span>'+
     '<span class="why">'+esc(d.purpose)+'</span><span class="dl">'+
     (d.template?'<a href="'+esc(GUIDE_BASE+"templates/"+d.template)+'" download>Blank template<span class="sr"> for '+esc(d.name)+', '+kind(d)+'</span></a>':"")+
     (d.example?'<a href="'+esc(GUIDE_BASE+"examples/"+d.example)+'" download>Worked example<span class="sr"> of '+esc(d.name)+', '+kind(d)+'</span></a>':"")+
     '</span></li>').join("")+'</ul>'+
     '<p class="hint" style="margin:.7rem 0 0">'+(kinds.length?"Files download as "+(kinds.length>1?kinds.slice(0,-1).join(", ")+" and "+kinds[kinds.length-1]:kinds[0])+". ":"")+
-    'See how they fit together in the <a href="'+esc(GUIDE_BASE)+'" target="_blank" rel="noopener">programme guide<span class="sr"> (opens in a new tab)</span></a>.</p></div>';
+    'See how they fit together in the <a href="'+esc(GUIDE_BASE)+'" target="_blank" rel="noopener">programme guide<span class="sr"> (opens in a new tab)</span></a>.</p></details>';
 }
 
 /* ---------- move-on checklist ---------- */
