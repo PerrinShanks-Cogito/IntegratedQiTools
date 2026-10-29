@@ -58,6 +58,7 @@
 .fh-list{list-style:none;margin:0;padding:0}
 .fh-list li{display:flex;justify-content:space-between;align-items:center;gap:.75rem;padding:.5rem .6rem;border-radius:4px;margin:0}
 .fh-list li+li{border-top:1px solid var(--fh-line)}
+.fh-list li[hidden]{display:none}
 .fh-list a{color:var(--fh-link);font-weight:600;text-underline-offset:3px}
 .fh-list .fh-here{font-weight:700;color:var(--fh-ink)}
 .fh-list .fh-off{color:var(--fh-muted)}

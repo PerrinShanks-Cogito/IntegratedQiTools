@@ -11,9 +11,24 @@
     if (m) { m.open = false; m.querySelector("summary").focus(); }
   });
 
+  const proj = document.querySelector(".fh-projects");
+
+  // Go to your open project: shown when this tab has a MiQi project with
+  // something in it (kept by miqi_project/app.js), named by its title.
+  const goto = proj && proj.querySelector("[data-fh-current-project]");
+  if (goto) {
+    try {
+      const p = JSON.parse(sessionStorage.getItem("miqi-project-v1") || "null");
+      const d = p && p.data;
+      if (d && (p.stage > 0 || p.closed || Object.keys(d).some(k => typeof d[k] === "string" ? d[k].trim() : Array.isArray(d[k]) && d[k].length))) {
+        goto.querySelector("[data-fh-current-title]").textContent = (typeof d.title === "string" && d.title.trim() ? d.title.trim() : "Untitled project") + ", open in this tab";
+        goto.hidden = false;
+      }
+    } catch (e) { /* no project to go back to */ }
+  }
+
   // MiQi Projects > Open a saved QI project: read the file here, hand it to
   // the MiQi project page in this tab, and go there (miqi_project/app.js).
-  const proj = document.querySelector(".fh-projects");
   const btn = proj && proj.querySelector("[data-fh-open-project]");
   const file = proj && proj.querySelector("[data-fh-project-file]");
   if (!btn || !file) return;
