@@ -132,7 +132,7 @@ const STAGES=[
    {k:"beneficiaries",t:"radio3",l:"Who benefits from the project?",o:"beneficiaries"},
    {k:"reach",t:"radio3",l:"How many people does this affect per year?",o:"reach"},
    {k:"learning",t:"textarea",l:"Key learning from your project"},
-   {k:"poster",t:"url",l:"Link to poster",hint:"Paste a SharePoint or web link."},
+   {k:"repo",t:"repo",l:"Submit your A3 to the QI repository and become eligible for a prize",hint:"Share your project and its A3 report so others across the Trust can learn from it."},
    {k:"scalable",t:"radio3",l:"Is this idea scalable?",o:"scalable"},
    {k:"pulse",t:"pulse",l:"Project promoted to Pulse"}
   ]}
@@ -280,6 +280,11 @@ function fieldHTML(f,d){
           :'<p class="empty">No benefits added yet.</p>')+
         '<div class="bf-actions"><button type="button" class="btn" data-act="addBenefit">Add benefit</button>'+
         (list.length?'<button type="button" class="btn" data-act="benefitsXlsx">Download register (.xlsx)</button>':'')+'</div></fieldset>';}
+    case "repo":{
+      const a3=TOOLS.a3_report?'<a href="'+esc(toolUrl("a3_report"))+'" target="_blank" rel="noopener">A3 report tool<span class="sr"> (opens in a new tab)</span></a>':"A3 report tool";
+      return '<fieldset class="field repo"><legend class="lbl">'+lab+'</legend>'+hint+
+        '<p class="hint" style="margin:0 0 .6rem">No A3 yet? Make one with the '+a3+'.</p>'+
+        '<button type="button" class="btn primary" data-act="addToRepo">Submit to the QI repository</button></fieldset>';}
     case "milestones":{
       const list=sortedMilestones();
       return '<fieldset class="field"><legend class="lbl">'+lab+'</legend>'+hint+
@@ -494,6 +499,7 @@ panel.addEventListener("click",e=>{
       if(used&&!confirm("Remove "+(x.title?"“"+x.title+"”":"this benefit")+" from the register?")) return;
       d.benefits.splice(i,1); save(); render(); toast("Benefit removed"); break;}
     case "benefitsXlsx": benefitsXlsx(); break;
+    case "addToRepo": addToRepo(); break;
     case "rmMilestone": d.milestones=(d.milestones||[]).filter(m=>m.id!==b.dataset.id); save(); render(); toast("Milestone deleted"); break;
     case "icsOne":{const m=(d.milestones||[]).find(x=>x.id===b.dataset.id); if(m) downloadIcs([m],fileBase()+"-"+slugOf(m.title)+".ics"); break;}
     case "icsAll": downloadIcs(sortedMilestones(),fileBase()+"-milestones.ics"); break;
@@ -516,6 +522,11 @@ rail.addEventListener("keydown",e=>{
   else return;
   e.preventDefault();
 });
+
+/* ---------- QI repository (placeholder until it exists) ----------
+   Export > Add project to QI repository and the Close stage's Submit
+   button both come here. */
+function addToRepo(){toast("Adding projects to the QI repository is coming soon. For now, use Save to keep a project file.");}
 
 /* ---------- benefits register as a spreadsheet ---------- */
 function benefitsXlsx(){
@@ -644,7 +655,7 @@ FocusActions.mount({
   exports:[
     {type:"csv",label:"Export for Pulse (.csv)",hint:"The whole project as one row, to upload to Pulse",run:exportPulse},
     /* placeholder until the QI repository exists */
-    {type:"repo",label:"Add project to QI repository",hint:"Coming soon",run:()=>toast("Adding projects to the QI repository is coming soon. For now, use Save to keep a project file.")}
+    {type:"repo",label:"Add project to QI repository",hint:"Coming soon",run:()=>addToRepo()}
   ]
 });
 
