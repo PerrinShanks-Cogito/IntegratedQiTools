@@ -121,6 +121,20 @@ Improvement's SPC P chart tool (version 3.0)):
   every page does. The fonts (Figtree and Public Sans) are served from
   `assets/fonts` through `assets/css/fonts.css`, not Google Fonts, so pages
   look the same offline.
+- **Desktop app** – `desktop/` packs the built site into an Electron app for
+  Windows and macOS, for machines that can't use the installed web app.
+  `desktop/main.js` serves the site from inside the app at `app://focus/`, so
+  its links work unchanged, with the live site's security headers (read from
+  `staticwebapp.config.json`); pages get no Node.js access, and links to other
+  sites open in the default browser. The Windows installer installs per user,
+  with no admin rights; there is also a portable `.exe`. Build it with the
+  **Build the desktop app** workflow (Actions tab, or push a `desktop-v*`
+  tag), which attaches the installers to the run. Locally: `cd desktop`,
+  `npm ci`, `npm run site` (needs Jekyll), then `npm start` to run it or
+  `npm run dist` to package it. The app isn't code signed, so Windows and
+  macOS warn the first time it's opened. Change `version` in
+  `desktop/package.json` for each release. Unlike the web app, it only
+  updates when people install a new version.
 - `assets/js/focus-explain.js` – the **Need further help to understand the
   analysis?** link under every tool's analysis. It builds a prompt for
   Microsoft 365 Copilot Chat from the analysis on the page, removes anything

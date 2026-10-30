@@ -1,0 +1,69 @@
+{
+  "name": "focus-qi-tools",
+  "productName": "FOCUS QI tools",
+  "version": "1.0.0",
+  "description": "Free quality improvement charting tools. Paste your data and build a chart. Nothing is uploaded.",
+  "author": "Guy’s and St Thomas’ NHS Foundation Trust",
+  "license": "UNLICENSED",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PerrinShanks-Cogito/IntegratedQiTools.git"
+  },
+  "main": "main.js",
+  "desktopName": "focus-qi-tools.desktop",
+  "scripts": {
+    "site": "cd .. && bundle exec jekyll build -d desktop/site",
+    "start": "electron .",
+    "dist": "electron-builder --publish never"
+  },
+  "devDependencies": {
+    "electron": "44.7.2",
+    "electron-builder": "26.17.0"
+  },
+  "build": {
+    "appId": "uk.nhs.gstt.focus-qi-tools",
+    "copyright": "© Guy’s and St Thomas’ NHS Foundation Trust 2026. All rights reserved.",
+    "files": [
+      "main.js",
+      "package.json",
+      "site/**/*"
+    ],
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "icon": "build/icon.png"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "shortcutName": "FOCUS QI tools",
+      "artifactName": "FOCUS-QI-tools-setup-${version}.${ext}"
+    },
+    "portable": {
+      "artifactName": "FOCUS-QI-tools-portable-${version}.${ext}"
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "icon": "build/icon.png",
+      "category": "public.app-category.productivity"
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "icon": "build/icon.png",
+      "category": "Office",
+      "syncDesktopName": true
+    },
+    "publish": []
+  }
+}
