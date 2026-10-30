@@ -1,0 +1,95 @@
+name: Build the desktop app
+
+# Builds FOCUS QI tools as a desktop app (desktop/, Electron) for Windows and
+# macOS. Run it from the Actions tab (Run workflow), or push a tag such as
+# desktop-v1.0.0. The installers are attached to the run as artifacts.
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "desktop-v*"
+  pull_request:
+    paths:
+      - "desktop/**"
+      - ".github/workflows/desktop.yml"
+
+jobs:
+  # The site is built once on Linux, the platform Gemfile.lock is for, as the
+  # Azure deploys do, and handed to the Windows and macOS builds
+  site:
+    runs-on: ubuntu-latest
+    name: Build the site
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+
+      - name: Build the site
+        run: bundle exec jekyll build -d desktop/site
+        env:
+          JEKYLL_ENV: production
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: desktop/site
+          if-no-files-found: error
+          retention-days: 1
+
+  build:
+    needs: site
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            target: --win
+            files: |
+              desktop/dist/*.exe
+          - os: macos-latest
+            target: --mac
+            files: |
+              desktop/dist/*.dmg
+    runs-on: ${{ matrix.os }}
+    name: Build (${{ matrix.os }})
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Put the site into the app
+        uses: actions/download-artifact@v4
+        with:
+          name: site
+          path: desktop/site
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: desktop/package-lock.json
+
+      - name: Install Electron and electron-builder
+        working-directory: desktop
+        run: npm ci
+
+      # Not code signed: Windows SmartScreen and macOS Gatekeeper warn the first time it's opened
+      - name: Build the installers
+        working-directory: desktop
+        run: npx electron-builder ${{ matrix.target }} --publish never
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+
+      - name: Attach the installers to the run
+        uses: actions/upload-artifact@v4
+        with:
+          name: focus-qi-tools-${{ runner.os }}
+          path: ${{ matrix.files }}
+          if-no-files-found: error

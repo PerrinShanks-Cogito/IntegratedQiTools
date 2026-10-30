@@ -2,11 +2,11 @@
 
 > **Draft, not yet signed off.** This record is being reviewed in a shared document. This copy is updated to match once it is approved. Keep it in step with the code: a pull request that changes anything in the review triggers below should update this file too.
 
-Last updated 28 October 2026
+Last updated 30 October 2026
 
 ## Purpose and scope
 
-The FOCUS QI tools address the OWASP ASVS 5.0 Level 1 requirements that apply to them, with four accepted risks. Most of ASVS does not apply, because the tools run entirely in the browser with no logins, server or database.
+The FOCUS QI tools address the OWASP ASVS 5.0 Level 1 requirements that apply to them, with three accepted risks. Most of ASVS does not apply, because the tools run entirely in the browser with no logins, server or database.
 
 | Item | Detail |
 | --- | --- |
@@ -27,19 +27,17 @@ flowchart LR
   azure["<b>Azure Static Web Apps</b><br/>Serves the site's files over HTTPS<br/>with the security headers.<br/>Receives no user data."]
   subgraph browser["User's browser on a Trust computer"]
     tool["<b>FOCUS tool page</b><br/>Reads pasted data, draws charts<br/>and builds exports, all in the browser"]
-    storage["<b>Browser storage</b><br/>Diagram work: until the tab closes<br/>A3 charts and drafts: up to 14 days<br/>Links to saved project files: up to 2 days<br/>Recent MiQi project files: up to 30 days"]
+    storage["<b>Browser storage</b><br/>Diagram work: until the tab closes<br/>A3 charts and drafts: up to 14 days<br/>Links to saved project files: up to 2 days<br/>Recent MiQi project files: up to 30 days<br/>Offline copy of the site's own files: until the next deploy"]
   end
   ai["<b>Application Insights, UK South</b><br/>Page views, counts, settings<br/>and error types.<br/>Never values or labels."]
-  fonts["<b>Google Fonts</b><br/>Fonts only, no code"]
   files["<b>Files on the user's computer</b><br/>Saved projects, data sheets and exports"]
   azure -->|site files| tool
   tool <-->|work in progress| storage
   tool -->|usage counts| ai
-  fonts -->|fonts| tool
   tool <-->|open and save| files
 ```
 
-Azure serves the site's files and receives nothing back. Work in progress is kept in the browser for a limited time, and anything kept longer is a file the person saves themselves. The security policy lets data go only to the site and Application Insights.
+Azure serves the site's files, fonts included, and receives nothing back. Work in progress is kept in the browser for a limited time, and anything kept longer is a file the person saves themselves. The security policy lets data go only to the site and Application Insights.
 
 ## Assessment by ASVS chapter
 
@@ -60,8 +58,8 @@ Nine of the 17 chapters apply in full or in part. All nine are met.
 | V11 Cryptography | No | Not applicable | The site does no cryptography of its own. |
 | V12 Secure Communication | Yes | Met | Served over HTTPS only by Azure. `Strict-Transport-Security: max-age=31536000; includeSubDomains`, confirmed on the live site. |
 | V13 Configuration | Yes | Met | Security settings are in `staticwebapp.config.json`, in source control. No secrets in the repository; the Application Insights connection string only allows sending data, so it is public by design. |
-| V14 Data Protection | Yes | Met | Pasted data never leaves the browser. Analytics send counts and fixed settings only, never values, labels or notes. Diagram autosave lasts only while the tab is open. A3 report charts and drafts are cleared after 14 days (#91). In Edge and Chrome, Save remembers which project file it last saved to or opened, per tool and per tab: IndexedDB keeps the browser's handle to that file (never its contents), and the browser asks before the site may write to it. Links are dropped by New and cleared after 2 days. MiQi Projects > Recent projects keeps up to 5 MiQi project files saved or opened in Edge or Chrome: each file's handle and name, the project's title and id, and when it was last used, never the project itself, for up to 30 days, with a Clear recent projects button. On a shared login, the next person could see these titles; reopening still needs their own access to the file and the browser's permission prompt. |
-| V15 Secure Coding and Architecture | Yes | Met | Third-party parts are listed: the Application Insights SDK 3.4.5, self-hosted and loaded with an integrity hash, and Google Fonts. Build dependencies are pinned in `Gemfile.lock`. |
+| V14 Data Protection | Yes | Met | Pasted data never leaves the browser. Analytics send counts and fixed settings only, never values, labels or notes. Diagram autosave lasts only while the tab is open. A3 report charts and drafts are cleared after 14 days (#91). In Edge and Chrome, Save remembers which project file it last saved to or opened, per tool and per tab: IndexedDB keeps the browser's handle to that file (never its contents), and the browser asks before the site may write to it. Links are dropped by New and cleared after 2 days. A service worker (`sw.js`) keeps a copy of the site's own pages and files in the browser's cache, so FOCUS works with no connection and can be installed as an app from Edge or Chrome; it never caches anything a person types, pastes or opens, ignores other sites' requests, and each deploy replaces the copy. MiQi Projects > Recent projects keeps up to 5 MiQi project files saved or opened in Edge or Chrome: each file's handle and name, the project's title and id, and when it was last used, never the project itself, for up to 30 days, with a Clear recent projects button. On a shared login, the next person could see these titles; reopening still needs their own access to the file and the browser's permission prompt. |
+| V15 Secure Coding and Architecture | Yes | Met | Third-party parts are listed: the Application Insights SDK 3.4.5, self-hosted and loaded with an integrity hash, and the Figtree and Public Sans fonts (Fontsource 5.3.0, SIL Open Font License), self-hosted in `assets/fonts`. Build dependencies are pinned in `Gemfile.lock`. |
 | V16 Security Logging and Error Handling | In part | Met | No server, so no server-side logs beyond the Azure platform's own. Browser error reports carry only the error type and where in the code it happened, never the message (#92). |
 | V17 WebRTC | No | Not applicable | No WebRTC. |
 
@@ -83,13 +81,12 @@ Every test passed, all on 28 October 2026. The live headers, live analytics and 
 
 ## Accepted risks
 
-Four risks are accepted because the fix would cost more than the risk, or would break something the Trust needs.
+Three risks are accepted because the fix would cost more than the risk, or would break something the Trust needs.
 
 | Risk | Why it is accepted | Impact |
 | --- | --- | --- |
 | The policy still allows inline styles (`style-src 'unsafe-inline'`) | Removing it means rewriting hundreds of `style=` attributes. Inline styles can't run code, and scripts stay blocked. | Low |
 | The policy allows WebAssembly (`'wasm-unsafe-eval'`) | Imprivata single sign-on runs WebAssembly in the page and fails without it. It does not allow `eval`. | Low |
-| Google Fonts load from Google with no integrity check | A stylesheet that Google changes can't carry a fixed hash. Fonts can't run code, and the policy limits them to Google's font servers. | Low |
 | Stored work stays in the browser until a FOCUS tool is next opened | Browser storage can't clear itself. Diagram work clears when the tab closes, and A3 items more than 14 days old are cleared at the next visit. | Low |
 
 ## Open actions, review and sign-off

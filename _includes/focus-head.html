@@ -1,3 +1,7 @@
+{%- comment %} FOCUS as an app: installable, and works with no connection (sw.js) {% endcomment %}
+<link rel="manifest" href="{{ '/manifest.webmanifest' | relative_url }}">
+<meta name="theme-color" content="#005EB8">
+<script src="{{ '/assets/js/focus-app.js' | relative_url }}" data-sw="{{ '/sw.js' | relative_url }}" defer></script>
 <link rel="stylesheet" href="{{ '/assets/css/focus-header.css' | relative_url }}?v={{ site.time | date: '%s' }}">
 {%- if page.tool_id %}
 {%- assign this_tool = site.data.tools | where: "id", page.tool_id | first %}

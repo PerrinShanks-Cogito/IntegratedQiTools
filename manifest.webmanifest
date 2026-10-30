@@ -1,0 +1,20 @@
+---
+# Lets Edge and Chrome install FOCUS as an app. Liquid fills in the addresses.
+---
+{
+  "id": {{ '/' | relative_url | jsonify }},
+  "name": "FOCUS QI tools",
+  "short_name": "FOCUS",
+  "description": {{ site.description | jsonify }},
+  "start_url": {{ '/' | relative_url | jsonify }},
+  "scope": {{ '/' | relative_url | jsonify }},
+  "display": "standalone",
+  "background_color": "#F0F4F5",
+  "theme_color": "#005EB8",
+  "icons": [
+    { "src": {{ '/assets/img/app/icon.svg' | relative_url | jsonify }}, "sizes": "any", "type": "image/svg+xml" },
+    { "src": {{ '/assets/img/app/icon-192.png' | relative_url | jsonify }}, "sizes": "192x192", "type": "image/png" },
+    { "src": {{ '/assets/img/app/icon-512.png' | relative_url | jsonify }}, "sizes": "512x512", "type": "image/png" },
+    { "src": {{ '/assets/img/app/icon-maskable-512.png' | relative_url | jsonify }}, "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

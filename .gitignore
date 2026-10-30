@@ -4,3 +4,8 @@ _site/
 .sass-cache/
 /vendor/
 .bundle/
+
+# Desktop app (desktop/): built site, packages and installers
+desktop/site/
+desktop/node_modules/
+desktop/dist/

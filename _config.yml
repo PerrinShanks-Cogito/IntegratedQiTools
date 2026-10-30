@@ -21,6 +21,7 @@ include:
   - staticwebapp.config.json
 
 exclude:
+  - desktop
   - README.md
   - Gemfile
   - Gemfile.lock

@@ -1,0 +1,14 @@
+<!-- © Guy’s and St Thomas’ NHS Foundation Trust 2026. All rights reserved. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180">
+  <rect width="180" height="180" fill="#fff"/>
+  <path d="M15 135 L60 112" stroke="#002462" stroke-width="25" stroke-linecap="round"/>
+  <circle cx="117" cy="87" r="48.5" fill="#fff" stroke="#002462" stroke-width="14"/>
+  <path d="M91.5 65 V119.5 H147" fill="none" stroke="#03A199" stroke-width="5"/>
+  <path d="M100 109 L109 92 L116 97 L126 86 L135 84" fill="none" stroke="#03A199" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="M131 92 L141 79 L127 80 Z" fill="#03A199"/>
+  <g fill="none" stroke="#03A199" stroke-width="3.6">
+    <circle cx="141" cy="79" r="14.5"/>
+    <circle cx="141" cy="79" r="7.5"/>
+    <path d="M141 60 V98 M122 79 H160" stroke-linecap="round"/>
+  </g>
+</svg>
