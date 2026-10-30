@@ -159,7 +159,8 @@
      Any part of a chart with a data-tip attribute shows its details in a box
      beside the pointer, on the page and in full screen (the copy keeps the
      attribute). Lines are separated by newlines; the first is the heading.
-     On a touch screen, tap it. */
+     A data-tip-act line (what clicking does) shows on the page only, as the
+     full screen copy can't be clicked. On a touch screen, tap it. */
   let tip = null, tipOn = null;
   function showTip(el, x, y) {
     if (!tip) { tip = document.createElement("div"); tip.className = "fct"; }
@@ -170,7 +171,9 @@
       if (tipOn) tipOn.classList.remove("fct-on");
       tipOn = el; el.classList.add("fct-on");
       tip.textContent = "";
-      el.getAttribute("data-tip").split("\n").forEach((line, i) => {
+      const lines = el.getAttribute("data-tip").split("\n"), act = el.getAttribute("data-tip-act");
+      if (act && !el.closest(".fcv")) lines.push(act);
+      lines.forEach((line, i) => {
         const d = document.createElement(i ? "span" : "b"); d.textContent = line; tip.appendChild(d);
       });
     }

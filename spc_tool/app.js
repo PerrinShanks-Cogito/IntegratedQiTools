@@ -724,7 +724,12 @@ function renderChart(kind, W, H, p, interactive, oy){
     if (kind === 'x'){ const st = m.status[i]; col = statusColor(st, p); if (st !== 'common') r = 4.6; }
     else { const g = m.segOf(i); if (g.ok && v > g.mrUcl){ col = p.neither; r = 4.6; } }
     s += `<circle cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="${r}" fill="${col}" stroke="${p.bg === 'transparent' ? 'var(--surface)' : p.bg}" stroke-width="1.2"/>`;
-    if (interactive && kind === 'x') s += `<circle class="hit" data-i="${i}" cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="10" fill="transparent" style="cursor:${i > 0 ? 'pointer' : 'default'}"/>`;
+    // Hover details (shown by focus-chart-full.js, on the page and in full screen)
+    if (interactive && kind === 'x'){
+      const act = i === 0 ? '' : ` data-tip-act="${state.breaks.has(i) ? 'Click to undo recalculation' : 'Click to recalculate limits from here'}"`;
+      s += `<circle class="hit" data-i="${i}" data-tip="${esc(tipText(i)).replace(/\n/g, '&#10;')}"${act} cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="10" fill="transparent" style="cursor:${i > 0 ? 'pointer' : 'default'}"/>`;
+    }
+    else if (interactive) s += `<circle data-tip="${esc(mrTipText(i)).replace(/\n/g, '&#10;')}" cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="10" fill="transparent"/>`;
   });
   if (clipped) s += `</g>`;
   const placed = rightLabels(m, kind).filter(([, v]) => v >= lo && v <= hi).map(([t, v, k]) => ({ t, y: Y(v), k })).sort((a, b) => a.y - b.y);
@@ -980,35 +985,27 @@ function renderAllInner(){
 }
 
 function statusName(st){ return st === 'common' ? 'Common cause' : st === 'improve' ? 'Special cause: improvement' : st === 'concern' ? 'Special cause: concern' : 'Special cause'; }
+// Hover details for a point: the label, then one fact per line
 function tipText(i){
   const r = state.rows[i], L = model.lim[i];
-  if (isT()) return `${r.label}: ${days(r.gap)} since ${dateLong(r.prev)} · ${statusName(model.status[i])}`;
-  if (!isCount()) return `${r.label}: ${fmt(r.value, 6)} · ${statusName(model.status[i])}`;
-  const lims = model.ok ? ` (limits ${fv(clampV(L.lcl))} – ${fv(clampV(L.ucl))})` : '';
+  if (isT()) return `${r.label}\n${days(r.gap)} since ${dateLong(r.prev)}\n${statusName(model.status[i])}`;
+  if (!isCount()) return `${r.label}\nValue: ${fmt(r.value, 6)}\n${statusName(model.status[i])}`;
+  const lims = model.ok ? `\nLimits ${fv(clampV(L.lcl))} – ${fv(clampV(L.ucl))}` : '';
   const val = isC() ? fmt(r.num, 2) : `${fmt(r.num, 2)} / ${fmt(r.den, 2)} = ${fv(model.v[i])}${isU() ? ' ' + rateName() : ''}`;
-  return `${r.label}: ${val}${lims} · ${statusName(model.status[i])}`;
+  return `${r.label}\nValue: ${val}${lims}\n${statusName(model.status[i])}`;
+}
+function mrTipText(i){
+  const g = model.segOf(i), over = g.ok && model.mr[i] > g.mrUcl;
+  return `${state.rows[i].label}\nMoving range: ${fmt(model.mr[i])}${g.ok ? `\nUpper limit ${fmt(g.mrUcl)}` : ''}${over ? '\nAbove the upper limit' : ''}`;
 }
 function drawCharts(){
   if (!model) return;
   const xb = $('#xBox'); if (!xb) return;
   const W = Math.max(320, Math.round(xb.clientWidth)), narrow = W < 560;
   const xH = isCount() || isT() ? (narrow ? 320 : 420) : (narrow ? 300 : 380);
-  xb.innerHTML = chartSVG('x', W, xH, true) + '<div id="tip"></div>';
-  const mb = $('#mrBox'); if (mb) mb.innerHTML = chartSVG('mr', W, narrow ? 170 : 200, false);
-  const svg = xb.querySelector('svg'), tip = $('#tip');
-  svg.addEventListener('pointerover', e => {
-    const t = e.target.closest('.hit'); if (!t) return;
-    const i = +t.dataset.i;
-    const act = i === 0 ? '' : state.breaks.has(i) ? ' · Click to undo recalculation' : ' · Click to recalculate limits from here';
-    tip.textContent = tipText(i) + act;
-    const box = xb.getBoundingClientRect(), pr = t.getBoundingClientRect();
-    const left = pr.left + pr.width / 2 - box.left;
-    tip.style.left = left + 'px'; tip.style.top = (pr.top - box.top + pr.height / 2) + 'px';
-    tip.classList.add('on');
-    const tw = tip.offsetWidth, minL = tw / 2 + 4, maxL = box.width - tw / 2 - 4;
-    tip.style.left = Math.min(Math.max(left, minL), Math.max(minL, maxL)) + 'px';
-  });
-  svg.addEventListener('pointerout', e => { if (e.target.closest('.hit')) tip.classList.remove('on'); });
+  xb.innerHTML = chartSVG('x', W, xH, true);
+  const mb = $('#mrBox'); if (mb) mb.innerHTML = chartSVG('mr', W, narrow ? 170 : 200, true);
+  const svg = xb.querySelector('svg');
   svg.addEventListener('click', e => { const t = e.target.closest('.hit'); if (!t) return; toggleBreak(+t.dataset.i); });
 }
 
