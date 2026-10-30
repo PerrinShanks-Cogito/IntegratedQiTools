@@ -14,7 +14,36 @@ on:
       - ".github/workflows/desktop.yml"
 
 jobs:
+  # The site is built once on Linux, the platform Gemfile.lock is for, as the
+  # Azure deploys do, and handed to the Windows and macOS builds
+  site:
+    runs-on: ubuntu-latest
+    name: Build the site
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+
+      - name: Build the site
+        run: bundle exec jekyll build -d desktop/site
+        env:
+          JEKYLL_ENV: production
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: desktop/site
+          if-no-files-found: error
+          retention-days: 1
+
   build:
+    needs: site
     strategy:
       fail-fast: false
       matrix:
@@ -34,16 +63,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
+      - name: Put the site into the app
+        uses: actions/download-artifact@v4
         with:
-          ruby-version: "3.3"
-          bundler-cache: true
-
-      - name: Build the site into the app
-        run: bundle exec jekyll build -d desktop/site
-        env:
-          JEKYLL_ENV: production
+          name: site
+          path: desktop/site
 
       - name: Set up Node
         uses: actions/setup-node@v4
