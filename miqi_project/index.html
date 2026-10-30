@@ -20,6 +20,8 @@ permalink: /miqi_project/
 html{min-height:100%}
 body{min-height:100vh;display:flex;flex-direction:column}
 main{flex:1 0 auto;width:100%;padding:0 var(--gutter) 3rem}
+/* A centred column, 1200px wide on large screens, rather than the full width */
+.page-head,main{max-width:calc(1200px + 2 * var(--gutter));margin-left:auto;margin-right:auto}
 
 /* Page head */
 .page-head{display:flex;flex-wrap:wrap;gap:.75rem 1rem;align-items:flex-end;justify-content:space-between;padding:1rem var(--gutter)}
