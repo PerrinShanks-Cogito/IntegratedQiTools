@@ -108,6 +108,19 @@ Improvement's SPC P chart tool (version 3.0)):
   as the heading), on the page and in full screen; the scatter plot's points
   use it. Styles are in `assets/css/focus-tool.css`, prefixed `.fcv` and
   `.fct`.
+- **FOCUS as an app** – `sw.js` is a service worker that keeps a copy of
+  every page and file of the site (Liquid lists them at build time) in the
+  browser's cache on the first visit, so the tools work with no connection.
+  The programme guide's templates and examples (about 50 MB) are kept the
+  first time each is downloaded instead. Online, files come from the site;
+  the copy is used offline or when the site takes over 4 seconds to answer.
+  Each build names a new cache and deletes the old one. With
+  `manifest.webmanifest` and the icons in `assets/img/app`, this lets Edge and
+  Chrome install FOCUS as an app, per user and with no admin rights.
+  `assets/js/focus-app.js` registers it, from `_includes/focus-head.html`, so
+  every page does. The fonts (Figtree and Public Sans) are served from
+  `assets/fonts` through `assets/css/fonts.css`, not Google Fonts, so pages
+  look the same offline.
 - `assets/js/focus-explain.js` – the **Need further help to understand the
   analysis?** link under every tool's analysis. It builds a prompt for
   Microsoft 365 Copilot Chat from the analysis on the page, removes anything
@@ -153,7 +166,7 @@ Improvement's SPC P chart tool (version 3.0)):
   still open.
 - `staticwebapp.config.json` – Azure Static Web Apps routing (custom 404,
   trailing slashes, security headers). The Content Security Policy lets pages
-  load only the site's own files, Google Fonts and the Application Insights
+  load only the site's own files (fonts included) and the Application Insights
   script, and send data only to the site and Application Insights, so nothing
   a user pastes can be sent anywhere else. Inline scripts are not allowed, so
   an injected script can't run: each tool's script is in its own file,

@@ -6,7 +6,8 @@
     { "route": "/p_chart", "redirect": "/spc_tool/?type=p", "statusCode": 301 },
     { "route": "/p_chart/*", "redirect": "/spc_tool/?type=p", "statusCode": 301 },
     { "route": "/t_chart", "redirect": "/spc_tool/?type=t", "statusCode": 301 },
-    { "route": "/t_chart/*", "redirect": "/spc_tool/?type=t", "statusCode": 301 }
+    { "route": "/t_chart/*", "redirect": "/spc_tool/?type=t", "statusCode": 301 },
+    { "route": "/sw.js", "headers": { "Cache-Control": "no-cache" } }
   ],
   "responseOverrides": {
     "404": {
@@ -19,9 +20,10 @@
     "X-Content-Type-Options": "nosniff",
     "Referrer-Policy": "strict-origin-when-cross-origin",
     "X-Frame-Options": "SAMEORIGIN",
-    "Content-Security-Policy": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://uksouth-1.in.applicationinsights.azure.com https://js.monitor.azure.com; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests"
+    "Content-Security-Policy": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self' https://uksouth-1.in.applicationinsights.azure.com https://js.monitor.azure.com; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests"
   },
   "mimeTypes": {
+    ".webmanifest": "application/manifest+json",
     ".json": "application/json",
     ".pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
     ".potx": "application/vnd.openxmlformats-officedocument.presentationml.template",
