@@ -833,6 +833,7 @@
   }
 
   /* ---------- exports ---------- */
+  const QI_REPOSITORY = 'https://forms.cloud.microsoft/e/d2zGXMfmRe';
   const slug = () => ((val('projectName') || val('reportTitle') || 'a3 report').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) || 'a3-report');
   function svgOut() { render(); return last.svg; }
   function toPng() {
@@ -868,7 +869,9 @@
       try { await navigator.clipboard.write([new ClipboardItem({ 'image/png': toPng() })]); FocusActions.say('Report copied. Paste it into PowerPoint or Word.'); }
       catch (e) { FocusActions.say('Your browser couldn’t copy the image. Use PNG image instead.'); }
     },
-    print: printReport
+    print: printReport,
+    // Opens the QI Repository submission form in a new tab. Nothing is sent from here.
+    repository: () => { window.open(QI_REPOSITORY, '_blank', 'noopener'); }
   };
 
   /* ---------- events and start ---------- */
@@ -888,7 +891,8 @@
       { type: 'print', label: 'Print or save as PDF', hint: 'A3, from your browser’s print window', run: EXPORTS.print },
       { type: 'png', run: EXPORTS.png, hint: 'A3 at 300 dpi, for slides and documents' },
       { type: 'svg', run: EXPORTS.svg },
-      { type: 'copyimg', run: EXPORTS.copyimg }
+      { type: 'copyimg', run: EXPORTS.copyimg },
+      { type: 'qi_repository', label: 'Add to QI Repository', hint: 'Share your work with others and become eligible for a prize', run: EXPORTS.repository }
     ])
   });
 
