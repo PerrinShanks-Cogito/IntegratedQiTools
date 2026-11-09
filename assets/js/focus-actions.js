@@ -21,11 +21,14 @@
      say        optional (message) => void, to show messages the tool's way
      ready      () => true when there is something to export
      exports    [{ type, run, hint? }] where type is one of FORMATS below
-     template   optional { fileName, title?, sheets, import? } for a "Data sheet"
+     template   optional { fileName, title?, sheets, import?, filled? } for a "Data sheet"
                 button that downloads a blank .xlsx to collect the data in; see
                 xlsx(). fileName and sheets can each be a function, called on
                 each click. With import, the button becomes a menu that can also
-                bring a filled-in data sheet back in (and Open accepts .xlsx):
+                bring a filled-in data sheet back in (and Open accepts .xlsx).
+                filled, a function, says whether sheets() will include data
+                already entered; the menu then offers "Download data sheet"
+                rather than a blank one. The import is either
                   [{ sheet, into, fixed?, label? }]  copies each named sheet
                     into the field matching the selector `into`, as
                     tab-separated text like a paste from Excel. fixed = how
@@ -666,13 +669,22 @@
     const sheetBtn = bar.querySelector('[data-fa="sheetmenu"]');
     const closeSheet = sheetBtn ? menu(sheetBtn, sheetBtn.nextElementSibling) : () => {};
     if (sheetBtn) sheetBtn.title = "Download a blank data sheet, or import one you’ve filled in";
+    // A tool can fill the data sheet with the data already entered (template.filled says whether it will),
+    // so the menu says which it is each time it opens
+    const filledSheet = () => !!(o.template && typeof o.template.filled === "function" && o.template.filled());
+    function labelSheet() {
+      if (!tplBtn || !sheetBtn) return;
+      tplBtn.innerHTML = filledSheet() ? "Download data sheet<small>With the data you’ve entered, ready to add to</small>"
+        : "Download blank data sheet<small>A spreadsheet to collect your data in</small>";
+    }
+    if (sheetBtn) sheetBtn.addEventListener("click", labelSheet);
     if (tplBtn) {
       tplBtn.title = o.template.title || "Download a blank spreadsheet to collect your data in";
       tplBtn.addEventListener("click", () => {
         if (sheetBtn) { closeSheet(false); sheetBtn.focus(); }
         const sheets = typeof o.template.sheets === "function" ? o.template.sheets() : o.template.sheets;
         const name = typeof o.template.fileName === "function" ? o.template.fileName() : o.template.fileName;
-        download(name, xlsx(sheets), undefined, "Saved " + name + ". Fill it in, then use Data sheet, Import filled data sheet, to bring it back in.");
+        download(name, xlsx(sheets), undefined, "Saved " + name + (filledSheet() ? ", with your data. Add to it, then" : ". Fill it in, then") + " use Data sheet, Import filled data sheet, to bring it back in.");
       });
     }
     const xlsxIn = bar.querySelector(".fa-xlsx");
