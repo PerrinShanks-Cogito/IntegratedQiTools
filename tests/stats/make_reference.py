@@ -377,6 +377,44 @@ for name, gaps in {"T chart": [int(g) for g in np.maximum(0, np.round(rng2.expon
 group("SPC T chart for rare events: gaps, limits and signals", "compute", ["spc_tool"], tc, call="spc", tol=1e-9, abs_tol=1e-12,
       note="reference: gaps in days (half a day for the same day), transformed by the power 1/3.6, XmR limits, back-transformed")
 
+# X-bar and S: subgroups of measurements, with the rules from The Health Care Data Guide
+rng3 = np.random.default_rng(1663)    # its own seed, so the other datasets stay the same
+
+
+def subgroups(mus, sizes, sd=3.0):
+    return [np.round(rng3.normal(m, sd, k), 1).tolist() for m, k in zip(mus, sizes)]
+
+
+sizes = [int(k) for k in rng3.integers(3, 8, 30)]
+xsc = []
+XS = {
+    "random, varying subgroup sizes": (subgroups([50] * 25, sizes), {}, None),
+    "equal subgroups of 5": (subgroups([50] * 24, [5] * 24), {}, None),
+    "shift of 8 below the centre line": (subgroups([50] * 14 + [47] * 9 + [50] * 3, [5] * 26, 1.5), {"dir": "down"}, None),
+    "one subgroup far above": (subgroups([50] * 10 + [62] + [50] * 10, [4] * 21), {}, None),
+    "step change with a break": (subgroups([30] * 15 + [36] * 15, sizes), {"breaks": [15]}, None),
+    "baseline of the first 12": (subgroups([30] * 12 + [33] * 12, sizes[:24]), {"useBaseN": True, "baseN": 12}, None),
+    "spread grows (S chart signals)": ([g if i < 18 else (np.array(g) * 3 - 100).round(1).tolist() for i, g in enumerate(subgroups([50] * 24, [6] * 24))], {}, None),
+    "15 hugging the centre line": ([[49.9, 50.1, 50, 50.2, 49.8] for _ in range(16)] + subgroups([50] * 8, [5] * 8, 4), {}, None),
+    "rule off: inner third": ([[49.9, 50.1, 50, 50.2, 49.8] for _ in range(16)] + subgroups([50] * 8, [5] * 8, 4), {"hug": False}, None),
+}
+for name, (g, o, _) in XS.items():
+    res = R.spc_xbar_s(g, o.get("breaks", ()), o.get("baseN") if o.get("useBaseN") else None,
+                       hug=o.get("hug", True), direction=o.get("dir", "up"))
+    # the rule lengths the page sets for this chart (8 for a shift, 6 for a trend)
+    xsc.append({"name": name, "args": ["xbars", g, dict({"shiftLen": 8, "trendLen": 6}, **o)], "expect": clean(res)})
+assert any(e["rule"] == "shift" for e in R.spc_xbar_s(XS["shift of 8 below the centre line"][0])["events"])
+assert any(e["rule"] == "hug" for e in R.spc_xbar_s(XS["15 hugging the centre line"][0])["events"])
+assert R.spc_xbar_s(XS["spread grows (S chart signals)"][0])["sEvents"]
+group("SPC X-bar and S chart: limits and signals", "compute", ["spc_tool"], xsc, call="spc", tol=1e-9, abs_tol=1e-12,
+      note="reference: Provost and Murray's The Health Care Data Guide, written independently in Python")
+# A3, B3 and B4 against the table printed in The Health Care Data Guide (3 decimals)
+TABLE = {2: (2.659, 0, 3.267), 3: (1.954, 0, 2.568), 4: (1.628, 0, 2.266), 5: (1.427, 0, 2.089), 6: (1.287, 0.030, 1.970),
+         7: (1.182, 0.118, 1.882), 8: (1.099, 0.185, 1.815), 10: (0.975, 0.284, 1.716), 15: (0.789, 0.428, 1.572), 25: (0.606, 0.565, 1.435)}
+for fn, k in (("A3", 0), ("B3", 1), ("B4", 2)):
+    group(f"X-bar and S chart factor {fn}", fn, ["spc_tool"], [{"args": [n], "expect": float(t[k])} for n, t in TABLE.items()],
+          tol=0, abs_tol=5.1e-4, note="the published table of control chart factors, to 3 decimals")
+
 runc = []
 RUN = {
     "random": (np.round(rng2.normal(30, 4, 24), 1).tolist(), {}),

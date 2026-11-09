@@ -10,6 +10,8 @@ const state = {
   shiftLen: 7, trendLen: 7, twoThree: true,
   // XmR only
   useBaseN: false, baseN: 20, screen: false, floor: false, showMR: true, yLabel: '',
+  // X-bar and S chart only
+  showS: true, hug: true,
   // P chart only
   laney: false, unit: 'pct', yMin: null, yMax: null, showNotes: true,
   // U chart only
@@ -202,6 +204,72 @@ function parseC(text){
   return { rows, header, skipped, invalid, decimals: 0, note: '', wide };
 }
 
+// X-bar and S chart: several measurements for each subgroup (such as each week). Either one line per
+// subgroup with its label then each measurement, or one line per measurement with its subgroup's
+// label, where lines in a row with the same label (or a blank label) make one subgroup
+const LABEL_WORD = /^(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\.?$|^(week|wk|w|q|quarter|day|month|period|sample|subgroup|batch|run|group)$/i;
+function parseXbarS(text){
+  const lines = text.split(/\r\n|\r|\n/);
+  const nonEmpty = lines.filter(l => l.trim() !== '');
+  let delim = 'ws';
+  if (nonEmpty.some(l => l.includes('\t'))) delim = '\t';
+  else if (nonEmpty.some(l => l.includes(';'))) delim = ';';
+  else if (nonEmpty.some(l => l.includes(','))) delim = ',';
+  const isNum = x => x !== undefined && String(x).trim() !== '' && isFinite(xNum(x));
+  const recs = [];
+  lines.forEach((line, idx) => {
+    const t = line.trim(); if (!t) return;
+    // Keep leading blank cells: a blank label carries on the subgroup above
+    const f = delim === 'ws' ? t.split(/[\s ]+/) : delim === ',' ? splitCSV(line.replace(/\s+$/, '')) : line.replace(/\s+$/, '').split(delim).map(x => x.trim().replace(/^"(.*)"$/, '$1'));
+    recs.push({ idx, f });
+  });
+  // Is the first column a label? Yes if it's mostly not numbers, or if it's whole numbers
+  // that never go down (week numbers, years) with measurements beside them
+  const data = recs.filter(r => r.f.some(isNum));
+  let labelCol = true;
+  if (delim !== 'ws' && data.length){
+    const textShare = data.filter(r => !isNum(r.f[0])).length / data.length;
+    const ints = data.every(r => /^\d+$/.test(String(r.f[0]).trim()) && r.f.slice(1).some(isNum));
+    const rising = ints && data.every((r, k) => k === 0 || +r.f[0] >= +data[k - 1].f[0]);
+    labelCol = textShare > 0.5 || (rising && data.length >= 3);
+  }
+  const rows = [], skipped = [], invalid = []; let header = null, decimals = 0, cur = null, long = false;
+  recs.forEach(r => {
+    let label = '', vals = [], notes = [], f = r.f;
+    if (delim === 'ws'){
+      // Labels may contain spaces (Apr 2024, Week 3): leading words, plus a number after a month or "week"
+      let k = 0; while (k < f.length && !isNum(f[k])) k++;
+      if (k > 0 && k < f.length && /^\d+$/.test(f[k]) && LABEL_WORD.test(f[k - 1])) k++;
+      label = f.slice(0, k).join(' '); f = f.slice(k);
+      let j = 0; while (j < f.length && isNum(f[j])) { vals.push(f[j]); j++; }
+      notes = f.slice(j).length ? [f.slice(j).join(' ')] : [];
+    } else {
+      if (labelCol){ label = String(f[0] || '').trim(); f = f.slice(1); }
+      f.forEach(x => { if (isNum(x)) vals.push(x); else if (String(x).trim()) notes.push(String(x).trim()); });
+    }
+    if (!vals.length){
+      if (!rows.length && !cur && header === null) header = r.f;
+      else skipped.push(r.idx + 1);
+      return;
+    }
+    vals.forEach(x => { decimals = Math.max(decimals, decimalsOf(x)); });
+    const nums = vals.map(xNum);
+    const cont = cur && labelCol && (label === '' || label === cur.label);
+    if (cont){ cur.vals.push(...nums); long = true; }
+    else { cur = { label, vals: nums, notes: [], line: r.idx + 1 }; rows.push(cur); }
+    notes.forEach(nt => { if (!cur.notes.includes(nt)) cur.notes.push(nt); });
+  });
+  const out = [];
+  rows.forEach(g => {
+    if (g.vals.length < 2){ invalid.push({ line: g.line, why: 'only one measurement, so no standard deviation' }); return; }
+    out.push({ label: g.label || String(out.length + 1), vals: g.vals, n: g.vals.length, mean: avg(g.vals), sd: sdOf(g.vals), note: g.notes.join(' · ').slice(0, 120), line: g.line });
+  });
+  const note = long ? 'Lines in a row with the same label were grouped into one subgroup.' : '';
+  // The heading over the measurements names the measure
+  const head = header && delim !== 'ws' ? String(header[labelCol ? 1 : 0] || '').trim() : '';
+  return { rows: out, header: head ? [head] : null, skipped, invalid, decimals: Math.min(decimals, 3), note, wide: false, long };
+}
+
 // T chart: the date of each event, with anything else on the line kept as a note
 const DAY = 864e5, POW = 3.6;
 const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
@@ -300,7 +368,7 @@ function parseT(text){
 
 /* ---------- Calculation ---------- */
 // Shared statistics, from /assets/js/focus-stats.js
-const { sum, mean: avg } = FocusStats;
+const { sum, mean: avg, sd: sdOf, lgamma } = FocusStats;
 
 // Charts of counts (P, U and C) show limits once there are this many points, as in the NHS P chart tool
 const MIN_COUNT_LIMITS = 13;
@@ -380,6 +448,120 @@ function limitsT(){
   const lastT = ev.length ? ev[ev.length - 1].t : null;
   const open = lastT !== null && todayT >= lastT ? Math.floor((todayT - lastT) / DAY) : null;
   return { v, y, n, segs, segOf, lim: v.map((x, i) => segOf(i)), segOk: g => g.ok, mr, sig, open };
+}
+
+// X-bar and S charts, as in Provost and Murray's The Health Care Data Guide.
+// c4 corrects the average standard deviation for its bias with n measurements; A3, B3 and B4
+// are the usual factors built from it (A3 = 3 ÷ (c4 √n), B3 and B4 = 1 ∓ 3 √(1 − c4²) ÷ c4).
+const c4 = n => Math.sqrt(2 / (n - 1)) * Math.exp(lgamma(n / 2) - lgamma((n - 1) / 2));
+const A3 = n => 3 / (c4(n) * Math.sqrt(n));
+const B3 = n => Math.max(0, 1 - 3 * Math.sqrt(1 - c4(n) ** 2) / c4(n));
+const B4 = n => 1 + 3 * Math.sqrt(1 - c4(n) ** 2) / c4(n);
+// The Health Care Data Guide's rules: 8 in a row for a shift, 6 for a trend, 15 in the inner third
+const HUG_LEN = 15;
+function limitsXbarS(){
+  const rows = state.rows, n = rows.length, v = rows.map(r => r.mean), sd = rows.map(r => r.sd);
+  // Centre lines weighted by subgroup size: X-double-bar = Σ nX-bar ÷ Σ n and S-bar = Σ nS ÷ Σ n
+  const segs = segments(n).map(({ s, e }) => {
+    const be = state.useBaseN && state.baseN >= 2 ? Math.min(s + state.baseN, e) : e;
+    const part = rows.slice(s, be), N = sum(part.map(r => r.n));
+    const mean = sum(part.map(r => r.n * r.mean)) / N, sBar = sum(part.map(r => r.n * r.sd)) / N;
+    return { s, e, be, mean, sBar, ok: be - s >= 2 && sBar > 0, fixed: be < e };
+  });
+  const segOf = i => segs.find(g => i >= g.s && i < g.e);
+  // Each point's limits follow its own subgroup size; zones at 1 and 2 standard errors mark the thirds
+  const band = (c, sig, ok, floor) => ({ mean: c, s1: sig, ucl: c + 3 * sig, lcl: floor ? Math.max(0, c - 3 * sig) : c - 3 * sig, up2: c + 2 * sig, lo2: c - 2 * sig, up1: c + sig, lo1: c - sig, ok });
+  const lim = rows.map((r, i) => { const g = segOf(i); return band(g.mean, A3(r.n) * g.sBar / 3, g.ok, false); });
+  const sLim = rows.map((r, i) => { const g = segOf(i), c = c4(r.n); return band(g.sBar, g.sBar * Math.sqrt(1 - c * c) / c, g.ok, true); });
+  return { v, sd, n, segs, segOf, lim, sLim, segOk: g => g.ok };
+}
+// Signals for one chart (X-bar or S): a point outside a limit; 8 in a row on one side of the centre line;
+// 6 in a row going up or down; 2 of 3 in a row in the outer third on one side; 15 in a row in the
+// inner third. A point on the centre line, or a repeated value in a trend, neither adds to nor breaks a run.
+function signalsXbarS(v, lim, segs, segOf){
+  const flags = v.map(() => ({ hi: false, lo: false, mid: false, sides: {} })), events = [];
+  const mark = (i, side, rule) => { if (side === 'mid') flags[i].mid = true; else { flags[i][side] = true; flags[i].sides[rule] = side; } };
+  for (const g of segs){
+    if (!g.ok) continue;
+    const { s, e } = g;
+    for (let i = s; i < e; i++){
+      if (v[i] > lim[i].ucl){ mark(i, 'hi', 'outside'); events.push({ rule: 'outside', side: 'hi', from: i, to: i }); }
+      else if (v[i] < lim[i].lcl){ mark(i, 'lo', 'outside'); events.push({ rule: 'outside', side: 'lo', from: i, to: i }); }
+    }
+    let run = [], rside = 0;
+    const closeShift = () => {
+      if (rside && run.length >= state.shiftLen){
+        const sname = rside > 0 ? 'hi' : 'lo';
+        run.forEach(j => mark(j, sname, 'shift'));
+        events.push({ rule: 'shift', side: sname, from: run[0], to: run[run.length - 1] });
+      }
+    };
+    for (let i = s; i < e; i++){
+      const d = Math.sign(v[i] - lim[i].mean);
+      if (d === 0) continue;
+      if (d !== rside){ closeShift(); run = []; rside = d; }
+      run.push(i);
+    }
+    closeShift();
+    let ts = s, tdir = 0, steps = 0;
+    const closeTrend = to => {
+      if (tdir !== 0 && steps + 1 >= state.trendLen){
+        const sname = tdir > 0 ? 'hi' : 'lo';
+        for (let j = ts; j <= to; j++) mark(j, sname, 'trend');
+        events.push({ rule: 'trend', side: sname, from: ts, to });
+      }
+    };
+    for (let i = s + 1; i < e; i++){
+      const d = Math.sign(v[i] - v[i - 1]);
+      if (d === 0) continue;
+      if (d === tdir){ steps++; continue; }
+      closeTrend(i - 1);
+      ts = i - 1; tdir = d; steps = 1;
+    }
+    closeTrend(e - 1);
+    if (state.twoThree){
+      const nearHi = j => v[j] > lim[j].up2 && v[j] <= lim[j].ucl, nearLo = j => v[j] < lim[j].lo2 && v[j] >= lim[j].lcl;
+      for (let i = s; i + 2 < e; i++){
+        const w = [i, i + 1, i + 2], hi = w.filter(nearHi), lo = w.filter(nearLo);
+        if (hi.length >= 2){ hi.forEach(j => mark(j, 'hi', 'twothree')); events.push({ rule: 'twothree', side: 'hi', from: hi[0], to: hi[hi.length - 1] }); }
+        if (lo.length >= 2){ lo.forEach(j => mark(j, 'lo', 'twothree')); events.push({ rule: 'twothree', side: 'lo', from: lo[0], to: lo[lo.length - 1] }); }
+      }
+    }
+    if (state.hug){
+      let hs = s;
+      for (let i = s; i <= e; i++){
+        if (i < e && v[i] > lim[i].lo1 && v[i] < lim[i].up1) continue;
+        if (i - hs >= HUG_LEN){
+          for (let j = hs; j < i; j++) mark(j, 'mid', 'hug');
+          events.push({ rule: 'hug', side: 'mid', from: hs, to: i - 1 });
+        }
+        hs = i + 1;
+      }
+    }
+  }
+  events.sort((a, b) => a.rule.localeCompare(b.rule) || a.side.localeCompare(b.side) || a.from - b.from);
+  const merged = [];
+  for (const ev of events){
+    const q = merged[merged.length - 1];
+    if (q && q.rule === ev.rule && q.side === ev.side && ev.from <= q.to + 1 && segOf(ev.from) === segOf(q.to)) q.to = Math.max(q.to, ev.to);
+    else merged.push({ ...ev });
+  }
+  merged.sort((a, b) => a.from - b.from || a.rule.localeCompare(b.rule));
+  return { events: merged, flags };
+}
+// A point's status from its flags: the S chart's signals have no better direction
+function statusOf(f, directional){
+  if (!f.hi && !f.lo) return f.mid ? 'hug' : 'common';
+  const sd = f.hi && f.lo ? f.sides[['trend', 'shift', 'twothree', 'outside'].find(r => f.sides[r])] : (f.hi ? 'hi' : 'lo');
+  if (!directional || state.dir === 'none') return sd === 'hi' ? 'neither-hi' : 'neither-lo';
+  return (state.dir === 'up') === (sd === 'hi') ? 'improve' : 'concern';
+}
+function computeXbarS(){
+  const m = limitsXbarS();
+  const x = signalsXbarS(m.v, m.lim, m.segs, m.segOf), s = signalsXbarS(m.sd, m.sLim, m.segs, m.segOf);
+  m.events = x.events; m.status = x.flags.map(f => statusOf(f, true));
+  m.sEvents = s.events; m.sStatus = s.flags.map(f => statusOf(f, false));
+  return m;
 }
 
 // Special cause rules, shared by both charts. The two source tools differ in small ways,
@@ -490,8 +672,9 @@ function findSignals(m){
 }
 
 function compute(){
-  const m = isCount() ? limitsCount() : state.type === 't' ? limitsT() : limitsXmr();
-  Object.assign(m, findSignals(m));
+  let m;
+  if (state.type === 'xbars') m = computeXbarS();
+  else { m = isCount() ? limitsCount() : state.type === 't' ? limitsT() : limitsXmr(); Object.assign(m, findSignals(m)); }
   m.lastStatus = m.status[m.n - 1];
   // Assurance against the target, using the latest point's limits
   const L = m.lim[m.n - 1];
@@ -506,7 +689,7 @@ function compute(){
 }
 
 /* ---------- Formatting ---------- */
-const isP = () => state.type === 'p', isT = () => state.type === 't', isU = () => state.type === 'u', isC = () => state.type === 'c';
+const isP = () => state.type === 'p', isT = () => state.type === 't', isU = () => state.type === 'u', isC = () => state.type === 'c', isXS = () => state.type === 'xbars';
 // Charts of counts, with limits for each point
 const isCount = () => isP() || isU() || isC();
 const isLaney = () => state.laney && (isP() || isU());
@@ -529,9 +712,9 @@ const countNoun = () => isP() ? 'the proportion' : isU() ? 'the rate' : 'the cou
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const trunc = (s, n) => s.length > n ? s.slice(0, n - 1) + '…' : s;
 const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
-function pointName(i){ const r = state.rows[i]; if (isT()) return 'the event on ' + r.label; return /^\d+$/.test(r.label) && Number(r.label) === i + 1 ? 'point ' + (i + 1) : r.label; }
+function pointName(i){ const r = state.rows[i]; if (isT()) return 'the event on ' + r.label; return /^\d+$/.test(r.label) && Number(r.label) === i + 1 ? (isXS() ? 'subgroup ' : 'point ') + (i + 1) : r.label; }
 function rangeName(a, b){ const n = i => isT() ? state.rows[i].label : pointName(i); return a === b ? n(a) : n(a) + ' to ' + n(b); }
-const chartName = () => isP() ? (state.laney ? 'P′ chart' : 'P chart') : isU() ? (state.laney ? 'U′ chart' : 'U chart') : isC() ? 'C chart' : isT() ? 'T chart' : 'XmR chart';
+const chartName = () => isP() ? (state.laney ? 'P′ chart' : 'P chart') : isU() ? (state.laney ? 'U′ chart' : 'U chart') : isC() ? 'C chart' : isT() ? 'T chart' : isXS() ? 'X-bar and S chart' : 'XmR chart';
 const p2 = v => String(v).padStart(2, '0');
 function dateLong(t, hasTime){ const d = new Date(t); let s = `${d.getUTCDate()} ${MON[d.getUTCMonth()]} ${d.getUTCFullYear()}`; if (hasTime === undefined ? state.hasTime : hasTime) s += ` ${p2(d.getUTCHours())}:${p2(d.getUTCMinutes())}`; return s; }
 function dateAxis(t){
@@ -566,6 +749,15 @@ function noteIndex(){ const out = []; if (!state.showNotes) return out; state.ro
 function rightLabels(m, kind){
   const L = m.lim[m.n - 1], g = m.segs[m.segs.length - 1], t = [];
   if (kind === 'mr'){ if (g.ok) t.push(['Upper ' + fmt(g.mrUcl), g.mrUcl], ['Mean ' + fmt(g.mrBar), g.mrBar]); return t; }
+  if (isXS()){
+    // The latest subgroup's limits, which follow its size
+    const S = kind === 's' ? m.sLim[m.n - 1] : L;
+    if (S.ok) t.push(['Upper ' + fmt(S.ucl), S.ucl]);
+    t.push([(kind === 's' ? 'Mean ' : 'Mean ') + fmt(S.mean), S.mean]);
+    if (S.ok && (kind !== 's' || S.lcl > 0)) t.push(['Lower ' + fmt(S.lcl), S.lcl]);
+    if (kind === 'x' && state.target !== null) t.push(['Target ' + fmt(state.target), state.target, 'target']);
+    return t;
+  }
   if (isCount()){
     if (m.ok) t.push(['Upper ' + fv(L.ucl), L.ucl]);
     t.push(['Mean ' + fv(L.mean), L.mean]);
@@ -576,7 +768,7 @@ function rightLabels(m, kind){
 }
 // Shared by the XmR and moving range charts so their points line up
 function rightMargin(m){
-  const t = rightLabels(m, 'x').concat(isCount() || isT() ? [] : rightLabels(m, 'mr'));
+  const t = rightLabels(m, 'x').concat(isXS() ? rightLabels(m, 's') : isCount() || isT() ? [] : rightLabels(m, 'mr'));
   return Math.max(74, 12 + Math.ceil(Math.max(0, ...t.map(x => x[0].length)) * 6.6));
 }
 function yRange(m, kind){
@@ -586,6 +778,16 @@ function yRange(m, kind){
     let lo = Math.min(...ys), hi = Math.max(...ys);
     const pad = (hi - lo) * 0.08 || Math.abs(hi) * 0.1 || 1;
     return { lo: Math.max(lo - pad, 0), hi: hi + pad };
+  }
+  if (isXS()){
+    const vs = kind === 's' ? m.sd : m.v, L = kind === 's' ? m.sLim : m.lim, ys = vs.slice();
+    L.forEach(l => { ys.push(l.mean); if (l.ok) ys.push(l.ucl, l.lcl); });
+    if (kind === 'x' && state.target !== null) ys.push(state.target);
+    let lo = Math.min(...ys), hi = Math.max(...ys);
+    const pad = (hi - lo) * 0.08 || Math.abs(hi) * 0.1 || 1;
+    lo -= pad; hi += pad;
+    if (kind === 's') lo = Math.max(lo, 0);
+    return { lo, hi };
   }
   if (isT()){
     const ys = m.v.slice();
@@ -622,7 +824,7 @@ function yRange(m, kind){
 
 function renderChart(kind, W, H, p, interactive, oy){
   oy = oy || 0;
-  const m = model, n = m.n, vals = kind === 'mr' ? m.mr : m.v;
+  const m = model, n = m.n, vals = kind === 'mr' ? m.mr : kind === 's' ? m.sd : m.v;
   const notes = kind === 'x' ? noteIndex() : [];
   const labels = state.rows.map(r => isT() ? dateAxis(r.t) : r.label), longLabels = labels.some(l => l.length > 6);
   const M = isCount() ? { l: 62, r: rightMargin(m), t: notes.length ? 30 : 14, b: 72 }
@@ -646,7 +848,7 @@ function renderChart(kind, W, H, p, interactive, oy){
     s += `<text x="${M.l - 8}" y="${yv}" dy="0.32em" text-anchor="end" font-size="12" fill="${p.muted}">${fmt(t, tdp)}${unit && isPct() ? '%' : ''}</text>`;
   });
   s += `<line x1="${M.l}" x2="${M.l + pw}" y1="${(oy + M.t + ph).toFixed(1)}" y2="${(oy + M.t + ph).toFixed(1)}" stroke="${p.rule}"/>`;
-  const yl = kind === 'mr' ? 'Moving range' : isP() ? (isPct() ? 'Percentage' : 'Proportion') : isU() ? 'Rate ' + rateName() : isC() ? state.yLabel || 'Count' : isT() ? 'Days since previous event' : state.yLabel;
+  const yl = kind === 'mr' ? 'Moving range' : kind === 's' ? 'Standard deviation' : isXS() ? (state.yLabel ? 'Average ' + state.yLabel.charAt(0).toLowerCase() + state.yLabel.slice(1) : 'Subgroup average') : isP() ? (isPct() ? 'Percentage' : 'Proportion') : isU() ? 'Rate ' + rateName() : isC() ? state.yLabel || 'Count' : isT() ? 'Days since previous event' : state.yLabel;
   if (yl) s += `<text transform="translate(14 ${oy + M.t + ph / 2}) rotate(-90)" text-anchor="middle" font-size="12" fill="${p.muted}">${esc(trunc(yl, 40))}</text>`;
   // x labels
   if (isCount() || isT()){
@@ -675,8 +877,11 @@ function renderChart(kind, W, H, p, interactive, oy){
   });
   // limits
   let lines = '';
-  if (isCount()){
-    // Limits step with each point's total; a limit below zero (or a proportion's above 100%) isn't drawn
+  if (isCount() || isXS()){
+    // Limits step with each point's total; a limit below zero (or a proportion's above 100%) isn't drawn.
+    // The X-bar and S charts' limits step with each subgroup's size
+    const LA = kind === 's' ? m.sLim : m.lim;
+    const skip = v => isXS() ? kind === 's' && v <= 0 : v <= 0 || (isP() && v >= 1);
     const span = (g, i) => {
       if (g.e - g.s === 1) return [X(i) - half * 0.8, X(i) + half * 0.8];
       return [i === g.s ? X(i) : X(i) - half, i === g.e - 1 ? X(i) : X(i) + half];
@@ -684,8 +889,8 @@ function renderChart(kind, W, H, p, interactive, oy){
     const stepPath = (g, key) => {
       let d = '', prev = false;
       for (let i = g.s; i < g.e; i++){
-        const v = m.lim[i][key];
-        if (v <= 0 || (isP() && v >= 1)){ prev = false; continue; }
+        const v = LA[i][key];
+        if (skip(v)){ prev = false; continue; }
         const [x1, x2] = span(g, i), yv = Y(v).toFixed(1);
         d += `${prev ? 'L' : 'M'}${x1.toFixed(1)} ${yv}L${x2.toFixed(1)} ${yv}`;
         prev = true;
@@ -693,9 +898,9 @@ function renderChart(kind, W, H, p, interactive, oy){
       return d ? `<path d="${d}" fill="none" stroke="${p.limit}" stroke-width="1.5" stroke-dasharray="6 4"/>` : '';
     };
     m.segs.forEach(g => {
-      const [x1] = span(g, g.s), [, x2] = span(g, g.e - 1), yv = Y(g.mean).toFixed(1);
+      const [x1] = span(g, g.s), [, x2] = span(g, g.e - 1), yv = Y(LA[g.s].mean).toFixed(1);
       lines += `<line x1="${x1.toFixed(1)}" x2="${x2.toFixed(1)}" y1="${yv}" y2="${yv}" stroke="${p.limit}" stroke-width="1.5"/>`;
-      if (m.ok) lines += stepPath(g, 'ucl') + stepPath(g, 'lcl');
+      if (m.segOk(g)) lines += stepPath(g, 'ucl') + stepPath(g, 'lcl');
     });
   } else {
     const segLine = (g, v, dash) => {
@@ -721,7 +926,7 @@ function renderChart(kind, W, H, p, interactive, oy){
   vals.forEach((v, i) => {
     if (v === null) return;
     let col = p.common, r = 3.4;
-    if (kind === 'x'){ const st = m.status[i]; col = statusColor(st, p); if (st !== 'common') r = 4.6; }
+    if (kind === 'x' || kind === 's'){ const st = (kind === 's' ? m.sStatus : m.status)[i]; col = statusColor(st, p); if (st !== 'common') r = 4.6; }
     else { const g = m.segOf(i); if (g.ok && v > g.mrUcl){ col = p.neither; r = 4.6; } }
     s += `<circle cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="${r}" fill="${col}" stroke="${p.bg === 'transparent' ? 'var(--surface)' : p.bg}" stroke-width="1.2"/>`;
     // Hover details (shown by focus-chart-full.js, on the page and in full screen)
@@ -729,7 +934,7 @@ function renderChart(kind, W, H, p, interactive, oy){
       const act = i === 0 ? '' : ` data-tip-act="${state.breaks.has(i) ? 'Click to undo recalculation' : 'Click to recalculate limits from here'}"`;
       s += `<circle class="hit" data-i="${i}" data-tip="${esc(tipText(i)).replace(/\n/g, '&#10;')}"${act} cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="10" fill="transparent" style="cursor:${i > 0 ? 'pointer' : 'default'}"/>`;
     }
-    else if (interactive) s += `<circle data-tip="${esc(mrTipText(i)).replace(/\n/g, '&#10;')}" cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="10" fill="transparent"/>`;
+    else if (interactive) s += `<circle data-tip="${esc(kind === 's' ? sTipText(i) : mrTipText(i)).replace(/\n/g, '&#10;')}" cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="10" fill="transparent"/>`;
   });
   if (clipped) s += `</g>`;
   const placed = rightLabels(m, kind).filter(([, v]) => v >= lo && v <= hi).map(([t, v, k]) => ({ t, y: Y(v), k })).sort((a, b) => a.y - b.y);
@@ -745,12 +950,12 @@ function hiddenCount(){
 }
 
 function chartSVG(kind, W, H, interactive){
-  return `<svg viewBox="0 0 ${W} ${H}" font-family='${FONT}' role="img" aria-label="${esc(kind === 'x' ? ariaSummary() : 'Moving range chart')}">${renderChart(kind, W, H, livePalette(), interactive)}</svg>`;
+  return `<svg viewBox="0 0 ${W} ${H}" font-family='${FONT}' role="img" aria-label="${esc(kind === 'x' ? ariaSummary() : kind === 's' ? 'S chart of the standard deviation within each subgroup' : 'Moving range chart')}">${renderChart(kind, W, H, livePalette(), interactive)}</svg>`;
 }
 
 function exportSVG(){
   const W = 1200, p = LIGHT, top = 64, xH = isCount() || isT() ? 460 : 440;
-  const mH = state.type === 'xmr' && state.showMR ? 220 : 0, notes = noteIndex();
+  const mH = (state.type === 'xmr' && state.showMR) || (isXS() && state.showS) ? 220 : 0, notes = noteIndex();
   const noteH = notes.length ? 26 + notes.length * 18 : 0, foot = 40;
   const H = top + xH + (mH ? mH + 24 : 0) + noteH + foot;
   const a = assuranceText();
@@ -761,8 +966,8 @@ function exportSVG(){
   s += renderChart('x', W, xH, p, false, top);
   let yy = top + xH;
   if (mH){
-    s += `<text x="24" y="${yy + 16}" font-size="14" font-weight="600" fill="${p.ink}">Moving range</text>`;
-    s += renderChart('mr', W, mH, p, false, yy + 24);
+    s += `<text x="24" y="${yy + 16}" font-size="14" font-weight="600" fill="${p.ink}">${isXS() ? 'S chart (standard deviation within each subgroup)' : 'Moving range'}</text>`;
+    s += renderChart(isXS() ? 's' : 'mr', W, mH, p, false, yy + 24);
     yy += mH + 24;
   }
   yy += 18;
@@ -773,6 +978,7 @@ function exportSVG(){
   });
   const how = isCount() ? `${chartName()}: limits are the mean ± 3 standard deviations${isP() ? " for each point's total" : isU() ? " for each point's exposure" : ''}. Blue: improvement, orange: concern, purple: special cause with no set direction.`
     : isT() ? 'T chart: days between events, with limits from the gaps transformed to the power 1/3.6. Blue: improvement, orange: concern.'
+    : isXS() ? 'X-bar and S chart (Provost and Murray): limits are the mean ± A3 × S-bar and B3 to B4 × S-bar for each subgroup size. Blue: improvement, orange: concern, purple: special cause with no set direction.'
     : 'XmR chart: limits are the mean ± 2.66 × the average moving range. Blue: improvement, orange: concern, purple: special cause with no set direction.';
   s += `<text x="24" y="${H - 16}" font-size="11.5" fill="${p.muted}">${how}</text>`;
   return { svg: s + '</svg>', W, H };
@@ -783,8 +989,18 @@ const RULE_TEXT = {
   outside: (ev, n) => ev.from === ev.to ? `${cap(pointName(ev.from))} is ${ev.side === 'hi' ? 'above the upper' : 'below the lower'} limit.` : `${n} points (${rangeName(ev.from, ev.to)}) are ${ev.side === 'hi' ? 'above the upper' : 'below the lower'} limit.`,
   shift: (ev, n) => `${n} points in a row ${ev.side === 'hi' ? 'above' : 'below'} the mean (${rangeName(ev.from, ev.to)}).`,
   trend: (ev, n) => `${n} points in a row going ${ev.side === 'hi' ? 'up' : 'down'} (${rangeName(ev.from, ev.to)}).`,
-  twothree: ev => `Two out of three points close to the ${ev.side === 'hi' ? 'upper' : 'lower'} limit (${rangeName(ev.from, ev.to)}).`
+  twothree: ev => `Two out of three points close to the ${ev.side === 'hi' ? 'upper' : 'lower'} limit (${rangeName(ev.from, ev.to)}).`,
+  hug: (ev, n) => `${n} points in a row close to the mean, in the middle third between the limits (${rangeName(ev.from, ev.to)}).`
 };
+// The S chart: the spread of the measurements within each subgroup
+const S_RULE_TEXT = {
+  outside: (ev, n) => ev.from === ev.to ? `The spread within ${pointName(ev.from)} is ${ev.side === 'hi' ? 'above the upper' : 'below the lower'} limit.` : `The spread within ${n} subgroups (${rangeName(ev.from, ev.to)}) is ${ev.side === 'hi' ? 'above the upper' : 'below the lower'} limit.`,
+  shift: (ev, n) => `${n} subgroups in a row with ${ev.side === 'hi' ? 'more' : 'less'} spread than average (${rangeName(ev.from, ev.to)}).`,
+  trend: (ev, n) => `${n} subgroups in a row with the spread ${ev.side === 'hi' ? 'growing' : 'shrinking'} (${rangeName(ev.from, ev.to)}).`,
+  twothree: ev => `Two out of three subgroups with the spread close to the ${ev.side === 'hi' ? 'upper' : 'lower'} limit (${rangeName(ev.from, ev.to)}).`,
+  hug: (ev, n) => `${n} subgroups in a row with the spread close to the average, in the middle third between the limits (${rangeName(ev.from, ev.to)}).`
+};
+const sRuleText = ev => S_RULE_TEXT[ev.rule](ev, ev.to - ev.from + 1);
 const less = 'events have become less frequent', more = 'events have become more frequent';
 const T_RULE_TEXT = {
   outside: ev => ev.side === 'hi' ? `The gap before ${pointName(ev.from)} is above the upper limit: a longer than usual gap between events.` : `The gap before ${pointName(ev.from)} is below the lower limit: events closer together than expected.`,
@@ -792,7 +1008,7 @@ const T_RULE_TEXT = {
   trend: (ev, n) => `${n} gaps in a row getting ${ev.side === 'hi' ? 'longer' : 'shorter'} (${rangeName(ev.from, ev.to)}).`
 };
 const ruleText = ev => (isT() ? T_RULE_TEXT : RULE_TEXT)[ev.rule](ev, ev.to - ev.from + 1);
-function eventStatus(ev){ if (state.dir === 'none') return 'neither'; return (state.dir === 'up') === (ev.side === 'hi') ? 'improve' : 'concern'; }
+function eventStatus(ev){ if (state.dir === 'none' || ev.side === 'mid') return 'neither'; return (state.dir === 'up') === (ev.side === 'hi') ? 'improve' : 'concern'; }
 
 function variationText(){
   const st = model.lastStatus, L = model.lim[model.n - 1];
@@ -803,6 +1019,11 @@ function variationText(){
     const longer = (st === 'improve') === (state.dir === 'up');
     if (st === 'improve') return { title: 'Special cause: improvement', short: `Special cause variation, improving (${longer ? less : more})`, long: `The most recent gap is part of a special cause signal in the direction of improvement: ${longer ? less : more}. Something has changed. Understanding what it was will help you sustain it.` };
     return { title: 'Special cause: concern', short: `Special cause variation, of concern (${longer ? less : more})`, long: `The most recent gap is part of a special cause signal in the wrong direction: ${longer ? less : more}. Something has changed and is worth investigating.` };
+  }
+  if (st === 'hug') return { title: 'Special cause: close to the mean', short: 'Special cause variation, points hugging the mean', long: `The most recent point is part of ${HUG_LEN} or more points in a row close to the mean, in the middle third between the limits. The subgroup averages vary less than the limits expect. Provost and Murray note this often means each subgroup mixes measurements from different sources, such as different staff, shifts or sites, or that the limits were calculated wrongly.` };
+  if (st === 'common' && isXS()){
+    if (!L.ok) return { title: 'Not enough data', short: 'Not enough subgroups to calculate limits', long: 'Add more subgroups, each with at least two measurements, to calculate process limits.' };
+    return { title: 'Common cause variation', short: 'Common cause variation', long: `The most recent subgroup shows common cause variation. The process looks stable: unless something changes, expect subgroup averages between ${fmt(L.lcl)} and ${fmt(L.ucl)} for a subgroup of ${state.rows[model.n - 1].n} measurements like the latest, averaging ${fmt(L.mean)}.` };
   }
   if (st === 'common'){
     if (isCount()){
@@ -846,6 +1067,7 @@ function openText(){
 function ariaSummary(){
   const v = variationText(), a = assuranceText();
   if (isT()) return `T chart of ${model.n} gaps between ${model.n + 1} events. ${v.short}.`;
+  if (isXS()) return `X-bar chart of the averages of ${model.n} subgroups. ${v.short}.${a ? ' ' + a.short + '.' : ''}`;
   return `${chartName()} of ${model.n} points. ${v.short}.${a ? ' ' + a.short + '.' : ''}`;
 }
 
@@ -858,6 +1080,17 @@ function readingNotes(){
     if (!isC() && !state.laney && m.ok && m.sigmaZ > 1.5 && Math.min(...state.rows.map(r => r.den)) >= 200) nts.push(`The points vary about ${fmt(m.sigmaZ, 1)} times as much as a ${L1} chart expects, and the ${isU() ? 'exposures' : 'totals'} are large. If the limits look too narrow, try the ${L1}′ chart.`);
     if (isC() && m.ok && m.sigmaZ > 1.5) nts.push(`The counts vary about ${fmt(m.sigmaZ, 1)} times as much as a C chart expects. If the opportunity for events changes from period to period, a U chart, with the exposure for each period, may suit better.`);
     if (m.ok && m.lim.some(L => L.lcl <= 0)) nts.push(`Where the lower limit would be below ${isPct() ? '0%' : '0'}, it isn't drawn.`);
+  } else if (isXS()){
+    const sizes = state.rows.map(r => r.n), lo = Math.min(...sizes), hi = Math.max(...sizes);
+    if (m.n < 20) nts.push(`With fewer than 20 subgroups, treat the limits as trial limits and recalculate them as more data arrives, as Provost and Murray advise.`);
+    if (lo !== hi) nts.push(`Subgroups have between ${lo} and ${hi} measurements, so the limits step in and out: a smaller subgroup gets wider limits.`);
+    if (hi > 25) nts.push(`Some subgroups have more than 25 measurements. With subgroups this large the limits get very narrow, so even small differences between subgroups show as signals.`);
+    m.segs.forEach(g => {
+      const where = m.segs.length > 1 ? ` in the period from ${pointName(g.s)}` : '';
+      if (!g.ok) nts.push(`There aren't enough subgroups${where} to calculate limits.`);
+      if (g.fixed) nts.push(`Limits${where} are fixed from its first ${g.be - g.s} subgroups.`);
+    });
+    if (m.sEvents.length) nts.push(`The S chart shows special cause variation in the spread within subgroups. Provost and Murray advise reading the S chart first: while it is unstable, the X-bar chart's limits are less reliable, so look into the S chart's signals before acting on the X-bar chart's.`);
   } else if (isT()){
     if (m.n < 15) nts.push(`With fewer than 15 gaps, treat the limits as provisional and recalculate them as more events happen.`);
     m.segs.forEach(g => {
@@ -885,7 +1118,7 @@ function readingNotes(){
   if (hidden) nts.push(`${hidden} point${hidden > 1 ? 's are' : ' is'} outside the axis range you set.`);
   if (state.invalid.length) nts.push(`Left out ${state.invalid.slice(0, 6).map(x => `line ${x.line} (${x.why})`).join(', ')}${state.invalid.length > 6 ? '…' : ''}.`);
   if (state.skipped.length){
-    const what = isP() ? 'a count and a total couldn’t be read' : isU() ? 'a count and an exposure couldn’t be read' : isC() ? 'no count could be read' : isT() ? 'no date could be read' : 'the value wasn’t a number';
+    const what = isXS() ? 'no measurement could be read' : isP() ? 'a count and a total couldn’t be read' : isU() ? 'a count and an exposure couldn’t be read' : isC() ? 'no count could be read' : isT() ? 'no date could be read' : 'the value wasn’t a number';
     const lines = typeof state.skipped[0] === 'string' ? '' : 'line' + (state.skipped.length > 1 ? 's ' : ' ');
     nts.push(`Skipped ${lines}${state.skipped.slice(0, 8).join(', ')}${state.skipped.length > 8 ? '…' : ''} because ${what}.`);
   }
@@ -897,6 +1130,7 @@ function varBadge(p){
   const st = model.lastStatus, col = statusColor(st, p);
   let glyph;
   if (st === 'common') glyph = `<path d="M11 22c3-5 5-5 7 0s4 5 7 0 4-5 7 0" fill="none" stroke="${col}" stroke-width="2.2" stroke-linecap="round"/>`;
+  else if (st === 'hug') glyph = `<path d="M11 22h22M15 17h14M15 27h14" fill="none" stroke="${col}" stroke-width="2.2" stroke-linecap="round"/>`;
   else { const up = st === 'neither-hi' || (st === 'improve' && state.dir === 'up') || (st === 'concern' && state.dir === 'down'); glyph = up ? `<path d="M13 26l9-9 9 9" fill="none" stroke="${col}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>` : `<path d="M13 18l9 9 9-9" fill="none" stroke="${col}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>`; }
   return `<svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="20" fill="none" stroke="${col}" stroke-width="2.4"/>${glyph}</svg>`;
 }
@@ -918,16 +1152,18 @@ function renderAll(){
 function renderAllInner(){
   $('#chartTitle').textContent = state.title || 'Your ' + chartName();
   $('#chartSub').textContent = isT() ? (state.team ? `${state.team} · days between rare events` : 'Days between rare events')
-    : (state.team ? state.team + ' · ' : '') + (isP() ? (isPct() ? 'Percentage' : 'Proportion') + ' over time' : isU() ? `Rate ${rateName()}, over time` : isC() ? 'Count over time' : 'XmR chart (individuals and moving range)');
+    : (state.team ? state.team + ' · ' : '') + (isP() ? (isPct() ? 'Percentage' : 'Proportion') + ' over time' : isU() ? `Rate ${rateName()}, over time` : isC() ? 'Count over time' : isXS() ? 'X-bar and S chart (subgroup averages and standard deviations)' : 'XmR chart (individuals and moving range)');
   renderChips();
   if (state.rows.length < 2){
     model = null;
     const ex = isP() ? 'Month\tSeen in 4 hours\tAttended\nApr 2024\t412\t530\nMay 2024\t398\t511\nJun 2024\t431\t547'
       : isU() ? 'Month\tFalls\tBed days\nApr 2024\t12\t3850\nMay 2024\t9\t3920\nJun 2024\t14\t3710'
-      : isC() ? 'Month\tComplaints\nApr 2024\t7\nMay 2024\t4\nJun 2024\t9' : isT() ? 'Event date\n03/01/2024\n29/01/2024\n14/02/2024' : 'Month\tDays\nApr 2024\t42\nMay 2024\t39\nJun 2024\t45';
+      : isC() ? 'Month\tComplaints\nApr 2024\t7\nMay 2024\t4\nJun 2024\t9'
+      : isXS() ? 'Week\tMinutes to triage\nWk 1\t14\t22\t9\t31\t17\nWk 2\t19\t12\t25\t15\nWk 3\t11\t28\t16\t20\t13' : isT() ? 'Event date\n03/01/2024\n29/01/2024\n14/02/2024' : 'Month\tDays\nApr 2024\t42\nMay 2024\t39\nJun 2024\t45';
     const ask = isP() ? 'Paste at least two periods on the left, each with a count and a total, to draw a chart.'
       : isU() ? 'Paste at least two periods on the left, each with a count and an exposure, to draw a chart.'
-      : isC() ? 'Paste at least two periods on the left, each with a count, to draw a chart.' : isT() ? 'Paste the dates of at least three events on the left to draw a chart.' : 'Paste at least two values on the left to draw a chart.';
+      : isC() ? 'Paste at least two periods on the left, each with a count, to draw a chart.'
+      : isXS() ? 'Paste at least two subgroups on the left, each with two or more measurements, to draw a chart.' : isT() ? 'Paste the dates of at least three events on the left to draw a chart.' : 'Paste at least two values on the left to draw a chart.';
     out.innerHTML = `<div class="empty"><p style="margin:0">${ask}</p><pre>${ex}</pre><p style="margin:12px 0 0"><button type="button" class="link" id="exampleBtn2">Or try the example data</button></p></div>`;
     $('#exampleBtn2').onclick = loadExample;
     return;
@@ -949,6 +1185,16 @@ function renderAllInner(){
     h += `<div class="stat"><b>${model.ok ? (L.lcl > 0 ? fv(L.lcl) + ' – ' : '') + fv(clampV(L.ucl)) : '–'}</b><span>${model.ok && L.lcl > 0 ? 'Lower and upper' : 'Upper'} limit for the latest point</span></div>`;
     h += `</div>`;
   }
+  if (isXS()){
+    const g = model.segs[model.segs.length - 1];
+    h += `<div class="stats">`;
+    h += `<div class="stat"><b>${model.n}</b><span>Subgroups, ${esc(state.rows[0].label)} to ${esc(state.rows[model.n - 1].label)}</span></div>`;
+    h += `<div class="stat"><b>${fmt(sum(state.rows.map(r => r.n)), 0)}</b><span>Measurements</span></div>`;
+    h += `<div class="stat"><b>${fmt(g.mean)}</b><span>Mean of the subgroup averages${model.segs.length > 1 ? ', latest limits' : ''}</span></div>`;
+    h += `<div class="stat"><b>${fmt(g.sBar)}</b><span>Average standard deviation</span></div>`;
+    h += `<div class="stat"><b>${L.ok ? fmt(L.lcl) + ' – ' + fmt(L.ucl) : '–'}</b><span>X-bar limits for the latest subgroup (n = ${state.rows[model.n - 1].n})</span></div>`;
+    h += `</div>`;
+  }
   if (isT()){
     const ev = state.events, g = L;
     h += `<div class="stats">`;
@@ -966,6 +1212,7 @@ function renderAllInner(){
   const notes = noteIndex();
   if (notes.length) h += `<ul class="notelist">${notes.map((i, k) => `<li><span class="flag">${k + 1}</span><span>${esc(state.rows[i].label)}: ${esc(state.rows[i].note)}</span></li>`).join('')}</ul>`;
   if (state.type === 'xmr' && state.showMR) h += `<h3 class="mr-head">Moving range</h3><div class="chart-box" id="mrBox"></div>`;
+  if (isXS() && state.showS) h += `<h3 class="mr-head">S chart: the spread within each subgroup</h3><div class="chart-box" id="sBox"></div>`;
 
   h += `<div class="reading"><h3>What the chart shows</h3><p>${esc(v.long)}</p>`;
   if (a) h += `<p>${esc(a.long)}</p>`;
@@ -974,7 +1221,14 @@ function renderAllInner(){
     h += `<p style="margin-top:14px"><strong>Signals found</strong></p><ul class="signals">`;
     model.events.forEach(ev => { h += `<li><i class="dot" style="background:${statusColor(eventStatus(ev), p)}"></i><span>${esc(cap(ruleText(ev)))}</span></li>`; });
     h += `</ul>`;
-  } else if (model.allOk) h += `<p>No special cause signals were found.</p>`;
+  } else if (model.allOk) h += `<p>No special cause signals were found${isXS() ? ' on the X-bar chart' : ''}.</p>`;
+  if (isXS() && model.allOk){
+    if (model.sEvents.length){
+      h += `<p style="margin-top:14px"><strong>Signals on the S chart</strong></p><ul class="signals">`;
+      model.sEvents.forEach(ev => { h += `<li><i class="dot" style="background:${p.neither}"></i><span>${esc(cap(sRuleText(ev)))}</span></li>`; });
+      h += `</ul>`;
+    } else h += `<p>The S chart shows no special cause signals, so the spread within subgroups looks stable.</p>`;
+  }
   const nts = readingNotes();
   if (nts.length) h += `<div class="notes">${nts.map(t => `<p>${esc(t)}</p>`).join('')}</div>`;
   h += `</div>`;
@@ -989,10 +1243,15 @@ function statusName(st){ return st === 'common' ? 'Common cause' : st === 'impro
 function tipText(i){
   const r = state.rows[i], L = model.lim[i];
   if (isT()) return `${r.label}\n${days(r.gap)} since ${dateLong(r.prev)}\n${statusName(model.status[i])}`;
+  if (isXS()) return `${r.label}\nAverage: ${fmt(r.mean)} (n = ${r.n})\nStandard deviation: ${fmt(r.sd)}${L.ok ? `\nLimits ${fmt(L.lcl)} – ${fmt(L.ucl)}` : ''}\n${statusName(model.status[i])}`;
   if (!isCount()) return `${r.label}\nValue: ${fmt(r.value, 6)}\n${statusName(model.status[i])}`;
   const lims = model.ok ? `\nLimits ${fv(clampV(L.lcl))} – ${fv(clampV(L.ucl))}` : '';
   const val = isC() ? fmt(r.num, 2) : `${fmt(r.num, 2)} / ${fmt(r.den, 2)} = ${fv(model.v[i])}${isU() ? ' ' + rateName() : ''}`;
   return `${r.label}\nValue: ${val}${lims}\n${statusName(model.status[i])}`;
+}
+function sTipText(i){
+  const r = state.rows[i], S = model.sLim[i], st = model.sStatus[i];
+  return `${r.label}\nStandard deviation: ${fmt(r.sd)} (n = ${r.n})${S.ok ? `\nLimits ${fmt(S.lcl)} – ${fmt(S.ucl)}` : ''}\n${st === 'common' ? 'Common cause' : 'Special cause'}`;
 }
 function mrTipText(i){
   const g = model.segOf(i), over = g.ok && model.mr[i] > g.mrUcl;
@@ -1005,6 +1264,7 @@ function drawCharts(){
   const xH = isCount() || isT() ? (narrow ? 320 : 420) : (narrow ? 300 : 380);
   xb.innerHTML = chartSVG('x', W, xH, true);
   const mb = $('#mrBox'); if (mb) mb.innerHTML = chartSVG('mr', W, narrow ? 170 : 200, true);
+  const sb = $('#sBox'); if (sb) sb.innerHTML = chartSVG('s', W, narrow ? 190 : 230, true);
   const svg = xb.querySelector('svg');
   svg.addEventListener('click', e => { const t = e.target.closest('.hit'); if (!t) return; toggleBreak(+t.dataset.i); });
 }
@@ -1019,6 +1279,16 @@ function tableRows(){
     state.rows.forEach((q, i) => {
       const g = model.segOf(i);
       rows.push([i + 2, iso(q.t), r4(q.gap), r4(q.y), r4(model.mr[i]), r4(g.mean), g.ok ? r4(g.lcl) : '', g.ok ? r4(g.ucl) : '', signalName(model.status[i]) || 'Common cause', q.note]);
+    });
+    return rows;
+  }
+  if (isXS()){
+    const n6 = v => isFinite(v) ? String(+v.toFixed(6)) : '';
+    const rows = [['Subgroup', 'Label', 'Measurements (n)', 'Average', 'Standard deviation', 'Mean of averages', 'Lower limit', 'Upper limit', 'Signal', 'Mean standard deviation', 'S lower limit', 'S upper limit', 'S chart signal', 'Note']];
+    state.rows.forEach((r, i) => {
+      const L = model.lim[i], S = model.sLim[i];
+      rows.push([i + 1, r.label, r.n, n6(r.mean), n6(r.sd), n6(L.mean), L.ok ? n6(L.lcl) : '', L.ok ? n6(L.ucl) : '', signalName(model.status[i]) || 'Common cause',
+        n6(S.mean), S.ok ? n6(S.lcl) : '', S.ok ? n6(S.ucl) : '', model.sStatus[i] === 'common' ? 'Common cause' : 'Special cause', r.note]);
     });
     return rows;
   }
@@ -1060,6 +1330,15 @@ function tableHTML(){
     });
     return h + `</tbody></table></div></details>`;
   }
+  if (isXS()){
+    let h = `<details class="values"><summary>Calculated values</summary><div class="tablewrap"><table><thead><tr><th>#</th><th class="l">Label</th><th>n</th><th>Average</th><th>Lower limit</th><th>Upper limit</th><th class="l">Signal</th><th>Std dev</th><th>S lower limit</th><th>S upper limit</th><th class="l">S chart</th><th class="l">Note</th><th><span style="position:absolute;left:-9999px">Action</span></th></tr></thead><tbody>`;
+    state.rows.forEach((r, i) => {
+      const L = model.lim[i], S = model.sLim[i];
+      const btn = i === 0 ? '' : `<button type="button" data-brk="${i}">${state.breaks.has(i) ? 'Undo recalculation' : 'Recalculate from here'}</button>`;
+      h += `<tr class="${state.breaks.has(i) ? 'brk' : ''}"><td>${i + 1}</td><td class="l">${esc(r.label)}</td><td>${r.n}</td><td>${fmt(r.mean)}</td><td>${L.ok ? fmt(L.lcl) : '–'}</td><td>${L.ok ? fmt(L.ucl) : '–'}</td><td class="l">${signalName(model.status[i])}</td><td>${fmt(r.sd)}</td><td>${S.ok ? fmt(S.lcl) : '–'}</td><td>${S.ok ? fmt(S.ucl) : '–'}</td><td class="l">${model.sStatus[i] === 'common' ? '' : 'Special cause'}</td><td class="l wrap">${esc(r.note)}</td><td>${btn}</td></tr>`;
+    });
+    return h + `</tbody></table></div></details>`;
+  }
   const P = isCount();
   const valueHead = isC() ? '' : isU() ? `<th>Exposure</th><th>Rate ${esc(rateName())}</th>` : `<th>Total</th><th>${isPct() ? 'Percentage' : 'Proportion'}</th>`;
   const head = P ? `<th>#</th><th class="l">Label</th><th>Count</th>${valueHead}<th>Mean</th><th>Lower limit</th><th>Upper limit</th><th class="l">Signal</th><th class="l">Note</th>`
@@ -1093,7 +1372,7 @@ function renderChips(){
 }
 
 /* ---------- Exports ---------- */
-function slug(){ const d = isP() ? 'p-chart' : isU() ? 'u-chart' : isC() ? 'c-chart' : isT() ? 't-chart' : 'spc-chart'; return (state.title || d).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) || d; }
+function slug(){ const d = isP() ? 'p-chart' : isU() ? 'u-chart' : isC() ? 'c-chart' : isT() ? 't-chart' : isXS() ? 'xbar-s-chart' : 'spc-chart'; return (state.title || d).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) || d; }
 let dlPromise = null;
 function getDownloads(){
   if (!window.claude || typeof window.claude.use !== 'function') return Promise.resolve(undefined);
@@ -1126,7 +1405,11 @@ function summaryText(){
   const a = assuranceText(); if (a) lines.push(a.long);
   const o = openText(); if (o) lines.push(o.text);
   if (model.events.length){ lines.push('', 'Signals found:'); model.events.forEach(ev => lines.push('- ' + cap(ruleText(ev)))); }
-  else if (model.allOk || isT()) lines.push('No special cause signals were found.');
+  else if (model.allOk || isT()) lines.push(`No special cause signals were found${isXS() ? ' on the X-bar chart' : ''}.`);
+  if (isXS() && model.allOk){
+    if (model.sEvents.length){ lines.push('', 'Signals on the S chart:'); model.sEvents.forEach(ev => lines.push('- ' + cap(sRuleText(ev)))); }
+    else lines.push('The S chart shows no special cause signals.');
+  }
   const notes = noteIndex();
   if (notes.length){ lines.push('', 'Notes:'); notes.forEach((i, k) => lines.push(`${k + 1}. ${state.rows[i].label}: ${state.rows[i].note}`)); }
   return lines.join('\n');
@@ -1169,6 +1452,11 @@ const TYPE_TEXT = {
     hint: 'One period per line, oldest first: a label such as the week or month, then the count. Anything in a third column is shown as a note on the chart. A header row is fine.',
     title: 'e.g. Complaints each month', dir: 'Improvement is when the count goes'
   },
+  xbars: {
+    placeholder: 'Paste from Excel, e.g.\nWeek\tMinutes to triage\nWk 1\t14\t22\t9\t31\nWk 2\t19\t12\t25\t15\t18\nor one measurement per line:\nWk 1\t14\nWk 1\t22',
+    hint: 'Each subgroup needs at least two measurements, such as the waiting times of a sample of patients each week. Paste one subgroup per line, its label then each measurement across the row, or one measurement per line with its subgroup label beside it: lines in a row with the same label, or a blank label, make one subgroup. Subgroups can be different sizes. Anything that isn’t a number is shown as a note. A header row is fine.',
+    title: 'e.g. Minutes from arrival to triage', dir: 'Improvement is when the average goes'
+  },
   t: {
     placeholder: 'Paste from Excel, e.g.\n03/01/2024\n29/01/2024\n14/02/2024\tNew checklist started',
     hint: 'One event per line, oldest first, as day/month/year (03/01/2024), 2024-01-03 or 3 Jan 2024. Anything after the date, such as a second column, is shown as a note on the chart. A header row is fine.',
@@ -1176,8 +1464,10 @@ const TYPE_TEXT = {
   }
 };
 // The special cause rule lengths each chart's source tool uses by default
-const RUN_DEFAULT = { xmr: 7, p: 7, u: 7, c: 7, t: 6 };
-const TYPES = ['xmr', 'p', 'u', 'c', 't'];
+// The X-bar and S chart follows The Health Care Data Guide: 8 in a row for a shift and 6 for a trend
+const RUN_DEFAULT = { xmr: 7, p: 7, u: 7, c: 7, t: 6, xbars: 8 };
+const TREND_DEFAULT = { xmr: 7, p: 7, u: 7, c: 7, t: 6, xbars: 6 };
+const TYPES = ['xmr', 'xbars', 'p', 'u', 'c', 't'];
 function showType(){
   const t = TYPE_TEXT[state.type];
   document.querySelectorAll('[data-for]').forEach(el => { el.hidden = !el.dataset.for.split(' ').includes(state.type); });
@@ -1186,7 +1476,7 @@ function showType(){
   if (isT() && state.dir === 'none'){ document.querySelector('input[name=dir][value=up]').checked = true; state.dir = 'up'; }
   $('#data').placeholder = t.placeholder; $('#dataHint').textContent = t.hint + ' Use Data sheet, at the top of the page, to download a spreadsheet with these columns, then import it once it’s filled in.';
   $('#title').placeholder = t.title; $('#dirLabel').textContent = t.dir;
-  $('#targetLabel').textContent = isPct() ? 'Target, % (optional)' : isP() ? 'Target, as a proportion (optional)' : isU() ? `Target, ${rateName()} (optional)` : 'Target (optional)';
+  $('#targetLabel').textContent = isXS() ? 'Target for the average (optional)' : isPct() ? 'Target, % (optional)' : isP() ? 'Target, as a proportion (optional)' : isU() ? `Target, ${rateName()} (optional)` : 'Target (optional)';
   $('#target').min = isCount() ? '0' : '';
   const L1 = isU() ? 'U' : 'P';
   $('#ctypePlain').textContent = L1 + ' chart'; $('#ctypeLaney').textContent = L1 + '′ chart';
@@ -1203,7 +1493,7 @@ function setType(t){
   if (!TYPES.includes(t)) t = 'xmr';
   if (t === state.type) return;
   // Rule lengths left at the old chart's default move to the new chart's default
-  ['#shiftLen', '#trendLen'].forEach(id => { if (+$(id).value === RUN_DEFAULT[state.type]) $(id).value = RUN_DEFAULT[t]; });
+  [['#shiftLen', RUN_DEFAULT], ['#trendLen', TREND_DEFAULT]].forEach(([id, D]) => { if (+$(id).value === D[state.type]) $(id).value = D[t]; });
   state.type = t; state.breaks.clear();
   showType(); readForm(); readData(); renderAll(); syncUrl();
 }
@@ -1219,14 +1509,18 @@ function suggestType(text){
   const U = { type: 'u', msg: 'Some counts are more than their total, so this looks like a rate: a count against an exposure such as bed days.', btn: 'Use a U chart' };
   const PU = { type: 'p', msg: 'This looks like a count and a total for each period.', btn: 'Use a P chart', alt: { type: 'u', btn: 'Use a U chart (a rate)' } };
   const T = { type: 't', msg: 'This looks like a list of event dates.', btn: 'Use a T chart' };
+  const XS = { type: 'xbars', msg: 'This looks like several measurements for each period.', btn: 'Use an X-bar and S chart' };
+  const fitsXS = () => { const g = parseXbarS(text); return g.rows.length >= 2 && (g.long || g.rows.every(r => r.n >= 3)); };
   const fitsP = () => { const pr = parseP(text, 'p'); return pr.rows.length >= 2 && !pr.invalid.length; };
   if (text.trim() && state.rows.length < 2){
     // Nothing usable for this chart: offer whichever other chart can read it
     if (!isT() && parseT(text).rows.length >= 2) other = T;
     else if (isP() && parseP(text, 'u').rows.length >= 2) other = U;
-    else if (!isCount() && fitsP()) other = PU;
+    else if (!isCount() && !isXS() && fitsP()) other = PU;
     else if (state.type !== 'xmr' && parseXmr(text).rows.length >= 2) other = XMR;
   } else if (text.trim() && isP() && state.invalid.some(x => x.why === 'count is more than the total')) other = U;
+  // Several measurements for each label suit an X-bar and S chart
+  else if (text.trim() && state.type === 'xmr' && fitsXS()) other = XS;
   // A count with another number beside it could be a P or U chart
   else if (text.trim() && (state.type === 'xmr' || isC()) && state.wide && fitsP() && parseP(text, 'p').rows.length >= state.rows.length) other = PU;
   box.hidden = !other;
@@ -1237,7 +1531,7 @@ function suggestType(text){
 }
 function readData(){
   const text = $('#data').value;
-  const r = isP() || isU() ? parseP(text, state.type) : isC() ? parseC(text) : isT() ? parseT(text) : parseXmr(text);
+  const r = isP() || isU() ? parseP(text, state.type) : isC() ? parseC(text) : isT() ? parseT(text) : isXS() ? parseXbarS(text) : parseXmr(text);
   state.rows = r.rows; state.skipped = r.skipped; state.invalid = r.invalid; state.decimals = r.decimals; state.wide = r.wide;
   if (isT()){ state.events = r.events; state.unsorted = r.unsorted; state.order = r.order; state.hasTime = r.hasTime; }
   state.header = isCount() ? r.header : (r.header && r.header[0] ? r.header : null);
@@ -1251,14 +1545,14 @@ function readData(){
     if (r.skipped.length) t += ` ${r.skipped.length} line${r.skipped.length > 1 ? 's' : ''} skipped.`;
     ps.textContent = t; ps.className = 'status' + (r.skipped.length ? ' warn' : '');
   } else {
-    let t = `${r.rows.length} ${isCount() ? 'period' : 'value'}${r.rows.length === 1 ? '' : 's'} read.`;
+    let t = isXS() ? `${r.rows.length} subgroup${r.rows.length === 1 ? '' : 's'} (${sum(r.rows.map(x => x.n))} measurements) read.` : `${r.rows.length} ${isCount() ? 'period' : 'value'}${r.rows.length === 1 ? '' : 's'} read.`;
     if (r.note) t += ' ' + r.note;
     if (state.header) t += ' First line used as a header.';
     const bad = r.skipped.length + r.invalid.length;
-    if (bad) t += ` ${bad} line${bad > 1 ? 's' : ''} ${isCount() ? 'left out' : 'skipped'}.`;
+    if (bad) t += ` ${bad} ${isXS() && r.invalid.length ? 'line or subgroup' : 'line'}${bad > 1 ? 's' : ''} ${isCount() || isXS() ? 'left out' : 'skipped'}.`;
     ps.textContent = t; ps.className = 'status' + (bad ? ' warn' : '');
   }
-  if (state.type === 'xmr'){
+  if (state.type === 'xmr' || isXS()){
     $('#yLabel').placeholder = state.header ? state.header[0] : 'e.g. Days';
     state.yLabel = $('#yLabel').value.trim() || (state.header ? state.header[0] : '');
   }
@@ -1272,7 +1566,7 @@ function readTarget(){
   else state.target = raw === '' || !isFinite(+raw) ? null : +raw;
 }
 function readAxes(){ state.yMin = numOrNull($('#yMin').value); state.yMax = numOrNull($('#yMax').value); }
-const runLen = id => { const v = parseInt($(id).value, 10); return v >= 3 ? v : RUN_DEFAULT[state.type]; };
+const runLen = id => { const v = parseInt($(id).value, 10); return v >= 3 ? v : (id === '#trendLen' ? TREND_DEFAULT : RUN_DEFAULT)[state.type]; };
 // Read every setting from the form, for after a project file is opened or the chart type changes
 function readForm(){
   state.title = $('#title').value.trim(); state.team = $('#team').value.trim();
@@ -1288,6 +1582,7 @@ function readForm(){
   state.showNotes = $('#showNotes').checked; state.twoThree = $('#twoThree').checked;
   state.shiftLen = runLen('#shiftLen'); state.trendLen = runLen('#trendLen');
   state.useTrend = $('#useTrend').checked; state.dateFmt = $('#dateFmt').value;
+  state.showS = $('#showS').checked; state.hug = $('#hugRule').checked;
   showType();
 }
 
@@ -1297,7 +1592,7 @@ $('#data').addEventListener('input', () => { clearTimeout(parseTimer); parseTime
 $('#title').addEventListener('input', e => { state.title = e.target.value.trim(); $('#chartTitle').textContent = state.title || 'Your ' + chartName(); });
 $('#title').addEventListener('change', renderAll);
 $('#team').addEventListener('input', e => { state.team = e.target.value.trim(); renderAll(); });
-$('#yLabel').addEventListener('input', e => { state.yLabel = e.target.value.trim() || (state.type === 'xmr' && state.header ? state.header[0] : ''); renderAll(); });
+$('#yLabel').addEventListener('input', e => { state.yLabel = e.target.value.trim() || ((state.type === 'xmr' || isXS()) && state.header ? state.header[0] : ''); renderAll(); });
 // A new rate base changes the target's and the axis range's meaning with it, as typed
 $('#per').addEventListener('input', () => { const v = +$('#per').value; state.per = isFinite(v) && v > 0 ? v : 1000; showType(); readTarget(); readAxes(); renderAll(); });
 $('#perUnit').addEventListener('input', e => { state.perUnit = e.target.value.trim(); showType(); renderAll(); });
@@ -1325,6 +1620,8 @@ $('#trendLen').addEventListener('input', () => { state.trendLen = runLen('#trend
 $('#useTrend').addEventListener('change', e => { state.useTrend = e.target.checked; renderAll(); });
 $('#dateFmt').addEventListener('change', e => { state.dateFmt = e.target.value; renderAll(); });
 $('#twoThree').addEventListener('change', e => { state.twoThree = e.target.checked; renderAll(); });
+$('#showS').addEventListener('change', e => { state.showS = e.target.checked; renderAll(); });
+$('#hugRule').addEventListener('change', e => { state.hug = e.target.checked; renderAll(); });
 
 function loadExample(){
   const mon = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -1365,6 +1662,22 @@ function loadExample(){
     $('#team').value = 'Outpatients (example)'; $('#yLabel').value = 'Complaints';
     document.querySelector('input[name=dir][value=down]').checked = true;
     $('#target').value = ''; $('#yMin').value = ''; $('#yMax').value = '';
+  } else if (isXS()){
+    // Minutes from arrival to triage for a sample of 4 to 6 patients each week: about 18, then about 13
+    // after a streaming nurse starts at the front door
+    let seed = 30; const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+    const norm = () => Math.sqrt(-2 * Math.log(rnd() || 1e-9)) * Math.cos(2 * Math.PI * rnd());
+    const lines = ['Week\tMinutes to triage'];
+    for (let w = 0; w < 26; w++){
+      const n = 4 + (w * 7 % 3), mu = w < 16 ? 18 : 13, sd = 4;
+      const vals = Array.from({ length: n }, () => Math.max(1, Math.round(mu + sd * norm())));
+      lines.push(`Wk ${w + 1}\t${vals.join('\t')}${w === 16 ? '\tStreaming nurse started' : ''}`);
+    }
+    $('#data').value = lines.join('\n');
+    $('#title').value = 'Minutes from arrival to triage';
+    $('#team').value = 'Emergency department (example)'; $('#yLabel').value = 'Minutes to triage';
+    document.querySelector('input[name=dir][value=down]').checked = true;
+    $('#target').value = '15';
   } else if (isT()){
     // Falls with harm on one ward: about one every three weeks, then less often after a falls bundle starts
     const gaps = [19, 6, 31, 12, 25, 3, 17, 40, 9, 22, 14, 28, 7, 35, 11, 20, 16, 4, 26, 13, 58, 47, 71, 39, 64, 52, 88, 44, 61, 75];
@@ -1393,7 +1706,7 @@ $('#clearBtn').onclick = () => {
   $('#data').value = ''; state.breaks.clear(); $('#title').value = ''; $('#team').value = ''; $('#yLabel').value = ''; $('#target').value = '';
   readForm(); readData(); renderAll(); $('#data').focus(); trackCleared();
 };
-trackSettings({ chartType: 'spctype', direction: 'dir', floorAtZero: 'floor', baseline: 'base', screenMovingRanges: 'screen', pChartType: 'ctype', showMovingRange: 'showMR', unit: 'unit', dateFormat: 'dateFmt', showNotes: 'showNotes', twoOfThree: 'twoThree', useTrend: 'useTrend' });
+trackSettings({ chartType: 'spctype', direction: 'dir', floorAtZero: 'floor', baseline: 'base', screenMovingRanges: 'screen', pChartType: 'ctype', showMovingRange: 'showMR', unit: 'unit', dateFormat: 'dateFmt', showNotes: 'showNotes', twoOfThree: 'twoThree', useTrend: 'useTrend', showSChart: 'showS', innerThird: 'hugRule' });
 
 /* ---------- Blank data collection sheet ---------- */
 // The columns are in the order each chart's parser reads them, with guidance on collecting the data for that chart
@@ -1439,6 +1752,17 @@ const SHEET = {
       'Use the Note column for changes to the process, such as a new leaflet. Notes are shown as numbered flags on the chart.'
     ]
   },
+  xbars: {
+    name: 'X-bar and S chart', option: 'Several measurements each period',
+    head: () => ['Subgroup (period)', $('#yLabel').value.trim() || 'Measurement', 'Note'], widths: [22, 22, 40], rows: 120,
+    fill: [
+      'Fill in one row for each measurement, oldest at the top. In the first column, write the subgroup it belongs to, such as the week (Wk 1) or the date the week begins. Every measurement in the same subgroup gets the same label, and the rows for a subgroup go together.',
+      'Write the measurement in the second column, such as minutes from arrival to triage for one patient. Rename the Measurement heading to what you are measuring.',
+      'Take at least 2 measurements in every subgroup, and ideally about the same number each time, such as 5 patients picked at random each week. Subgroups of 3 to 10 are typical.',
+      'Make each subgroup from one process: don’t mix sites, shifts or staff groups in the same subgroup unless that mix is what you want to study.',
+      'Use the Note column for changes to the process, such as a new streaming nurse. Notes are shown as numbered flags on the chart.'
+    ]
+  },
   t: {
     name: 'T chart', option: 'Dates of rare events',
     head: () => ['Date of event', 'Note'], widths: [18, 48], rows: 40,
@@ -1456,10 +1780,11 @@ function dataSheet(){
   const rows = [head];
   for (let i = 0; i < k.rows; i++) rows.push(Array(head.length).fill({ v: '', s: 'input' }));
   const min = isT() ? 'Collect at least 15 events if you can. With fewer, treat the limits as provisional.'
+    : isXS() ? 'Collect at least 20 subgroups if you can. With fewer, treat the limits as trial limits.'
     : isCount() ? `Collect at least 20 periods if you can. Process limits appear once there are ${MIN_COUNT_LIMITS} points, and get more reliable with more.`
     : 'Collect at least 20 periods if you can. With fewer than 15, treat the limits as provisional.';
   const notes = [
-    `Collecting data for ${state.type === 'xmr' ? 'an' : 'a'} ${k.name}`,
+    `Collecting data for ${state.type === 'xmr' || isXS() ? 'an' : 'a'} ${k.name}`,
     'Before you start',
     '1. Write down exactly what you are measuring: what counts, what doesn’t, and where the data comes from. This makes sure everyone collects it the same way every time.',
     isT() ? '2. Decide who will record each event and how you will hear about it, so none are missed.' : '2. Choose how often you will plot it, each week or each month, and keep to it.',
@@ -1484,13 +1809,13 @@ function importSheet(book, h){
   const rows = h.sheet('Data') || (first && first.rows);
   if (!rows) return new Error('That workbook doesn’t have a Data sheet. Use a data sheet downloaded from this tool.');
   const head = (rows[0] || []).map(v => String(v).trim().toLowerCase());
-  const t = /^date of event/.test(head[0] || '') ? 't' : /^count \(met/.test(head[1] || '') ? 'p' : head[1] === 'events' ? 'u'
+  const t = /^date of event/.test(head[0] || '') ? 't' : /^subgroup/.test(head[0] || '') ? 'xbars' : /^count \(met/.test(head[1] || '') ? 'p' : head[1] === 'events' ? 'u'
     : head[1] === 'count of events' ? 'c' : head[0] === 'period' && (head.length <= 2 || (head.length === 3 && head[2] === 'note')) ? 'xmr' : '';
   if (t) setType(t);
   const n = h.count(rows);
   if (!n) return new Error('That data sheet has no rows filled in yet.');
   h.put('#data', h.tsv(rows));
-  return `Imported ${n} ${n === 1 ? 'row' : 'rows'} as ${state.type === 'xmr' ? 'an' : 'a'} ${SHEET[state.type].name}.`;
+  return `Imported ${n} ${n === 1 ? 'row' : 'rows'} as ${state.type === 'xmr' || isXS() ? 'an' : 'a'} ${SHEET[state.type].name}.`;
 }
 
 /* ---------- Shared toolbar (Data sheet, Example, Open, Save, Export) ---------- */
@@ -1521,6 +1846,6 @@ if (window.matchMedia) window.matchMedia('(prefers-color-scheme: dark)').addEven
 
 const askedType = new URLSearchParams(location.search).get('type');
 state.type = TYPES.includes(askedType) ? askedType : 'xmr';
-if (state.type === 't') ['#shiftLen', '#trendLen'].forEach(id => { $(id).value = RUN_DEFAULT.t; });
+if (state.type !== 'xmr'){ $('#shiftLen').value = RUN_DEFAULT[state.type]; $('#trendLen').value = TREND_DEFAULT[state.type]; }
 readForm(); readData(); renderAll();
 })();
