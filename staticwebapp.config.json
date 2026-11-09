@@ -6,7 +6,9 @@
     { "route": "/p_chart", "redirect": "/spc_tool/?type=p", "statusCode": 301 },
     { "route": "/p_chart/*", "redirect": "/spc_tool/?type=p", "statusCode": 301 },
     { "route": "/t_chart", "redirect": "/spc_tool/?type=t", "statusCode": 301 },
-    { "route": "/t_chart/*", "redirect": "/spc_tool/?type=t", "statusCode": 301 }
+    { "route": "/t_chart/*", "redirect": "/spc_tool/?type=t", "statusCode": 301 },
+    { "route": "/xbar_s_chart", "redirect": "/spc_tool/?type=xbars", "statusCode": 301 },
+    { "route": "/xbar_s_chart/*", "redirect": "/spc_tool/?type=xbars", "statusCode": 301 }
   ],
   "responseOverrides": {
     "404": {

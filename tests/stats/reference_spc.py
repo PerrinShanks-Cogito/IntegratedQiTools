@@ -236,6 +236,132 @@ def spc_t(days, breaks=(), shift_len=7, trend_len=7, use_trend=True, direction="
     return dict(gaps=gaps, segs=[{k: g[k] for k in keep} for g in segs], events=events, status=spc_status(flags, direction))
 
 
+# ------------------------------------------------------------------ X-bar and S
+# Provost and Murray, The Health Care Data Guide: centre lines weighted by
+# subgroup size, X-bar limits at the mean +/- A3 x S-bar and S limits at B3 and
+# B4 x S-bar for each subgroup's size. Rules, on both charts: a point outside a
+# limit; 8 in a row on one side of the centre line; 6 in a row up or down; 2 of
+# 3 in a row in the outer third on one side; 15 in a row in the inner third. A
+# point on the centre line, or a repeated value, neither adds to nor breaks a run.
+def c4(n):
+    from scipy.special import gammaln
+    return math.sqrt(2 / (n - 1)) * math.exp(gammaln(n / 2) - gammaln((n - 1) / 2))
+
+
+def xbar_s_signals(v, lim, segs, shift_len=8, trend_len=6, two_three=True, hug=True):
+    flags = [dict(hi=False, lo=False, mid=False, sides={}) for _ in v]
+    events = []
+
+    def mark(i, side, rule):
+        if side == "mid":
+            flags[i]["mid"] = True
+        else:
+            flags[i][side] = True
+            flags[i]["sides"][rule] = side
+
+    def add(rule, side, idx):
+        for q in idx:
+            mark(q, side, rule)
+        events.append({"rule": rule, "side": side, "from": idx[0], "to": idx[-1]})
+
+    for g in segs:
+        if not g["ok"]:
+            continue
+        s, e = g["s"], g["e"]
+        for i in range(s, e):
+            if v[i] > lim[i]["ucl"]:
+                add("outside", "hi", [i])
+            elif v[i] < lim[i]["lcl"]:
+                add("outside", "lo", [i])
+        # shift: drop points on the centre line, then look for runs on one side
+        pts = [(i, sign(v[i] - lim[i]["mean"])) for i in range(s, e) if v[i] != lim[i]["mean"]]
+        k = 0
+        while k < len(pts):
+            j = k
+            while j + 1 < len(pts) and pts[j + 1][1] == pts[k][1]:
+                j += 1
+            if j - k + 1 >= shift_len:
+                add("shift", "hi" if pts[k][1] > 0 else "lo", [p[0] for p in pts[k:j + 1]])
+            k = j + 1
+        # trend: drop repeated values, then look for runs of moves the same way
+        moves = [(i, sign(v[i] - v[i - 1])) for i in range(s + 1, e) if v[i] != v[i - 1]]
+        k = 0
+        while k < len(moves):
+            j = k
+            while j + 1 < len(moves) and moves[j + 1][1] == moves[k][1]:
+                j += 1
+            if j - k + 2 >= trend_len:
+                start = moves[k][0] - 1
+                end = moves[j + 1][0] - 1 if j + 1 < len(moves) else e - 1
+                add("trend", "hi" if moves[k][1] > 0 else "lo", list(range(start, end + 1)))
+            k = j + 1
+        if two_three:
+            for i in range(s, e - 2):
+                w = [i, i + 1, i + 2]
+                hi = [j for j in w if lim[j]["up2"] < v[j] <= lim[j]["ucl"]]
+                lo = [j for j in w if lim[j]["lcl"] <= v[j] < lim[j]["lo2"]]
+                if len(hi) >= 2:
+                    add("twothree", "hi", hi)
+                if len(lo) >= 2:
+                    add("twothree", "lo", lo)
+        if hug:
+            inner = [lim[i]["lo1"] < v[i] < lim[i]["up1"] for i in range(s, e)] + [False]
+            start = s
+            for i in range(s, e + 1):
+                if inner[i - s]:
+                    continue
+                if i - start >= 15:
+                    add("hug", "mid", list(range(start, i)))
+                start = i + 1
+    seg_of = lambda i: next(k for k, g in enumerate(segs) if g["s"] <= i < g["e"])
+    events.sort(key=lambda x: (x["rule"], x["side"], x["from"]))
+    merged = []
+    for ev in events:
+        q = merged[-1] if merged else None
+        if q and q["rule"] == ev["rule"] and q["side"] == ev["side"] and ev["from"] <= q["to"] + 1 and seg_of(ev["from"]) == seg_of(q["to"]):
+            q["to"] = max(q["to"], ev["to"])
+        else:
+            merged.append(dict(ev))
+    merged.sort(key=lambda x: (x["from"], x["rule"]))
+    return merged, flags
+
+
+def xbar_s_status(flags, direction):
+    base = spc_status(flags, direction)
+    return ["hug" if f["mid"] and st == "common" else st for f, st in zip(flags, base)]
+
+
+def spc_xbar_s(groups, breaks=(), base_n=None, shift_len=8, trend_len=6, two_three=True, hug=True, direction="up"):
+    n = [len(g) for g in groups]
+    xbar = [float(np.mean(g)) for g in groups]
+    sd = [float(np.std(g, ddof=1)) for g in groups]
+    segs = []
+    for s, e in segments(len(groups), breaks):
+        be = min(s + base_n, e) if base_n and base_n >= 2 else e
+        N = sum(n[s:be])
+        mean = sum(n[i] * xbar[i] for i in range(s, be)) / N
+        sbar = sum(n[i] * sd[i] for i in range(s, be)) / N
+        segs.append(dict(s=s, e=e, mean=mean, sBar=sbar, ok=be - s >= 2 and sbar > 0))
+    lim, slim = [], []
+    for i in range(len(groups)):
+        g = next(g for g in segs if g["s"] <= i < g["e"])
+        c = c4(n[i])
+        a3 = 3 / (c * math.sqrt(n[i]))
+        sx = a3 * g["sBar"] / 3
+        ss = g["sBar"] * math.sqrt(1 - c * c) / c
+        b3, b4 = max(0.0, 1 - 3 * math.sqrt(1 - c * c) / c), 1 + 3 * math.sqrt(1 - c * c) / c
+        lim.append(dict(mean=g["mean"], ucl=g["mean"] + a3 * g["sBar"], lcl=g["mean"] - a3 * g["sBar"],
+                        up2=g["mean"] + 2 * sx, lo2=g["mean"] - 2 * sx, up1=g["mean"] + sx, lo1=g["mean"] - sx))
+        slim.append(dict(mean=g["sBar"], ucl=b4 * g["sBar"], lcl=b3 * g["sBar"],
+                         up2=g["sBar"] + 2 * ss, lo2=g["sBar"] - 2 * ss, up1=g["sBar"] + ss, lo1=g["sBar"] - ss))
+    ev, fl = xbar_s_signals(xbar, lim, segs, shift_len, trend_len, two_three, hug)
+    sev, sfl = xbar_s_signals(sd, slim, segs, shift_len, trend_len, two_three, hug)
+    keep = ("mean", "ucl", "lcl")
+    return dict(segs=[{k: g[k] for k in ("mean", "sBar", "ok")} for g in segs],
+                lim=[{k: l[k] for k in keep} for l in lim], sLim=[{k: l[k] for k in keep} for l in slim],
+                events=ev, status=xbar_s_status(fl, direction), sEvents=sev, sStatus=xbar_s_status(sfl, "none"))
+
+
 # ------------------------------------------------------------------ run chart
 EPS = 1e-9
 

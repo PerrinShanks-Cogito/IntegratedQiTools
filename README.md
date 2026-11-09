@@ -17,7 +17,7 @@ chi-squared test and Weibull reliability analysis, which were all built here, an
 built here from the NHS Improvement funnel plot tool (version 2.0), and the T
 chart for rare events, which was built here from NHS England's T chart rare
 events SPC tool (version 2.0), and the P chart, which was built here from NHS
-Improvement's SPC P chart tool (version 3.0)):
+Improvement's SPC P chart tool (version 3.0), and the X-bar and S chart in the SPC tool, which was built here following the limits and special cause rules in Provost and Murray's *The Health Care Data Guide: Learning from Data for Improvement*):
 
 | Tool | Path |
 | --- | --- |
@@ -30,7 +30,7 @@ Improvement's SPC P chart tool (version 3.0)):
 | Tree plot (treemap) | `/tree_plot/` |
 | Bar chart | `/bar_chart/` |
 | Run chart | `/run_chart/` |
-| SPC chart (XmR, P, U, C and T charts) | `/spc_tool/` (`/p_chart/` and `/t_chart/` redirect to `/spc_tool/?type=p` and `?type=t`) |
+| SPC chart (XmR, X-bar and S, P, U, C and T charts) | `/spc_tool/` (`/p_chart/`, `/t_chart/` and `/xbar_s_chart/` redirect to `/spc_tool/?type=p`, `?type=t` and `?type=xbars`) |
 | Histogram | `/histogram/` |
 | Box and whisker plot | `/box_plot/` |
 | ANOVA (one-way analysis of variance) | `/anova/` |

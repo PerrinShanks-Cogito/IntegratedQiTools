@@ -27,15 +27,19 @@ const CALLS = {
   // then compute() works out the limits and signals with the given settings.
   // Each case gets a fresh copy of the tool, so settings don't carry over.
   spc: tool => (kind, data, opts) => {
-    const S = load(tool, ["compute", "state", "parseXmr", "parseP", "parseC", "parseT"]);
+    const S = load(tool, ["compute", "state", "parseXmr", "parseP", "parseC", "parseT", "parseXbarS"]);
     const text = kind === "xmr" || kind === "t" ? data.join("\n")
+      : kind === "xbars" ? data.map((g, i) => `S${i + 1}\t${g.join("\t")}`).join("\n")
       : kind === "c" ? data.map((c, i) => `P${i + 1} ${c}`).join("\n")
       : data.map(([num, den], i) => `P${i + 1} ${num} ${den}`).join("\n");
-    const r = kind === "xmr" ? S.parseXmr(text) : kind === "c" ? S.parseC(text) : kind === "t" ? S.parseT(text) : S.parseP(text, kind);
+    const r = kind === "xbars" ? S.parseXbarS(text) : kind === "xmr" ? S.parseXmr(text) : kind === "c" ? S.parseC(text) : kind === "t" ? S.parseT(text) : S.parseP(text, kind);
     Object.assign(S.state, { type: kind, rows: r.rows, events: r.events || [] }, opts, { breaks: new Set(opts.breaks || []) });
     const m = S.compute();
     const pick = (o, keys) => Object.fromEntries(keys.map(k => [k, o[k]]));
     const events = m.events.map(e => pick(e, ["rule", "side", "from", "to"]));
+    if (kind === "xbars") return { segs: m.segs.map(g => pick(g, ["mean", "sBar", "ok"])), lim: m.lim.map(l => pick(l, ["mean", "ucl", "lcl"])),
+      sLim: m.sLim.map(l => pick(l, ["mean", "ucl", "lcl"])), events, status: m.status,
+      sEvents: m.sEvents.map(e => pick(e, ["rule", "side", "from", "to"])), sStatus: m.sStatus };
     if (kind === "xmr") return { segs: m.segs.map(g => pick(g, ["mean", "mrBar", "ucl", "lcl", "up2", "lo2", "ok"])), events, status: m.status };
     if (kind === "t") return { gaps: r.rows.map(x => x.gap), segs: m.segs.map(g => pick(g, ["tMean", "mrBar", "mean", "ucl", "lcl"])), events, status: m.status };
     return { ok: m.ok, lim: m.lim.map(l => pick(l, ["mean", "ucl", "lcl", "up2", "lo2"])), events, status: m.status };
