@@ -1284,11 +1284,14 @@ function tableRows(){
   }
   if (isXS()){
     const n6 = v => isFinite(v) ? String(+v.toFixed(6)) : '';
-    const rows = [['Subgroup', 'Label', 'Measurements (n)', 'Average', 'Standard deviation', 'Mean of averages', 'Lower limit', 'Upper limit', 'Signal', 'Mean standard deviation', 'S lower limit', 'S upper limit', 'S chart signal', 'Note']];
+    // One row per measurement, as in the data sheet, with its subgroup's results beside it,
+    // so every measurement is there and the table can be filtered or pivoted in Excel
+    const rows = [['Subgroup', 'Label', 'Measurement', 'Value', 'Measurements in subgroup (n)', 'Subgroup average', 'Subgroup standard deviation', 'Mean of averages', 'Lower limit', 'Upper limit', 'Signal', 'Mean standard deviation', 'S lower limit', 'S upper limit', 'S chart signal', 'Note']];
     state.rows.forEach((r, i) => {
       const L = model.lim[i], S = model.sLim[i];
-      rows.push([i + 1, r.label, r.n, n6(r.mean), n6(r.sd), n6(L.mean), L.ok ? n6(L.lcl) : '', L.ok ? n6(L.ucl) : '', signalName(model.status[i]) || 'Common cause',
-        n6(S.mean), S.ok ? n6(S.lcl) : '', S.ok ? n6(S.ucl) : '', model.sStatus[i] === 'common' ? 'Common cause' : 'Special cause', r.note]);
+      const res = [r.n, n6(r.mean), n6(r.sd), n6(L.mean), L.ok ? n6(L.lcl) : '', L.ok ? n6(L.ucl) : '', signalName(model.status[i]) || 'Common cause',
+        n6(S.mean), S.ok ? n6(S.lcl) : '', S.ok ? n6(S.ucl) : '', model.sStatus[i] === 'common' ? 'Common cause' : 'Special cause'];
+      r.vals.forEach((v, k) => rows.push([i + 1, r.label, k + 1, v, ...res, k === 0 ? r.note : '']));
     });
     return rows;
   }
