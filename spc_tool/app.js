@@ -1775,11 +1775,24 @@ const SHEET = {
     ]
   }
 };
+// The data already entered, as rows in the data sheet's columns, so the sheet can be added to
+// and imported again. A T chart's dates are written day/month/year, as the sheet asks for.
+function sheetData(){
+  if (!$('#data').value.trim()) return [];
+  const dmy = t => { const d = new Date(t); return `${p2(d.getUTCDate())}/${p2(d.getUTCMonth() + 1)}/${d.getUTCFullYear()}` + (state.hasTime ? ` ${p2(d.getUTCHours())}:${p2(d.getUTCMinutes())}` : ''); };
+  if (isT()) return state.events.map(e => [dmy(e.t), e.note || '']);
+  if (isXS()) return state.rows.flatMap(r => r.vals.map((v, k) => [r.label, v, k === 0 ? r.note : '']));
+  if (isC()) return state.rows.map(r => [r.label, r.num, r.note]);
+  if (isCount()) return state.rows.map(r => [r.label, r.num, r.den, r.note]);
+  return state.rows.map(r => [r.label, r.value, r.note]);
+}
 function dataSheet(){
   const k = SHEET[state.type];
   const head = k.head().map(v => ({ v, s: 'head' }));
-  const rows = [head];
-  for (let i = 0; i < k.rows; i++) rows.push(Array(head.length).fill({ v: '', s: 'input' }));
+  const rows = [head], have = sheetData();
+  have.forEach(r => rows.push(r.map(v => ({ v: v === undefined || v === null ? '' : v, s: 'input' }))));
+  // Room to add more: the usual blank rows, or 20 after data already entered
+  for (let i = 0; i < (have.length ? 20 : k.rows); i++) rows.push(Array(head.length).fill({ v: '', s: 'input' }));
   const min = isT() ? 'Collect at least 15 events if you can. With fewer, treat the limits as provisional.'
     : isXS() ? 'Collect at least 20 subgroups if you can. With fewer, treat the limits as trial limits.'
     : isCount() ? `Collect at least 20 periods if you can. Process limits appear once there are ${MIN_COUNT_LIMITS} points, and get more reliable with more.`
@@ -1839,7 +1852,7 @@ FocusActions.mount({
   afterOpen: () => { clearTimeout(parseTimer); readForm(); readData(); renderAll(); },
   ready: () => !!model,
   exports: trackExports(['png', 'svg', 'copyimg', 'csv', 'copytable', 'copysummary'].map(type => ({ type, run: () => act(type) }))),
-  template: { title: 'Download a spreadsheet to collect your data in, set up for the chart you have chosen', fileName: () => `${state.type}-chart-data-sheet.xlsx`, sheets: dataSheet, import: importSheet }
+  template: { title: 'Download a spreadsheet set up for the chart you have chosen, with any data you have entered, to collect your data in', fileName: () => `${state.type}-chart-data-sheet.xlsx`, sheets: dataSheet, import: importSheet, filled: () => sheetData().length > 0 }
 });
 
 let rz; new ResizeObserver(() => { clearTimeout(rz); rz = setTimeout(drawCharts, 80); }).observe(out);
