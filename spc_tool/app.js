@@ -1159,7 +1159,7 @@ function renderAllInner(){
     const ex = isP() ? 'Month\tSeen in 4 hours\tAttended\nApr 2024\t412\t530\nMay 2024\t398\t511\nJun 2024\t431\t547'
       : isU() ? 'Month\tFalls\tBed days\nApr 2024\t12\t3850\nMay 2024\t9\t3920\nJun 2024\t14\t3710'
       : isC() ? 'Month\tComplaints\nApr 2024\t7\nMay 2024\t4\nJun 2024\t9'
-      : isXS() ? 'Week\tMinutes to triage\nWk 1\t14\t22\t9\t31\t17\nWk 2\t19\t12\t25\t15\nWk 3\t11\t28\t16\t20\t13' : isT() ? 'Event date\n03/01/2024\n29/01/2024\n14/02/2024' : 'Month\tDays\nApr 2024\t42\nMay 2024\t39\nJun 2024\t45';
+      : isXS() ? 'Subgroup (period)\tMinutes to triage\tNote\nWk 1\t14\nWk 1\t22\nWk 1\t9\nWk 2\t19\nWk 2\t12\nWk 2\t25' : isT() ? 'Event date\n03/01/2024\n29/01/2024\n14/02/2024' : 'Month\tDays\nApr 2024\t42\nMay 2024\t39\nJun 2024\t45';
     const ask = isP() ? 'Paste at least two periods on the left, each with a count and a total, to draw a chart.'
       : isU() ? 'Paste at least two periods on the left, each with a count and an exposure, to draw a chart.'
       : isC() ? 'Paste at least two periods on the left, each with a count, to draw a chart.'
@@ -1453,8 +1453,8 @@ const TYPE_TEXT = {
     title: 'e.g. Complaints each month', dir: 'Improvement is when the count goes'
   },
   xbars: {
-    placeholder: 'Paste from Excel, e.g.\nWeek\tMinutes to triage\nWk 1\t14\t22\t9\t31\nWk 2\t19\t12\t25\t15\t18\nor one measurement per line:\nWk 1\t14\nWk 1\t22',
-    hint: 'Each subgroup needs at least two measurements, such as the waiting times of a sample of patients each week. Paste one subgroup per line, its label then each measurement across the row, or one measurement per line with its subgroup label beside it: lines in a row with the same label, or a blank label, make one subgroup. Subgroups can be different sizes. Anything that isn’t a number is shown as a note. A header row is fine.',
+    placeholder: 'Paste from Excel, e.g.\nSubgroup (period)\tMinutes to triage\tNote\nWk 1\t14\nWk 1\t22\nWk 1\t9\nWk 2\t19\tNew streaming nurse\nWk 2\t12',
+    hint: 'One measurement per line, oldest first: the subgroup it belongs to, such as the week, then the measurement, then an optional note. Lines in a row with the same subgroup, or a blank one, make one subgroup, and each subgroup needs at least two measurements. Subgroups can be different sizes. You can also paste one subgroup per line, with its measurements across the row. A header row is fine.',
     title: 'e.g. Minutes from arrival to triage', dir: 'Improvement is when the average goes'
   },
   t: {
@@ -1667,11 +1667,12 @@ function loadExample(){
     // after a streaming nurse starts at the front door
     let seed = 30; const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
     const norm = () => Math.sqrt(-2 * Math.log(rnd() || 1e-9)) * Math.cos(2 * Math.PI * rnd());
-    const lines = ['Week\tMinutes to triage'];
+    // Laid out like the data sheet: one measurement per line, with the note on the subgroup's first line
+    const lines = ['Subgroup (period)\tMinutes to triage\tNote'];
     for (let w = 0; w < 26; w++){
       const n = 4 + (w * 7 % 3), mu = w < 16 ? 18 : 13, sd = 4;
       const vals = Array.from({ length: n }, () => Math.max(1, Math.round(mu + sd * norm())));
-      lines.push(`Wk ${w + 1}\t${vals.join('\t')}${w === 16 ? '\tStreaming nurse started' : ''}`);
+      vals.forEach((v, k) => lines.push(`Wk ${w + 1}\t${v}${w === 16 && k === 0 ? '\tStreaming nurse started' : ''}`));
     }
     $('#data').value = lines.join('\n');
     $('#title').value = 'Minutes from arrival to triage';
