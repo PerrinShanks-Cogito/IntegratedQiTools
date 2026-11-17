@@ -165,3 +165,10 @@
   hidden: true
   group: Share your work
   description: Follow the FOCUS stages, from Find the opportunity to Sustain the benefit, to the programme document you need next, such as the scoping document, RAID log, highlight report or closure report, and see each one filled in for a worked example.
+
+- id: attendee_upload
+  name: Attendee upload formatter
+  status: Alpha
+  hidden: true
+  group: Admin
+  description: Turn the weekly course attendee export into rows for the SharePoint training list, with a table of event types you can add to.

@@ -167,8 +167,9 @@
   /* ---------- blank .xlsx workbooks for collecting data ----------
      sheets: [{ name, cols: [widths], rows: [[cell]], freeze?: rows }]
      A cell is a string or number, or { v, s } where s is a style:
-     "head" (bold, shaded), "input" (a box to fill in), "title" or "wrap". */
-  const XSTYLE = { head: 1, input: 2, title: 3, wrap: 4 };
+     "head" (bold, shaded), "input" (a box to fill in), "title", "wrap" or
+     "date" (a number that is an Excel date serial, shown dd/mm/yyyy hh:mm:ss). */
+  const XSTYLE = { head: 1, input: 2, title: 3, wrap: 4, date: 5 };
   const xmlEsc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   const colName = i => { let n = ""; for (i++; i; i = Math.floor((i - 1) / 26)) n = String.fromCharCode(65 + (i - 1) % 26) + n; return n; };
   function sheetXml(sh) {
@@ -187,16 +188,18 @@
       (cols ? "<cols>" + cols + "</cols>" : "") + "<sheetData>" + rows + "</sheetData></worksheet>";
   }
   const STYLES = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' +
+    '<numFmts count="1"><numFmt numFmtId="164" formatCode="dd/mm/yyyy hh:mm:ss"/></numFmts>' +
     '<fonts count="3"><font><sz val="11"/><name val="Arial"/></font><font><b/><sz val="11"/><name val="Arial"/></font><font><b/><sz val="14"/><name val="Arial"/></font></fonts>' +
     '<fills count="4"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill>' +
     '<fill><patternFill patternType="solid"><fgColor rgb="FFDCE9F7"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFFFF7DC"/></patternFill></fill></fills>' +
     '<borders count="2"><border/><border><left style="thin"><color rgb="FFAEB7BD"/></left><right style="thin"><color rgb="FFAEB7BD"/></right><top style="thin"><color rgb="FFAEB7BD"/></top><bottom style="thin"><color rgb="FFAEB7BD"/></bottom></border></borders>' +
-    '<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="5">' +
+    '<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="6">' +
     '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>' +
     '<xf numFmtId="0" fontId="1" fillId="2" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1"/>' +
     '<xf numFmtId="0" fontId="0" fillId="3" borderId="1" xfId="0" applyFill="1" applyBorder="1"/>' +
     '<xf numFmtId="0" fontId="2" fillId="0" borderId="0" xfId="0" applyFont="1"/>' +
-    '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment wrapText="1" vertical="top"/></xf></cellXfs>' +
+    '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment wrapText="1" vertical="top"/></xf>' +
+    '<xf numFmtId="164" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/></cellXfs>' +
     '<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>';
   const CRC = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
   const crc32 = b => { let c = 0xFFFFFFFF; for (let i = 0; i < b.length; i++) c = CRC[(c ^ b[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; };

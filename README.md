@@ -48,6 +48,7 @@ Improvement's SPC P chart tool (version 3.0), and the X-bar and S chart in the S
 | Admin demand and capacity model (hidden) | `/admin_demand_capacity/` |
 | A3 report | `/a3_report/` |
 | Programme guide (which programme document next, with worked examples) (hidden) | `/programme_guide/` |
+| Attendee upload formatter (CITI attendee export to SharePoint list rows) (hidden) | `/attendee_upload/` |
 
 ## How it fits together
 
@@ -170,6 +171,31 @@ Improvement's SPC P chart tool (version 3.0), and the X-bar and S chart in the S
   the matching directive, or the browser will block it. The OWASP ASVS
   Level 1 security record is in `docs/security/asvs-level-1.md`, with the
   changes that mean it needs reviewing; `docs/` is not published.
+
+## Attendee upload formatter
+
+`/attendee_upload/` replaces the Friday Office Script (`attendeelistformatv1`)
+that turned the course attendee export into rows for the SharePoint training
+list. It is hidden from the landing page and menu (group Admin); the page
+works for anyone with the link.
+
+- Paste the export (Sheet 1 columns A to O, with or without the heading row)
+  or upload an .xlsx, .xlsm or .csv. With a heading row, columns are found by
+  name; without one, they are read in Sheet 1 order.
+- Each row becomes the 14 Sheet 2 columns: FullName = First Name & Last
+  Name, Name = Course Name & date completed (`dd/mm/yyyy 00:00:00`),
+  EventDate = date completed at midnight, Email = Email. TypeName,
+  EventTypeID, Medium and LengthHours come from the event types table, matched
+  on Course Name ignoring capitals and extra spaces. The other columns are
+  left blank.
+- The event types table can be edited on the page; changes are kept in that
+  browser (localStorage, event types only, never attendee data). Courses not
+  in the table are listed with an "Add as event type" button. The defaults
+  everyone starts with are in `attendee_upload/event_types.json`: use
+  Download event types on the page and replace that file to change them.
+- Export: Download for SharePoint (.xlsx, one sheet called Sheet2, EventDate
+  as a real date), Copy rows (no headings, to paste under existing rows in
+  grid view), Copy rows with headings, or CSV.
 
 ## Programme guide
 

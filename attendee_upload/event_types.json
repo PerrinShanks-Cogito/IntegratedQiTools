@@ -1,0 +1,10 @@
+{
+  "about": "Default event types for the attendee upload formatter. Course name is matched against Sheet 1 column L (Course Name), ignoring case and extra spaces. To change the defaults everyone starts with, edit this file, or use Download event types on the page and replace this file with it.",
+  "eventTypes": [
+    { "course": "CITI: Intro to Improvement eLearning", "typeName": "Intro to Improvement eLearning", "eventTypeId": 8, "medium": "elearning", "lengthHours": 0.5 },
+    { "course": "CITI Bitesize series: Introduction to Data for Improvement", "typeName": "Introduction to Data", "eventTypeId": 9, "medium": "F2F", "lengthHours": 2.5 },
+    { "course": "CITI Bitesize series: Introduction to Project Management", "typeName": "Introduction to Project Management", "eventTypeId": 12, "medium": "F2F", "lengthHours": 3 },
+    { "course": "CITI Bitesize series: Introduction to SPC charts for Improvement", "typeName": "Introduction to SPC charts for Improvement", "eventTypeId": 13, "medium": "F2F", "lengthHours": 2 },
+    { "course": "CITI: Introduction to Excel for Improvement eLearning", "typeName": "Introduction to Excel", "eventTypeId": 11, "medium": "elearning", "lengthHours": 2 }
+  ]
+}
