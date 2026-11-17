@@ -5,27 +5,23 @@
    A to O) into rows for the SharePoint training list (Sheet 2 columns), with
    the same rules as the script:
      FullName  = B & " " & C (each trimmed)
-     TypeName, EventTypeID, Medium, LengthHours = event types table, looked up
-                 on the course name in L (ignoring capitals)
+     TypeName, EventTypeID, Medium, LengthHours = event types list
+                 (event_types.json, built from the ImpCommEventType export by
+                 _attendee_upload/build_event_types.py), looked up on the
+                 course name in L (ignoring capitals and extra spaces)
      Name      = L without a leading "CITI:", "CITI Bitesize series:" or
                  "CITI Academy:" (the script strips the first two),
                  plus " dd/mm/yyyy" from F unless L contains "elearning"
      F (date completed) goes to ElearningCompletionDate when the mapped
                  Medium is elearning, otherwise to EventDate
-     Scheduled = 1, Completed = 1, Email = E; the rest are blank. The attendee list never leaves the browser; only the
-   event types table is kept, in this browser's localStorage. */
+     Scheduled = 1, Completed = 1, Email = E; the rest are blank. The attendee list never leaves the browser and nothing is stored. */
 (function () {
   const $ = id => document.getElementById(id);
   const els = {
     data: $("data"), detected: $("detected"), result: $("result"),
-    fileIn: $("fileIn"), typesBody: $("typesBody"), typesIn: $("typesIn"), typesStatus: $("typesStatus")
+    fileIn: $("fileIn")
   };
-  const TYPES_KEY = "focus.attendee_upload.eventTypes";
-  // Course names of the defaults this browser has already been given, so
-  // defaults added to event_types.json later are added to a saved table, but
-  // ones the person removed don't come back.
-  const SEEN_KEY = "focus.attendee_upload.seenDefaults";
-  const DEFAULTS_URL = "/attendee_upload/event_types.json";
+  const TYPES_URL = "/attendee_upload/event_types.json";
 
   // Sheet 1 columns, in order (A to O)
   const IN_COLS = ["Employee number", "First Name", "Last Name", "Username", "Email", "Date completed", "Role",
@@ -41,95 +37,14 @@
   const say = msg => { if (window.FocusActions) FocusActions.say(msg); };
   const track = (name, props) => { try { if (window.trackToolEvent) window.trackToolEvent(name, props || {}); } catch (e) { /* analytics is optional */ } };
 
-  /* ---------- event types ---------- */
-  let defaults = [];
+  /* ---------- event types (from event_types.json) ---------- */
   let types = [];
-
-  function cleanType(t) {
-    const num = v => { const n = parseFloat(String(v == null ? "" : v).replace(",", ".")); return isFinite(n) ? n : ""; };
-    const typeName = String(t.typeName == null ? "" : t.typeName).trim();
-    // A blank course name means the course is called the same as its TypeName.
-    return { course: norm(t.course) || norm(typeName), typeName, eventTypeId: num(t.eventTypeId), medium: norm(t.medium), lengthHours: num(t.lengthHours) };
-  }
-  function saveTypes() {
-    try { localStorage.setItem(TYPES_KEY, JSON.stringify(types)); } catch (e) { /* private window: kept for this visit only */ }
-  }
-  function loadStoredTypes() {
-    try {
-      const raw = localStorage.getItem(TYPES_KEY);
-      if (!raw) return null;
-      const list = JSON.parse(raw);
-      return Array.isArray(list) ? list.map(cleanType) : null;
-    } catch (e) { return null; }
-  }
+  let typesError = false;
   function typeLookup() {
     const m = new Map();
-    types.forEach(t => { const c = t.course || t.typeName; if (norm(c) && !m.has(key(c))) m.set(key(c), t); });
+    types.forEach(t => { if (norm(t.course) && !m.has(key(t.course))) m.set(key(t.course), t); });
     return m;
   }
-  function typesSay(msg) { els.typesStatus.textContent = msg; }
-
-  function renderTypes(focusLast) {
-    const field = (i, name, label, type) =>
-      '<input type="' + (type || "text") + '"' + (type === "number" ? ' step="any"' : "") + ' data-i="' + i + '" data-k="' + name +
-      '" aria-label="' + label + ', row ' + (i + 1) + '" value="' + esc(types[i][name]) + '">';
-    els.typesBody.innerHTML = types.map((t, i) =>
-      '<tr><td class="c">' + field(i, "course", "Course name") + "</td><td>" + field(i, "typeName", "TypeName") +
-      '</td><td class="n">' + field(i, "eventTypeId", "EventTypeID", "number") + "</td><td>" + field(i, "medium", "Medium") +
-      '</td><td class="n">' + field(i, "lengthHours", "LengthHours", "number") +
-      '</td><td><button type="button" class="del" data-del="' + i + '" aria-label="Remove event type ' + (i + 1) + '">✕</button></td></tr>'
-    ).join("") || '<tr><td colspan="6" class="hint">No event types yet. Add one below.</td></tr>';
-    if (focusLast) { const f = els.typesBody.querySelector("tr:last-child input"); if (f) f.focus(); }
-  }
-  els.typesBody.addEventListener("input", e => {
-    const el = e.target, i = +el.dataset.i, k = el.dataset.k;
-    if (!k || !types[i]) return;
-    types[i][k] = el.type === "number" ? (el.value === "" ? "" : +el.value) : el.value;
-    saveTypes(); update();
-  });
-  els.typesBody.addEventListener("change", e => {
-    const el = e.target, i = +el.dataset.i;
-    if (!el.dataset.k || !types[i]) return;
-    types[i] = cleanType(types[i]);
-    const courseIn = els.typesBody.querySelector('input[data-i="' + i + '"][data-k="course"]');
-    if (courseIn && courseIn.value !== types[i].course) courseIn.value = types[i].course;
-    saveTypes();
-  });
-  els.typesBody.addEventListener("click", e => {
-    const b = e.target.closest("[data-del]"); if (!b) return;
-    const i = +b.dataset.del, name = types[i] && types[i].course;
-    if (name && !confirm("Remove the event type “" + name + "”?")) return;
-    types.splice(i, 1); saveTypes(); renderTypes(); update();
-    typesSay(name ? "Removed " + name + "." : "Removed the row.");
-  });
-  function addType(course) {
-    types.push(cleanType({ course: course || "" }));
-    saveTypes(); renderTypes(true); update();
-    typesSay(course ? "Added " + course + ". Fill in its TypeName, EventTypeID, Medium and LengthHours." : "Added a row.");
-  }
-  $("addTypeBtn").addEventListener("click", () => addType(""));
-  $("resetTypesBtn").addEventListener("click", () => {
-    if (!confirm("Replace the event types in this browser with the defaults? Any you've added here will be lost unless you download them first.")) return;
-    types = defaults.map(cleanType); saveTypes(); renderTypes(); update();
-    typesSay("Event types reset to the defaults.");
-  });
-  $("dlTypesBtn").addEventListener("click", () => {
-    const doc = { about: "Event types for the attendee upload formatter. Load this file on the page, or replace attendee_upload/event_types.json with it to change the defaults.", eventTypes: types.map(cleanType) };
-    FocusActions.saveFile("event_types.json", JSON.stringify(doc, null, 2) + "\n", "application/json").then(
-      ok => typesSay(ok ? "Downloaded event_types.json." : "Download cancelled."), () => typesSay("The file couldn’t be saved here."));
-  });
-  $("ulTypesBtn").addEventListener("click", () => els.typesIn.click());
-  els.typesIn.addEventListener("change", () => {
-    const f = els.typesIn.files && els.typesIn.files[0]; els.typesIn.value = "";
-    if (!f) return;
-    const big = FocusActions.tooBig(f, "project"); if (big) return typesSay(big);
-    f.text().then(t => {
-      const doc = JSON.parse(t), list = Array.isArray(doc) ? doc : doc && doc.eventTypes;
-      if (!Array.isArray(list)) throw new Error("bad");
-      types = list.map(cleanType); saveTypes(); renderTypes(); update();
-      typesSay("Loaded " + types.length + " event type" + (types.length === 1 ? "" : "s") + " from " + f.name + ".");
-    }).catch(() => typesSay("That file isn't an event types file."));
-  });
 
   /* ---------- reading the attendee export ---------- */
   function splitText(text) {
@@ -268,8 +183,10 @@
     const ready = c.unmatched.length === 0 && !c.badDates;
     let h = '<p class="summary">' + (ready ? n + " row" + (n === 1 ? "" : "s") + " ready to upload." : matched + " of " + n + " rows matched to an event type.") + "</p>";
     if (c.unmatched.length) {
-      h += '<div class="unmatched"><b>Course' + (c.unmatched.length === 1 ? "" : "s") + " not in the event types table</b>" +
-        '<ul>' + c.unmatched.map(u => "<li>" + esc(u.course) + " (" + u.n + " row" + (u.n === 1 ? "" : "s") + ')<button type="button" data-addcourse="' + esc(u.course) + '">Add as event type</button></li>').join("") + "</ul></div>";
+      h += '<div class="unmatched"><b>Course' + (c.unmatched.length === 1 ? "" : "s") + " not in the event types list</b>" +
+        '<ul>' + c.unmatched.map(u => "<li>" + esc(u.course) + " (" + u.n + " row" + (u.n === 1 ? "" : "s") + ")</li>").join("") + "</ul>" +
+        '<p class="hint" style="margin:.5rem 0 0">' + (typesError ? "The event types list couldn’t be loaded. Reload the page to try again."
+          : "These rows have no TypeName, EventTypeID, Medium or LengthHours. Add the event type to the database, then update the tool with the new ImpCommEventType export.") + "</p></div>";
     }
     if (issues.length) h += '<ul class="issues">' + issues.map(i => "<li>" + esc(i) + "</li>").join("") + "</ul>";
     const shown = ["FullName", "TypeName", "EventTypeID", "Name", "Medium", "LengthHours", "EventDate", "ElearningCompletionDate", "Scheduled", "Completed", "Email"];
@@ -283,11 +200,6 @@
       }).join("") + "</tr>").join("") + "</tbody></table></div>";
     els.result.innerHTML = h;
   }
-  els.result.addEventListener("click", e => {
-    const b = e.target.closest("[data-addcourse]"); if (!b) return;
-    addType(b.dataset.addcourse);
-    $("types-h").scrollIntoView({ behavior: "smooth", block: "start" });
-  });
 
   let timer = 0;
   els.data.addEventListener("input", () => { clearTimeout(timer); timer = setTimeout(update, 150); });
@@ -393,12 +305,6 @@
     example: loadExample, hasData: () => !!els.data.value.trim(),
     fileName: () => fileBase(),
     fields: 'section.panel[aria-labelledby="data-h"]',
-    getExtra: () => ({ eventTypes: types.map(cleanType) }),
-    setExtra: extra => {
-      if (extra && Array.isArray(extra.eventTypes) && extra.eventTypes.length) {
-        types = extra.eventTypes.map(cleanType); saveTypes(); renderTypes();
-      }
-    },
     afterOpen: () => update(),
     explain: { off: true },  // never send attendee rows to Copilot
     reset: () => { els.data.value = ""; update(); },
@@ -412,23 +318,12 @@
   });
 
   /* ---------- start ---------- */
-  const stored = loadStoredTypes();
-  fetch(DEFAULTS_URL, { credentials: "same-origin" })
+  // Event types used to be editable on the page and kept in localStorage.
+  try { localStorage.removeItem("focus.attendee_upload.eventTypes"); localStorage.removeItem("focus.attendee_upload.seenDefaults"); } catch (e) { /* nothing kept */ }
+  fetch(TYPES_URL, { credentials: "same-origin", cache: "no-cache" })
     .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
-    .then(doc => { defaults = (doc.eventTypes || []).map(cleanType); })
-    .catch(() => { defaults = []; typesSay("The default event types couldn't be loaded."); })
-    .then(() => {
-      let seen = null;
-      try { seen = JSON.parse(localStorage.getItem(SEEN_KEY) || "null"); } catch (e) { seen = null; }
-      if (stored) {
-        const have = new Set(stored.map(t => key(t.course)));
-        const old = new Set((Array.isArray(seen) ? seen : stored.map(t => t.course)).map(key));
-        const fresh = defaults.filter(d => !have.has(key(d.course)) && !old.has(key(d.course)));
-        types = stored.concat(fresh.map(cleanType));
-        if (fresh.length) { saveTypes(); typesSay("Added " + fresh.length + " new default event type" + (fresh.length === 1 ? "" : "s") + "."); }
-      } else types = defaults.map(cleanType);
-      try { localStorage.setItem(SEEN_KEY, JSON.stringify(defaults.map(d => d.course))); } catch (e) { /* not kept */ }
-      renderTypes(); update();
-    });
-  renderTypes(); update();
+    .then(doc => { types = Array.isArray(doc.eventTypes) ? doc.eventTypes : []; })
+    .catch(() => { typesError = true; say("The event types list couldn’t be loaded. Reload the page to try again."); })
+    .then(update);
+  update();
 })();

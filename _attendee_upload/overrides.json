@@ -1,0 +1,5 @@
+{
+  "about": "Corrections applied on top of ImpCommEventType.csv when building attendee_upload/event_types.json. Keyed by event type ID. typeName replaces the TypeName; useNotes false stops the EventTypeNotes being used as a course name; extraCourses adds more course names (as they appear in column L of the attendee export) that map to this ID. If the database is corrected, the matching entry here can be removed.",
+  "10": { "typeName": "Introduction to Excel F2F", "useNotes": false },
+  "11": { "extraCourses": ["CITI: Introduction to Excel for Improvement eLearning"] }
+}

@@ -47,6 +47,12 @@ jobs:
           ruby-version: "3.3"
           bundler-cache: true
 
+      # The attendee upload formatter's event types come from the database
+      # export in _attendee_upload/ImpCommEventType.csv, so replacing that
+      # file is enough to update them. Stops the deploy if the CSV has a problem.
+      - name: Build attendee upload event types
+        run: python3 _attendee_upload/build_event_types.py
+
       - name: Build Jekyll site
         run: bundle exec jekyll build
         env:
