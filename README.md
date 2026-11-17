@@ -174,44 +174,108 @@ Improvement's SPC P chart tool (version 3.0), and the X-bar and S chart in the S
 
 ## Attendee upload formatter
 
-`/attendee_upload/` replaces the Friday Office Script (`attendeelistformatv1`)
-that turned the course attendee export into rows for the SharePoint training
-list. It is hidden from the landing page and menu (group Admin); the page
-works for anyone with the link.
+`/attendee_upload/` turns the weekly CITI course attendee export into rows for
+the SharePoint training list. It replaces the Friday process of pasting the
+export into Sheet 1 of the "Friday COH upload to DB" workbook and running the
+`attendeelistformatv1` Office Script. It is hidden from the landing page and
+menu (group Admin, `hidden: true` in `_data/tools.yml`); the page works for
+anyone with the link. Like every tool, it runs in the browser: the attendee
+list is never uploaded or stored.
 
-- Paste the export (Sheet 1 columns A to O, with or without the heading row)
-  or upload an .xlsx, .xlsm or .csv. With a heading row, columns are found by
-  name; without one, they are read in Sheet 1 order.
-- Each row becomes the 14 Sheet 2 columns, by the same rules as the Office
-  Script: FullName = First Name & Last Name; TypeName, EventTypeID, Medium
-  and LengthHours from the event types list, matched on Course Name ignoring
-  capitals and extra spaces; Name =
-  Course Name without a leading `CITI:`, `CITI Bitesize series:` or
-  `CITI Academy:` (the script stripped only the first two), plus ` dd/mm/yyyy` unless the course name contains
-  "elearning"; the date completed (time kept) in ElearningCompletionDate when
-  the Medium is elearning, otherwise in EventDate; Scheduled = 1,
-  Completed = 1; Email = Email. Grouper, EngagementNotes and Facilitator1 are
-  blank.
-- Event types are looked up in `attendee_upload/event_types.json`, which is
-  built from the database's event type export,
-  `_attendee_upload/ImpCommEventType.csv` (columns ID, TypeName, LengthHours,
-  Medium, EventTypeNotes), by `_attendee_upload/build_event_types.py`. Each
-  event type matches its TypeName and, where EventTypeNotes starts with
-  "CITI", that course name too. `_attendee_upload/overrides.json` holds
-  corrections to the export (ID 10 renamed Introduction to Excel F2F, and the
-  CITI Excel eLearning course mapped to ID 11). Rows whose course isn't in the
-  list are flagged on the page.
-- **To add new event types:** export the event type table from the database
-  as CSV and replace `_attendee_upload/ImpCommEventType.csv` with it, keeping
-  that name (on GitHub: open the `_attendee_upload` folder, choose Add file,
-  Upload files, and drop in the new file with the same name). The deploy runs the script before building the
-  site, so the tool picks the new types up when it's deployed. The script
-  stops the deploy with a message if a column is missing or two event types
-  claim the same course name. To try it locally, run
-  `python3 _attendee_upload/build_event_types.py` and commit the JSON too.
-- Export: Download for SharePoint (.xlsx, one sheet called Sheet2, the two
-  date columns as real dates), Copy rows (no headings, to paste under existing rows in
-  grid view), Copy rows with headings, or CSV.
+### Friday steps
+
+1. Open `/attendee_upload/`.
+2. Paste the attendee export (the Sheet 1 columns, A to O), with or without
+   the heading row, or use **Upload a file** for an .xlsx, .xlsm or .csv. In a
+   workbook it uses the sheet called Sheet1, or else the first sheet with the
+   Sheet 1 headings. With a heading row, columns are found by name; without
+   one, they are read in Sheet 1 order.
+3. Check the result. Rows whose course isn't in the event types list, or
+   whose date completed can't be read, are highlighted, and the courses
+   missing from the list are named above the table (see
+   [Adding new event types](#adding-new-event-types)).
+4. **Export**, then one of:
+   - **Download for SharePoint (.xlsx)**: one sheet called Sheet2 with all 14
+     columns and the two date columns as real dates (`dd/mm/yyyy hh:mm:ss`).
+   - **Copy rows**: no headings, to paste under the existing rows in the
+     SharePoint list's grid view (Edit in grid view).
+   - **Copy rows with headings**, or **Data table (.csv)**.
+
+### How each row is built
+
+Sheet 1 columns: Employee number, First Name, Last Name, Username, Email,
+Date completed, Role, Division, Directorate, Department, Staff Group, Course
+Name, Cost centre, Site, Epic Username. Each row becomes the 14 Sheet 2
+columns, following the Office Script:
+
+| Sheet 2 column | Value |
+| --- | --- |
+| FullName | First Name and Last Name (B & C), each trimmed |
+| TypeName, EventTypeID, Medium, LengthHours | The event type whose course name matches Course Name (L), ignoring capitals and extra spaces; blank if none matches |
+| Name | Course Name without a leading `CITI:`, `CITI Bitesize series:` or `CITI Academy:`, then ` dd/mm/yyyy` from Date completed (F), except for courses with "elearning" in the name, which have no date |
+| EventDate | Date completed (F), with its time, when the event type's Medium isn't elearning (and when no event type matched) |
+| ElearningCompletionDate | Date completed (F), with its time, when the Medium is elearning |
+| Scheduled, Completed | 1 |
+| Email | Email (E) |
+| Grouper, EngagementNotes, Facilitator1 | Blank |
+
+Dates are read as dd/mm/yyyy or dd-Mon-yy (two-digit years under 30 are
+20xx, otherwise 19xx), with or without a time, or as Excel dates. Blank rows
+are skipped. Two things differ from the Office Script: it also strips
+`CITI Academy:`, and it matches course names whatever their spacing.
+
+### Event types
+
+The page looks course names up in `attendee_upload/event_types.json`. Don't
+edit that file by hand: it is built from three files in `_attendee_upload/`
+(a folder Jekyll doesn't publish):
+
+- `ImpCommEventType.csv` – the database's event type table, exported as CSV
+  with the columns ID, TypeName, LengthHours, Medium, Grouper and
+  EventTypeNotes (Grouper isn't used).
+- `overrides.json` – corrections to the export, by event type ID:
+  `typeName` replaces the TypeName, `"useNotes": false` stops the
+  EventTypeNotes being used as a course name, and `extraCourses` adds more
+  course names that map to the ID. It holds two corrections: ID 10 is renamed
+  "Introduction to Excel F2F" (its notes named the CITI eLearning course), and
+  "CITI: Introduction to Excel for Improvement eLearning" maps to ID 11
+  ("Introduction to Excel for Improvement eLearning"). If the database is
+  corrected, those entries can be removed.
+- `build_event_types.py` – builds the JSON. Each event type matches its
+  TypeName and, where its EventTypeNotes starts with "CITI" (the course's
+  name in the CITI export), that course name too. Spaces are tidied to single
+  spaces in TypeName and course names. It stops with a message, and writes
+  nothing, if a column is missing, a value that should be a number isn't, or
+  two event types claim the same course name.
+
+The deploy workflow runs `python3 _attendee_upload/build_event_types.py`
+before building the site, so the JSON on the live site always matches the
+CSV. If the script stops, the site isn't deployed and the live site keeps
+the previous version.
+
+### Adding new event types
+
+1. Add the new event types to the database.
+2. Export the event type table as CSV, in the same format as before.
+3. Replace `_attendee_upload/ImpCommEventType.csv` with it, keeping that
+   exact file name. On GitHub: open the `_attendee_upload` folder, choose
+   **Add file**, **Upload files**, drop in the new file and commit it to
+   `main` (or to a branch and merge it).
+4. The deploy rebuilds the event types and publishes them. Check the
+   workflow run in the Actions tab: if the "Build attendee upload event
+   types" step failed, its message says what to fix in the CSV (for example
+   "The course name 'Introduction to Data' belongs to both ID 9 and ID 47").
+   Fix the CSV, or add an entry to `overrides.json`, and upload it again.
+
+If a CITI course in the attendee export has a different name from the event
+type's TypeName, put the course name exactly as it appears in column L in the
+event type's EventTypeNotes in the database (starting "CITI"), or add it to
+`extraCourses` in `overrides.json`. To check the result before committing,
+run this from the repository root and look at the JSON it writes:
+
+```
+python3 _attendee_upload/build_event_types.py
+```
 
 ## Programme guide
 
