@@ -98,7 +98,7 @@ td.miss{color:var(--danger);font-weight:700}
 <div class="types-host">
   <section class="panel types-panel" aria-labelledby="types-h">
     <h2 id="types-h">Event types</h2>
-    <p class="hint">Each course name in column L is looked up here to fill in TypeName, EventTypeID, Medium and LengthHours. Changes are kept in this browser. Matching ignores capitals and extra spaces.</p>
+    <p class="hint">Each course name in column L is looked up here to fill in TypeName, EventTypeID, Medium and LengthHours. Leave the course name blank if it’s the same as the TypeName. Changes are kept in this browser. Matching ignores capitals and extra spaces.</p>
     <div class="types-wrap">
       <table class="types">
         <thead><tr><th scope="col">Course name (column L)</th><th scope="col">TypeName</th><th scope="col">EventTypeID</th><th scope="col">Medium</th><th scope="col">LengthHours</th><th scope="col"><span class="sr">Remove</span></th></tr></thead>
@@ -117,7 +117,7 @@ td.miss{color:var(--danger);font-weight:700}
 </div>
 
 <section class="notes" aria-label="How the rows are built">
-  <p><b>How each row is built</b> (the same rules as the attendeelistformatv1 Office Script): FullName is First Name and Last Name (B &amp; C). TypeName, EventTypeID, Medium and LengthHours come from the event types table. Name is the Course Name (L) without a leading “CITI:” or “CITI Bitesize series:”, followed by the date completed as dd/mm/yyyy, except for courses with “eLearning” in the name, which have no date. The date completed (F) goes in ElearningCompletionDate when the Medium is elearning, otherwise in EventDate. Scheduled and Completed are 1. Email is column E. Grouper, EngagementNotes and Facilitator1 are left blank.</p>
+  <p><b>How each row is built</b> (the rules of the attendeelistformatv1 Office Script, which this replaces): FullName is First Name and Last Name (B &amp; C). TypeName, EventTypeID, Medium and LengthHours come from the event types table. Name is the Course Name (L) without a leading “CITI:”, “CITI Bitesize series:” or “CITI Academy:”, followed by the date completed as dd/mm/yyyy, except for courses with “eLearning” in the name, which have no date. The date completed (F) goes in ElearningCompletionDate when the Medium is elearning, otherwise in EventDate. Scheduled and Completed are 1. Email is column E. Grouper, EngagementNotes and Facilitator1 are left blank.</p>
   <p><b>To upload:</b> use Export, then Download for SharePoint (.xlsx), or Copy rows and paste into the list's grid view (Edit in grid view). Rows whose course isn't in the event types table are highlighted: add the course above and the rows update straight away.</p>
 </section>
 

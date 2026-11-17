@@ -185,8 +185,9 @@ works for anyone with the link.
 - Each row becomes the 14 Sheet 2 columns, by the same rules as the Office
   Script: FullName = First Name & Last Name; TypeName, EventTypeID, Medium
   and LengthHours from the event types table, matched on Course Name ignoring
-  capitals and extra spaces; Name = Course Name without a leading `CITI:` or
-  `CITI Bitesize series:`, plus ` dd/mm/yyyy` unless the course name contains
+  capitals and extra spaces (a blank course name uses the TypeName); Name =
+  Course Name without a leading `CITI:`, `CITI Bitesize series:` or
+  `CITI Academy:` (the script stripped only the first two), plus ` dd/mm/yyyy` unless the course name contains
   "elearning"; the date completed (time kept) in ElearningCompletionDate when
   the Medium is elearning, otherwise in EventDate; Scheduled = 1,
   Completed = 1; Email = Email. Grouper, EngagementNotes and Facilitator1 are

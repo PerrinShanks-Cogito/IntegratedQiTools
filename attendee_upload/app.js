@@ -7,7 +7,8 @@
      FullName  = B & " " & C (each trimmed)
      TypeName, EventTypeID, Medium, LengthHours = event types table, looked up
                  on the course name in L (ignoring capitals)
-     Name      = L without a leading "CITI:" or "CITI Bitesize series:",
+     Name      = L without a leading "CITI:", "CITI Bitesize series:" or
+                 "CITI Academy:" (the script strips the first two),
                  plus " dd/mm/yyyy" from F unless L contains "elearning"
      F (date completed) goes to ElearningCompletionDate when the mapped
                  Medium is elearning, otherwise to EventDate
@@ -46,7 +47,9 @@
 
   function cleanType(t) {
     const num = v => { const n = parseFloat(String(v == null ? "" : v).replace(",", ".")); return isFinite(n) ? n : ""; };
-    return { course: norm(t.course), typeName: String(t.typeName == null ? "" : t.typeName).trim(), eventTypeId: num(t.eventTypeId), medium: norm(t.medium), lengthHours: num(t.lengthHours) };
+    const typeName = String(t.typeName == null ? "" : t.typeName).trim();
+    // A blank course name means the course is called the same as its TypeName.
+    return { course: norm(t.course) || norm(typeName), typeName, eventTypeId: num(t.eventTypeId), medium: norm(t.medium), lengthHours: num(t.lengthHours) };
   }
   function saveTypes() {
     try { localStorage.setItem(TYPES_KEY, JSON.stringify(types)); } catch (e) { /* private window: kept for this visit only */ }
@@ -61,7 +64,7 @@
   }
   function typeLookup() {
     const m = new Map();
-    types.forEach(t => { if (t.course && !m.has(key(t.course))) m.set(key(t.course), t); });
+    types.forEach(t => { const c = t.course || t.typeName; if (norm(c) && !m.has(key(c))) m.set(key(c), t); });
     return m;
   }
   function typesSay(msg) { els.typesStatus.textContent = msg; }
@@ -88,6 +91,8 @@
     const el = e.target, i = +el.dataset.i;
     if (!el.dataset.k || !types[i]) return;
     types[i] = cleanType(types[i]);
+    const courseIn = els.typesBody.querySelector('input[data-i="' + i + '"][data-k="course"]');
+    if (courseIn && courseIn.value !== types[i].course) courseIn.value = types[i].course;
     saveTypes();
   });
   els.typesBody.addEventListener("click", e => {
@@ -217,7 +222,7 @@
       const t = lookup.get(key(course));
       const fullName = norm(norm(get(r, "First Name")) + " " + norm(get(r, "Last Name")));
       const email = norm(get(r, "Email"));
-      const shortCourse = course.replace(/^CITI(?:\s+Bitesize\s+series)?:\s*/i, "");
+      const shortCourse = course.replace(/^CITI(?:\s+(?:Bitesize\s+series|Academy))?:\s*/i, "");
       const isElearningCourse = /elearning/i.test(course);
       const dateCol = t && norm(t.medium).toLowerCase() === "elearning" ? "ElearningCompletionDate" : "EventDate";
       if (!t && course) unmatched.set(key(course), { course, n: (unmatched.get(key(course)) || { n: 0 }).n + 1 });

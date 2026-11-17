@@ -1,5 +1,5 @@
 {
-  "about": "Default event types for the attendee upload formatter, from the ImpCommEventType table. Course name is matched against Sheet 1 column L (Course Name), ignoring capitals and extra spaces: it is the table's EventTypeNotes where that holds the CITI course name, otherwise the TypeName. To change the defaults everyone starts with, edit this file, or use Download event types on the page and replace this file with it.",
+  "about": "Default event types for the attendee upload formatter, from the ImpCommEventType table. Course name is matched against Sheet 1 column L (Course Name), ignoring capitals and extra spaces: it is the table's EventTypeNotes where that holds the CITI course name, otherwise the TypeName (a blank course name on the page also uses the TypeName). To change the defaults everyone starts with, edit this file, or use Download event types on the page and replace this file with it.",
   "eventTypes": [
     {"course": "CITI: Intro to Improvement eLearning", "typeName": "Intro to Improvement eLearning", "eventTypeId": 8, "medium": "elearning", "lengthHours": 0.5},
     {"course": "CITI Bitesize series: Introduction to Data for Improvement", "typeName": "Introduction to Data", "eventTypeId": 9, "medium": "F2F", "lengthHours": 2.5},
@@ -13,6 +13,7 @@
     {"course": "Evelina - ASM/DSM", "typeName": "Evelina - ASM/DSM", "eventTypeId": 5, "medium": "F2F", "lengthHours": 3},
     {"course": "Evelina - MAU", "typeName": "Evelina - MAU", "eventTypeId": 6, "medium": "F2F", "lengthHours": 3},
     {"course": "CITI Academy: Improvement Delivery Training", "typeName": "Improvement Delivery", "eventTypeId": 7, "medium": "F2F", "lengthHours": 14},
+    {"course": "Introduction to Excel F2F", "typeName": "Introduction to Excel F2F", "eventTypeId": 10, "medium": "F2F", "lengthHours": 3},
     {"course": "Introduction to Excel for Improvement eLearning", "typeName": "Introduction to Excel for Improvement eLearning", "eventTypeId": 11, "medium": "eLearning", "lengthHours": 2},
     {"course": "Nightingale Academy", "typeName": "Nightingale Academy", "eventTypeId": 14, "medium": "F2F", "lengthHours": 2.5},
     {"course": "Positive Action Program - Evolve - QI Intro", "typeName": "Positive Action Program - Evolve - QI Intro", "eventTypeId": 15, "medium": "Online", "lengthHours": 2},
@@ -25,7 +26,7 @@
     {"course": "Collaborative Event Staff", "typeName": "Collaborative Event Staff", "eventTypeId": 22, "medium": "F2F", "lengthHours": 7},
     {"course": "Positive Action Program - Evolve - Project management and quality improvement", "typeName": "Positive Action Program - Evolve - Project management and quality improvement", "eventTypeId": 23, "medium": "F2F", "lengthHours": 7},
     {"course": "Positive Action Program - Evolve - Data and Excel for improvement", "typeName": "Positive Action Program - Evolve - Data and Excel for improvement", "eventTypeId": 24, "medium": "F2F", "lengthHours": 7},
-    {"course": "Positive Action Program - Evolve - Project Clinic Day", "typeName": "Positive Action Program - Evolve  - Project Clinic Day", "eventTypeId": 25, "medium": "F2F", "lengthHours": 7},
+    {"course": "Positive Action Program - Evolve - Project Clinic Day", "typeName": "Positive Action Program - Evolve - Project Clinic Day", "eventTypeId": 25, "medium": "F2F", "lengthHours": 7},
     {"course": "Lunch and Learn", "typeName": "Lunch and Learn", "eventTypeId": 26, "medium": "Online", "lengthHours": 1},
     {"course": "Positive Action Program - Excel - Project management and quality improvement", "typeName": "Positive Action Program - Excel - Project management and quality improvement", "eventTypeId": 27, "medium": "F2F", "lengthHours": 7},
     {"course": "Positive Action Program - Excel - Change and Decision Making", "typeName": "Positive Action Program - Excel  - Change and Decision Making", "eventTypeId": 28, "medium": "Online", "lengthHours": 4},
