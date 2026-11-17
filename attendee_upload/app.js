@@ -2,12 +2,16 @@
 
 /* Attendee upload formatter. Replaces the Friday Office Script
    (attendeelistformatv1): turns the course attendee export (Sheet 1 columns
-   A to O) into rows for the SharePoint training list (Sheet 2 columns), using
-   the mapping on Sheet 3:
-     FullName  = B & " " & C           Email     = E
-     Name      = L & " " & F           EventDate = F (dd/mm/yyyy 00:00:00)
-   and the event types table (course name in L -> TypeName, EventTypeID,
-   Medium, LengthHours). The attendee list never leaves the browser; only the
+   A to O) into rows for the SharePoint training list (Sheet 2 columns), with
+   the same rules as the script:
+     FullName  = B & " " & C (each trimmed)
+     TypeName, EventTypeID, Medium, LengthHours = event types table, looked up
+                 on the course name in L (ignoring capitals)
+     Name      = L without a leading "CITI:" or "CITI Bitesize series:",
+                 plus " dd/mm/yyyy" from F unless L contains "elearning"
+     F (date completed) goes to ElearningCompletionDate when the mapped
+                 Medium is elearning, otherwise to EventDate
+     Scheduled = 1, Completed = 1, Email = E; the rest are blank. The attendee list never leaves the browser; only the
    event types table is kept, in this browser's localStorage. */
 (function () {
   const $ = id => document.getElementById(id);
@@ -149,36 +153,46 @@
     return { header: false, idx: want.map((w, i) => i) };
   }
 
-  // Dates as Excel pastes them (dd/mm/yyyy, with or without a time), as the
-  // workbook reader gives them (yyyy-mm-dd hh:mm) or as an Excel serial.
+  // Dates as Excel pastes them (dd/mm/yyyy or dd-Mon-yy, with or without a
+  // time), as the workbook reader gives them (yyyy-mm-dd hh:mm) or as an
+  // Excel serial. A time of day is kept, as Excel keeps it in the cell.
+  // Two-digit years: under 30 is 20xx, otherwise 19xx, as in the script.
+  const MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
   function parseDate(v) {
     const s = norm(v);
     if (!s) return null;
-    let m = s.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{2,4})(?:[ T,]+.*)?$/);
+    const year = t => { let y = +t; if (t.length <= 2) y += y < 30 ? 2000 : 1900; return y; };
+    const time = t => {
+      const m = String(t || "").match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?\s*([ap]\.?m\.?)?$/i);
+      if (!m) return t && t.trim() ? null : [0, 0, 0];
+      let h = +m[1]; const ap = (m[4] || "").toLowerCase();
+      if (ap.startsWith("p") && h < 12) h += 12;
+      if (ap.startsWith("a") && h === 12) h = 0;
+      return h < 24 && +m[2] < 60 && +(m[3] || 0) < 60 ? [h, +m[2], +(m[3] || 0)] : null;
+    };
+    let m = s.match(/^(\d{1,2})[\/.\-](\d{1,2}|[A-Za-z]{3,9})[\/.\- ](\d{4}|\d{2})(?:[ T,]+(.*))?$/) ||
+            s.match(/^(\d{1,2}) ([A-Za-z]{3,9}),? (\d{4}|\d{2})(?:[ T,]+(.*))?$/);
     if (m) {
-      let y = +m[3]; if (y < 100) y += 2000;
-      return valid(y, +m[2], +m[1]);
+      const mo = /\d/.test(m[2]) ? +m[2] : MONTHS.indexOf(m[2].slice(0, 3).toLowerCase()) + 1;
+      return valid(year(m[3]), mo, +m[1], time(m[4]));
     }
-    m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})(?:[ T].*)?$/);
-    if (m) return valid(+m[1], +m[2], +m[3]);
-    m = s.match(/^(\d{1,2})[ \-]([A-Za-z]{3,9})[ \-,]+(\d{2,4})(?:[ T,]+.*)?$/);
-    if (m) {
-      const mon = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"].indexOf(m[2].slice(0, 3).toLowerCase());
-      let y = +m[3]; if (y < 100) y += 2000;
-      if (mon >= 0) return valid(y, mon + 1, +m[1]);
-    }
+    m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})(?:[ T](.*))?$/);
+    if (m) return valid(+m[1], +m[2], +m[3], time(m[4]));
     if (/^\d{5}(\.\d+)?$/.test(s)) {
-      const d = new Date(Date.UTC(1899, 11, 30) + Math.floor(+s) * 864e5);
-      return valid(d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate());
+      const ms = Math.round(+s * 864e5 / 1000) * 1000, d = new Date(Date.UTC(1899, 11, 30) + ms);
+      return valid(d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate(), [d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds()]);
     }
     return null;
   }
-  function valid(y, mo, d) {
+  function valid(y, mo, d, t) {
+    if (!t || mo < 1) return null;
     const dt = new Date(Date.UTC(y, mo - 1, d));
-    return dt.getUTCFullYear() === y && dt.getUTCMonth() === mo - 1 && dt.getUTCDate() === d ? { y, mo, d } : null;
+    return dt.getUTCFullYear() === y && dt.getUTCMonth() === mo - 1 && dt.getUTCDate() === d ? { y, mo, d, h: t[0], mi: t[1], s: t[2] } : null;
   }
-  const dateText = dt => pad(dt.d) + "/" + pad(dt.mo) + "/" + dt.y + " 00:00:00";
-  const dateSerial = dt => (Date.UTC(dt.y, dt.mo - 1, dt.d) - Date.UTC(1899, 11, 30)) / 864e5;
+  const dayText = dt => pad(dt.d) + "/" + pad(dt.mo) + "/" + dt.y;
+  const dateText = dt => dayText(dt) + " " + pad(dt.h) + ":" + pad(dt.mi) + ":" + pad(dt.s);
+  const dateSerial = dt => (Date.UTC(dt.y, dt.mo - 1, dt.d, dt.h, dt.mi, dt.s) - Date.UTC(1899, 11, 30)) / 864e5;
+  const DATE_COLS = ["EventDate", "ElearningCompletionDate"];
 
   /* ---------- building the output ---------- */
   let current = null;
@@ -199,6 +213,9 @@
       const t = lookup.get(key(course));
       const fullName = norm(norm(get(r, "First Name")) + " " + norm(get(r, "Last Name")));
       const email = norm(get(r, "Email"));
+      const shortCourse = course.replace(/^CITI(?:\s+Bitesize\s+series)?:\s*/i, "");
+      const isElearningCourse = /elearning/i.test(course);
+      const dateCol = t && norm(t.medium).toLowerCase() === "elearning" ? "ElearningCompletionDate" : "EventDate";
       if (!t && course) unmatched.set(key(course), { course, n: (unmatched.get(key(course)) || { n: 0 }).n + 1 });
       if (!dt) badDates++;
       if (!email) noEmail++;
@@ -207,13 +224,17 @@
         FullName: fullName,
         TypeName: t ? t.typeName : "",
         EventTypeID: t ? t.eventTypeId : "",
-        Name: course + (dt ? " " + dateText(dt) : ""),
+        Name: dt && !isElearningCourse ? shortCourse + " " + dayText(dt) : shortCourse,
         Medium: t ? t.medium : "",
         LengthHours: t ? t.lengthHours : "",
-        EventDate: dt ? dateText(dt) : "",
+        EventDate: "",
+        ElearningCompletionDate: "",
+        Scheduled: 1,
+        Completed: 1,
         Email: email
       };
-      return { v, dt, matched: !!t, course, rawDate: norm(get(r, "Date completed")) };
+      if (dt) v[dateCol] = dateText(dt);
+      return { v, dt, dateCol, matched: !!t, course, rawDate: norm(get(r, "Date completed")) };
     });
     return { rows: out, header: map.header, unmatched: [...unmatched.values()], badDates, noEmail, noName,
       missingCols: map.header ? IN_COLS.filter((c, i) => map.idx[i] == null && ["First Name", "Last Name", "Email", "Date completed", "Course Name"].includes(c)) : [] };
@@ -231,7 +252,7 @@
     els.detected.textContent = n + " attendee row" + (n === 1 ? "" : "s") + (c.header ? ", heading row found." : ", no heading row, so columns are read in Sheet 1 order (A to O).");
     const issues = [];
     if (c.missingCols.length) issues.push("These columns weren't found in the heading row: " + c.missingCols.join(", ") + ".");
-    if (c.badDates) issues.push(c.badDates + " row" + (c.badDates === 1 ? " has" : "s have") + " no date completed that could be read (expected dd/mm/yyyy). Name and EventDate are incomplete for " + (c.badDates === 1 ? "it" : "them") + ".");
+    if (c.badDates) issues.push(c.badDates + " row" + (c.badDates === 1 ? " has" : "s have") + " no date completed that could be read (expected dd/mm/yyyy). The date is missing from Name and EventDate or ElearningCompletionDate for " + (c.badDates === 1 ? "it" : "them") + ".");
     if (c.noEmail) issues.push(c.noEmail + " row" + (c.noEmail === 1 ? " has" : "s have") + " no email.");
     if (c.noName) issues.push(c.noName + " row" + (c.noName === 1 ? " has" : "s have") + " no first or last name.");
     const matched = c.rows.filter(r => r.matched).length;
@@ -242,14 +263,14 @@
         '<ul>' + c.unmatched.map(u => "<li>" + esc(u.course) + " (" + u.n + " row" + (u.n === 1 ? "" : "s") + ')<button type="button" data-addcourse="' + esc(u.course) + '">Add as event type</button></li>').join("") + "</ul></div>";
     }
     if (issues.length) h += '<ul class="issues">' + issues.map(i => "<li>" + esc(i) + "</li>").join("") + "</ul>";
-    const shown = ["FullName", "TypeName", "EventTypeID", "Name", "Medium", "LengthHours", "EventDate", "Email"];
-    h += '<p class="hint">Showing the columns that are filled in. The download and copies include all 14 Sheet 2 columns, with the rest blank.</p>';
+    const shown = ["FullName", "TypeName", "EventTypeID", "Name", "Medium", "LengthHours", "EventDate", "ElearningCompletionDate", "Scheduled", "Completed", "Email"];
+    h += '<p class="hint">Grouper, EngagementNotes and Facilitator1 are blank, so they’re not shown here. The download and copies include all 14 Sheet 2 columns.</p>';
     h += '<div class="tablewrap"><table><thead><tr><th scope="col">#</th>' + shown.map(s => '<th scope="col">' + s + "</th>").join("") + "</tr></thead><tbody>" +
       c.rows.map((r, i) => '<tr' + (r.matched && r.dt ? "" : ' class="warn"') + '><td class="num">' + (i + 1) + "</td>" + shown.map(s => {
         const val = r.v[s];
-        const miss = (s === "TypeName" && !r.matched) || (s === "EventDate" && !r.dt);
-        const shownVal = miss ? (s === "EventDate" ? (r.rawDate ? "Can't read “" + r.rawDate + "”" : "Missing") : "Not matched") : val;
-        return "<td" + (miss ? ' class="miss"' : (s === "EventTypeID" || s === "LengthHours" ? ' class="num"' : "")) + ">" + esc(shownVal) + "</td>";
+        const miss = (s === "TypeName" && !r.matched) || (s === r.dateCol && !r.dt);
+        const shownVal = miss ? (s === r.dateCol ? (r.rawDate ? "Can't read “" + r.rawDate + "”" : "Missing") : "Not matched") : val;
+        return "<td" + (miss ? ' class="miss"' : (["EventTypeID", "LengthHours", "Scheduled", "Completed"].includes(s) ? ' class="num"' : "")) + ">" + esc(shownVal) + "</td>";
       }).join("") + "</tr>").join("") + "</tbody></table></div>";
     els.result.innerHTML = h;
   }
@@ -321,7 +342,7 @@
     if (!checkReady()) return;
     const head = OUT_COLS.map(c => ({ v: c, s: "head" }));
     const rows = current.rows.map(r => OUT_COLS.map(c => {
-      if (c === "EventDate") return r.dt ? { v: dateSerial(r.dt), s: "date" } : "";
+      if (DATE_COLS.includes(c)) return r.dt && c === r.dateCol ? { v: dateSerial(r.dt), s: "date" } : null;
       const v = outValue(r, c);
       return v === "" ? null : v;
     }));

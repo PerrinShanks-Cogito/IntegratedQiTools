@@ -117,7 +117,7 @@ td.miss{color:var(--danger);font-weight:700}
 </div>
 
 <section class="notes" aria-label="How the rows are built">
-  <p><b>How each row is built:</b> FullName is First Name and Last Name (B &amp; C). Name is the Course Name and the date completed (L &amp; F), as <i>Course name dd/mm/yyyy 00:00:00</i>. EventDate is the date completed at 00:00:00. Email is column E. TypeName, EventTypeID, Medium and LengthHours come from the event types table. Grouper, EngagementNotes, ElearningCompletionDate, Facilitator1, Scheduled and Completed are left blank.</p>
+  <p><b>How each row is built</b> (the same rules as the attendeelistformatv1 Office Script): FullName is First Name and Last Name (B &amp; C). TypeName, EventTypeID, Medium and LengthHours come from the event types table. Name is the Course Name (L) without a leading “CITI:” or “CITI Bitesize series:”, followed by the date completed as dd/mm/yyyy, except for courses with “eLearning” in the name, which have no date. The date completed (F) goes in ElearningCompletionDate when the Medium is elearning, otherwise in EventDate. Scheduled and Completed are 1. Email is column E. Grouper, EngagementNotes and Facilitator1 are left blank.</p>
   <p><b>To upload:</b> use Export, then Download for SharePoint (.xlsx), or Copy rows and paste into the list's grid view (Edit in grid view). Rows whose course isn't in the event types table are highlighted: add the course above and the rows update straight away.</p>
 </section>
 

@@ -182,19 +182,22 @@ works for anyone with the link.
 - Paste the export (Sheet 1 columns A to O, with or without the heading row)
   or upload an .xlsx, .xlsm or .csv. With a heading row, columns are found by
   name; without one, they are read in Sheet 1 order.
-- Each row becomes the 14 Sheet 2 columns: FullName = First Name & Last
-  Name, Name = Course Name & date completed (`dd/mm/yyyy 00:00:00`),
-  EventDate = date completed at midnight, Email = Email. TypeName,
-  EventTypeID, Medium and LengthHours come from the event types table, matched
-  on Course Name ignoring capitals and extra spaces. The other columns are
-  left blank.
+- Each row becomes the 14 Sheet 2 columns, by the same rules as the Office
+  Script: FullName = First Name & Last Name; TypeName, EventTypeID, Medium
+  and LengthHours from the event types table, matched on Course Name ignoring
+  capitals and extra spaces; Name = Course Name without a leading `CITI:` or
+  `CITI Bitesize series:`, plus ` dd/mm/yyyy` unless the course name contains
+  "elearning"; the date completed (time kept) in ElearningCompletionDate when
+  the Medium is elearning, otherwise in EventDate; Scheduled = 1,
+  Completed = 1; Email = Email. Grouper, EngagementNotes and Facilitator1 are
+  blank.
 - The event types table can be edited on the page; changes are kept in that
   browser (localStorage, event types only, never attendee data). Courses not
   in the table are listed with an "Add as event type" button. The defaults
   everyone starts with are in `attendee_upload/event_types.json`: use
   Download event types on the page and replace that file to change them.
-- Export: Download for SharePoint (.xlsx, one sheet called Sheet2, EventDate
-  as a real date), Copy rows (no headings, to paste under existing rows in
+- Export: Download for SharePoint (.xlsx, one sheet called Sheet2, the two
+  date columns as real dates), Copy rows (no headings, to paste under existing rows in
   grid view), Copy rows with headings, or CSV.
 
 ## Programme guide
