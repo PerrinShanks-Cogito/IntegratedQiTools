@@ -194,8 +194,12 @@ works for anyone with the link.
 - The event types table can be edited on the page; changes are kept in that
   browser (localStorage, event types only, never attendee data). Courses not
   in the table are listed with an "Add as event type" button. The defaults
-  everyone starts with are in `attendee_upload/event_types.json`: use
-  Download event types on the page and replace that file to change them.
+  everyone starts with are in `attendee_upload/event_types.json`, taken from
+  the ImpCommEventType table (the course name is its EventTypeNotes where that
+  holds the CITI course name, otherwise its TypeName). Use Download event
+  types on the page and replace that file to change them. Defaults added to
+  the file later are added to a browser's saved table the next time it opens
+  the page; ones removed there don't come back.
 - Export: Download for SharePoint (.xlsx, one sheet called Sheet2, the two
   date columns as real dates), Copy rows (no headings, to paste under existing rows in
   grid view), Copy rows with headings, or CSV.

@@ -20,6 +20,10 @@
     fileIn: $("fileIn"), typesBody: $("typesBody"), typesIn: $("typesIn"), typesStatus: $("typesStatus")
   };
   const TYPES_KEY = "focus.attendee_upload.eventTypes";
+  // Course names of the defaults this browser has already been given, so
+  // defaults added to event_types.json later are added to a saved table, but
+  // ones the person removed don't come back.
+  const SEEN_KEY = "focus.attendee_upload.seenDefaults";
   const DEFAULTS_URL = "/attendee_upload/event_types.json";
 
   // Sheet 1 columns, in order (A to O)
@@ -42,7 +46,7 @@
 
   function cleanType(t) {
     const num = v => { const n = parseFloat(String(v == null ? "" : v).replace(",", ".")); return isFinite(n) ? n : ""; };
-    return { course: norm(t.course), typeName: norm(t.typeName), eventTypeId: num(t.eventTypeId), medium: norm(t.medium), lengthHours: num(t.lengthHours) };
+    return { course: norm(t.course), typeName: String(t.typeName == null ? "" : t.typeName).trim(), eventTypeId: num(t.eventTypeId), medium: norm(t.medium), lengthHours: num(t.lengthHours) };
   }
   function saveTypes() {
     try { localStorage.setItem(TYPES_KEY, JSON.stringify(types)); } catch (e) { /* private window: kept for this visit only */ }
@@ -409,7 +413,16 @@
     .then(doc => { defaults = (doc.eventTypes || []).map(cleanType); })
     .catch(() => { defaults = []; typesSay("The default event types couldn't be loaded."); })
     .then(() => {
-      types = stored || defaults.map(cleanType);
+      let seen = null;
+      try { seen = JSON.parse(localStorage.getItem(SEEN_KEY) || "null"); } catch (e) { seen = null; }
+      if (stored) {
+        const have = new Set(stored.map(t => key(t.course)));
+        const old = new Set((Array.isArray(seen) ? seen : stored.map(t => t.course)).map(key));
+        const fresh = defaults.filter(d => !have.has(key(d.course)) && !old.has(key(d.course)));
+        types = stored.concat(fresh.map(cleanType));
+        if (fresh.length) { saveTypes(); typesSay("Added " + fresh.length + " new default event type" + (fresh.length === 1 ? "" : "s") + "."); }
+      } else types = defaults.map(cleanType);
+      try { localStorage.setItem(SEEN_KEY, JSON.stringify(defaults.map(d => d.course))); } catch (e) { /* not kept */ }
       renderTypes(); update();
     });
   renderTypes(); update();
